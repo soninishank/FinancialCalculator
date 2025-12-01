@@ -9,6 +9,8 @@ import LumpSumOnly from "./components/calculators/LumpSumOnly";
 import StepUpSIP from "./components/calculators/StepUpSIP";
 import StepUpSIPWithLump from "./components/calculators/StepUpSIPWithLump";
 import GoalPlanner from "./components/calculators/GoalPlanner";
+import LoanEMI from "./components/calculators/LoanEMI"; 
+
 
 
 
@@ -35,6 +37,8 @@ export default function App() {
         return <StepUpSIPWithLump {...props} />;
       case "Goal Planner":
         return <GoalPlanner {...props} />;
+      case "Loan EMI":
+        return <LoanEMI {...props} />;
       default:
         return <SIPWithLumpSum {...props} />;
     }

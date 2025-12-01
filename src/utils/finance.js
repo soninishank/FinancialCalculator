@@ -51,3 +51,52 @@ export function calculateRealRate(nominalRate, inflationRate) {
   
   return realRate * 100; // Convert back to percentage
 }
+export function calculateEMI(P, R_m, N) {
+  if (R_m === 0) return P / N; // Simple division if interest is 0
+  
+  const factor = Math.pow(1 + R_m, N);
+  return P * R_m * (factor / (factor - 1));
+}
+
+
+export function computeLoanAmortization({ principal, annualRate, years, emi }) {
+  const R_m = annualRate / 12 / 100;
+  const N = years * 12;
+
+  let balance = principal;
+  const rows = [];
+  let totalInterestPaid = 0;
+  let totalPrincipalPaid = 0;
+
+  for (let m = 1; m <= N; m++) {
+    const interestPaidThisMonth = balance * R_m;
+    const principalPaidThisMonth = emi - interestPaidThisMonth;
+    balance -= principalPaidThisMonth;
+
+    totalInterestPaid += interestPaidThisMonth;
+    totalPrincipalPaid += principalPaidThisMonth;
+
+    if (m % 12 === 0) {
+      rows.push({
+        year: m / 12,
+        openingBalance: principal, // Constant for summary table clarity
+        principalPaid: totalPrincipalPaid,
+        interestPaid: totalInterestPaid,
+        closingBalance: Math.max(0, balance), // Ensure balance doesn't go negative due to rounding
+      });
+      
+      // Reset yearly totals for next year's row creation (optional, but cleaner for a yearly summary)
+      totalInterestPaid = 0;
+      totalPrincipalPaid = 0;
+    }
+  }
+
+  // The last entry needs to be created even if it's not exactly month 12, but since we are computing full years, the logic above is fine.
+  // The 'total' logic below is what matters most for the summary.
+  
+  // NOTE: For the final summary, we'll need to re-run the loop for total amounts
+  let finalTotalInterest = (emi * N) - principal;
+  let finalTotalPaid = emi * N;
+  
+  return { rows, finalTotalInterest: finalTotalInterest, finalTotalPaid: finalTotalPaid };
+}

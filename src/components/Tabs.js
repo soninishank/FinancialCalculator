@@ -8,6 +8,7 @@ const tabs = [
   { id: "Step-Up SIP", label: "Step-Up SIP" },
   { id: "Step-Up + LumpSum", label: "Step-Up + Lump Sum" },
   { id: "Goal Planner", label: "Goal Planner 🎯" },
+  { id: "Loan EMI", label: "Loan EMI 🏦" },
 ];
 
 // Destructure 'activeTab' and 'setActiveTab' to match what App.js passes
