@@ -1,41 +1,60 @@
 import React from "react";
 
-export default function FormattedInput({ value, onChange, currency, className }) {
-  // 1. Determine Locale based on currency
+// GLOBAL SAFE LIMIT: 100 Crores (1 Billion). 
+// No individual calculator usually needs more than this.
+const GLOBAL_SAFE_MAX = 1000000000; 
+
+export default function FormattedInput({ value, onChange, currency, className, max }) {
+  
+  // 1. Determine the effective maximum limit
+  // If a specific 'max' is passed (from the slider), use that.
+  // Otherwise, use the Global Safe Limit to prevent UI breakage.
+  // We allow the input to go slightly higher than the slider max (e.g. 2x) 
+  // for flexibility, OR strictly enforce the slider max. 
+  // Here, we strictly enforce the passed 'max' or the global limit.
+  const limit = max || GLOBAL_SAFE_MAX;
+
+  // 2. Determine Locale
   const getLocale = (curr) => {
     switch (curr) {
-      case "INR": return "en-IN"; // 1,00,000
-      case "EUR": return "de-DE"; // 100.000 (Europe uses dots for thousands usually)
-      default: return "en-US";    // 100,000
+      case "INR": return "en-IN";
+      case "EUR": return "de-DE";
+      default: return "en-US";
     }
   };
 
   const locale = getLocale(currency);
 
-  // 2. Format the value for Display (adds commas)
-  // We check if value is 0 and the user isn't typing to keep it clean, 
-  // but usually showing "0" or valid formatted number is best.
+  // 3. Format for Display
   const displayValue = value !== undefined && value !== null 
     ? Number(value).toLocaleString(locale, { maximumFractionDigits: 0 }) 
     : "";
 
-  // 3. Handle User Input (removes commas)
+  // 4. Handle Input
   const handleChange = (e) => {
-    // Get the value from input
     const inputValue = e.target.value;
 
-    // Remove non-numeric characters (commas, spaces, etc)
-    // We allow digits and a single decimal point if needed, but for this SIP calc, integers are usually safer.
+    // Remove commas/spaces to get raw number
     const rawValue = inputValue.replace(/[^0-9]/g, "");
+    const numberValue = Number(rawValue);
 
-    // Update parent state with the raw number
-    onChange(rawValue === "" ? 0 : Number(rawValue));
+    // --- GENERIC CHECK: BOUNDARY PROTECTION ---
+    if (numberValue > limit) {
+      // Option A: Shake effect or visual feedback (Advanced)
+      // Option B: Just ignore the input (Simple & Robust)
+      
+      // If the value is too big, simply don't update the state.
+      // This "freezes" the input at the last valid number.
+      return; 
+    }
+
+    onChange(rawValue === "" ? 0 : numberValue);
   };
 
   return (
     <input
-      type="text" // Must be text to allow commas
-      value={displayValue === "0" ? "" : displayValue} // Optional: clears input if 0
+      type="text"
+      value={displayValue === "0" ? "" : displayValue}
       placeholder="0"
       onChange={handleChange}
       className={className}

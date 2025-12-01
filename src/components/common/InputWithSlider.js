@@ -1,5 +1,7 @@
+// src/components/common/InputWithSlider.js
 import React from "react";
 import FormattedInput from "./FormattedInput";
+import { getCurrencySymbol, moneyFormat } from "../../utils/formatting";
 
 export default function InputWithSlider({
   label,
@@ -8,50 +10,71 @@ export default function InputWithSlider({
   min,
   max,
   step = 1,
-  currency, // optional: if passed, shows currency symbol
-  symbol,   // optional: if passed (like %), shows that instead
+  currency,
+  symbol,
 }) {
+  let prefix = null;
+  if (currency) {
+    prefix = getCurrencySymbol(currency);
+  } else if (symbol) {
+    prefix = symbol;
+  }
+
   return (
     <div className="mb-4">
-      <div className="flex justify-between items-center mb-1">
-        <label className="block text-sm font-medium text-gray-700">{label}</label>
+      <div className="flex justify-between items-end mb-2">
+        <label className="text-sm font-medium text-gray-700">{label}</label>
+        {/* Badge: Shows exact value (e.g., 99,99,99,999) */}
+        <span className="text-xs font-semibold text-teal-600 bg-teal-50 px-2 py-1 rounded">
+          {currency ? prefix : ""} {Number(value).toLocaleString("en-IN")} {symbol === "%" ? "%" : ""}
+        </span>
       </div>
 
-      <div className="flex items-center gap-3">
-        {/* Input Box */}
-        <div className="flex-1 flex items-center">
-          {currency && (
-            <span className="px-3 py-3 bg-gray-50 rounded-l-xl font-medium text-gray-500 border border-r-0 border-gray-200">
-              {symbol}
-            </span>
-          )}
-          <FormattedInput
-            value={value}
-            onChange={onChange}
-            currency={currency}
-            className={`w-full p-3 border border-gray-200 text-gray-800 font-semibold focus:ring-2 focus:ring-teal-500 outline-none transition-all
-              ${currency ? "rounded-r-xl" : "rounded-xl"}
-            `}
-          />
-        </div>
+      <div className="relative">
+        {prefix && (
+          <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+            <span className="text-gray-500 font-semibold">{prefix}</span>
+          </div>
+        )}
+
+        <FormattedInput
+          value={value}
+          onChange={onChange}
+          currency={currency}
+          // Allow typing beyond the slider max (up to Global Safe Limit of 100Cr+)
+          className={`
+            w-full py-3 pr-4 border border-gray-300 rounded-xl outline-none 
+            focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all
+            font-semibold text-gray-800
+            ${prefix ? "pl-10" : "pl-4"} 
+          `}
+        />
       </div>
 
-      {/* Slider */}
-      <div className="mt-3 relative h-6 flex items-center">
+      <div className="mt-3 flex items-center gap-4">
+        {/* Min Label */}
+        <span className="text-xs text-gray-400 font-medium min-w-[30px]">
+          {currency ? moneyFormat(min, currency, true) : min}
+        </span>
+
         <input
           type="range"
           min={min}
           max={max}
           step={step}
-          value={value}
+          // If value exceeds max, stick slider to the end (100%)
+          value={value > max ? max : value}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-600 hover:accent-teal-500 transition-all"
+          className="
+            w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer 
+            accent-teal-600 hover:accent-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-300
+          "
         />
-      </div>
-      
-      <div className="flex justify-between text-xs text-gray-400 mt-1 font-medium">
-        <span>{min}</span>
-        <span>{max}</span>
+
+        {/* Max Label */}
+        <span className="text-xs text-gray-400 font-medium min-w-[30px] text-right">
+          {currency ? moneyFormat(max, currency, true) : max}
+        </span>
       </div>
     </div>
   );

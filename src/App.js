@@ -8,6 +8,9 @@ import PureSIP from "./components/calculators/PureSIP";
 import LumpSumOnly from "./components/calculators/LumpSumOnly";
 import StepUpSIP from "./components/calculators/StepUpSIP";
 import StepUpSIPWithLump from "./components/calculators/StepUpSIPWithLump";
+import GoalPlanner from "./components/calculators/GoalPlanner";
+
+
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("SIP + LumpSum");
@@ -30,6 +33,8 @@ export default function App() {
         return <StepUpSIP {...props} />;
       case "Step-Up + LumpSum":
         return <StepUpSIPWithLump {...props} />;
+      case "Goal Planner":
+        return <GoalPlanner {...props} />;
       default:
         return <SIPWithLumpSum {...props} />;
     }
