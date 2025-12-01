@@ -4,17 +4,28 @@ import React, { useMemo, useState } from "react";
 // --- IMPORTS ---
 import CurrencySelector from "../common/CurrencySelector";
 import InputWithSlider from "../common/InputWithSlider";
-import AmortizationTableWrapper from "../common/AmortizationTableWrapper"; // <--- NEW IMPORT
+import AmortizationTableWrapper from "../common/AmortizationTableWrapper"; 
+import CompoundingBarChart from "../common/CompoundingBarChart";
 import { moneyFormat } from "../../utils/formatting";
 import { calculateEMI, computeLoanAmortization } from "../../utils/finance";
 import { downloadCSV } from "../../utils/export";
-import CompoundingBarChart from "../common/CompoundingBarChart";
+
+import { 
+  DEFAULT_LOAN_PRINCIPAL,
+  DEFAULT_LOAN_RATE,
+  DEFAULT_LOAN_TENURE,
+  MIN_YEARS,
+  MIN_RATE,
+  MAX_LOAN,
+  MAX_RATE,
+  MAX_YEARS 
+} from "../../utils/constants"; // <--- NEW IMPORTS
 
 export default function LoanEMI({ currency, setCurrency }) {
-  // Inputs
-  const [principal, setPrincipal] = useState(5000000); // Loan Amount
-  const [annualRate, setAnnualRate] = useState(8);    // Annual Interest Rate
-  const [years, setYears] = useState(20);             // Loan Tenure
+  // Inputs: Use Default Constants
+  const [principal, setPrincipal] = useState(DEFAULT_LOAN_PRINCIPAL); 
+  const [annualRate, setAnnualRate] = useState(DEFAULT_LOAN_RATE);    
+  const [years, setYears] = useState(DEFAULT_LOAN_TENURE);             
 
   const R_m = annualRate / 12 / 100;
   const N = years * 12;
@@ -71,15 +82,37 @@ export default function LoanEMI({ currency, setCurrency }) {
     <div className="animate-fade-in">
       <CurrencySelector currency={currency} setCurrency={setCurrency} />
 
-      {/* INPUTS SECTION (omitted for brevity) */}
+      {/* INPUTS SECTION */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">
-        <InputWithSlider label="Loan Principal Amount" value={principal} onChange={setPrincipal} min={100000} max={50000000} step={100000} currency={currency} />
-        <InputWithSlider label="Loan Tenure (Years)" value={years} onChange={setYears} min={1} max={30} />
+        {/* Loan Principal Amount - Use MAX_LOAN */}
+        <InputWithSlider 
+          label="Loan Principal Amount" 
+          value={principal} 
+          onChange={setPrincipal} 
+          min={100000} max={MAX_LOAN} step={100000} 
+          currency={currency} 
+        />
+        
+        {/* Loan Tenure - Use MAX_YEARS */}
+        <InputWithSlider 
+          label="Loan Tenure (Years)" 
+          value={years} 
+          onChange={setYears} 
+          min={MIN_YEARS} max={MAX_YEARS} 
+        />
+        
+        {/* Annual Rate - Use MAX_RATE */}
         <div className="md:col-span-2">
-          <InputWithSlider label="Annual Interest Rate (%)" value={annualRate} onChange={setAnnualRate} min={1} max={20} symbol="%" />
+          <InputWithSlider 
+            label="Annual Interest Rate (%)" 
+            value={annualRate} 
+            onChange={setAnnualRate} 
+            min={MIN_RATE} max={MAX_RATE} symbol="%" 
+          />
         </div>
       </div>
-            {/* SUMMARY CARDS (omitted for brevity) */}
+      
+      {/* SUMMARY CARDS (Customized for Loan) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
         {/* Card 1: Monthly EMI */}
         <div className="bg-white border-l-4 border-violet-500 rounded-xl p-6 shadow-sm">
@@ -109,11 +142,11 @@ export default function LoanEMI({ currency, setCurrency }) {
         </div>
       </div>
 
-      {/* --- NEW LOAN CHART INTEGRATION --- */}
+      {/* LOAN AMORTIZATION BAR CHART */}
       <CompoundingBarChart 
         data={yearlyRows} 
         currency={currency} 
-        type="loan" // <--- CRITICAL: Tell the chart what kind of data it is rendering
+        type="loan" 
       />
 
       {/* AMORTIZATION TABLE (Using the Wrapper) */}

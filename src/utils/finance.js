@@ -100,3 +100,16 @@ export function computeLoanAmortization({ principal, annualRate, years, emi }) {
   
   return { rows, finalTotalInterest: finalTotalInterest, finalTotalPaid: finalTotalPaid };
 }
+
+export function calculateCAGR(beginningValue, endingValue, years) {
+  if (years === 0 || beginningValue === 0) return 0;
+  if (beginningValue < 0 || endingValue < 0) return 0; // Prevent complex math/errors
+
+  const ratio = endingValue / beginningValue;
+  const exponent = 1 / years;
+  
+  // CAGR in decimal form
+  const cagrDecimal = Math.pow(ratio, exponent) - 1;
+  
+  return cagrDecimal * 100; // Convert to percentage
+}

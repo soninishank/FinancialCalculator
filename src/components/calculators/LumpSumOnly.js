@@ -11,6 +11,17 @@ import InputWithSlider from "../common/InputWithSlider";
 
 import { calcLumpFutureValue } from "../../utils/finance";
 import { downloadCSV } from "../../utils/export";
+import { 
+  DEFAULT_LUMP_SUM,
+  DEFAULT_TENURE_YEARS,
+  DEFAULT_RATE,
+  MIN_AMOUNT,
+  MIN_YEARS,
+  MIN_RATE,
+  MAX_AMOUNT,
+  MAX_YEARS,
+  MAX_RATE
+} from "../../utils/constants"; // <--- NEW IMPORTS
 
 function computeYearlyLump({ lumpSum, annualRate, years }) {
   const r_m = annualRate / 12 / 100;
@@ -23,7 +34,7 @@ function computeYearlyLump({ lumpSum, annualRate, years }) {
     if (m % 12 === 0) {
       rows.push({
         year: m / 12,
-        totalInvested: lumpSum, // Constant for Lump Sum
+        totalInvested: lumpSum, 
         lumpSum: lumpSum,
         growth: currentBalance - lumpSum,
         overallValue: currentBalance,
@@ -34,9 +45,10 @@ function computeYearlyLump({ lumpSum, annualRate, years }) {
 }
 
 export default function LumpSumOnly({ currency, setCurrency }) {
-  const [lumpSum, setLumpSum] = useState(10000);
-  const [years, setYears] = useState(10);
-  const [annualRate, setAnnualRate] = useState(12);
+  // --- STATE FIX: Use Default Constants ---
+  const [lumpSum, setLumpSum] = useState(DEFAULT_LUMP_SUM);
+  const [years, setYears] = useState(DEFAULT_TENURE_YEARS);
+  const [annualRate, setAnnualRate] = useState(DEFAULT_RATE);
 
   const n = years * 12;
   const r_m = annualRate / 12 / 100;
@@ -69,7 +81,7 @@ export default function LumpSumOnly({ currency, setCurrency }) {
           label="Initial Lump Sum"
           value={lumpSum}
           onChange={setLumpSum}
-          min={5000} max={10000000} step={1000}
+          min={MIN_AMOUNT} max={MAX_AMOUNT} step={1000} // Use MAX_AMOUNT
           currency={currency}
         />
 
@@ -77,7 +89,7 @@ export default function LumpSumOnly({ currency, setCurrency }) {
           label="Investment Tenure (Years)"
           value={years}
           onChange={setYears}
-          min={1} max={40}
+          min={MIN_YEARS} max={MAX_YEARS} // Use MAX_YEARS
         />
 
         <div className="md:col-span-2">
@@ -85,7 +97,7 @@ export default function LumpSumOnly({ currency, setCurrency }) {
             label="Expected Annual Return (%)"
             value={annualRate}
             onChange={setAnnualRate}
-            min={1} max={30}
+            min={MIN_RATE} max={MAX_RATE} // Use MAX_RATE
             symbol="%"
           />
         </div>
@@ -101,7 +113,7 @@ export default function LumpSumOnly({ currency, setCurrency }) {
             gain={gain} 
             total={totalFuture} 
             currency={currency} 
-            years={years} // <-- Just ensure this prop is passed for the center text!
+            years={years}
           />
         </div>
         <div className="lg:col-span-2 h-full">

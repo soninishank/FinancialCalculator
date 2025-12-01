@@ -1,4 +1,4 @@
-// src/components/calculators/SIPWithLumpSum.js
+// src/components/calculators/StepUpSIPWithLump.js
 import React, { useMemo, useState } from "react";
 
 // --- IMPORTS ---
@@ -7,26 +7,50 @@ import SummaryCards from "../common/SummaryCards";
 import InvestmentPieChart from "../common/InvestmentPieChart";
 import ResultsTable from "../common/ResultsTable";
 import CompoundingBarChart from "../common/CompoundingBarChart";
-import InputWithSlider from "../common/InputWithSlider"; // <--- NEW IMPORT
+import InputWithSlider from "../common/InputWithSlider";
 
+import { useLimitedPay } from "../../hooks/useLimitedPay"; // <--- IMPORT HOOK
 import { downloadCSV } from "../../utils/export";
+import { 
+  DEFAULT_MONTHLY_SIP,
+  DEFAULT_LUMP_SUM,
+  DEFAULT_RATE,
+  DEFAULT_TENURE_YEARS,
+  DEFAULT_STEP_UP,
+  MIN_SIP,
+  MIN_RATE,
+  MIN_YEARS,
+  MAX_AMOUNT,MIN_AMOUNT,
+  MAX_SIP,
+  MAX_RATE,
+  MAX_YEARS,
+  MAX_STEP_UP
+} from "../../utils/constants"; // <--- NEW CONSTANTS
 
-function computeStepUpWithLumpSchedule({ initialSIP, lumpSum, stepUpPercent, annualRate, years }) {
+// --- UPDATED LOGIC (Now includes totalYears and sipYears) ---
+function computeStepUpWithLumpSchedule({ initialSIP, lumpSum, stepUpPercent, annualRate, totalYears, sipYears }) {
   const r_m = annualRate / 12 / 100;
-  const months = years * 12;
+  const totalMonths = totalYears * 12;
+  const sipMonths = sipYears * 12; // How long contributions last
 
   let balance = lumpSum;
-  let monthly = Number(initialSIP);
   let totalInvested = lumpSum;
   const rows = [];
 
-  for (let m = 1; m <= months; m++) {
+  for (let m = 1; m <= totalMonths; m++) {
     const yearIndex = Math.floor((m - 1) / 12);
-    monthly = Number(initialSIP) * Math.pow(1 + stepUpPercent / 100, yearIndex);
+    const currentMonthlySIP = Number(initialSIP) * Math.pow(1 + stepUpPercent / 100, yearIndex);
 
-    balance = balance * (1 + r_m) + monthly;
-    totalInvested += monthly;
+    // 1. Only contribute SIP if within the SIP Duration
+    if (m <= sipMonths) {
+      balance += currentMonthlySIP;
+      totalInvested += currentMonthlySIP;
+    }
 
+    // 2. Apply Interest
+    balance = balance * (1 + r_m);
+
+    // 3. Snapshot at year end
     if (m % 12 === 0) {
       rows.push({
         year: m / 12,
@@ -43,15 +67,34 @@ function computeStepUpWithLumpSchedule({ initialSIP, lumpSum, stepUpPercent, ann
 }
 
 export default function StepUpSIPWithLump({ currency, setCurrency }) {
-  const [initialSIP, setInitialSIP] = useState(5000);
-  const [lumpSum, setLumpSum] = useState(100000);
-  const [stepUpPercent, setStepUpPercent] = useState(5);
-  const [years, setYears] = useState(10);
-  const [annualRate, setAnnualRate] = useState(12);
+  // --- STATE FIX: Use Default Constants ---
+  const [initialSIP, setInitialSIP] = useState(DEFAULT_MONTHLY_SIP);
+  const [lumpSum, setLumpSum] = useState(DEFAULT_LUMP_SUM);
+  const [stepUpPercent, setStepUpPercent] = useState(DEFAULT_STEP_UP);
+  const [annualRate, setAnnualRate] = useState(DEFAULT_RATE);
 
+  // --- USE LIMITED PAY HOOK ---
+  const { 
+    totalYears, 
+    sipYears, 
+    setSipYears, 
+    isLimitedPay, 
+    handleTotalYearsChange, 
+    handleLimitedPayToggle 
+  } = useLimitedPay(DEFAULT_TENURE_YEARS);
+
+  // Calculations
   const yearlyRows = useMemo(
-    () => computeStepUpWithLumpSchedule({ initialSIP: Number(initialSIP), lumpSum: Number(lumpSum), stepUpPercent: Number(stepUpPercent), annualRate: Number(annualRate), years: Number(years) }),
-    [initialSIP, lumpSum, stepUpPercent, annualRate, years]
+    () =>
+      computeStepUpWithLumpSchedule({ 
+        initialSIP: Number(initialSIP), 
+        lumpSum: Number(lumpSum), 
+        stepUpPercent: Number(stepUpPercent), 
+        annualRate: Number(annualRate), 
+        totalYears: Number(totalYears), 
+        sipYears: Number(sipYears) 
+      }),
+    [initialSIP, lumpSum, stepUpPercent, annualRate, totalYears, sipYears]
   );
 
   const lastRow = yearlyRows[yearlyRows.length - 1] || { totalInvested: 0, overallValue: 0 };
@@ -73,42 +116,82 @@ export default function StepUpSIPWithLump({ currency, setCurrency }) {
 
       {/* INPUTS SECTION */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">
+        
+        {/* Initial SIP */}
         <InputWithSlider
           label="Initial Monthly SIP"
           value={initialSIP}
           onChange={setInitialSIP}
-          min={500} max={500000} step={500}
+          min={MIN_SIP} max={MAX_SIP} step={500}
           currency={currency}
         />
 
+        {/* Lump Sum */}
         <InputWithSlider
           label="Initial Lump Sum"
           value={lumpSum}
           onChange={setLumpSum}
-          min={5000} max={10000000} step={1000}
+          min={MIN_AMOUNT} max={MAX_AMOUNT} step={1000}
           currency={currency}
         />
 
+        {/* Step Up % */}
         <InputWithSlider
           label="Annual Step-up (%)"
           value={stepUpPercent}
           onChange={setStepUpPercent}
-          min={0} max={50} symbol="%"
+          min={MIN_RATE} max={MAX_STEP_UP} symbol="%"
         />
 
-        <InputWithSlider
-          label="Investment Tenure (Years)"
-          value={years}
-          onChange={setYears}
-          min={1} max={40}
-        />
+        {/* Investment Tenure (With Limited Pay Toggle) */}
+        <div>
+          <InputWithSlider
+            label="Total Investment Tenure (Years)"
+            value={totalYears}
+            onChange={handleTotalYearsChange}
+            min={MIN_YEARS} max={MAX_YEARS}
+          />
+          
+          <div className="mt-4 flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="flex items-center h-5">
+              <input
+                id="limitedPay"
+                type="checkbox"
+                checked={isLimitedPay}
+                onChange={handleLimitedPayToggle}
+                className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 cursor-pointer"
+              />
+            </div>
+            <div className="text-sm">
+              <label htmlFor="limitedPay" className="font-medium text-gray-700 cursor-pointer">
+                Stop SIP early? (Limited Pay)
+              </label>
+              <p className="text-gray-500 text-xs mt-1">
+                Stop contributions after a few years but let the money grow.
+              </p>
+            </div>
+          </div>
+          
+          {isLimitedPay && (
+            <div className="mt-4 pl-4 border-l-2 border-teal-100 animate-slide-down">
+              <InputWithSlider
+                label="SIP Contribution Period (Years)"
+                value={sipYears}
+                onChange={setSipYears}
+                min={MIN_YEARS} 
+                max={totalYears}
+              />
+            </div>
+          )}
+        </div>
 
-        <div className="md:col-span-2">
+        {/* Rate */}
+        <div className="md:col-span-1">
           <InputWithSlider
             label="Expected Annual Return (%)"
             value={annualRate}
             onChange={setAnnualRate}
-            min={1} max={30} symbol="%"
+            min={MIN_RATE} max={MAX_RATE} symbol="%"
           />
         </div>
       </div>
@@ -118,7 +201,7 @@ export default function StepUpSIPWithLump({ currency, setCurrency }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12 items-start">
         <div className="lg:col-span-1">
-          <InvestmentPieChart invested={investedTotal} gain={gain} total={totalFuture} currency={currency} years={years} />
+          <InvestmentPieChart invested={investedTotal} gain={gain} total={totalFuture} currency={currency} years={totalYears} />
         </div>
         <div className="lg:col-span-2 h-full">
           <ResultsTable data={yearlyRows} currency={currency} onExport={handleExport} />
