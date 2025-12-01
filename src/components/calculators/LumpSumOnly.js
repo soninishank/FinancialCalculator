@@ -34,7 +34,7 @@ function computeYearlyLump({ lumpSum, annualRate, years }) {
 }
 
 export default function LumpSumOnly({ currency, setCurrency }) {
-  const [lumpSum, setLumpSum] = useState(100000);
+  const [lumpSum, setLumpSum] = useState(10000);
   const [years, setYears] = useState(10);
   const [annualRate, setAnnualRate] = useState(12);
 
