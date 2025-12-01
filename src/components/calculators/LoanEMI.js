@@ -8,6 +8,7 @@ import AmortizationTableWrapper from "../common/AmortizationTableWrapper"; // <-
 import { moneyFormat } from "../../utils/formatting";
 import { calculateEMI, computeLoanAmortization } from "../../utils/finance";
 import { downloadCSV } from "../../utils/export";
+import CompoundingBarChart from "../common/CompoundingBarChart";
 
 export default function LoanEMI({ currency, setCurrency }) {
   // Inputs
@@ -78,8 +79,7 @@ export default function LoanEMI({ currency, setCurrency }) {
           <InputWithSlider label="Annual Interest Rate (%)" value={annualRate} onChange={setAnnualRate} min={1} max={20} symbol="%" />
         </div>
       </div>
-
-      {/* SUMMARY CARDS (omitted for brevity) */}
+            {/* SUMMARY CARDS (omitted for brevity) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
         {/* Card 1: Monthly EMI */}
         <div className="bg-white border-l-4 border-violet-500 rounded-xl p-6 shadow-sm">
@@ -109,11 +109,18 @@ export default function LoanEMI({ currency, setCurrency }) {
         </div>
       </div>
 
+      {/* --- NEW LOAN CHART INTEGRATION --- */}
+      <CompoundingBarChart 
+        data={yearlyRows} 
+        currency={currency} 
+        type="loan" // <--- CRITICAL: Tell the chart what kind of data it is rendering
+      />
+
       {/* AMORTIZATION TABLE (Using the Wrapper) */}
       <div className="mt-12">
         <AmortizationTableWrapper
           title="Amortization Schedule (Yearly)"
-          renderTableContent={renderAmortizationTableContent} // Pass the function
+          renderTableContent={renderAmortizationTableContent}
           onExport={handleExport}
           rowCount={yearlyRows.length}
         />
