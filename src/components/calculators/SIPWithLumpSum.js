@@ -9,7 +9,8 @@ import ResultsTable from "../common/ResultsTable";
 import CompoundingBarChart from "../common/CompoundingBarChart";
 import InputWithSlider from "../common/InputWithSlider";
 
-import { getCurrencySymbol } from "../../utils/formatting";
+// Import the new generic hook
+import { useLimitedPay } from "../../hooks/useLimitedPay"; 
 import { downloadCSV } from "../../utils/export";
 
 // --- LOGIC ---
@@ -29,7 +30,7 @@ function computeYearlySchedule({ monthlySIP, lumpSum, annualRate, totalYears, si
       monthlyInvested += monthlySIP;
     }
 
-    // Apply interest every month (on the whole balance)
+    // Apply interest every month
     balance = balance * (1 + r_m);
 
     if (m % 12 === 0) {
@@ -52,42 +53,16 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
   const [lumpSum, setLumpSum] = useState(100000);
   const [annualRate, setAnnualRate] = useState(12);
   
-  // Tenure State
-  const [totalYears, setTotalYears] = useState(10);
-  const [sipYears, setSipYears] = useState(10);
-  
-  // UX Toggle
-  const [isLimitedPay, setIsLimitedPay] = useState(false);
-
-  const currencySymbol = getCurrencySymbol(currency);
-
-  // --- HANDLERS (The Fix: Sync logic here, not in useEffect) ---
-
-  // 1. When changing Total Tenure
-  const handleTotalYearsChange = (newVal) => {
-    setTotalYears(newVal);
-    
-    // If Limited Pay is ON, ensure SIP Years doesn't exceed Total Years
-    if (isLimitedPay) {
-      if (sipYears > newVal) {
-        setSipYears(newVal);
-      }
-    } else {
-      // If Limited Pay is OFF, they must match exactly
-      setSipYears(newVal);
-    }
-  };
-
-  // 2. When checking/unchecking the box
-  const handleLimitedPayToggle = (e) => {
-    const checked = e.target.checked;
-    setIsLimitedPay(checked);
-    
-    if (!checked) {
-      // If turning OFF, reset SIP years to match Total years immediately
-      setSipYears(totalYears);
-    }
-  };
+  // --- USE THE GENERIC HOOK ---
+  // This replaces all the manual state and handlers you had before
+  const { 
+    totalYears, 
+    sipYears, 
+    setSipYears, 
+    isLimitedPay, 
+    handleTotalYearsChange, 
+    handleLimitedPayToggle 
+  } = useLimitedPay(10);
 
   // --- CALCULATIONS ---
   const yearlyRows = useMemo(
@@ -102,6 +77,7 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
     [monthlySIP, lumpSum, annualRate, totalYears, sipYears]
   );
 
+  // Derive Summary
   const lastRow = yearlyRows[yearlyRows.length - 1] || { totalInvested: 0, overallValue: 0 };
   const investedTotal = lastRow.totalInvested;
   const totalFuture = lastRow.overallValue;
@@ -143,23 +119,22 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
           currency={currency}
         />
 
-        {/* Investment Tenure */}
+        {/* Investment Tenure (Uses Logic from Hook) */}
         <div>
           <InputWithSlider
             label="Total Investment Tenure (Years)"
             value={totalYears}
-            onChange={handleTotalYearsChange} // Use the new handler
+            onChange={handleTotalYearsChange}
             min={1} max={40}
           />
 
-          {/* Advanced Toggle */}
           <div className="mt-4 flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
             <div className="flex items-center h-5">
               <input
                 id="limitedPay"
                 type="checkbox"
                 checked={isLimitedPay}
-                onChange={handleLimitedPayToggle} // Use the new handler
+                onChange={handleLimitedPayToggle}
                 className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 cursor-pointer"
               />
             </div>
@@ -173,7 +148,6 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
             </div>
           </div>
 
-          {/* Conditional Slider */}
           {isLimitedPay && (
             <div className="mt-4 pl-4 border-l-2 border-teal-100 animate-slide-down">
               <InputWithSlider
@@ -181,7 +155,7 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
                 value={sipYears}
                 onChange={setSipYears}
                 min={1} 
-                max={totalYears} // Enforce visual max
+                max={totalYears}
               />
             </div>
           )}

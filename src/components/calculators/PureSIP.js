@@ -1,30 +1,36 @@
 // src/components/calculators/PureSIP.js
 import React, { useMemo, useState } from "react";
 
-// --- IMPORTS FROM COMMON ---
+// --- IMPORTS ---
 import CurrencySelector from "../common/CurrencySelector";
 import SummaryCards from "../common/SummaryCards";
 import InvestmentPieChart from "../common/InvestmentPieChart";
 import ResultsTable from "../common/ResultsTable";
 import CompoundingBarChart from "../common/CompoundingBarChart";
-import InputWithSlider from "../common/InputWithSlider"; // <--- NEW IMPORT
+import InputWithSlider from "../common/InputWithSlider";
 
-// --- IMPORTS FROM UTILS ---
-import { calcSIPFutureValue } from "../../utils/finance";
+import { useLimitedPay } from "../../hooks/useLimitedPay"; // <--- NEW HOOK
 import { downloadCSV } from "../../utils/export";
 
-// Business Logic
-function computeYearlySchedule({ monthlySIP, annualRate, years }) {
+// --- UPDATED MATH LOGIC ---
+function computeYearlySchedule({ monthlySIP, annualRate, totalYears, sipYears }) {
   const r_m = annualRate / 12 / 100;
-  const months = years * 12;
+  const totalMonths = totalYears * 12;
+  const sipMonths = sipYears * 12;
 
   let balance = 0;
   let monthlyInvested = 0;
   const rows = [];
 
-  for (let m = 1; m <= months; m++) {
-    balance = balance * (1 + r_m) + monthlySIP;
-    monthlyInvested += monthlySIP;
+  for (let m = 1; m <= totalMonths; m++) {
+    // Only add SIP if within duration
+    if (m <= sipMonths) {
+      balance += monthlySIP;
+      monthlyInvested += monthlySIP;
+    }
+    
+    // Always compound
+    balance = balance * (1 + r_m); // End of month compounding
 
     if (m % 12 === 0) {
       rows.push({
@@ -40,21 +46,33 @@ function computeYearlySchedule({ monthlySIP, annualRate, years }) {
 
 export default function PureSIP({ currency, setCurrency }) {
   const [monthlySIP, setMonthlySIP] = useState(5000);
-  const [years, setYears] = useState(10);
   const [annualRate, setAnnualRate] = useState(12);
 
-  const n = years * 12;
-  const r_m = annualRate / 12 / 100;
+  // --- USE THE CUSTOM HOOK ---
+  const { 
+    totalYears, 
+    sipYears, 
+    setSipYears, 
+    isLimitedPay, 
+    handleTotalYearsChange, 
+    handleLimitedPayToggle 
+  } = useLimitedPay(10);
 
-  const fvSIP = useMemo(() => calcSIPFutureValue(Number(monthlySIP), r_m, n), [monthlySIP, r_m, n]);
-  const investedTotal = Number(monthlySIP) * n;
-  const totalFuture = fvSIP;
-  const gain = totalFuture - investedTotal;
-
+  // Calculations
   const yearlyRows = useMemo(
-    () => computeYearlySchedule({ monthlySIP: Number(monthlySIP), annualRate: Number(annualRate), years: Number(years) }),
-    [monthlySIP, annualRate, years]
+    () => computeYearlySchedule({ 
+      monthlySIP: Number(monthlySIP), 
+      annualRate: Number(annualRate), 
+      totalYears: Number(totalYears), 
+      sipYears: Number(sipYears) 
+    }),
+    [monthlySIP, annualRate, totalYears, sipYears]
   );
+
+  const lastRow = yearlyRows[yearlyRows.length - 1] || { totalInvested: 0, overallValue: 0 };
+  const investedTotal = lastRow.totalInvested;
+  const totalFuture = lastRow.overallValue;
+  const gain = totalFuture - investedTotal;
 
   const handleExport = () => {
     const headers = ["Year", "Total Invested", "Growth", "Total Value"];
@@ -68,7 +86,6 @@ export default function PureSIP({ currency, setCurrency }) {
     <div className="animate-fade-in">
       <CurrencySelector currency={currency} setCurrency={setCurrency} />
 
-      {/* INPUTS SECTION - Cleaned up */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">
         <InputWithSlider
           label="Monthly SIP Amount"
@@ -78,20 +95,51 @@ export default function PureSIP({ currency, setCurrency }) {
           currency={currency}
         />
 
-        <InputWithSlider
-          label="Investment Tenure (Years)"
-          value={years}
-          onChange={setYears}
-          min={1} max={40}
-        />
+        {/* Investment Tenure with Logic Hook */}
+        <div>
+          <InputWithSlider
+            label="Total Investment Tenure (Years)"
+            value={totalYears}
+            onChange={handleTotalYearsChange}
+            min={1} max={40}
+          />
+
+          <div className="mt-4 flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <input
+              id="limitedPay"
+              type="checkbox"
+              checked={isLimitedPay}
+              onChange={handleLimitedPayToggle}
+              className="mt-1 w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 cursor-pointer"
+            />
+            <div>
+              <label htmlFor="limitedPay" className="font-medium text-gray-700 text-sm cursor-pointer">
+                Stop SIP early? (Limited Pay)
+              </label>
+              <p className="text-gray-500 text-xs mt-1">
+                Stop contributing after a few years but let the money grow.
+              </p>
+            </div>
+          </div>
+
+          {isLimitedPay && (
+            <div className="mt-4 pl-4 border-l-2 border-teal-100 animate-slide-down">
+              <InputWithSlider
+                label="SIP Contribution Period (Years)"
+                value={sipYears}
+                onChange={setSipYears}
+                min={1} max={totalYears}
+              />
+            </div>
+          )}
+        </div>
 
         <div className="md:col-span-2">
           <InputWithSlider
             label="Expected Annual Return (%)"
             value={annualRate}
             onChange={setAnnualRate}
-            min={1} max={30}
-            symbol="%"
+            min={1} max={30} symbol="%"
           />
         </div>
       </div>
@@ -101,7 +149,7 @@ export default function PureSIP({ currency, setCurrency }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12 items-start">
         <div className="lg:col-span-1">
-          <InvestmentPieChart invested={investedTotal} gain={gain} total={totalFuture} currency={currency} years={years} />
+          <InvestmentPieChart invested={investedTotal} gain={gain} total={totalFuture} currency={currency} years={totalYears} />
         </div>
         <div className="lg:col-span-2 h-full">
           <ResultsTable data={yearlyRows} currency={currency} onExport={handleExport} />

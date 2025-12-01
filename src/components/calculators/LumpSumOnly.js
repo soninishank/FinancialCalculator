@@ -7,7 +7,7 @@ import SummaryCards from "../common/SummaryCards";
 import InvestmentPieChart from "../common/InvestmentPieChart";
 import ResultsTable from "../common/ResultsTable";
 import CompoundingBarChart from "../common/CompoundingBarChart";
-import InputWithSlider from "../common/InputWithSlider"; // <--- NEW IMPORT
+import InputWithSlider from "../common/InputWithSlider"; 
 
 import { calcLumpFutureValue } from "../../utils/finance";
 import { downloadCSV } from "../../utils/export";
@@ -23,7 +23,7 @@ function computeYearlyLump({ lumpSum, annualRate, years }) {
     if (m % 12 === 0) {
       rows.push({
         year: m / 12,
-        totalInvested: lumpSum,
+        totalInvested: lumpSum, // Constant for Lump Sum
         lumpSum: lumpSum,
         growth: currentBalance - lumpSum,
         overallValue: currentBalance,
@@ -96,7 +96,13 @@ export default function LumpSumOnly({ currency, setCurrency }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12 items-start">
         <div className="lg:col-span-1">
-          <InvestmentPieChart invested={investedTotal} gain={gain} total={totalFuture} currency={currency} years={years} />
+          <InvestmentPieChart 
+            invested={investedTotal} 
+            gain={gain} 
+            total={totalFuture} 
+            currency={currency} 
+            years={years} // <-- Just ensure this prop is passed for the center text!
+          />
         </div>
         <div className="lg:col-span-2 h-full">
           <ResultsTable data={yearlyRows} currency={currency} onExport={handleExport} />
