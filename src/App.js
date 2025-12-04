@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Tabs from "./components/Tabs";
+import CurrencySelector from "./components/common/CurrencySelector";
 
 
 // Import calculators
@@ -49,19 +50,30 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center p-4">
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center p-4">
       <div className="max-w-5xl w-full bg-white rounded-3xl shadow-xl overflow-hidden mt-10">
         
-        {/* Header */}
-        <div className="bg-teal-700 p-8 text-center text-white">
-          <h1 className="text-3xl font-bold">Investment Calculator</h1>
-          <p className="mt-2 text-teal-100 opacity-90">
-            Plan your financial goals with precision
-          </p>
+        {/* --- HEADER (New Compact Flex Structure) --- */}
+        <div className="bg-teal-700 p-6 pt-4 pb-4 text-white flex justify-between items-center relative"> {/* Reduced p-8 to p-6/p-4 */}
+          
+          {/* Title on the left */}
+          <div className="text-left pr-4">
+            <h1 className="text-2xl font-bold">Investment Calculator</h1>
+            <p className="text-teal-100 opacity-90 text-sm">
+              Plan your financial goals with precision
+            </p>
+          </div>
+          
+          {/* Currency Selector on the right */}
+          {/* CRITICAL: Reduced width to fit compact style */}
+          <div className="w-full sm:w-1/3 md:w-1/5 max-w-[150px]"> 
+            <CurrencySelector currency={currency} setCurrency={setCurrency} compactHeader={true} />
+          </div>
         </div>
-
+        {/* ----------------------------------------------------------------- */}
         {/* Tabs */}
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+
 
         {/* Main Content Area */}
         <div className="p-8 md:p-12">

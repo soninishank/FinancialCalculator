@@ -2,13 +2,14 @@
 import React, { useMemo, useState } from "react";
 
 // --- IMPORTS ---
-import CurrencySelector from "../common/CurrencySelector";
 import InputWithSlider from "../common/InputWithSlider";
 import AmortizationTableWrapper from "../common/AmortizationTableWrapper"; 
 import CompoundingBarChart from "../common/CompoundingBarChart";
 import { moneyFormat } from "../../utils/formatting";
 import { calculateEMI, computeLoanAmortization } from "../../utils/finance";
-import { downloadCSV } from "../../utils/export";
+// We no longer need downloadCSV as we use window.print(), but we can't delete 
+// the export function reference unless we rename it. Let's keep it clean.
+// import { downloadCSV } from "../../utils/export"; 
 
 import { 
   DEFAULT_LOAN_PRINCIPAL,
@@ -19,7 +20,7 @@ import {
   MAX_LOAN,
   MAX_RATE,
   MAX_YEARS 
-} from "../../utils/constants"; // <--- NEW IMPORTS
+} from "../../utils/constants"; 
 
 export default function LoanEMI({ currency, setCurrency }) {
   // Inputs: Use Default Constants
@@ -39,17 +40,10 @@ export default function LoanEMI({ currency, setCurrency }) {
     [principal, annualRate, years, monthlyEMI]
   );
   
-  // Handlers
+  // --- PRINT HANDLER (FIX for 'handlePrint' is not defined) ---
   const handleExport = () => {
-    const headers = ["Year", "Opening Balance", "Principal Paid", "Interest Paid", "Closing Balance"];
-    const data = yearlyRows.map((r) => [
-      `Year ${r.year}`,
-      Math.round(r.openingBalance),
-      Math.round(r.principalPaid),
-      Math.round(r.interestPaid),
-      Math.round(r.closingBalance),
-    ]);
-    downloadCSV(data, headers, "loan_emi_schedule.csv");
+    // We are using window.print() instead of CSV export now.
+    window.print();
   };
 
   // --- REUSABLE FUNCTION FOR TABLE CONTENT (Passed to the Wrapper) ---
@@ -80,7 +74,6 @@ export default function LoanEMI({ currency, setCurrency }) {
 
   return (
     <div className="animate-fade-in">
-      <CurrencySelector currency={currency} setCurrency={setCurrency} />
 
       {/* INPUTS SECTION */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">

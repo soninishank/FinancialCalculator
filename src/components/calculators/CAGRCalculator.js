@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from "react";
 
 // --- IMPORTS ---
-import CurrencySelector from "../common/CurrencySelector";
 import InputWithSlider from "../common/InputWithSlider";
 import { calculateCAGR } from "../../utils/finance";
 import {
@@ -32,7 +31,6 @@ export default function CAGRCalculator({ currency, setCurrency }) {
   
   return (
     <div className="animate-fade-in">
-      <CurrencySelector currency={currency} setCurrency={setCurrency} />
 
       {/* INPUTS SECTION */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">

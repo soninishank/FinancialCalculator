@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import InputWithSlider from "../common/InputWithSlider";
-import CurrencySelector from "../common/CurrencySelector";
 import { moneyFormat } from "../../utils/formatting";
 import { getRequiredLumpSum, getRequiredSIP, getRequiredStepUpSIP ,calculateRealRate} from "../../utils/finance";
 import { useInflation } from "../../hooks/useInflation"; 
@@ -35,7 +34,6 @@ export default function GoalPlanner({ currency, setCurrency }) {
 
   return (
     <div className="animate-fade-in">
-      <CurrencySelector currency={currency} setCurrency={setCurrency} />
 
       {/* Target Inputs */}
       <div className="bg-gradient-to-r from-teal-700 to-teal-900 rounded-2xl p-8 text-white mb-10 shadow-lg">
