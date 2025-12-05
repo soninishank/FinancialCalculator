@@ -12,14 +12,15 @@ export function moneyFormat(x, currency = "INR", compact = false) {
   const num = Number(x);
 
   // 1. Compact Mode (e.g. 1.25 Cr)
-  // Fix: Increased significant digits to prevent 99.99 rounding to 100
   if (compact && Math.abs(num) >= 10000) {
     return num.toLocaleString(locale, {
       style: "currency",
       currency: currency,
       notation: "compact", 
       compactDisplay: "short",
-      maximumFractionDigits: 2, // Shows 99.99 Cr instead of 100 Cr
+      // --- FIX: Force 2 decimal places (e.g., 5.49L) ---
+      minimumFractionDigits: 2, 
+      maximumFractionDigits: 2, 
     });
   }
 
@@ -27,6 +28,7 @@ export function moneyFormat(x, currency = "INR", compact = false) {
   return num.toLocaleString(locale, {
     style: "currency",
     currency: currency,
+    // Keep this at 0 for clean, large number displays
     maximumFractionDigits: 0,
   });
 }
