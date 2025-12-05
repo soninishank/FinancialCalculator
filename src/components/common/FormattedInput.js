@@ -1,20 +1,14 @@
+// src/components/common/FormattedInput.js
 import React from "react";
 
-// GLOBAL SAFE LIMIT: 100 Crores (1 Billion). 
-// No individual calculator usually needs more than this.
-const GLOBAL_SAFE_MAX = 1000000000; 
+const GLOBAL_SAFE_MAX = 2000000000; 
 
-export default function FormattedInput({ value, onChange, currency, className, max }) {
+export default function FormattedInput({ value, onChange, currency, className, max, isDecimal = false }) {
   
-  // 1. Determine the effective maximum limit
-  // If a specific 'max' is passed (from the slider), use that.
-  // Otherwise, use the Global Safe Limit to prevent UI breakage.
-  // We allow the input to go slightly higher than the slider max (e.g. 2x) 
-  // for flexibility, OR strictly enforce the slider max. 
-  // Here, we strictly enforce the passed 'max' or the global limit.
-  const limit = max || GLOBAL_SAFE_MAX;
+  // 1. Get the current, UNVALIDATED value from state (which might be '45' from the bug)
+  const currentValue = String(value);
+  const limit = max ? Math.floor(Number(max)) : GLOBAL_SAFE_MAX; 
 
-  // 2. Determine Locale
   const getLocale = (curr) => {
     switch (curr) {
       case "INR": return "en-IN";
@@ -22,39 +16,67 @@ export default function FormattedInput({ value, onChange, currency, className, m
       default: return "en-US";
     }
   };
-
+  
   const locale = getLocale(currency);
 
-  // 3. Format for Display
   const displayValue = value !== undefined && value !== null 
-    ? Number(value).toLocaleString(locale, { maximumFractionDigits: 0 }) 
+    ? isDecimal ? currentValue : Number(currentValue).toLocaleString(locale, { maximumFractionDigits: 0 }) 
     : "";
 
-  // 4. Handle Input
+  // 4. Handle Input (The Core Logic with Validation)
   const handleChange = (e) => {
     const inputValue = e.target.value;
 
-    // Remove commas/spaces to get raw number
-    const rawValue = inputValue.replace(/[^0-9]/g, "");
+    let regex = /[^0-9]/g; 
+    if (isDecimal) {
+      regex = /[^0-9.]/g; 
+    }
+    
+    // 1. Clean the input string
+    let rawValue = inputValue.replace(regex, "");
+    
+    // 2. Enforce Decimals
+    if (isDecimal) {
+        if (rawValue.split('.').length > 2) {
+            rawValue = rawValue.replace(/\.+$/, '');
+        }
+        const parts = rawValue.split('.');
+        if (parts.length === 2 && parts[1].length > 2) {
+            rawValue = `${parts[0]}.${parts[1].substring(0, 2)}`;
+        }
+    }
+    
     const numberValue = Number(rawValue);
 
-    // --- GENERIC CHECK: BOUNDARY PROTECTION ---
-    if (numberValue > limit) {
-      // Option A: Shake effect or visual feedback (Advanced)
-      // Option B: Just ignore the input (Simple & Robust)
-      
-      // If the value is too big, simply don't update the state.
-      // This "freezes" the input at the last valid number.
+    // --- CRITICAL VALIDATION FIX ---
+    // A. Stop the input if the number's integer part is over the limit.
+    if (Math.floor(numberValue) > limit) {
       return; 
     }
-
-    onChange(rawValue === "" ? 0 : numberValue);
+    
+    // B. Handle Empty/Partial Inputs
+    if (rawValue === "" || rawValue === ".") {
+        return onChange(isDecimal ? rawValue : 0);
+    }
+    
+    // 5. Update State
+    let finalValue;
+    if (isDecimal) {
+        // For decimal inputs, update with the raw string
+        finalValue = rawValue;
+    } else {
+        // For money inputs, convert to number
+        finalValue = Number(rawValue);
+    }
+    
+    onChange(finalValue);
   };
 
   return (
     <input
       type="text"
-      value={displayValue === "0" ? "" : displayValue}
+      // Use the calculated displayValue which respects the current state
+      value={displayValue === "0" ? "" : displayValue} 
       placeholder="0"
       onChange={handleChange}
       className={className}

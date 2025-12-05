@@ -8,7 +8,7 @@ import ResultsTable from "../common/ResultsTable";
 import CompoundingBarChart from "../common/CompoundingBarChart";
 import InputWithSlider from "../common/InputWithSlider";
 
-import { useLimitedPay } from "../../hooks/useLimitedPay"; // <--- GENERIC HOOK
+import { useLimitedPay } from "../../hooks/useLimitedPay"; 
 import { downloadCSV } from "../../utils/export";
 import { 
   DEFAULT_MONTHLY_SIP, 
@@ -27,8 +27,9 @@ import {
 // --- LOGIC ---
 function computeYearlySchedule({ monthlySIP, lumpSum, annualRate, totalYears, sipYears }) {
   const r_m = annualRate / 12 / 100;
-  const totalMonths = totalYears * 12;
-  const sipMonths = sipYears * 12;
+  // Use Math.ceil to ensure calculations cover the partial final month if needed
+  const totalMonths = Math.ceil(totalYears * 12); 
+  const sipMonths = Math.ceil(sipYears * 12);
 
   let balance = lumpSum;
   let monthlyInvested = 0;
@@ -62,7 +63,6 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
    // --- LOCAL STATE (Non-Tenure Inputs) ---
   const [monthlySIP, setMonthlySIP] = useState(DEFAULT_MONTHLY_SIP);
   const [lumpSum, setLumpSum] = useState(DEFAULT_LUMP_SUM);
-  const [annualRate, setAnnualRate] = useState(DEFAULT_RATE);
   
   // --- HOOK STATE (Tenure Inputs) ---
   const { 
@@ -72,7 +72,11 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
     isLimitedPay, 
     handleTotalYearsChange, 
     handleLimitedPayToggle 
-  } = useLimitedPay(DEFAULT_TENURE_YEARS);
+  } = useLimitedPay(DEFAULT_TENURE_YEARS); // Hook handles totalYears/sipYears state
+
+  // Use decimal for rate input
+  const [annualRate, setAnnualRate] = useState(DEFAULT_RATE.toFixed(1)); 
+
 
   // --- CALCULATIONS ---
   const yearlyRows = useMemo(
@@ -127,13 +131,14 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
           currency={currency}
         />
 
-        {/* Investment Tenure (Uses Logic from Hook) */}
+        {/* Investment Tenure (Now Decimal) */}
         <div>
           <InputWithSlider
             label="Total Investment Tenure (Years)"
             value={totalYears}
             onChange={handleTotalYearsChange}
-            min={MIN_YEARS} max={MAX_YEARS}
+            min={MIN_YEARS} max={MAX_YEARS} step={0.1} // <--- DECIMAL STEP
+            isDecimal={true} // <--- CRITICAL
           />
 
           <div className="mt-4 flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
@@ -163,7 +168,9 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
                 value={sipYears}
                 onChange={setSipYears}
                 min={MIN_YEARS} 
-                max={totalYears}
+                max={totalYears} // Max is now the current totalYears
+                step={0.1} // <--- DECIMAL STEP
+                isDecimal={true} // <--- CRITICAL
               />
             </div>
           )}
@@ -174,8 +181,9 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
             label="Expected Annual Return (%)"
             value={annualRate}
             onChange={setAnnualRate}
-            min={MIN_RATE} max={MAX_RATE}
+            min={MIN_RATE} max={MAX_RATE} step={0.1} // <--- DECIMAL STEP
             symbol="%"
+            isDecimal={true} // <--- CRITICAL
           />
         </div>
       </div>

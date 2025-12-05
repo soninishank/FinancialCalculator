@@ -123,7 +123,7 @@ export default function PureSIP({ currency, setCurrency }) {
             label="Total Investment Tenure (Years)"
             value={totalYears}
             onChange={handleTotalYearsChange}
-            min={MIN_YEARS} max={MAX_YEARS} // Use MAX_YEARS
+            min={MIN_YEARS} max={MAX_YEARS} step={0.1} isDecimal={true}// Use MAX_YEARS
           />
 
           <div className="mt-4 flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
@@ -165,7 +165,8 @@ export default function PureSIP({ currency, setCurrency }) {
             label="Expected Annual Return (%)"
             value={annualRate}
             onChange={setAnnualRate}
-            min={MIN_RATE} max={MAX_RATE} symbol="%" // Use MAX_RATE
+            min={MIN_RATE} max={MAX_RATE} step={0.1} symbol="%"
+            isDecimal={true}
           />
         </div>
       </div>

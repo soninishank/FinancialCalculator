@@ -116,7 +116,7 @@ export default function StepUpSIP({ currency, setCurrency }) {
           label="Annual Step-up (%)"
           value={stepUpPercent}
           onChange={setStepUpPercent}
-          min={0} max={50} symbol="%"
+          min={0} max={50} symbol="%" isDecimal={true}
         />
 
         {/* Investment Tenure (With Advanced Toggle) */}
@@ -125,7 +125,8 @@ export default function StepUpSIP({ currency, setCurrency }) {
             label="Total Investment Tenure (Years)"
             value={totalYears}
             onChange={handleTotalYearsChange}
-            min={1} max={40}
+            min={1} max={40} step={0.1}
+            isDecimal={true}
           />
 
           <div className="mt-4 flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
@@ -155,7 +156,8 @@ export default function StepUpSIP({ currency, setCurrency }) {
                 value={sipYears}
                 onChange={setSipYears}
                 min={1} 
-                max={totalYears}
+                max={totalYears} step={0.1}
+                isDecimal={true}
               />
             </div>
           )}
@@ -168,6 +170,7 @@ export default function StepUpSIP({ currency, setCurrency }) {
             value={annualRate}
             onChange={setAnnualRate}
             min={1} max={30} symbol="%"
+            isDecimal={true}
           />
         </div>
       </div>

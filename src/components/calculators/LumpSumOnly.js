@@ -84,10 +84,11 @@ export default function LumpSumOnly({ currency, setCurrency }) {
         />
 
         <InputWithSlider
-          label="Investment Tenure (Years)"
+          label="Total Investment Tenure (Years)"
           value={years}
           onChange={setYears}
-          min={MIN_YEARS} max={MAX_YEARS} // Use MAX_YEARS
+          min={MIN_YEARS} max={MAX_YEARS} step={0.1}
+          isDecimal={true} 
         />
 
         <div className="md:col-span-2">
@@ -95,8 +96,9 @@ export default function LumpSumOnly({ currency, setCurrency }) {
             label="Expected Annual Return (%)"
             value={annualRate}
             onChange={setAnnualRate}
-            min={MIN_RATE} max={MAX_RATE} // Use MAX_RATE
+            min={MIN_RATE} max={MAX_RATE} step={0.1}
             symbol="%"
+            isDecimal={true} 
           />
         </div>
       </div>
