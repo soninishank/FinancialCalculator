@@ -14,7 +14,7 @@ export const DEFAULT_LOAN_RATE = 8;
 export const DEFAULT_LOAN_TENURE = 20;
 
 // 2. Input Max Limits (Used by InputWithSlider)
-export const MAX_AMOUNT = 100000000; // 1 Billion / 100 Crores
+export const MAX_AMOUNT = 100000000; // 10 cr
 export const MAX_SIP = 5000000;        // 50 Lakhs
 export const MAX_LOAN = 100000000;     // 10 Crores
 export const MAX_YEARS = 40;
