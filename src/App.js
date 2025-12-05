@@ -1,9 +1,8 @@
 import React, { useState } from "react";
+
+// --- Imports corrected for new folder structure ---
 import Tabs from "./components/Tabs";
-import CurrencySelector from "./components/common/CurrencySelector";
-
-
-// Import calculators
+import CurrencySelector from "./components/common/CurrencySelector"; // Assuming it's in common
 import SIPWithLumpSum from "./components/calculators/SIPWithLumpSum";
 import PureSIP from "./components/calculators/PureSIP";
 import LumpSumOnly from "./components/calculators/LumpSumOnly";
@@ -14,18 +13,13 @@ import LoanEMI from "./components/calculators/LoanEMI";
 import CAGRCalculator from "./components/calculators/CAGRCalculator";
 import TopUpLoanEMI from "./components/calculators/TopUpLoanEMI";
 
-
-
-
-
 export default function App() {
   const [activeTab, setActiveTab] = useState("SIP + LumpSum");
   
-  // 1. LIFT STATE UP: Define currency here so it persists across tabs
+  // LIFT STATE UP: Currency
   const [currency, setCurrency] = useState("INR");
 
   const renderContent = () => {
-    // 2. PASS PROPS: Pass currency and setCurrency to every component
     const props = { currency, setCurrency };
 
     switch (activeTab) {
@@ -53,33 +47,36 @@ export default function App() {
   };
 
   return (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center p-4">
-      <div className="max-w-5xl w-full bg-white rounded-3xl shadow-xl overflow-hidden mt-10">
+    // P-2 on mobile, p-4 on desktop
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center p-2 sm:p-4">
+      <div className="max-w-5xl w-full bg-white rounded-xl sm:rounded-3xl shadow-xl overflow-hidden mt-4 sm:mt-10">
         
-        {/* --- HEADER (New Compact Flex Structure) --- */}
-        <div className="bg-teal-700 p-6 pt-4 pb-4 text-white flex justify-between items-center relative"> {/* Reduced p-8 to p-6/p-4 */}
+        {/* --- HEADER (Mobile-First Compact Layout) --- */}
+        {/* Use space-between layout for mobile for title and currency selector */}
+        <div className="bg-teal-700 p-4 sm:p-6 text-white flex justify-between items-start">
           
-          {/* Title on the left */}
-          <div className="text-left pr-4">
-            <h1 className="text-2xl font-bold">Investment Calculator</h1>
-            <p className="text-teal-100 opacity-90 text-sm">
+          {/* Title - Adjust font sizes for mobile (text-xl sm:text-2xl) */}
+          <div className="text-left pr-4 flex-grow">
+            <h1 className="text-xl sm:text-2xl font-bold">Investment Calculator</h1>
+            <p className="text-teal-100 opacity-90 text-xs sm:text-sm">
               Plan your financial goals with precision
             </p>
           </div>
           
-          {/* Currency Selector on the right */}
-          {/* CRITICAL: Reduced width to fit compact style */}
-          <div className="w-full sm:w-1/3 md:w-1/5 max-w-[150px]"> 
+          {/* Currency Selector - Fixed Width for Compact Look */}
+          <div className="w-2/5 sm:w-1/4 max-w-[150px] mt-[-6px] mr-[-6px]"> 
+            {/* The CurrencySelector needs to be mobile-optimized to look good here */}
             <CurrencySelector currency={currency} setCurrency={setCurrency} compactHeader={true} />
           </div>
         </div>
         {/* ----------------------------------------------------------------- */}
+        
         {/* Tabs */}
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
 
-        {/* Main Content Area */}
-        <div className="p-8 md:p-12">
+        {/* Main Content Area - Reduced mobile padding */}
+        <div className="p-4 sm:p-8 md:p-12">
           {renderContent()}
         </div>
       </div>

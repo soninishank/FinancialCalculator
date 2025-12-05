@@ -1,12 +1,14 @@
+// src/components/common/SummaryCards.js
 import React from "react";
 import { moneyFormat } from "../../utils/formatting";
 
 export default function SummaryCards({ totalValue, invested, gain, currency }) {
+  // FIX: Change default grid to 1-col (mobile) and 3-cols on medium (desktop)
+  // Reduce gap on mobile
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mt-6 sm:mt-10">
       
-      {/* 1. Total Future Value -> ROSE (Red/Pink) 
-          This creates a strong contrast against the Indigo card. */}
+      {/* 1. Total Future Value (Sky/Blue) */}
       <Card
         label="Total Future Value"
         value={totalValue}
@@ -19,8 +21,7 @@ export default function SummaryCards({ totalValue, invested, gain, currency }) {
         }
       />
 
-      {/* 2. Total Invested -> INDIGO (Blue/Purple) 
-          Matches the 'Invested' slice in your Pie Chart. */}
+      {/* 2. Total Invested (Indigo) */}
       <Card
         label="Total Invested"
         value={invested}
@@ -33,8 +34,7 @@ export default function SummaryCards({ totalValue, invested, gain, currency }) {
         }
       />
 
-      {/* 3. Wealth Generated -> EMERALD (Green) 
-          Matches the 'Interest' slice in your Pie Chart. */}
+      {/* 3. Wealth Generated (Emerald) */}
       <Card
         label="Wealth Generated"
         value={gain}
@@ -51,7 +51,7 @@ export default function SummaryCards({ totalValue, invested, gain, currency }) {
 }
 
 function Card({ label, value, currency, color, icon }) {
-  // Distinct Color Palette
+  // Distinct Color Palette (Keep this as is)
   const colorClasses = {
     sky: {
       border: "border-l-sky-500",
@@ -74,23 +74,27 @@ function Card({ label, value, currency, color, icon }) {
 
   return (
     <div 
+      // FIX: Reduce padding on mobile (p-4) and keep p-6 for desktop (sm:p-6)
       className={`
-        bg-white rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] 
+        bg-white rounded-xl p-4 sm:p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] 
         border border-gray-100 border-l-4 ${theme.border}
         flex items-center justify-between transition-transform hover:-translate-y-1
       `}
       title={moneyFormat(value, currency, false)}
     >
       <div>
-        <p className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">
+        {/* Label: Make text size tiny on mobile */}
+        <p className="text-gray-500 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-1">
           {label}
         </p>
-        <h3 className="text-2xl font-extrabold text-gray-900">
+        {/* Value: Make text size smaller on mobile (text-xl sm:text-2xl) */}
+        <h3 className="text-xl sm:text-2xl font-extrabold text-gray-900">
           {moneyFormat(value, currency, true)}
         </h3>
       </div>
 
-      <div className={`p-3 rounded-full ${theme.bgIcon} ${theme.textIcon}`}>
+      {/* Icon: Reduce padding on mobile */}
+      <div className={`p-2 sm:p-3 rounded-full ${theme.bgIcon} ${theme.textIcon}`}>
         {icon}
       </div>
     </div>
