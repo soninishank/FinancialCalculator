@@ -12,6 +12,7 @@ import StepUpSIPWithLump from "./components/calculators/StepUpSIPWithLump";
 import GoalPlanner from "./components/calculators/GoalPlanner";
 import LoanEMI from "./components/calculators/LoanEMI"; 
 import CAGRCalculator from "./components/calculators/CAGRCalculator";
+import TopUpLoanEMI from "./components/calculators/TopUpLoanEMI";
 
 
 
@@ -44,6 +45,8 @@ export default function App() {
         return <LoanEMI {...props} />;
       case "CAGR Calculator":
         return <CAGRCalculator {...props} />;
+      case "Top-Up Loan EMI":
+        return <TopUpLoanEMI {...props} />;
       default:
         return <SIPWithLumpSum {...props} />;
     }

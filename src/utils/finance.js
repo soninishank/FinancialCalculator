@@ -51,12 +51,6 @@ export function calculateRealRate(nominalRate, inflationRate) {
   
   return realRate * 100; // Convert back to percentage
 }
-export function calculateEMI(P, R_m, N) {
-  if (R_m === 0) return P / N; // Simple division if interest is 0
-  
-  const factor = Math.pow(1 + R_m, N);
-  return P * R_m * (factor / (factor - 1));
-}
 
 
 export function computeLoanAmortization({ principal, annualRate, years, emi }) {
@@ -101,6 +95,13 @@ export function computeLoanAmortization({ principal, annualRate, years, emi }) {
   return { rows, finalTotalInterest: finalTotalInterest, finalTotalPaid: finalTotalPaid };
 }
 
+// Helper function (make sure this exists in your utils/finance.js)
+export function calculateEMI(principal, monthlyRate, months) {
+  if (monthlyRate === 0) return principal / months;
+  return (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / 
+         (Math.pow(1 + monthlyRate, months) - 1);
+}
+
 export function calculateCAGR(beginningValue, endingValue, years) {
   if (years === 0 || beginningValue === 0) return 0;
   if (beginningValue < 0 || endingValue < 0) return 0; // Prevent complex math/errors
@@ -112,4 +113,104 @@ export function calculateCAGR(beginningValue, endingValue, years) {
   const cagrDecimal = Math.pow(ratio, exponent) - 1;
   
   return cagrDecimal * 100; // Convert to percentage
+}
+
+export function computeDualAmortization({
+  basePrincipal, baseRate, baseYears,
+  topUpPrincipal, topUpRate, topUpYear
+}) {
+  const R_base_m = baseRate / 12 / 100;
+  const R_topUp_m = topUpRate / 12 / 100;
+  const totalMonths = baseYears * 12;
+  const topUpMonth = topUpYear * 12;
+  
+  let balance = basePrincipal;
+  let totalInterest = 0;
+  const rows = [];
+
+  // Calculate Base Loan EMI
+  const baseEMI = calculateEMI(basePrincipal, R_base_m, totalMonths);
+  
+  let monthlyInterestAccumulator = 0;
+  let monthlyPrincipalAccumulator = 0;
+  let yearOpeningBalance = basePrincipal;
+  
+  // --- Stage 1: Base Loan Only ---
+  for (let m = 1; m <= topUpMonth; m++) {
+    const interest = balance * R_base_m;
+    const principalPaid = baseEMI - interest;
+    balance -= principalPaid;
+    
+    totalInterest += interest;
+    
+    monthlyInterestAccumulator += interest;
+    monthlyPrincipalAccumulator += principalPaid;
+
+    if (m % 12 === 0) {
+      rows.push({
+        year: m / 12,
+        openingBalance: yearOpeningBalance,
+        principalPaid: monthlyPrincipalAccumulator,
+        interestPaid: monthlyInterestAccumulator,
+        closingBalance: Math.max(0, balance),
+      });
+      yearOpeningBalance = balance; // This will be updated after top-up if needed
+      monthlyInterestAccumulator = 0;
+      monthlyPrincipalAccumulator = 0;
+    }
+  }
+  
+  // --- Top-Up Occurs ---
+  balance += topUpPrincipal;
+  
+  // CRITICAL FIX: Update the opening balance for the next year to include top-up
+  yearOpeningBalance = balance;
+  
+  const N_remaining = totalMonths - topUpMonth;
+  const newCombinedEMI = calculateEMI(balance, R_topUp_m, N_remaining);
+  
+  // --- Stage 2: Combined Loan ---
+  for (let m = topUpMonth + 1; m <= totalMonths; m++) {
+    const interest = balance * R_topUp_m;
+    const principalPaid = newCombinedEMI - interest;
+    balance -= principalPaid;
+
+    totalInterest += interest;
+    
+    monthlyInterestAccumulator += interest;
+    monthlyPrincipalAccumulator += principalPaid;
+
+    if (m % 12 === 0) {
+      rows.push({
+        year: m / 12,
+        openingBalance: yearOpeningBalance,
+        principalPaid: monthlyPrincipalAccumulator,
+        interestPaid: monthlyInterestAccumulator,
+        closingBalance: Math.max(0, balance),
+      });
+      yearOpeningBalance = balance;
+      monthlyInterestAccumulator = 0;
+      monthlyPrincipalAccumulator = 0;
+    }
+  }
+
+  // Handle partial final year if needed
+  if (totalMonths % 12 !== 0) {
+    rows.push({
+      year: Math.ceil(totalMonths / 12),
+      openingBalance: yearOpeningBalance,
+      principalPaid: monthlyPrincipalAccumulator,
+      interestPaid: monthlyInterestAccumulator,
+      closingBalance: Math.max(0, balance),
+    });
+  }
+
+  const finalTotalPaid = baseEMI * topUpMonth + newCombinedEMI * N_remaining;
+  
+  return { 
+    rows, 
+    finalTotalInterest: totalInterest, 
+    finalTotalPaid, 
+    monthlyEMI: newCombinedEMI 
+  };
 }
