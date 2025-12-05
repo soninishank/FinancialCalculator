@@ -26,8 +26,8 @@ export default function CompoundingBarChart({ data, currency, type = 'investment
       labels: ["Principal Paid", "Interest Paid"],
       color1: "#3B82F6", // Blue for Principal (Solid Money)
       color2: "#EF4444", // Red for Interest (The Cost)
-      data1Key: 'principalPaid', // Key from LoanEMI data
-      data2Key: 'interestPaid',  // Key from LoanEMI data
+      data1Key: 'principalPaid', 
+      data2Key: 'interestPaid',  
       stackLabel: "Annual Payment"
     };
   } else {
@@ -37,8 +37,8 @@ export default function CompoundingBarChart({ data, currency, type = 'investment
       labels: ["Invested Amount", "Interest Gained"],
       color1: "#6366F1", // Indigo for Invested
       color2: "#14B8A6", // Teal for Interest
-      data1Key: 'totalInvested', // Key from Investment data
-      data2Key: 'growth',        // Key from Investment data
+      data1Key: 'totalInvested', 
+      data2Key: 'growth',        
       stackLabel: "Total Value"
     };
   }
@@ -51,8 +51,8 @@ export default function CompoundingBarChart({ data, currency, type = 'investment
         data: data.map((row) => row[chartConfig.data1Key]),
         backgroundColor: chartConfig.color1, 
         hoverBackgroundColor: chartConfig.color1,
-        barPercentage: 0.6,
-        categoryPercentage: 0.8,
+        barPercentage: 0.8, // Slightly wider bars for mobile readability
+        categoryPercentage: 0.9,
         stack: "Stack 0",
       },
       {
@@ -61,8 +61,8 @@ export default function CompoundingBarChart({ data, currency, type = 'investment
         backgroundColor: chartConfig.color2,
         hoverBackgroundColor: chartConfig.color2,
         borderRadius: { topLeft: 4, topRight: 4 },
-        barPercentage: 0.6,
-        categoryPercentage: 0.8,
+        barPercentage: 0.8,
+        categoryPercentage: 0.9,
         stack: "Stack 0",
       },
     ],
@@ -78,7 +78,11 @@ export default function CompoundingBarChart({ data, currency, type = 'investment
     scales: {
       x: {
         grid: { display: false },
-        ticks: { maxTicksLimit: 8, font: { size: 11 }, color: "#64748B" },
+        ticks: { 
+          maxTicksLimit: 6, // FIX: Reduce X-axis label density for mobile
+          font: { size: 10 }, // FIX: Smaller font for mobile
+          color: "#64748B" 
+        },
         border: { display: false },
       },
       y: {
@@ -86,48 +90,55 @@ export default function CompoundingBarChart({ data, currency, type = 'investment
         stacked: true,
         ticks: {
           callback: (value) => moneyFormat(value, currency, true),
-          font: { size: 11, weight: "500" },
-          color: "#64748B", padding: 10,
+          font: { size: 10, weight: "500" }, // FIX: Smaller font for mobile
+          color: "#64748B", padding: 8,
         },
         border: { display: false },
       },
     },
     plugins: {
       legend: {
-        position: "top", align: "end",
-        labels: { usePointStyle: true, boxWidth: 8, padding: 20, font: { size: 12, weight: "500" }, color: "#475569" },
+        position: "bottom", // FIX: Move legend to bottom to save vertical space
+        align: "center",
+        labels: { 
+          usePointStyle: true, 
+          boxWidth: 8, 
+          padding: 10, // Reduce padding
+          font: { size: 10, weight: "500" }, // Smaller font
+          color: "#475569" 
+        },
       },
       tooltip: {
+        // ... (keep tooltip styles the same, they are already compact) ...
         backgroundColor: "#FFFFFF", titleColor: "#1E293B", bodyColor: "#334155", borderColor: "#E2E8F0", borderWidth: 1,
         padding: 12, cornerRadius: 8, displayColors: true, boxPadding: 4,
         callbacks: {
           label: (context) => {
-            // Label is the specific category (Principal or Interest)
             return ` ${context.dataset.label}: ${moneyFormat(context.raw, currency)}`;
           },
           footer: (tooltipItems) => {
             const total = tooltipItems.reduce((a, b) => a + b.raw, 0);
-            // Footer shows the Stack Label (Annual Payment for Loan, Total Value for Investment)
             return `${chartConfig.stackLabel}: ${moneyFormat(total, currency)}`;
           },
         },
-        footerFont: { weight: "bold" },
-        footerColor: chartConfig.color2, // Use one of the primary stack colors for the footer text
+        footerFont: { weight: "bold", size: 11 }, // Smaller footer font
+        footerColor: chartConfig.color2, 
         footerMarginTop: 8,
       },
     },
   };
 
   return (
-    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm mt-8">
+    // Height remains flexible due to h-[350px] w-full
+    <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-100 shadow-sm mt-8">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-gray-700 font-bold text-lg">{chartConfig.title}</h3>
+        <h3 className="text-gray-700 font-bold text-base sm:text-lg">{chartConfig.title}</h3>
       </div>
-      <p className="text-sm text-gray-500 mb-6">
+      <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">
         {chartConfig.subtitle}
       </p>
       
-      <div className="h-[350px] w-full">
+      <div className="h-[300px] sm:h-[350px] w-full"> {/* Slightly reduced height for mobile */}
         <Bar data={chartData} options={options} />
       </div>
     </div>
