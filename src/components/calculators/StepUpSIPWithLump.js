@@ -7,9 +7,12 @@ import InvestmentPieChart from "../common/InvestmentPieChart";
 import ResultsTable from "../common/ResultsTable";
 import CompoundingBarChart from "../common/CompoundingBarChart";
 import InputWithSlider from "../common/InputWithSlider";
+import TaxToggle from "../common/TaxToggle"; // <-- added
 
-import { useLimitedPay } from "../../hooks/useLimitedPay"; // <--- IMPORT HOOK
+import { useLimitedPay } from "../../hooks/useLimitedPay"; 
 import { downloadCSV } from "../../utils/export";
+import { calculateLTCG, DEFAULT_LTCG_TAX_RATE_DECIMAL } from "../../utils/tax"; // <-- added
+
 import { 
   DEFAULT_MONTHLY_SIP,
   DEFAULT_LUMP_SUM,
@@ -19,18 +22,18 @@ import {
   MIN_SIP,
   MIN_RATE,
   MIN_YEARS,
-  MAX_AMOUNT,MIN_AMOUNT,
+  MAX_AMOUNT, MIN_AMOUNT,
   MAX_SIP,
   MAX_RATE,
   MAX_YEARS,
   MAX_STEP_UP
-} from "../../utils/constants"; // <--- NEW CONSTANTS
+} from "../../utils/constants";
 
-// --- UPDATED LOGIC (Now includes totalYears and sipYears) ---
+// --- UPDATED LOGIC ---
 function computeStepUpWithLumpSchedule({ initialSIP, lumpSum, stepUpPercent, annualRate, totalYears, sipYears }) {
   const r_m = annualRate / 12 / 100;
   const totalMonths = totalYears * 12;
-  const sipMonths = sipYears * 12; // How long contributions last
+  const sipMonths = sipYears * 12;
 
   let balance = lumpSum;
   let totalInvested = lumpSum;
@@ -40,16 +43,13 @@ function computeStepUpWithLumpSchedule({ initialSIP, lumpSum, stepUpPercent, ann
     const yearIndex = Math.floor((m - 1) / 12);
     const currentMonthlySIP = Number(initialSIP) * Math.pow(1 + stepUpPercent / 100, yearIndex);
 
-    // 1. Only contribute SIP if within the SIP Duration
     if (m <= sipMonths) {
       balance += currentMonthlySIP;
       totalInvested += currentMonthlySIP;
     }
 
-    // 2. Apply Interest
     balance = balance * (1 + r_m);
 
-    // 3. Snapshot at year end
     if (m % 12 === 0) {
       rows.push({
         year: m / 12,
@@ -66,13 +66,19 @@ function computeStepUpWithLumpSchedule({ initialSIP, lumpSum, stepUpPercent, ann
 }
 
 export default function StepUpSIPWithLump({ currency, setCurrency }) {
-  // --- STATE FIX: Use Default Constants ---
+  // --- STATE ---
   const [initialSIP, setInitialSIP] = useState(DEFAULT_MONTHLY_SIP);
   const [lumpSum, setLumpSum] = useState(DEFAULT_LUMP_SUM);
   const [stepUpPercent, setStepUpPercent] = useState(DEFAULT_STEP_UP);
   const [annualRate, setAnnualRate] = useState(DEFAULT_RATE);
 
-  // --- USE LIMITED PAY HOOK ---
+  // --- TAX STATE (added) ---
+  const [isTaxApplied, setIsTaxApplied] = useState(false);
+  const [ltcgRate, setLtcgRate] = useState(DEFAULT_LTCG_TAX_RATE_DECIMAL * 100); 
+  const [isExemptionApplied, setIsExemptionApplied] = useState(false);
+  const [exemptionLimit, setExemptionLimit] = useState(100000);
+
+  // --- LIMITED PAY HOOK ---
   const { 
     totalYears, 
     sipYears, 
@@ -82,29 +88,60 @@ export default function StepUpSIPWithLump({ currency, setCurrency }) {
     handleLimitedPayToggle 
   } = useLimitedPay(DEFAULT_TENURE_YEARS);
 
-  // Calculations
+  // CALCULATIONS
   const yearlyRows = useMemo(
     () =>
-      computeStepUpWithLumpSchedule({ 
-        initialSIP: Number(initialSIP), 
-        lumpSum: Number(lumpSum), 
-        stepUpPercent: Number(stepUpPercent), 
-        annualRate: Number(annualRate), 
-        totalYears: Number(totalYears), 
-        sipYears: Number(sipYears) 
+      computeStepUpWithLumpSchedule({
+        initialSIP: Number(initialSIP),
+        lumpSum: Number(lumpSum),
+        stepUpPercent: Number(stepUpPercent),
+        annualRate: Number(annualRate),
+        totalYears: Number(totalYears),
+        sipYears: Number(sipYears),
       }),
     [initialSIP, lumpSum, stepUpPercent, annualRate, totalYears, sipYears]
   );
 
-  const lastRow = yearlyRows[yearlyRows.length - 1] || { totalInvested: 0, overallValue: 0 };
+  const lastRow =
+    yearlyRows[yearlyRows.length - 1] || { totalInvested: 0, overallValue: 0 };
   const investedTotal = lastRow.totalInvested;
   const totalFuture = lastRow.overallValue;
   const gain = totalFuture - investedTotal;
 
+  // --- TAX CALCULATION (added) ---
+  const taxResult = calculateLTCG(gain, investedTotal, isTaxApplied, {
+    taxRate: Number(ltcgRate),
+    currency,
+    exemptionApplied: Boolean(isExemptionApplied),
+    exemptionLimit: Number(exemptionLimit) || 0,
+  });
+
+  const taxAmount = taxResult?.taxAmount ?? 0;
+  const netGain = taxResult?.netGain ?? gain - (taxAmount ?? 0);
+  const netFutureValue = taxResult?.netFutureValue ?? totalFuture - (taxAmount ?? 0);
+
+  const postTaxFuture = netFutureValue;
+  const postTaxGain = netGain;
+  const taxDeductedAmount = taxAmount;
+
   function handleExport() {
-    const header = ["Year", "Total Invested", "SIP Invested", "Lump Sum", "Step-up %", "Growth", "Overall Value"];
+    const header = [
+      "Year",
+      "Total Invested",
+      "SIP Invested",
+      "Lump Sum",
+      "Step-up %",
+      "Growth",
+      "Overall Value",
+    ];
     const rows = yearlyRows.map((r) => [
-      `Year ${r.year}`, Math.round(r.totalInvested), Math.round(r.sipInvested), Math.round(r.lumpSum), `${r.stepUpAppliedPercent}%`, Math.round(r.growth), Math.round(r.overallValue),
+      `Year ${r.year}`,
+      Math.round(r.totalInvested),
+      Math.round(r.sipInvested),
+      Math.round(r.lumpSum),
+      `${r.stepUpAppliedPercent}%`,
+      Math.round(r.growth),
+      Math.round(r.overallValue),
     ]);
     downloadCSV(rows, header, "stepup_sip_lumpsum_table.csv");
   }
@@ -115,7 +152,6 @@ export default function StepUpSIPWithLump({ currency, setCurrency }) {
       {/* INPUTS SECTION */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">
         
-        {/* Initial SIP */}
         <InputWithSlider
           label="Initial Monthly SIP"
           value={initialSIP}
@@ -124,7 +160,6 @@ export default function StepUpSIPWithLump({ currency, setCurrency }) {
           currency={currency}
         />
 
-        {/* Lump Sum */}
         <InputWithSlider
           label="Initial Lump Sum"
           value={lumpSum}
@@ -133,7 +168,6 @@ export default function StepUpSIPWithLump({ currency, setCurrency }) {
           currency={currency}
         />
 
-        {/* Step Up % */}
         <InputWithSlider
           label="Annual Step-up (%)"
           value={stepUpPercent}
@@ -141,7 +175,6 @@ export default function StepUpSIPWithLump({ currency, setCurrency }) {
           min={MIN_RATE} max={MAX_STEP_UP} symbol="%"
         />
 
-        {/* Investment Tenure (With Limited Pay Toggle) */}
         <div>
           <InputWithSlider
             label="Total Investment Tenure (Years)"
@@ -183,7 +216,6 @@ export default function StepUpSIPWithLump({ currency, setCurrency }) {
           )}
         </div>
 
-        {/* Rate */}
         <div className="md:col-span-1">
           <InputWithSlider
             label="Expected Annual Return (%)"
@@ -191,15 +223,53 @@ export default function StepUpSIPWithLump({ currency, setCurrency }) {
             onChange={setAnnualRate}
             min={MIN_RATE} max={MAX_RATE} symbol="%"
           />
+
+          {/* --- TAX TOGGLE ADDED HERE --- */}
+          <div className="mt-6">
+            <TaxToggle
+              currency={currency}
+              isTaxApplied={isTaxApplied}
+              setIsTaxApplied={setIsTaxApplied}
+              taxRate={ltcgRate}
+              onTaxRateChange={setLtcgRate}
+              isExemptionApplied={isExemptionApplied}
+              setIsExemptionApplied={setIsExemptionApplied}
+              exemptionLimit={exemptionLimit}
+              onExemptionLimitChange={setExemptionLimit}
+            />
+          </div>
         </div>
       </div>
 
-      <SummaryCards totalValue={totalFuture} invested={investedTotal} gain={gain} currency={currency} />
+      {/* SUMMARY CARDS (now supports tax) */}
+      <SummaryCards
+        totalValue={totalFuture}
+        invested={investedTotal}
+        gain={gain}
+        currency={currency}
+        {...(isTaxApplied
+          ? {
+              tax: {
+                applied: true,
+                postTaxValue: postTaxFuture,
+                postTaxGain: postTaxGain,
+                taxDeducted: taxDeductedAmount,
+              },
+            }
+          : {})}
+      />
+
       <CompoundingBarChart data={yearlyRows} currency={currency} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12 items-start">
         <div className="lg:col-span-1">
-          <InvestmentPieChart invested={investedTotal} gain={gain} total={totalFuture} currency={currency} years={totalYears} />
+          <InvestmentPieChart
+            invested={investedTotal}
+            gain={gain}
+            total={totalFuture}
+            currency={currency}
+            years={totalYears}
+          />
         </div>
         <div className="lg:col-span-2 h-full">
           <ResultsTable data={yearlyRows} currency={currency} onExport={handleExport} />

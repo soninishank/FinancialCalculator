@@ -2,7 +2,7 @@
 import { useState } from 'react';
 
 export function useInflation(defaultRate = 6) {
-  const [isInflationAdjusted, setIsInflationAdjusted] = useState(true); // Assume ON by default
+  const [isInflationAdjusted, setIsInflationAdjusted] = useState(false); // Assume ON by default
   const [inflationRate, setInflationRate] = useState(defaultRate);
 
   return {

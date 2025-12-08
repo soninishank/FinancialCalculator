@@ -6,10 +6,12 @@ import SummaryCards from "../common/SummaryCards";
 import InvestmentPieChart from "../common/InvestmentPieChart";
 import ResultsTable from "../common/ResultsTable";
 import CompoundingBarChart from "../common/CompoundingBarChart";
-import InputWithSlider from "../common/InputWithSlider"; 
+import InputWithSlider from "../common/InputWithSlider";
+import TaxToggle from "../common/TaxToggle"; // <-- added
 
 import { calcLumpFutureValue } from "../../utils/finance";
 import { downloadCSV } from "../../utils/export";
+import { calculateLTCG, DEFAULT_LTCG_TAX_RATE_DECIMAL } from "../../utils/tax"; // <-- added
 import { 
   DEFAULT_LUMP_SUM,
   DEFAULT_TENURE_YEARS,
@@ -49,6 +51,12 @@ export default function LumpSumOnly({ currency, setCurrency }) {
   const [years, setYears] = useState(DEFAULT_TENURE_YEARS);
   const [annualRate, setAnnualRate] = useState(DEFAULT_RATE);
 
+  // --- TAX STATE (added) ---
+  const [isTaxApplied, setIsTaxApplied] = useState(false);
+  const [ltcgRate, setLtcgRate] = useState(DEFAULT_LTCG_TAX_RATE_DECIMAL * 100); // percent (e.g. 10)
+  const [isExemptionApplied, setIsExemptionApplied] = useState(false);
+  const [exemptionLimit, setExemptionLimit] = useState(100000);
+
   const n = years * 12;
   const r_m = annualRate / 12 / 100;
 
@@ -61,6 +69,22 @@ export default function LumpSumOnly({ currency, setCurrency }) {
     () => computeYearlyLump({ lumpSum: Number(lumpSum), annualRate: Number(annualRate), years: Number(years) }),
     [lumpSum, annualRate, years]
   );
+
+  // --- TAX CALCULATION (added) ---
+  const taxResult = calculateLTCG(gain, investedTotal, isTaxApplied, {
+    taxRate: Number(ltcgRate),
+    currency,
+    exemptionApplied: Boolean(isExemptionApplied),
+    exemptionLimit: Number(exemptionLimit) || 0,
+  });
+
+  const taxAmount = taxResult?.taxAmount ?? 0;
+  const netGain = taxResult?.netGain ?? gain - (taxResult?.taxAmount ?? 0);
+  const netFutureValue = taxResult?.netFutureValue ?? totalFuture - (taxResult?.taxAmount ?? 0);
+
+  const postTaxFuture = netFutureValue;
+  const postTaxGain = netGain;
+  const taxDeductedAmount = taxAmount;
 
   function handleExport() {
     const header = ["Year", "Total Invested", "Lump Sum", "Growth", "Overall Value"];
@@ -100,10 +124,40 @@ export default function LumpSumOnly({ currency, setCurrency }) {
             symbol="%"
             isDecimal={true} 
           />
+
+          {/* --- Apply LTCG AFTER Expected Annual Return (%) --- */}
+          <div className="mt-6">
+            <TaxToggle
+              currency={currency}
+              isTaxApplied={isTaxApplied}
+              setIsTaxApplied={setIsTaxApplied}
+              taxRate={ltcgRate}
+              onTaxRateChange={setLtcgRate}
+              isExemptionApplied={isExemptionApplied}
+              setIsExemptionApplied={setIsExemptionApplied}
+              exemptionLimit={exemptionLimit}
+              onExemptionLimitChange={setExemptionLimit}
+            />
+          </div>
         </div>
       </div>
 
-      <SummaryCards totalValue={totalFuture} invested={investedTotal} gain={gain} currency={currency} />
+      <SummaryCards
+        totalValue={totalFuture}
+        invested={investedTotal}
+        gain={gain}
+        currency={currency}
+        {...(isTaxApplied
+          ? {
+              tax: {
+                applied: true,
+                postTaxValue: postTaxFuture,
+                postTaxGain: postTaxGain,
+                taxDeducted: taxDeductedAmount,
+              },
+            }
+          : {})}
+      />
       <CompoundingBarChart data={yearlyRows} currency={currency} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12 items-start">

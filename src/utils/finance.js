@@ -214,3 +214,94 @@ export function computeDualAmortization({
     monthlyEMI: newCombinedEMI 
   };
 }
+
+export function computeSWPPlan({ 
+  initialCorpus, 
+  annualRate, 
+  years, 
+  monthlyWithdrawal, 
+  annualWithdrawalIncrease 
+}) {
+  const rows = [];
+  let currentCorpus = initialCorpus;
+  let totalWithdrawn = 0;
+  let totalInterest = 0;
+  let depletionYear = 0;
+  let depletionMonth = 0;
+  let currentMonthlyWithdrawal = monthlyWithdrawal;
+
+  const monthlyRate = annualRate / 12 / 100;
+  const annualIncreaseFactor = 1 + annualWithdrawalIncrease / 100;
+
+  for (let year = 1; year <= years; year++) {
+    const openingBalance = currentCorpus;
+    let yearlyWithdrawal = 0;
+    let yearlyInterest = 0;
+    let corpusDepleted = false;
+
+    // Process 12 months for this year
+    for (let month = 1; month <= 12; month++) {
+      // Stop if corpus is already depleted
+      if (currentCorpus <= 0) {
+        corpusDepleted = true;
+        currentCorpus = 0;
+        break;
+      }
+
+      // Step 1: Calculate and add monthly interest on current balance FIRST
+      // This is how SWP actually works - corpus grows first, then you withdraw
+      const monthlyInterest = currentCorpus * monthlyRate;
+      yearlyInterest += monthlyInterest;
+      currentCorpus += monthlyInterest;
+
+      // Step 2: Withdraw money (full amount if available)
+      const actualWithdrawal = Math.min(currentMonthlyWithdrawal, currentCorpus);
+      currentCorpus -= actualWithdrawal;
+      yearlyWithdrawal += actualWithdrawal;
+
+      // Step 3: Check if corpus depleted this month
+      if (currentCorpus <= 0) {
+        currentCorpus = 0;
+        corpusDepleted = true;
+        
+        // Record the year and month of depletion (only once)
+        if (depletionYear === 0) {
+          depletionYear = year;
+          depletionMonth = month;
+        }
+        break;
+      }
+    }
+
+    // Record this year's data
+    rows.push({
+      year,
+      openingBalance,
+      totalWithdrawal: yearlyWithdrawal,
+      interestEarned: yearlyInterest,
+      closingBalance: Math.max(0, currentCorpus),
+    });
+
+    // Update totals
+    totalWithdrawn += yearlyWithdrawal;
+    totalInterest += yearlyInterest;
+
+    // If corpus depleted, stop processing future years
+    if (corpusDepleted) {
+      break;
+    }
+
+    // Apply annual withdrawal increase for next year
+    currentMonthlyWithdrawal *= annualIncreaseFactor;
+  }
+
+  return {
+    rows,
+    finalCorpus: Math.max(0, currentCorpus),
+    totalWithdrawn,
+    totalInterest,
+    depletionYear,
+    depletionMonth,
+    depletionTotalMonths: depletionYear > 0 ? (depletionYear - 1) * 12 + depletionMonth : 0,
+  };
+}

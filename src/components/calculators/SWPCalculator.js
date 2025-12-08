@@ -1,0 +1,202 @@
+// src/components/calculators/SWPCalculator.js
+import React, { useMemo, useState } from "react";
+
+// --- IMPORTS ---
+import InputWithSlider from "../common/InputWithSlider";
+import AmortizationTableWrapper from "../common/AmortizationTableWrapper";
+
+import { moneyFormat } from "../../utils/formatting";
+import { computeSWPPlan } from "../../utils/finance";
+import { downloadCSV } from "../../utils/export";
+
+export default function SWPCalculator({ currency }) {
+  // Simple Inputs Only
+  const [initialCorpus, setInitialCorpus] = useState(1000000);
+  const [monthlyWithdrawal, setMonthlyWithdrawal] = useState(5000);
+  const [years, setYears] = useState(15);
+  const [annualRate, setAnnualRate] = useState(12);
+
+  // --- CALCULATION ---
+  const { rows, finalCorpus, totalWithdrawn, totalInterest, depletionYear, depletionMonth } = useMemo(
+    () =>
+      computeSWPPlan({
+        initialCorpus: Number(initialCorpus),
+        annualRate: Number(annualRate),
+        years: Number(years),
+        monthlyWithdrawal: Number(monthlyWithdrawal),
+        annualWithdrawalIncrease: 0, // No annual increase for simplicity
+      }),
+    [initialCorpus, annualRate, years, monthlyWithdrawal]
+  );
+
+  // --- DERIVE ADDITIONAL UX FIELDS LOCALLY (no change needed in computeSWPPlan util) ---
+  // Total elapsed months until depletion (0 if not depleted)
+  const depletionTotalMonths = depletionYear > 0 ? (depletionYear - 1) * 12 + depletionMonth : 0;
+
+  const formatDurationFromMonths = (totalMonths) => {
+    if (!totalMonths || totalMonths <= 0) return "";
+    const yearsPart = Math.floor(totalMonths / 12);
+    const monthsPart = totalMonths % 12;
+
+    const parts = [];
+    if (yearsPart > 0) parts.push(`${yearsPart} ${yearsPart === 1 ? "year" : "years"}`);
+    if (monthsPart > 0) parts.push(`${monthsPart} ${monthsPart === 1 ? "month" : "months"}`);
+
+    return parts.join(" ");
+  };
+
+  const depletionYearMsg =
+    depletionYear > 0
+      ? `Corpus depleted after ${formatDurationFromMonths(
+          depletionTotalMonths
+        )} (Year ${depletionYear}, Month ${depletionMonth})`
+      : "Corpus remained after requested period";
+
+  const annualizedWithdrawalRate = initialCorpus > 0 ? ((monthlyWithdrawal * 12) / initialCorpus) * 100 : 0;
+
+  // Export Handler
+  const handleExport = () => {
+    const headers = ["Year", "Opening Balance", "Total Withdrawal", "Interest Earned", "Closing Balance"];
+    const data = rows.map((r) => [
+      `Year ${r.year}`,
+      Math.round(r.openingBalance),
+      Math.round(r.totalWithdrawal),
+      Math.round(r.interestEarned),
+      Math.round(r.closingBalance),
+    ]);
+    downloadCSV(data, headers, "swp_schedule.csv");
+  };
+
+  // Render Table Content
+  const renderSWPTableContent = () => (
+    <>
+      <thead className="bg-white sticky top-0 z-10 shadow-sm">
+        <tr>
+          <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
+            Year
+          </th>
+          <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200 text-right">
+            Opening Balance
+          </th>
+          <th className="py-3 px-4 text-xs font-semibold text-rose-600 uppercase tracking-wider bg-rose-50/50 border-b border-rose-100 text-right">
+            Withdrawal
+          </th>
+          <th className="py-3 px-4 text-xs font-semibold text-emerald-600 uppercase tracking-wider bg-emerald-50/50 border-b border-emerald-100 text-right">
+            Interest Earned
+          </th>
+          <th className="py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200 text-right">
+            Closing Balance
+          </th>
+        </tr>
+      </thead>
+      <tbody className="text-sm divide-y divide-gray-100">
+        {rows.map((r) => (
+          <tr
+            key={r.year}
+            className={`${r.closingBalance <= 0 ? "bg-rose-50" : "hover:bg-gray-50"} transition-colors`}
+          >
+            <td className="py-3 px-4 text-gray-600 font-medium whitespace-nowrap">Year {r.year}</td>
+            <td className="py-3 px-4 text-gray-600 text-right tabular-nums">
+              {moneyFormat(Math.round(r.openingBalance), currency, true)}
+            </td>
+            <td className="py-3 px-4 text-rose-600 font-bold text-right tabular-nums">
+              {moneyFormat(Math.round(r.totalWithdrawal), currency)}
+            </td>
+            <td className="py-3 px-4 text-emerald-600 text-right tabular-nums">
+              {moneyFormat(Math.round(r.interestEarned), currency)}
+            </td>
+            <td className="py-3 px-4 text-gray-800 font-bold text-right tabular-nums">
+              {moneyFormat(Math.round(r.closingBalance), currency, true)}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </>
+  );
+
+  return (
+    <div className="animate-fade-in">
+      {/* INPUTS SECTION */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">
+        <InputWithSlider
+          label="Initial Corpus Amount"
+          value={initialCorpus}
+          onChange={setInitialCorpus}
+          min={100000}
+          max={50000000}
+          step={100000}
+          currency={currency}
+        />
+
+        <InputWithSlider
+          label="Total Withdrawal Period (Years)"
+          value={years}
+          onChange={setYears}
+          min={1}
+          max={40}
+        />
+
+        <InputWithSlider
+          label="Monthly Withdrawal Amount"
+          value={monthlyWithdrawal}
+          onChange={setMonthlyWithdrawal}
+          min={1000}
+          max={500000}
+          step={500}
+          currency={currency}
+          allowManualInput={true}
+        />
+
+        <InputWithSlider
+          label="Expected Annual Return (%)"
+          value={annualRate}
+          onChange={setAnnualRate}
+          min={1}
+          max={20}
+          step={0.5}
+          isDecimal={true}
+          symbol="%"
+        />
+      </div>
+
+      {/* SUMMARY CARDS */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+        {/* Card 1: Initial Withdrawal / Annualized Rate */}
+        <div className="bg-white border-l-4 border-violet-500 rounded-xl p-6 shadow-sm">
+          <div className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Monthly Withdrawal</div>
+          <div className="text-3xl font-extrabold text-gray-900 mt-2">{moneyFormat(Math.round(monthlyWithdrawal), currency)}</div>
+          <p className="text-xs text-gray-500 mt-2">{annualizedWithdrawalRate.toFixed(2)}% of initial corpus annually</p>
+        </div>
+
+        {/* Card 2: Final Remaining Corpus */}
+        <div
+          className={`border-l-4 rounded-xl p-6 shadow-sm ${
+            depletionYear > 0 ? "bg-rose-50 border-rose-500" : "bg-emerald-50 border-emerald-500"
+          }`}
+        >
+          <div className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Final Corpus</div>
+          <div
+            className={`text-2xl font-extrabold ${depletionYear > 0 ? "text-rose-600" : "text-emerald-700"} mt-2`}
+          >
+            {moneyFormat(Math.round(finalCorpus), currency)}
+          </div>
+          <p className={`text-xs font-medium mt-2 ${depletionYear > 0 ? "text-rose-700" : "text-gray-500"}`}>
+            {depletionYearMsg}
+          </p>
+        </div>
+
+        {/* Card 3: Total Withdrawn */}
+        <div className="bg-white border-l-4 border-indigo-500 rounded-xl p-6 shadow-sm">
+          <div className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Total Withdrawn</div>
+          <div className="text-3xl font-extrabold text-gray-900 mt-2">{moneyFormat(Math.round(totalWithdrawn), currency)}</div>
+          <p className="text-xs text-gray-500 mt-2">Interest Earned: {moneyFormat(Math.round(totalInterest), currency)}</p>
+        </div>
+      </div>
+
+      {/* AMORTIZATION TABLE */}
+      <div className="mt-12">
+        <AmortizationTableWrapper title="SWP Schedule (Yearly)" renderTableContent={renderSWPTableContent} onExport={handleExport} rowCount={rows.length} />
+      </div>
+    </div>
+  );
+}

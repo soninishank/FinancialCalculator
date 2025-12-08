@@ -7,10 +7,12 @@ import InvestmentPieChart from "../common/InvestmentPieChart";
 import ResultsTable from "../common/ResultsTable";
 import CompoundingBarChart from "../common/CompoundingBarChart";
 import InputWithSlider from "../common/InputWithSlider";
+import TaxToggle from "../common/TaxToggle"; // <-- added
 
 import { useLimitedPay } from "../../hooks/useLimitedPay";
 import { downloadCSV } from "../../utils/export";
 import { calcSIPFutureValue } from "../../utils/finance";
+import { calculateLTCG, DEFAULT_LTCG_TAX_RATE_DECIMAL } from "../../utils/tax"; // <-- added
 import { 
   DEFAULT_MONTHLY_SIP,
   DEFAULT_RATE,
@@ -19,7 +21,8 @@ import {
   MIN_YEARS,
   MAX_SIP,
   MAX_RATE,
-  MAX_YEARS,DEFAULT_TENURE_YEARS
+  MAX_YEARS,
+  DEFAULT_TENURE_YEARS
 } from "../../utils/constants"; // <--- NEW IMPORTS
 
 // Business Logic for Pure SIP
@@ -58,6 +61,12 @@ export default function PureSIP({ currency, setCurrency }) {
   // --- STATE FIX: Use Default Constants ---
   const [monthlySIP, setMonthlySIP] = useState(DEFAULT_MONTHLY_SIP);
   const [annualRate, setAnnualRate] = useState(DEFAULT_RATE);
+  
+  // --- TAX STATE (added) ---
+  const [isTaxApplied, setIsTaxApplied] = useState(false);
+  const [ltcgRate, setLtcgRate] = useState(DEFAULT_LTCG_TAX_RATE_DECIMAL * 100); // percent (e.g. 10)
+  const [isExemptionApplied, setIsExemptionApplied] = useState(false);
+  const [exemptionLimit, setExemptionLimit] = useState(100000);
 
   // Use Limited Pay Hook (which has its own default years)
   const { 
@@ -93,6 +102,22 @@ export default function PureSIP({ currency, setCurrency }) {
       }),
     [monthlySIP, annualRate, totalYears, sipYears]
   );
+
+  // --- TAX CALCULATION (added) ---
+  const taxResult = calculateLTCG(gain, investedTotal, isTaxApplied, {
+    taxRate: Number(ltcgRate),
+    currency,
+    exemptionApplied: Boolean(isExemptionApplied),
+    exemptionLimit: Number(exemptionLimit) || 0,
+  });
+
+  const taxAmount = taxResult?.taxAmount ?? 0;
+  const netGain = taxResult?.netGain ?? gain - (taxResult?.taxAmount ?? 0);
+  const netFutureValue = taxResult?.netFutureValue ?? totalFuture - (taxResult?.taxAmount ?? 0);
+
+  const postTaxFuture = netFutureValue;
+  const postTaxGain = netGain;
+  const taxDeductedAmount = taxAmount;
 
   const handleExport = () => {
     const headers = ["Year", "Total Invested", "Growth", "Total Value"];
@@ -168,10 +193,41 @@ export default function PureSIP({ currency, setCurrency }) {
             min={MIN_RATE} max={MAX_RATE} step={0.1} symbol="%"
             isDecimal={true}
           />
+
+          {/* --- Apply LTCG AFTER Expected Annual Return (%) --- */}
+          <div className="mt-6">
+            <TaxToggle
+              currency={currency}
+              isTaxApplied={isTaxApplied}
+              setIsTaxApplied={setIsTaxApplied}
+              taxRate={ltcgRate}
+              onTaxRateChange={setLtcgRate}
+              isExemptionApplied={isExemptionApplied}
+              setIsExemptionApplied={setIsExemptionApplied}
+              exemptionLimit={exemptionLimit}
+              onExemptionLimitChange={setExemptionLimit}
+            />
+          </div>
         </div>
       </div>
 
-      <SummaryCards totalValue={totalFuture} invested={investedTotal} gain={gain} currency={currency} />
+      {/* Summary: pass tax object only when tax applied */}
+      <SummaryCards
+        totalValue={totalFuture}
+        invested={investedTotal}
+        gain={gain}
+        currency={currency}
+        {...(isTaxApplied
+          ? {
+              tax: {
+                applied: true,
+                postTaxValue: postTaxFuture,
+                postTaxGain: postTaxGain,
+                taxDeducted: taxDeductedAmount,
+              },
+            }
+          : {})}
+      />
       <CompoundingBarChart data={yearlyRows} currency={currency} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12 items-start">

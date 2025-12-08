@@ -7,9 +7,11 @@ import InvestmentPieChart from "../common/InvestmentPieChart";
 import ResultsTable from "../common/ResultsTable";
 import CompoundingBarChart from "../common/CompoundingBarChart";
 import InputWithSlider from "../common/InputWithSlider";
+import TaxToggle from "../common/TaxToggle"; // <-- added
 
 import { useLimitedPay } from "../../hooks/useLimitedPay";
 import { downloadCSV } from "../../utils/export";
+import { calculateLTCG, DEFAULT_LTCG_TAX_RATE_DECIMAL } from "../../utils/tax"; // <-- added
 
 // --- UPDATED LOGIC ---
 function computeStepUpSchedule({ initialSIP, stepUpPercent, annualRate, totalYears, sipYears }) {
@@ -56,6 +58,12 @@ export default function StepUpSIP({ currency, setCurrency }) {
   const [stepUpPercent, setStepUpPercent] = useState(10);
   const [annualRate, setAnnualRate] = useState(12);
 
+  // --- TAX STATE (added) ---
+  const [isTaxApplied, setIsTaxApplied] = useState(false);
+  const [ltcgRate, setLtcgRate] = useState(DEFAULT_LTCG_TAX_RATE_DECIMAL * 100); // percent (e.g. 10)
+  const [isExemptionApplied, setIsExemptionApplied] = useState(false);
+  const [exemptionLimit, setExemptionLimit] = useState(100000);
+
   // --- USE LIMITED PAY HOOK ---
   const { 
     totalYears, 
@@ -83,6 +91,22 @@ export default function StepUpSIP({ currency, setCurrency }) {
   const investedTotal = lastRow.totalInvested;
   const totalFuture = lastRow.overallValue;
   const gain = totalFuture - investedTotal;
+
+  // --- TAX CALCULATION (added) ---
+  const taxResult = calculateLTCG(gain, investedTotal, isTaxApplied, {
+    taxRate: Number(ltcgRate),
+    currency,
+    exemptionApplied: Boolean(isExemptionApplied),
+    exemptionLimit: Number(exemptionLimit) || 0,
+  });
+
+  const taxAmount = taxResult?.taxAmount ?? 0;
+  const netGain = taxResult?.netGain ?? gain - (taxResult?.taxAmount ?? 0);
+  const netFutureValue = taxResult?.netFutureValue ?? totalFuture - (taxResult?.taxAmount ?? 0);
+
+  const postTaxFuture = netFutureValue;
+  const postTaxGain = netGain;
+  const taxDeductedAmount = taxAmount;
 
   function handleExport() {
     const header = ["Year", "Total Invested", "SIP Invested", "Step-up %", "Growth", "Overall Value"];
@@ -172,10 +196,40 @@ export default function StepUpSIP({ currency, setCurrency }) {
             min={1} max={30} symbol="%"
             isDecimal={true}
           />
+
+          {/* --- Apply LTCG AFTER Expected Annual Return (%) --- */}
+          <div className="mt-6">
+            <TaxToggle
+              currency={currency}
+              isTaxApplied={isTaxApplied}
+              setIsTaxApplied={setIsTaxApplied}
+              taxRate={ltcgRate}
+              onTaxRateChange={setLtcgRate}
+              isExemptionApplied={isExemptionApplied}
+              setIsExemptionApplied={setIsExemptionApplied}
+              exemptionLimit={exemptionLimit}
+              onExemptionLimitChange={setExemptionLimit}
+            />
+          </div>
         </div>
       </div>
 
-      <SummaryCards totalValue={totalFuture} invested={investedTotal} gain={gain} currency={currency} />
+      <SummaryCards
+        totalValue={totalFuture}
+        invested={investedTotal}
+        gain={gain}
+        currency={currency}
+        {...(isTaxApplied
+          ? {
+              tax: {
+                applied: true,
+                postTaxValue: postTaxFuture,
+                postTaxGain: postTaxGain,
+                taxDeducted: taxDeductedAmount,
+              },
+            }
+          : {})}
+      />
       <CompoundingBarChart data={yearlyRows} currency={currency} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12 items-start">

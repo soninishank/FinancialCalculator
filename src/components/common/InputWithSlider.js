@@ -86,6 +86,7 @@ export default function InputWithSlider({
           onChange={onChange}
           currency={currency}
           isDecimal={isDecimal}
+          min={min}
           max={max}
           className={`
             w-full py-2.5 sm:py-3 pr-4 border border-gray-300 rounded-xl outline-none 

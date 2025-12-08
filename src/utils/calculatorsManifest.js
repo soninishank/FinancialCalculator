@@ -74,7 +74,15 @@ const calculators = [
     keywords: 'top-up loan emi, loan topup calculator, additional loan EMI',
     category: 'Loan',
     component: 'TopUpLoanEMI'
-  }
+  },
+  {
+    slug: 'swp-calculator',
+    title: 'SWP Calculator',
+    description: 'Model monthly withdrawals from your investment corpus while the remaining balance continues to grow through compounding.',
+    keywords: 'swp, systematic withdrawal plan, income, retirement',
+    category: 'SIP',
+    component: 'SWPCalculator'
+  },
 ];
 
 export default calculators;

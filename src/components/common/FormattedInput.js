@@ -1,22 +1,16 @@
 // src/components/common/FormattedInput.js
-import React from "react";
 
 const GLOBAL_SAFE_MAX = 2000000000; 
 
-export default function FormattedInput({ value, onChange, currency, className, max, isDecimal = false }) {
+// 1. ADD 'min' prop here and set a default of 0
+export default function FormattedInput({ value, onChange, currency, className, max, min = 0, isDecimal = false }) {
   
-  // 1. Get the current, UNVALIDATED value from state (which might be '45' from the bug)
   const currentValue = String(value);
   const limit = max ? Math.floor(Number(max)) : GLOBAL_SAFE_MAX; 
+  // Get the integer minimum bound
+  const minLimit = Math.floor(Number(min)); 
 
-  const getLocale = (curr) => {
-    switch (curr) {
-      case "INR": return "en-IN";
-      case "EUR": return "de-DE";
-      default: return "en-US";
-    }
-  };
-  
+  const getLocale = (curr) => { /* ... */ };
   const locale = getLocale(currency);
 
   const displayValue = value !== undefined && value !== null 
@@ -35,7 +29,7 @@ export default function FormattedInput({ value, onChange, currency, className, m
     // 1. Clean the input string
     let rawValue = inputValue.replace(regex, "");
     
-    // 2. Enforce Decimals
+    // 2. Enforce Decimals (Existing logic is fine)
     if (isDecimal) {
         if (rawValue.split('.').length > 2) {
             rawValue = rawValue.replace(/\.+$/, '');
@@ -47,14 +41,25 @@ export default function FormattedInput({ value, onChange, currency, className, m
     }
     
     const numberValue = Number(rawValue);
+    const integerValue = Math.floor(numberValue);
 
-    // --- CRITICAL VALIDATION FIX ---
-    // A. Stop the input if the number's integer part is over the limit.
-    if (Math.floor(numberValue) > limit) {
+    // --- CRITICAL VALIDATION FIX (Updated) ---
+    // A. Stop the input if the integer part is OVER the max limit.
+    if (integerValue > limit) {
       return; 
     }
     
-    // B. Handle Empty/Partial Inputs
+    // B. Stop the input if the number is BELOW the minimum limit.
+    // Allow an empty string or a partial number (like '1.') to pass, 
+    // but reject a final integer like '100' if min is 1,000,000.
+    if (minLimit > 0 && 
+        integerValue < minLimit && 
+        integerValue > 0 &&
+        !isDecimal) { // Only enforce strictly for non-decimal inputs.
+      return; 
+    }
+    
+    // C. Handle Empty/Partial Inputs
     if (rawValue === "" || rawValue === ".") {
         return onChange(isDecimal ? rawValue : 0);
     }
@@ -62,10 +67,8 @@ export default function FormattedInput({ value, onChange, currency, className, m
     // 5. Update State
     let finalValue;
     if (isDecimal) {
-        // For decimal inputs, update with the raw string
         finalValue = rawValue;
     } else {
-        // For money inputs, convert to number
         finalValue = Number(rawValue);
     }
     

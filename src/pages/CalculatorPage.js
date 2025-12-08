@@ -16,6 +16,7 @@ const importBySlug = (slug) => {
     case 'loan-emi': return import('../components/calculators/LoanEMI');
     case 'cagr-calculator': return import('../components/calculators/CAGRCalculator');
     case 'topup-loan-emi': return import('../components/calculators/TopUpLoanEMI');
+    case 'swp-calculator': return import('../components/calculators/SWPCalculator');
     default: return Promise.reject(new Error('Unknown calculator'));
   }
 };
