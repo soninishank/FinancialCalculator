@@ -1,25 +1,26 @@
 // src/pages/HomeFrontPage.js
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import HomeIpoSection from "../components/ipo/HomeIpoSection";
 
 export default function HomeFrontPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       
       {/* -------- HERO SECTION -------- */}
-      <section className="bg-teal-700 text-white py-14">
+      <section className="bg-indigo-600 text-white py-14">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <h1 className="text-3xl sm:text-4xl font-bold">
             Smart Tools to Plan Your Financial Journey
           </h1>
-          <p className="mt-3 text-teal-100 text-lg">
+          <p className="mt-3 text-indigo-100 text-lg">
             Mutual funds, IPOs, calculators, demat accounts & more — all in one platform.
           </p>
 
           <div className="mt-6">
             <Link
               to="/calculators"
-              className="px-6 py-3 bg-white text-teal-700 font-semibold rounded-xl shadow hover:bg-gray-100 transition"
+              className="px-6 py-3 bg-white text-indigo-600 font-semibold rounded-xl shadow hover:bg-gray-100 transition focus:outline-none focus:ring-2 focus:ring-indigo-200"
             >
               Explore Calculators
             </Link>
@@ -66,6 +67,9 @@ export default function HomeFrontPage() {
         </div>
       </section>
 
+      {/* -------- IPOs (homepage) -------- */}
+      <HomeIpoSection />
+
       {/* -------- FEATURED CALCULATORS -------- */}
       <section className="max-w-6xl mx-auto px-4 py-12">
         <h2 className="text-xl font-semibold mb-4">Popular Calculators</h2>
@@ -79,9 +83,8 @@ export default function HomeFrontPage() {
           <CalcCard title="Lump Sum Calculator" slug="lump-sum" />
         </div>
 
-
         <div className="text-center mt-6">
-          <Link to="/calculators" className="text-teal-600 font-semibold hover:underline">
+          <Link to="/calculators" className="text-indigo-600 font-semibold hover:underline">
             View all calculators →
           </Link>
         </div>
@@ -98,7 +101,7 @@ export default function HomeFrontPage() {
         </div>
 
         <div className="text-center mt-6">
-          <Link to="/articles" className="text-teal-600 font-semibold hover:underline">
+          <Link to="/articles" className="text-indigo-600 font-semibold hover:underline">
             View all articles →
           </Link>
         </div>
@@ -112,9 +115,16 @@ export default function HomeFrontPage() {
   );
 }
 
+
 function CalcCard({ title, slug }) {
+  const location = useLocation(); // captures current path (e.g., /calculators)
+
   return (
-    <Link to={`/calculator/${slug}`} className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
+    <Link
+      to={`/calculator/${slug}`}
+      state={{ from: location.pathname }}  // <-- send the origin page
+      className="p-6 bg-white rounded-xl shadow hover:shadow-md transition"
+    >
       <h3 className="font-semibold text-lg">{title}</h3>
       <p className="text-sm text-gray-600 mt-1">Open calculator →</p>
     </Link>

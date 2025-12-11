@@ -9,8 +9,14 @@
     "@testing-library/user-event": "^13.5.0",
     "ajv": "^6.12.6",
     "ajv-keywords": "^3.5.2",
+    "axios": "^1.13.2",
     "chart.js": "^4.5.1",
+    "cheerio": "^1.1.2",
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
     "file-saver": "^2.0.5",
+    "node-cache": "^5.1.2",
+    "puppeteer": "^24.32.1",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.3.1",
     "react-dom": "^18.3.1",
@@ -23,7 +29,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "scraper": "node server/scraper.js",
+    "dev:scraper": "nodemon server/scraper.js"
   },
   "eslintConfig": {
     "extends": [
@@ -45,9 +53,22 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.22",
+    "nodemon": "^3.1.11",
     "postcss": "^8.5.6"
   },
   "resolutions": {
     "ajv": "8.14.0"
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "postcss.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soninishank/FinancialCalculator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/soninishank/FinancialCalculator/issues"
   }
 }

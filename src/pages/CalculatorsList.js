@@ -64,7 +64,7 @@ function Card({ meta }) {
   return (
     <Link
       to={`/calculator/${meta.slug}`}
-      className="relative p-6 bg-white rounded-xl shadow hover:shadow-md transition block"
+      className="relative p-6 pt-12 bg-white rounded-xl shadow hover:shadow-md transition block"
     >
       <div className="absolute top-3 right-3 bg-gray-50 text-xs text-gray-600 px-2 py-1 rounded-full border">
         {meta.category ?? "General"}

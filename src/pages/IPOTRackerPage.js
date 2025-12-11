@@ -1,6 +1,6 @@
 // src/pages/IPOTrackerPage.js
 import React, { useState } from "react";
-import { useIpoData } from "../components/ipo/useIpoData"; // <--- FIX 2: Import the hook
+import { useIpoData } from "../hooks/useIpoData"; // <--- FIX 2: Import the hook
 import IpoListTable from "../components/ipo/IPOListTable";     // <--- FIX 3: Import the List Table
 import IpoStatusTabs from "../components/ipo/IPOStatusTabs";   // <--- FIX 4: Import the Tabs
 const TABS = ['Upcoming', 'Open', 'Closed'];
@@ -25,7 +25,7 @@ export default function IPOTracker() {
 
     return (
         <div className="animate-fade-in">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">IPO & GMP Tracker (Unofficial)</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">IPO & GMP Tracker</h2>
             <p className="text-gray-500 mb-6">Live status and grey market premium for mainboard and SME IPOs.</p>
 
             {/* Tab Navigation */}

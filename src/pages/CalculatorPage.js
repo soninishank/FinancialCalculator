@@ -1,6 +1,6 @@
 // src/pages/CalculatorPage.js
-import React, { Suspense } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { Suspense, useCallback } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import manifest from '../utils/calculatorsManifest';
 import { useCurrency } from '../contexts/CurrencyContext';
 
@@ -28,22 +28,54 @@ export default function CalculatorPage() {
   // call hooks unconditionally
   const { currency, setCurrency } = useCurrency();
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // location.state.from is an optional explicit origin the catalog can set.
+  // e.g. on the catalog page: <Link to={`/calculators/${slug}`} state={{ from: location.pathname }} />
+  const fallbackPath = location.state && location.state.from ? location.state.from : '/';
+
+  const handleBack = useCallback(() => {
+    // If there's at least one entry in history, try to go back.
+    // window.history.length can be > 1 even for new tabs in some browsers, but this is a pragmatic check.
+    // We still guard with a fallback because navigate(-1) may not always produce the expected result (direct open).
+    try {
+      if (window.history.length > 1) {
+        navigate(-1);
+      } else {
+        // direct open, fallback to catalog/home
+        navigate(fallbackPath);
+      }
+    } catch (err) {
+      // defensive fallback
+      navigate(fallbackPath);
+    }
+  }, [navigate, fallbackPath]);
+
   if (!meta) {
     return (
       <div className="p-6">
         <p>Calculator not found.</p>
-        <Link to="/" className="text-teal-600">Back to catalog</Link>
+        <button onClick={() => navigate('/')} className="text-teal-600">Back to catalog</button>
       </div>
     );
   }
 
   const LazyCalc = React.lazy(() => importBySlug(slug));
 
-   return (
+  return (
     // single-column layout: calculator uses full width
-    <div className="w-full">
-      <main className="bg-white rounded p-6 shadow">
-        <Link to="/" className="text-sm text-teal-600 mb-4 inline-block">← Back</Link>
+    <div className="w-full max-w-none px-0">
+      <main className="w-full bg-white rounded p-6 shadow mx-auto max-w-4xl">
+        {/* Back button — uses history with safe fallback */}
+        <button
+          onClick={handleBack}
+          className="text-sm text-teal-600 mb-4 inline-flex items-center"
+          aria-label="Go back"
+        >
+          ← Back
+        </button>
+
         <h1 className="text-2xl font-bold mb-2">{meta.title}</h1>
         <p className="text-gray-600 mb-4">{meta.description}</p>
 
