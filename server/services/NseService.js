@@ -87,6 +87,10 @@ class NseService {
         const rawType = item.series || item.securityType || item.issueType || 'EQ';
         const finalType = (rawType === 'SME' || rawType === 'SM') ? 'SME' : 'Equity';
 
+        let series = 'EQ';
+        if (item.series) series = item.series;
+        else if (rawType === 'SME' || rawType === 'SM') series = 'SME';
+
         // Price
         let priceRangeStr = item.issuePrice || item.priceBand || item.priceRange;
         const priceRange = parsePriceRange(priceRangeStr);
@@ -124,16 +128,16 @@ class NseService {
                 await client.query(`
                     UPDATE ipo SET 
                         company_name = $1, status = $2, price_range_low = $3, price_range_high = $4, 
-                        issue_size = $5, issue_type = $6, updated_at = NOW()
-                    WHERE ipo_id = $7
-                `, [companyName, status, priceRange.low, priceRange.high, issueSizeShares || 0, finalType, ipoId]);
+                        issue_size = $5, issue_type = $6, series = $7, updated_at = NOW()
+                    WHERE ipo_id = $8
+                `, [companyName, status, priceRange.low, priceRange.high, issueSizeShares || 0, finalType, series, ipoId]);
             } else {
                 // Insert
                 const insertRes = await client.query(`
-                    INSERT INTO ipo (symbol, company_name, status, price_range_low, price_range_high, issue_size, issue_type)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7)
+                    INSERT INTO ipo (symbol, company_name, status, price_range_low, price_range_high, issue_size, issue_type, series)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
                     RETURNING ipo_id
-                `, [symbol, companyName, status, priceRange.low, priceRange.high, issueSizeShares || 0, finalType]);
+                `, [symbol, companyName, status, priceRange.low, priceRange.high, issueSizeShares || 0, finalType, series]);
                 ipoId = insertRes.rows[0].ipo_id;
             }
 
@@ -198,6 +202,150 @@ class NseService {
             return { success: false, error: err.message };
         } finally {
             await client.end();
+        }
+    }
+
+    async fetchAndStoreIpoDetails(symbol, series, ipoId, client) {
+        console.log(`Fetching details for ${symbol} (${series})`);
+        const url = `https://www.nseindia.com/api/ipo-detail?symbol=${encodeURIComponent(symbol)}&series=${encodeURIComponent(series)}`;
+
+        try {
+            const data = await this.fetchData(url);
+            if (!data) return null;
+
+            // Extract useful info from "issueInfo.dataList"
+            const dataList = data.issueInfo?.dataList || [];
+
+            // Helper to find value by title
+            const findVal = (titleFragment) => {
+                const item = dataList.find(d => d.title && d.title.toLowerCase().includes(titleFragment.toLowerCase()));
+                return item ? item.value : null;
+            };
+
+            // 1. Parse fields for IPO table
+            // Face Value
+            const fvStr = findVal("Face Value"); // "Rs.2 per Equity Share"
+            const faceValue = parsePrice(fvStr);
+
+            // Tick Size
+            const tickStr = findVal("Tick Size"); // "Re.1"
+            const tickSize = parsePrice(tickStr);
+
+            // Bid Lot
+            const bidLotStr = findVal("Bid Lot"); // "92 Equity shares..."
+            const bidLotMatch = bidLotStr ? bidLotStr.match(/^(\d+)/) : null;
+            const bidLot = bidLotMatch ? parseInt(bidLotMatch[1]) : null;
+
+            // Min Order Qty
+            const minQtyStr = findVal("Minimum Order Quantity");
+            const minQtyMatch = minQtyStr ? minQtyStr.match(/^(\d+)/) : null;
+            const minOrderQty = minQtyMatch ? parseInt(minQtyMatch[1]) : null;
+
+            // Max Retail Amount
+            const maxRetStr = findVal("Maximum Subscription Amount for Retail Investor"); // "\"Rs. 2,00,000\""
+            const maxRetailAmount = parsePrice(maxRetStr);
+
+            // BRLM
+            const brlm = findVal("Book Running Lead Managers");
+
+            // Update IPO Table
+            await client.query(`
+                UPDATE ipo SET
+                    face_value = $1, tick_size = $2, bid_lot = $3, min_order_qty = $4, 
+                    max_retail_amount = $5, book_running_lead_managers = $6, updated_at = NOW()
+                WHERE ipo_id = $7
+            `, [faceValue, tickSize, bidLot, minOrderQty, maxRetailAmount, brlm, ipoId]);
+
+
+            // 2. Registrar
+            const regName = findVal("Name of the Registrar");
+            const regAddress = findVal("Address of the Registrar");
+            const regContactRaw = findVal("Contact person name number and Email id");
+
+            // Basic parsing for registrar contact
+            let regPerson = null, regEmail = null, regPhone = null;
+            if (regContactRaw) {
+                // "M. Murali Krishna, + 91 40 6716 2222 , E-mail: parkmedi.ipo@kfintech.com"
+
+                // Extract Email
+                const emailMatch = regContactRaw.match(/E-mail:\s*([^\s,]+)/i);
+                if (emailMatch) regEmail = emailMatch[1];
+
+                // Extract Phone (simple heuristic)
+                const phoneMatch = regContactRaw.match(/\+[\d\s\-]+/);
+                if (phoneMatch) regPhone = phoneMatch[0].trim();
+
+                // Name (start of string)
+                const parts = regContactRaw.split(',');
+                if (parts.length > 0) regPerson = parts[0].trim();
+            }
+
+            // Upsert Registrar
+            // We use Name as unique key for simplicity here, or we can just always insert. 
+            // Better to check if exists by name.
+            let registrarId = null;
+            if (regName) {
+                const regRes = await client.query('SELECT registrar_id FROM registrar WHERE name = $1', [regName]);
+                if (regRes.rows.length > 0) {
+                    registrarId = regRes.rows[0].registrar_id;
+                    // Update contact info if missing? Let's just update.
+                    await client.query(`
+                        UPDATE registrar SET address=$1, contact_person=$2, phone=$3, email=$4 WHERE registrar_id=$5
+                    `, [regAddress, regPerson, regPhone, regEmail, registrarId]);
+                } else {
+                    const insReg = await client.query(`
+                        INSERT INTO registrar (name, address, contact_person, phone, email) 
+                        VALUES ($1, $2, $3, $4, $5) RETURNING registrar_id
+                    `, [regName, regAddress, regPerson, regPhone, regEmail]);
+                    registrarId = insReg.rows[0].registrar_id;
+                }
+
+                // Link to IPO
+                await client.query('UPDATE ipo SET primary_registrar_id = $1 WHERE ipo_id = $2', [registrarId, ipoId]);
+            }
+
+            // 3. Documents
+            // Map known documents from dataList
+            const docMap = {
+                'Red Herring Prospectus': 'RHP',
+                'Sample Application Forms': 'Sample_Form',
+                'Bidding Centers': 'Bidding_Centres',
+                'Security Parameters': 'Security_Parameters', // partial match
+                'Anchor Allocation Report': 'Anchor_Report'
+            };
+
+            for (const d of dataList) {
+                if (!d.title || !d.value) continue;
+                let url = d.value;
+                if (url.includes('<a href=')) {
+                    const match = url.match(/href=([^ >]+)/);
+                    if (match) url = match[1];
+                }
+
+                // Determine Type
+                let docType = 'Other';
+                for (const [key, val] of Object.entries(docMap)) {
+                    if (d.title.includes(key)) docType = val;
+                }
+
+                // Should we save every link? Maybe just the important ones.
+                // If it's a URL, save it.
+                if (url.startsWith('http') || (url.endsWith('.zip') || url.endsWith('.pdf'))) {
+                    // Check existing
+                    const checkDoc = await client.query('SELECT doc_id FROM documents WHERE ipo_id=$1 AND title=$2', [ipoId, d.title]);
+                    if (checkDoc.rows.length === 0) {
+                        await client.query(`
+                            INSERT INTO documents (ipo_id, doc_type, title, url) VALUES ($1, $2, $3, $4)
+                        `, [ipoId, docType, d.title, url]);
+                    }
+                }
+            }
+
+            return { ipoId, detailsFetched: true };
+
+        } catch (err) {
+            console.error(`Error fetching details for ${symbol}:`, err);
+            return null;
         }
     }
 }

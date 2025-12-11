@@ -51,8 +51,8 @@ const Row = ({ ipo, status }) => {
     return (
         <tr className={`hover:bg-gray-50 transition-colors ${isClosingToday ? 'bg-orange-50' : ''}`}>
             {/* Company & Type */}
-            <td className="py-3 px-4 whitespace-nowrap">
-                <p className="font-semibold text-gray-900">{name}</p>
+            <td className="py-3 px-4 whitespace-nowrap cursor-pointer group" onClick={() => window.location.href = `/ipo/${ipo.symbol}`}>
+                <p className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{name}</p>
                 <div className="flex gap-2 mt-1">
                     <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${typeTheme}`}>
                         {type}

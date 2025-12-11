@@ -38,6 +38,8 @@ function normalize(scraped) {
     return {
       id: r.id || `${r.name || 'unknown'}-${r.issueStart || ''}`,
       name: r.name || r.company || "Unknown",
+      symbol: r.symbol,
+      series: r.series,
       type: r.type || "EQ",
       openDate: r.issueStart || r.openDate || "",
       closeDate: r.issueEnd || r.closeDate || "",

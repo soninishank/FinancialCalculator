@@ -5,7 +5,8 @@ import { CurrencyProvider } from './contexts/CurrencyContext';
 // Import Pages
 import CalculatorPage from "./pages/CalculatorPage";
 import HomeFrontPage from "./pages/HomeFrontPage";
-import IPOTRackerPage from "./pages/IPOTRackerPage"; 
+import IPOTRackerPage from "./pages/IPOTRackerPage";
+import IPODetailPage from "./pages/IPODetailPage";
 import CalculatorsList from "./pages/CalculatorsList";
 import Layout from "./components/Layout";
 
@@ -19,6 +20,7 @@ export default function App() {
             <Route path="/calculators" element={<CalculatorsList />} />
             <Route path="/calculator/:slug" element={<CalculatorPage />} />
             <Route path="/ipo-tracker" element={<IPOTRackerPage />} />
+            <Route path="/ipo/:symbol" element={<IPODetailPage />} />
           </Route>
           <Route path="*" element={<div>Route not found.</div>} />
         </Routes>
