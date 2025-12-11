@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { moneyFormat } from "../../utils/formatting";
+import BiddingChart from './BiddingChart';
+import SubscriptionStats from './SubscriptionStats';
 
 export default function IPODetail() {
     const { symbol } = useParams();
@@ -43,7 +45,7 @@ export default function IPODetail() {
         issue_size, issue_start, issue_end, listing_date,
         face_value, tick_size, bid_lot, min_order_qty, max_retail_amount,
         registrar_name, registrar_email, registrar_website, registrar_phone,
-        documents
+        documents, biddingData, subscription
     } = ipo;
 
     const priceRange = (price_range_low && price_range_high)
@@ -105,7 +107,19 @@ export default function IPODetail() {
                                 Issue Details
                             </h2>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
-                                <DetailRow label="Issue Size" value={issue_size ? moneyFormat(issue_size, 'INR', true) : '-'} />
+                                <DetailRow label="Issue Size" value={
+                                    issue_size ? (
+                                        <div>
+                                            <div className="font-bold">{moneyFormat(issue_size, 'INR', true)}</div>
+                                            {(ipo.fresh_issue_size || ipo.offer_for_sale_size) && (
+                                                <div className="text-xs text-gray-500 mt-1 font-normal">
+                                                    {ipo.fresh_issue_size && <div>Fresh: {moneyFormat(ipo.fresh_issue_size, 'INR', true)}</div>}
+                                                    {ipo.offer_for_sale_size && <div>OFS: {moneyFormat(ipo.offer_for_sale_size, 'INR', true)}</div>}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : '-'
+                                } />
                                 <DetailRow label="Face Value" value={face_value ? `Rs.${face_value}` : '-'} />
                                 <DetailRow label="Tick Size" value={tick_size ? `Rs.${tick_size}` : '-'} />
                                 <DetailRow label="Bid Lot" value={bid_lot ? `${bid_lot} Shares` : '-'} />
@@ -113,6 +127,16 @@ export default function IPODetail() {
                                 <DetailRow label="Max Retail Amount" value={max_retail_amount ? `Rs.${max_retail_amount}` : '-'} />
                             </div>
                         </div>
+
+                        {/* Bidding Chart */}
+                        {biddingData && biddingData.length > 0 && (
+                            <BiddingChart data={biddingData} />
+                        )}
+
+                        {/* Subscription Stats */}
+                        {subscription && subscription.length > 0 && (
+                            <SubscriptionStats data={subscription} />
+                        )}
 
                         {/* Documents */}
                         {documents && documents.length > 0 && (

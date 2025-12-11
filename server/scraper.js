@@ -146,27 +146,57 @@ app.get("/api/ipos/:symbol", async (req, res) => {
     // Heuristic: if 'book_running_lead_managers' is null, we probably haven't fetched details yet.
     // Or check updated_at vs now.
     // For now, let's always try to fetch if key fields are missing.
-    if (!ipo.book_running_lead_managers || !ipo.face_value) {
-      const NseService = require('./services/NseService');
-      // We need 'series' for the URL. If DB has series, use it. Else use query param or default.
-      const fetchSeries = ipo.series || series;
+    // Check if we need to fetch details
+    // Strategy: Stale-While-Revalidate
+    // 1. If critical data missing -> Blocking Fetch
+    // 2. If data exists but stale -> Return DB data, Trigger Background Fetch
+    // 3. If fresh -> Return DB data
 
+    const NseService = require('./services/NseService');
+    const fetchSeries = ipo.series || series;
+
+    const isMissingData = !ipo.book_running_lead_managers || !ipo.face_value;
+
+    // Determine Staleness
+    // Rule: Strict 1-hour refresh.
+    const now = new Date();
+    const updatedAt = new Date(ipo.updated_at || 0); // Handle null updated_at
+    const ageMinutes = (now - updatedAt) / (1000 * 60);
+
+    let isStale = false;
+    if (ageMinutes >= 60) isStale = true;
+
+    // Also re-fetch if we have no bidding data or subscription data for an OPEN IPO?
+    // Let's rely on updated_at for now.
+
+    if (isMissingData) {
+      console.log(`[Blocking] Fetching missing data for ${symbol}`);
       const fetched = await NseService.fetchAndStoreIpoDetails(symbol, fetchSeries, ipo.ipo_id, client);
-
       if (fetched) {
-        // Re-fetch updated data
+        // Re-fetch updated data to return immediately
         const updatedRes = await client.query(`
-            SELECT 
-                i.*, 
-                d.issue_start, d.issue_end, d.listing_date, d.market_open_time, d.market_close_time,
-                r.name as registrar_name, r.email as registrar_email, r.website as registrar_website, r.phone as registrar_phone
-            FROM ipo i 
-            LEFT JOIN ipo_dates d ON i.ipo_id = d.ipo_id
-            LEFT JOIN registrar r ON i.primary_registrar_id = r.registrar_id
-            WHERE i.ipo_id = $1
-         `, [ipo.ipo_id]);
+                SELECT 
+                    i.*, 
+                    d.issue_start, d.issue_end, d.listing_date, d.market_open_time, d.market_close_time,
+                    r.name as registrar_name, r.email as registrar_email, r.website as registrar_website, r.phone as registrar_phone
+                FROM ipo i 
+                LEFT JOIN ipo_dates d ON i.ipo_id = d.ipo_id
+                LEFT JOIN registrar r ON i.primary_registrar_id = r.registrar_id
+                WHERE i.ipo_id = $1
+             `, [ipo.ipo_id]);
         ipo = updatedRes.rows[0];
       }
+    } else if (isStale) {
+      console.log(`[Async] Triggering background refresh for ${symbol} (Age: ${ageMinutes.toFixed(0)}m)`);
+      // Background Fetch - Do NOT await
+      NseService.fetchAndStoreIpoDetails(symbol, fetchSeries, ipo.ipo_id, client)
+        .then(res => {
+          if (res) console.log(`[Async] updated ${symbol}`);
+          else console.log(`[Async] failed/no-change for ${symbol}`);
+        })
+        .catch(err => console.error(`[Async] Error updating ${symbol}:`, err));
+
+      // Proceed to return existing (stale) data
     }
 
     // 2. Get Documents
@@ -181,13 +211,17 @@ app.get("/api/ipos/:symbol", async (req, res) => {
     const gmpRes = await client.query('SELECT gmp_value, snapshot_time FROM gmp WHERE ipo_id=$1 ORDER BY snapshot_time DESC LIMIT 1', [ipo.ipo_id]);
     const gmp = gmpRes.rows.length > 0 ? gmpRes.rows[0] : null;
 
+    // 5. Bidding Data
+    const biddingRes = await client.query('SELECT price_label, price_value, cumulative_quantity FROM bidding_data WHERE ipo_id=$1 ORDER BY price_value ASC NULLS LAST', [ipo.ipo_id]);
+
     res.json({
       ok: true,
       data: {
         ...ipo,
         documents,
         subscription,
-        gmp
+        gmp,
+        biddingData: biddingRes.rows
       }
     });
 

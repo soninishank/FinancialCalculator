@@ -153,19 +153,60 @@ class NseService {
                 `, [ipoId, issueStart, issueEnd, listingDate]);
             }
 
-            // 3. Subscription (Optional, if exists in item)
-            // item.noOfSharesOffered, item.noOfsharesBid, item.noOfTime
-            if (item.noOfTime) {
+            // 3. Subscription
+            // Use 'activeCat' or 'bidDetails'
+            const subData = data.activeCat?.dataList || data.bidDetails;
+
+            if (subData && Array.isArray(subData)) {
+                // Clear old
+                await client.query('DELETE FROM subscription_summary WHERE ipo_id = $1', [ipoId]);
+
+                for (const item of subData) {
+                    // Filter out headers/totals if needed, though they might be useful.
+                    // Headers usually don't have 'noOfSharesBid'.
+                    if (!item.noOfSharesBid) continue;
+
+                    let category = item.category;
+                    const sharesOffered = item.noOfSharesOffered ? (parseFloat(item.noOfSharesOffered) || 0) : 0; // offered can be empty string
+                    const sharesBid = parseFloat(item.noOfSharesBid) || 0;
+                    const ratio = item.noOfTime ? (parseFloat(item.noOfTime) || 0) : 0; // noOfTime might be empty or "0.0"
+
+                    // Use category name directly (schema constraint removed)
+                    // or map if we want standardization. Let's keep verbose for now as requested ("QIBs", etc).
+                    // NSE data: "Qualified Institutional Buyers(QIBs)", "Retail Individual Investors(RIIs)"
+
+                    // Some items are sub-totals like "Total". We can include them or flag them.
+                    // Let's store everything that looks like data.
+
+                    await client.query(`
+                        INSERT INTO subscription_summary (ipo_id, category, shares_offered, shares_bid, subscription_ratio, updated_at)
+                        VALUES ($1, $2, $3, $4, $5, NOW())
+                    `, [ipoId, category, sharesOffered, sharesBid, ratio]);
+                }
+            } else if (item.noOfTime) {
+                // Fallback to the brief summary found in list api if detailed not available
                 const sharesOffered = parseFloat(item.noOfSharesOffered) || 0;
                 const sharesBid = parseFloat(item.noOfsharesBid) || 0;
                 const ratio = parseFloat(item.noOfTime) || 0;
-                const subCategory = 'Others'; // Defaulting as we don't have breakdown here usually
+                const subCategory = 'Others';
 
-                await client.query('DELETE FROM subscription_summary WHERE ipo_id = $1 AND category = $2', [ipoId, subCategory]);
-                await client.query(`
-                    INSERT INTO subscription_summary (ipo_id, category, shares_offered, shares_bid, subscription_ratio, updated_at)
-                    VALUES ($1, $2, $3, $4, $5, NOW())
-                 `, [ipoId, subCategory, sharesOffered, sharesBid, ratio]);
+                // Check if we already inserted detailed data above? 
+                // Wait, 'item' here is from the list loop (upsertIpo arguments).
+                // 'subData' is from fetchAndStoreIpoDetails (data variable).
+                // Ah, this block is inside upsertIpo? 
+                // NO, wait.
+                // The REPLACE block I am targeting is inside `upsertIpo`.
+                // BUT `fetchAndStoreIpoDetails` also needs this logic. 
+                // `upsertIpo` handles the LIST api response. 
+                // `fetchAndStoreIpoDetails` handles the DETAIL api response.
+
+                // Detailed sub data is ONLY available in `fetchAndStoreIpoDetails` (detail API).
+                // The block I selected (lines 156-169) is inside `upsertIpo`.
+                // The user wants detailed data. `upsertIpo` only sees brief data.
+
+                // So I should keep `upsertIpo` as is (or basic), and put the extensive logic in `fetchAndStoreIpoDetails`.
+                // The instructions said "Replace generic subscription parsing...".
+                // I will add the logic to `fetchAndStoreIpoDetails` instad.
             }
 
         } catch (err) {
@@ -222,39 +263,62 @@ class NseService {
                 return item ? item.value : null;
             };
 
-            // 1. Parse fields for IPO table
-            // Face Value
-            const fvStr = findVal("Face Value"); // "Rs.2 per Equity Share"
+            // 1. Parsing Logic
+            // Parse Issue Size for breakdown
+            const issueSizeStr = findVal("Issue Size") || "";
+            // Example: "Initial Public Offer comprising Fresh Issue up to Rs. 7700 million and Offer for Sale up to Rs. 1500 million..."
+
+            const extractAmount = (text, key) => {
+                // Look for "Key... Rs. <Amount> <Unit>?"
+                // Regex: Find 'key' then search ahead for 'Rs.' then digits
+                const regex = new RegExp(`${key}.*?Rs\\.\\s*([\\d,]+\\.?\\d*)\\s*(million|crore|lakh)?`, 'i');
+                const match = text.match(regex);
+                if (match) {
+                    let amount = parseFloat(match[1].replace(/,/g, ''));
+                    const unit = match[2] ? match[2].toLowerCase() : '';
+
+                    // Convert to absolute INR using unit
+                    if (unit === 'million') amount *= 1000000;
+                    else if (unit === 'crore') amount *= 10000000;
+                    else if (unit === 'lakh') amount *= 100000;
+
+                    return amount;
+                }
+                return 0;
+            };
+
+            const freshIssueSize = extractAmount(issueSizeStr, "Fresh Issue");
+            const ofsSize = extractAmount(issueSizeStr, "Offer for Sale");
+
+            // Parse Other Fields
+            const fvStr = findVal("Face Value");
             const faceValue = parsePrice(fvStr);
 
-            // Tick Size
-            const tickStr = findVal("Tick Size"); // "Re.1"
+            const tickStr = findVal("Tick Size");
             const tickSize = parsePrice(tickStr);
 
-            // Bid Lot
-            const bidLotStr = findVal("Bid Lot"); // "92 Equity shares..."
+            const bidLotStr = findVal("Bid Lot");
             const bidLotMatch = bidLotStr ? bidLotStr.match(/^(\d+)/) : null;
             const bidLot = bidLotMatch ? parseInt(bidLotMatch[1]) : null;
 
-            // Min Order Qty
             const minQtyStr = findVal("Minimum Order Quantity");
             const minQtyMatch = minQtyStr ? minQtyStr.match(/^(\d+)/) : null;
             const minOrderQty = minQtyMatch ? parseInt(minQtyMatch[1]) : null;
 
-            // Max Retail Amount
-            const maxRetStr = findVal("Maximum Subscription Amount for Retail Investor"); // "\"Rs. 2,00,000\""
+            const maxRetStr = findVal("Maximum Subscription Amount for Retail Investor");
             const maxRetailAmount = parsePrice(maxRetStr);
 
-            // BRLM
             const brlm = findVal("Book Running Lead Managers");
 
             // Update IPO Table
             await client.query(`
                 UPDATE ipo SET
                     face_value = $1, tick_size = $2, bid_lot = $3, min_order_qty = $4, 
-                    max_retail_amount = $5, book_running_lead_managers = $6, updated_at = NOW()
-                WHERE ipo_id = $7
-            `, [faceValue, tickSize, bidLot, minOrderQty, maxRetailAmount, brlm, ipoId]);
+                    max_retail_amount = $5, book_running_lead_managers = $6, 
+                    fresh_issue_size = $7, offer_for_sale_size = $8,
+                    updated_at = NOW()
+                WHERE ipo_id = $9
+            `, [faceValue, tickSize, bidLot, minOrderQty, maxRetailAmount, brlm, freshIssueSize, ofsSize, ipoId]);
 
 
             // 2. Registrar
@@ -262,33 +326,23 @@ class NseService {
             const regAddress = findVal("Address of the Registrar");
             const regContactRaw = findVal("Contact person name number and Email id");
 
-            // Basic parsing for registrar contact
             let regPerson = null, regEmail = null, regPhone = null;
             if (regContactRaw) {
-                // "M. Murali Krishna, + 91 40 6716 2222 , E-mail: parkmedi.ipo@kfintech.com"
-
-                // Extract Email
                 const emailMatch = regContactRaw.match(/E-mail:\s*([^\s,]+)/i);
                 if (emailMatch) regEmail = emailMatch[1];
 
-                // Extract Phone (simple heuristic)
                 const phoneMatch = regContactRaw.match(/\+[\d\s\-]+/);
                 if (phoneMatch) regPhone = phoneMatch[0].trim();
 
-                // Name (start of string)
                 const parts = regContactRaw.split(',');
                 if (parts.length > 0) regPerson = parts[0].trim();
             }
 
-            // Upsert Registrar
-            // We use Name as unique key for simplicity here, or we can just always insert. 
-            // Better to check if exists by name.
             let registrarId = null;
             if (regName) {
                 const regRes = await client.query('SELECT registrar_id FROM registrar WHERE name = $1', [regName]);
                 if (regRes.rows.length > 0) {
                     registrarId = regRes.rows[0].registrar_id;
-                    // Update contact info if missing? Let's just update.
                     await client.query(`
                         UPDATE registrar SET address=$1, contact_person=$2, phone=$3, email=$4 WHERE registrar_id=$5
                     `, [regAddress, regPerson, regPhone, regEmail, registrarId]);
@@ -299,44 +353,96 @@ class NseService {
                     `, [regName, regAddress, regPerson, regPhone, regEmail]);
                     registrarId = insReg.rows[0].registrar_id;
                 }
-
-                // Link to IPO
                 await client.query('UPDATE ipo SET primary_registrar_id = $1 WHERE ipo_id = $2', [registrarId, ipoId]);
             }
 
-            // 3. Documents
-            // Map known documents from dataList
+            // 3. Subscription (Detailed)
+            const subData = data.activeCat?.dataList || data.bidDetails;
+            if (subData && Array.isArray(subData)) {
+
+                await client.query('DELETE FROM subscription_summary WHERE ipo_id = $1', [ipoId]);
+
+                for (const item of subData) {
+                    const getVal = (k1, k2, k3) => item[k1] || item[k2] || item[k3];
+
+                    let category = item.category;
+
+                    const sharesOfferedStr = getVal('noOfSharesOffered', 'noOfShareOffered', 'noOfSharesReserved');
+                    const sharesBidStr = getVal('noOfsharesBid', 'noOfSharesBid', 'noOfSharesApplied');
+                    const ratioStr = getVal('noOfTime', 'noOfTotalMeant', 'timesSubscribed');
+
+                    const sharesOffered = sharesOfferedStr ? (parseFloat(sharesOfferedStr.toString().replace(/,/g, '')) || 0) : 0;
+                    const sharesBid = sharesBidStr ? (parseFloat(sharesBidStr.toString().replace(/,/g, '')) || 0) : 0;
+                    const ratio = ratioStr ? (parseFloat(ratioStr.toString().replace(/,/g, '')) || 0) : 0;
+
+                    // Ensure we capture all categories
+                    await client.query(`
+                        INSERT INTO subscription_summary (ipo_id, category, shares_offered, shares_bid, subscription_ratio, updated_at)
+                        VALUES ($1, $2, $3, $4, $5, NOW())
+                    `, [ipoId, category, sharesOffered, sharesBid, ratio]);
+                }
+            }
+
+            // 4. Documents
             const docMap = {
                 'Red Herring Prospectus': 'RHP',
                 'Sample Application Forms': 'Sample_Form',
                 'Bidding Centers': 'Bidding_Centres',
-                'Security Parameters': 'Security_Parameters', // partial match
+                'Security Parameters': 'Security_Parameters',
                 'Anchor Allocation Report': 'Anchor_Report'
             };
 
+            const unwantedTitles = [
+                "Video link",
+                "List of mobile applications",
+                "Processing of ASBA"
+            ];
+
             for (const d of dataList) {
                 if (!d.title || !d.value) continue;
+                if (unwantedTitles.some(u => d.title.includes(u))) continue;
+
                 let url = d.value;
                 if (url.includes('<a href=')) {
                     const match = url.match(/href=([^ >]+)/);
                     if (match) url = match[1];
                 }
 
-                // Determine Type
                 let docType = 'Other';
                 for (const [key, val] of Object.entries(docMap)) {
                     if (d.title.includes(key)) docType = val;
                 }
 
-                // Should we save every link? Maybe just the important ones.
-                // If it's a URL, save it.
                 if (url.startsWith('http') || (url.endsWith('.zip') || url.endsWith('.pdf'))) {
-                    // Check existing
                     const checkDoc = await client.query('SELECT doc_id FROM documents WHERE ipo_id=$1 AND title=$2', [ipoId, d.title]);
                     if (checkDoc.rows.length === 0) {
                         await client.query(`
                             INSERT INTO documents (ipo_id, doc_type, title, url) VALUES ($1, $2, $3, $4)
                         `, [ipoId, docType, d.title, url]);
+                    }
+                }
+            }
+
+            // 4. Bidding Data (Demand Graph)
+            const graphData = data.demandGraphALL || data.demandGraph;
+            const plotData = graphData ? graphData.plotData : null;
+
+            if (plotData) {
+                await client.query('DELETE FROM bidding_data WHERE ipo_id=$1', [ipoId]);
+
+                for (const [priceKey, qtyStr] of Object.entries(plotData)) {
+                    const cleanQty = qtyStr.replace(/,/g, '');
+                    const qty = parseInt(cleanQty, 10);
+
+                    if (!isNaN(qty)) {
+                        let priceVal = null;
+                        const priceNum = parseFloat(priceKey);
+                        if (!isNaN(priceNum)) priceVal = priceNum;
+
+                        await client.query(`
+                            INSERT INTO bidding_data (ipo_id, price_label, price_value, cumulative_quantity)
+                            VALUES ($1, $2, $3, $4)
+                        `, [ipoId, priceKey, priceVal, qty]);
                     }
                 }
             }
