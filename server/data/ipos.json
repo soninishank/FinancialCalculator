@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2025-12-11T06:01:27.533Z",
+  "lastUpdated": "2025-12-11T06:50:19.163Z",
   "count": 2,
   "data": {
     "upcoming": [],
@@ -10,7 +10,7 @@
         "type": "EQ",
         "issueStart": "10-Dec-2025",
         "issueEnd": "12-Dec-2025",
-        "raw": "Park Medi World LimitedEQ10-Dec-202512-Dec-2025Active4,18,18,1822,25,00,8080.54"
+        "raw": "Park Medi World LimitedEQ10-Dec-202512-Dec-2025Active4,18,18,1822,37,84,7600.57"
       },
       {
         "id": "Nephrocare Health Services Limited-1",
@@ -18,7 +18,7 @@
         "type": "EQ",
         "issueStart": "10-Dec-2025",
         "issueEnd": "12-Dec-2025",
-        "raw": "Nephrocare Health Services LimitedEQ10-Dec-202512-Dec-2025Active1,33,87,85416,91,8720.13"
+        "raw": "Nephrocare Health Services LimitedEQ10-Dec-202512-Dec-2025Active1,33,87,85418,27,9680.14"
       }
     ],
     "closed": []

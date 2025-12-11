@@ -1,5 +1,4 @@
-// src/components/calculators/StepUpSIP.js
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 
 // --- IMPORTS ---
 import SummaryCards from "../common/SummaryCards";
@@ -7,71 +6,44 @@ import InvestmentPieChart from "../common/InvestmentPieChart";
 import ResultsTable from "../common/ResultsTable";
 import CompoundingBarChart from "../common/CompoundingBarChart";
 import InputWithSlider from "../common/InputWithSlider";
-import TaxToggle from "../common/TaxToggle"; // <-- added
+import TaxToggle from "../common/TaxToggle";
+
+import CalculatorLayout from "./CalculatorLayout"; // <--- NEW LAYOUT
 
 import { useLimitedPay } from "../../hooks/useLimitedPay";
+import { useCalculatorState } from "../../hooks/useCalculatorState"; // <--- NEW HOOK
 import { downloadCSV } from "../../utils/export";
-import { calculateLTCG, DEFAULT_LTCG_TAX_RATE_DECIMAL } from "../../utils/tax"; // <-- added
-
-// --- UPDATED LOGIC ---
-function computeStepUpSchedule({ initialSIP, stepUpPercent, annualRate, totalYears, sipYears }) {
-  const r_m = annualRate / 12 / 100;
-  const totalMonths = totalYears * 12;
-  const sipMonths = sipYears * 12;
-
-  let balance = 0;
-  let totalInvested = 0;
-  const rows = [];
-
-  for (let m = 1; m <= totalMonths; m++) {
-    // 1. Calculate what the SIP *would* be for this year (Step-up logic)
-    const yearIndex = Math.floor((m - 1) / 12);
-    const currentMonthlySIP = Number(initialSIP) * Math.pow(1 + stepUpPercent / 100, yearIndex);
-
-    // 2. Only contribute if within the SIP Duration
-    if (m <= sipMonths) {
-      balance += currentMonthlySIP;
-      totalInvested += currentMonthlySIP;
-    }
-
-    // 3. Apply Interest (Always happens)
-    balance = balance * (1 + r_m);
-
-    // 4. Snapshot at year end
-    if (m % 12 === 0) {
-      rows.push({
-        year: m / 12,
-        totalInvested: totalInvested,
-        sipInvested: totalInvested, // Pure StepUp has no lump sum
-        stepUpAppliedPercent: stepUpPercent,
-        growth: balance - totalInvested,
-        overallValue: balance,
-      });
-    }
-  }
-  return rows;
-}
+import { calculateLTCG } from "../../utils/tax";
+import { computeStepUpSchedule, calculateRealValue } from "../../utils/finance"; // <--- SHARED LOGIC
 
 export default function StepUpSIP({ currency, setCurrency }) {
   // --- STATE ---
-  const [initialSIP, setInitialSIP] = useState(5000);
-  const [stepUpPercent, setStepUpPercent] = useState(10);
-  const [annualRate, setAnnualRate] = useState(12);
-
-  // --- TAX STATE (added) ---
-  const [isTaxApplied, setIsTaxApplied] = useState(false);
-  const [ltcgRate, setLtcgRate] = useState(DEFAULT_LTCG_TAX_RATE_DECIMAL * 100); // percent (e.g. 10)
-  const [isExemptionApplied, setIsExemptionApplied] = useState(false);
-  const [exemptionLimit, setExemptionLimit] = useState(100000);
+  const {
+    initialSIP, setInitialSIP,
+    stepUpPercent, setStepUpPercent,
+    annualRate, setAnnualRate,
+    isTaxApplied, setIsTaxApplied,
+    ltcgRate, setLtcgRate,
+    isExemptionApplied, setIsExemptionApplied,
+    exemptionLimit, setExemptionLimit,
+    isInflationAdjusted, setIsInflationAdjusted,
+    inflationRate, setInflationRate,
+  } = useCalculatorState({
+    initialSIP: 5000,
+    stepUpPercent: 10,
+    annualRate: 12,
+    isInflationAdjusted: false,
+    inflationRate: 6,
+  });
 
   // --- USE LIMITED PAY HOOK ---
-  const { 
-    totalYears, 
-    sipYears, 
-    setSipYears, 
-    isLimitedPay, 
-    handleTotalYearsChange, 
-    handleLimitedPayToggle 
+  const {
+    totalYears,
+    sipYears,
+    setSipYears,
+    isLimitedPay,
+    handleTotalYearsChange,
+    handleLimitedPayToggle
   } = useLimitedPay(10);
 
   // --- CALCULATIONS ---
@@ -92,7 +64,7 @@ export default function StepUpSIP({ currency, setCurrency }) {
   const totalFuture = lastRow.overallValue;
   const gain = totalFuture - investedTotal;
 
-  // --- TAX CALCULATION (added) ---
+  // --- TAX CALCULATION ---
   const taxResult = calculateLTCG(gain, investedTotal, isTaxApplied, {
     taxRate: Number(ltcgRate),
     currency,
@@ -108,6 +80,12 @@ export default function StepUpSIP({ currency, setCurrency }) {
   const postTaxGain = netGain;
   const taxDeductedAmount = taxAmount;
 
+  // --- INFLATION CALCULATION ---
+  const realValue = useMemo(() => {
+    return calculateRealValue(totalFuture, inflationRate, totalYears);
+  }, [totalFuture, inflationRate, totalYears]);
+
+
   function handleExport() {
     const header = ["Year", "Total Invested", "SIP Invested", "Step-up %", "Growth", "Overall Value"];
     const rows = yearlyRows.map((r) => [
@@ -121,84 +99,82 @@ export default function StepUpSIP({ currency, setCurrency }) {
     downloadCSV(rows, header, "stepup_sip_table.csv");
   }
 
-  return (
-    <div className="animate-fade-in">
+  // --- UI PARTS ---
+  const inputsSection = (
+    <>
+      {/* Initial SIP */}
+      <InputWithSlider
+        label="Initial Monthly SIP"
+        value={initialSIP}
+        onChange={setInitialSIP}
+        min={500} max={500000} step={500}
+        currency={currency}
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">
-        
-        {/* Initial SIP */}
+      {/* Step Up % */}
+      <InputWithSlider
+        label="Annual Step-up (%)"
+        value={stepUpPercent}
+        onChange={setStepUpPercent}
+        min={0} max={50} symbol="%" isDecimal={true}
+      />
+
+      {/* Investment Tenure (With Advanced Toggle) */}
+      <div>
         <InputWithSlider
-          label="Initial Monthly SIP"
-          value={initialSIP}
-          onChange={setInitialSIP}
-          min={500} max={500000} step={500}
-          currency={currency}
+          label="Total Investment Tenure (Years)"
+          value={totalYears}
+          onChange={handleTotalYearsChange}
+          min={1} max={40} step={0.1}
+          isDecimal={true}
         />
 
-        {/* Step Up % */}
-        <InputWithSlider
-          label="Annual Step-up (%)"
-          value={stepUpPercent}
-          onChange={setStepUpPercent}
-          min={0} max={50} symbol="%" isDecimal={true}
-        />
-
-        {/* Investment Tenure (With Advanced Toggle) */}
-        <div>
-          <InputWithSlider
-            label="Total Investment Tenure (Years)"
-            value={totalYears}
-            onChange={handleTotalYearsChange}
-            min={1} max={40} step={0.1}
-            isDecimal={true}
-          />
-
-          <div className="mt-4 flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
-            <div className="flex items-center h-5">
-              <input
-                id="limitedPay"
-                type="checkbox"
-                checked={isLimitedPay}
-                onChange={handleLimitedPayToggle}
-                className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 cursor-pointer"
-              />
-            </div>
-            <div className="text-sm">
-              <label htmlFor="limitedPay" className="font-medium text-gray-700 cursor-pointer">
-                Stop SIP early? (Limited Pay)
-              </label>
-              <p className="text-gray-500 text-xs mt-1">
-                Enable this if you want to stop contributions after a few years but let the money grow.
-              </p>
-            </div>
+        <div className="mt-4 flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+          <div className="flex items-center h-5">
+            <input
+              id="limitedPay"
+              type="checkbox"
+              checked={isLimitedPay}
+              onChange={handleLimitedPayToggle}
+              className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 cursor-pointer"
+            />
           </div>
-
-          {isLimitedPay && (
-            <div className="mt-4 pl-4 border-l-2 border-teal-100 animate-slide-down">
-              <InputWithSlider
-                label="SIP Contribution Period (Years)"
-                value={sipYears}
-                onChange={setSipYears}
-                min={1} 
-                max={totalYears} step={0.1}
-                isDecimal={true}
-              />
-            </div>
-          )}
+          <div className="text-sm">
+            <label htmlFor="limitedPay" className="font-medium text-gray-700 cursor-pointer">
+              Stop SIP early? (Limited Pay)
+            </label>
+            <p className="text-gray-500 text-xs mt-1">
+              Enable this if you want to stop contributions after a few years but let the money grow.
+            </p>
+          </div>
         </div>
 
-        {/* Rate */}
-        <div className="md:col-span-1">
-          <InputWithSlider
-            label="Expected Annual Return (%)"
-            value={annualRate}
-            onChange={setAnnualRate}
-            min={1} max={30} symbol="%"
-            isDecimal={true}
-          />
+        {isLimitedPay && (
+          <div className="mt-4 pl-4 border-l-2 border-teal-100 animate-slide-down">
+            <InputWithSlider
+              label="SIP Contribution Period (Years)"
+              value={sipYears}
+              onChange={setSipYears}
+              min={1}
+              max={totalYears} step={0.1}
+              isDecimal={true}
+            />
+          </div>
+        )}
+      </div>
 
-          {/* --- Apply LTCG AFTER Expected Annual Return (%) --- */}
-          <div className="mt-6">
+      {/* Rate */}
+      <div className="md:col-span-1">
+        <InputWithSlider
+          label="Expected Annual Return (%)"
+          value={annualRate}
+          onChange={setAnnualRate}
+          min={1} max={30} symbol="%"
+          isDecimal={true}
+        />
+
+        <div className="mt-6 flex flex-col md:flex-row gap-6">
+          <div className="flex-1">
             <TaxToggle
               currency={currency}
               isTaxApplied={isTaxApplied}
@@ -211,16 +187,49 @@ export default function StepUpSIP({ currency, setCurrency }) {
               onExemptionLimitChange={setExemptionLimit}
             />
           </div>
+          {/* INFLATION TOGGLE */}
+          <div className="flex-1 p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-semibold text-gray-700">Adjust for Inflation</label>
+              <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                <input type="checkbox" name="toggle" id="inflation-toggle-step"
+                  checked={isInflationAdjusted}
+                  onChange={() => setIsInflationAdjusted(!isInflationAdjusted)}
+                  className="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300 checked:right-0 checked:border-sky-500 transition-all duration-300"
+                  style={{ right: isInflationAdjusted ? "0" : "auto", left: isInflationAdjusted ? "auto" : "0" }}
+                />
+                <label htmlFor="inflation-toggle-step" className={`toggle-label block overflow-hidden h-5 rounded-full cursor-pointer ${isInflationAdjusted ? "bg-sky-500" : "bg-gray-300"}`}></label>
+              </div>
+            </div>
+
+            {isInflationAdjusted && (
+              <div className="mt-3 animate-fade-in">
+                <InputWithSlider
+                  label="Inflation Rate (%)"
+                  value={inflationRate}
+                  onChange={setInflationRate}
+                  min={0} max={15} step={0.1} symbol="%"
+                  isDecimal={true}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
+    </>
+  );
 
-      <SummaryCards
-        totalValue={totalFuture}
-        invested={investedTotal}
-        gain={gain}
-        currency={currency}
-        {...(isTaxApplied
-          ? {
+  return (
+    <CalculatorLayout
+      inputs={inputsSection}
+      summary={
+        <SummaryCards
+          totalValue={totalFuture}
+          invested={investedTotal}
+          gain={gain}
+          currency={currency}
+          {...(isTaxApplied
+            ? {
               tax: {
                 applied: true,
                 postTaxValue: postTaxFuture,
@@ -228,24 +237,31 @@ export default function StepUpSIP({ currency, setCurrency }) {
                 taxDeducted: taxDeductedAmount,
               },
             }
-          : {})}
-      />
-      <CompoundingBarChart data={yearlyRows} currency={currency} />
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12 items-start">
-        <div className="lg:col-span-1">
-          <InvestmentPieChart 
-            invested={investedTotal} 
-            gain={gain} 
-            total={totalFuture} 
-            currency={currency} 
-            years={totalYears} 
-          />
-        </div>
-        <div className="lg:col-span-2 h-full">
-          <ResultsTable data={yearlyRows} currency={currency} onExport={handleExport} />
-        </div>
-      </div>
-    </div>
+            : {})}
+          {...(isInflationAdjusted
+            ? {
+              inflation: {
+                applied: true,
+                realValue: realValue,
+                inflationRate: inflationRate,
+              },
+            }
+            : {})}
+        />
+      }
+      charts={<CompoundingBarChart data={yearlyRows} currency={currency} />}
+      pieChart={
+        <InvestmentPieChart
+          invested={investedTotal}
+          gain={gain}
+          total={totalFuture}
+          currency={currency}
+          years={totalYears}
+        />
+      }
+      table={
+        <ResultsTable data={yearlyRows} currency={currency} onExport={handleExport} />
+      }
+    />
   );
 }

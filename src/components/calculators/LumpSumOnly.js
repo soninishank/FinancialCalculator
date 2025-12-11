@@ -1,5 +1,4 @@
-// src/components/calculators/LumpSumOnly.js
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 
 // --- IMPORTS ---
 import SummaryCards from "../common/SummaryCards";
@@ -7,12 +6,15 @@ import InvestmentPieChart from "../common/InvestmentPieChart";
 import ResultsTable from "../common/ResultsTable";
 import CompoundingBarChart from "../common/CompoundingBarChart";
 import InputWithSlider from "../common/InputWithSlider";
-import TaxToggle from "../common/TaxToggle"; // <-- added
+import TaxToggle from "../common/TaxToggle";
 
-import { calcLumpFutureValue } from "../../utils/finance";
+import CalculatorLayout from "./CalculatorLayout"; // <--- NEW LAYOUT
+
+import { useCalculatorState } from "../../hooks/useCalculatorState"; // <--- NEW HOOK
 import { downloadCSV } from "../../utils/export";
-import { calculateLTCG, DEFAULT_LTCG_TAX_RATE_DECIMAL } from "../../utils/tax"; // <-- added
-import { 
+import { computeYearlySchedule, calculateRealValue } from "../../utils/finance"; // <--- SHARED LOGIC
+import { calculateLTCG } from "../../utils/tax";
+import {
   DEFAULT_LUMP_SUM,
   DEFAULT_TENURE_YEARS,
   DEFAULT_RATE,
@@ -22,55 +24,43 @@ import {
   MAX_AMOUNT,
   MAX_YEARS,
   MAX_RATE
-} from "../../utils/constants"; // <--- NEW IMPORTS
-
-function computeYearlyLump({ lumpSum, annualRate, years }) {
-  const r_m = annualRate / 12 / 100;
-  const months = years * 12;
-  const rows = [];
-  let currentBalance = lumpSum;
-
-  for (let m = 1; m <= months; m++) {
-    currentBalance = currentBalance * (1 + r_m);
-    if (m % 12 === 0) {
-      rows.push({
-        year: m / 12,
-        totalInvested: lumpSum, 
-        lumpSum: lumpSum,
-        growth: currentBalance - lumpSum,
-        overallValue: currentBalance,
-      });
-    }
-  }
-  return rows;
-}
+} from "../../utils/constants";
 
 export default function LumpSumOnly({ currency, setCurrency }) {
-  // --- STATE FIX: Use Default Constants ---
-  const [lumpSum, setLumpSum] = useState(DEFAULT_LUMP_SUM);
-  const [years, setYears] = useState(DEFAULT_TENURE_YEARS);
-  const [annualRate, setAnnualRate] = useState(DEFAULT_RATE);
+  // --- STATE ---
+  const {
+    lumpSum, setLumpSum,
+    annualRate, setAnnualRate,
+    years, setYears,
+    isTaxApplied, setIsTaxApplied,
+    ltcgRate, setLtcgRate,
+    isExemptionApplied, setIsExemptionApplied,
+    exemptionLimit, setExemptionLimit,
+    isInflationAdjusted, setIsInflationAdjusted,
+    inflationRate, setInflationRate,
+  } = useCalculatorState({
+    lumpSum: DEFAULT_LUMP_SUM,
+    annualRate: DEFAULT_RATE,
+    years: DEFAULT_TENURE_YEARS,
+  });
 
-  // --- TAX STATE (added) ---
-  const [isTaxApplied, setIsTaxApplied] = useState(false);
-  const [ltcgRate, setLtcgRate] = useState(DEFAULT_LTCG_TAX_RATE_DECIMAL * 100); // percent (e.g. 10)
-  const [isExemptionApplied, setIsExemptionApplied] = useState(false);
-  const [exemptionLimit, setExemptionLimit] = useState(100000);
-
-  const n = years * 12;
-  const r_m = annualRate / 12 / 100;
-
-  const fvLump = useMemo(() => calcLumpFutureValue(Number(lumpSum), r_m, n), [lumpSum, r_m, n]);
-  const investedTotal = Number(lumpSum);
-  const totalFuture = fvLump;
-  const gain = totalFuture - investedTotal;
-
+  // --- CALCULATIONS ---
   const yearlyRows = useMemo(
-    () => computeYearlyLump({ lumpSum: Number(lumpSum), annualRate: Number(annualRate), years: Number(years) }),
+    () => computeYearlySchedule({
+      monthlySIP: 0,
+      lumpSum: Number(lumpSum),
+      annualRate: Number(annualRate),
+      totalYears: Number(years)
+    }),
     [lumpSum, annualRate, years]
   );
 
-  // --- TAX CALCULATION (added) ---
+  const lastRow = yearlyRows[yearlyRows.length - 1] || { totalInvested: 0, overallValue: 0 };
+  const investedTotal = lastRow.totalInvested; // Should constitute only lump sum
+  const totalFuture = lastRow.overallValue;
+  const gain = totalFuture - investedTotal;
+
+  // --- TAX CALCULATION ---
   const taxResult = calculateLTCG(gain, investedTotal, isTaxApplied, {
     taxRate: Number(ltcgRate),
     currency,
@@ -86,6 +76,12 @@ export default function LumpSumOnly({ currency, setCurrency }) {
   const postTaxGain = netGain;
   const taxDeductedAmount = taxAmount;
 
+  // --- INFLATION CALCULATION ---
+  const realValue = useMemo(() => {
+    return calculateRealValue(totalFuture, inflationRate, years);
+  }, [totalFuture, inflationRate, years]);
+
+
   function handleExport() {
     const header = ["Year", "Total Invested", "Lump Sum", "Growth", "Overall Value"];
     const rows = yearlyRows.map((r) => [
@@ -94,39 +90,37 @@ export default function LumpSumOnly({ currency, setCurrency }) {
     downloadCSV(rows, header, "lump_sum_table.csv");
   }
 
-  return (
-    <div className="animate-fade-in">
+  // --- UI PARTS ---
+  const inputsSection = (
+    <>
+      <InputWithSlider
+        label="Initial Lump Sum"
+        value={lumpSum}
+        onChange={setLumpSum}
+        min={MIN_AMOUNT} max={MAX_AMOUNT} step={1000} // Use MAX_AMOUNT
+        currency={currency}
+      />
 
-      {/* INPUTS SECTION */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">
+      <InputWithSlider
+        label="Total Investment Tenure (Years)"
+        value={years}
+        onChange={setYears}
+        min={MIN_YEARS} max={MAX_YEARS} step={0.1}
+        isDecimal={true}
+      />
+
+      <div className="md:col-span-2">
         <InputWithSlider
-          label="Initial Lump Sum"
-          value={lumpSum}
-          onChange={setLumpSum}
-          min={MIN_AMOUNT} max={MAX_AMOUNT} step={1000} // Use MAX_AMOUNT
-          currency={currency}
+          label="Expected Annual Return (%)"
+          value={annualRate}
+          onChange={setAnnualRate}
+          min={MIN_RATE} max={MAX_RATE} step={0.1}
+          symbol="%"
+          isDecimal={true}
         />
 
-        <InputWithSlider
-          label="Total Investment Tenure (Years)"
-          value={years}
-          onChange={setYears}
-          min={MIN_YEARS} max={MAX_YEARS} step={0.1}
-          isDecimal={true} 
-        />
-
-        <div className="md:col-span-2">
-          <InputWithSlider
-            label="Expected Annual Return (%)"
-            value={annualRate}
-            onChange={setAnnualRate}
-            min={MIN_RATE} max={MAX_RATE} step={0.1}
-            symbol="%"
-            isDecimal={true} 
-          />
-
-          {/* --- Apply LTCG AFTER Expected Annual Return (%) --- */}
-          <div className="mt-6">
+        <div className="mt-6 flex flex-col md:flex-row gap-6">
+          <div className="flex-1">
             <TaxToggle
               currency={currency}
               isTaxApplied={isTaxApplied}
@@ -139,16 +133,49 @@ export default function LumpSumOnly({ currency, setCurrency }) {
               onExemptionLimitChange={setExemptionLimit}
             />
           </div>
+          {/* INFLATION TOGGLE */}
+          <div className="flex-1 p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-semibold text-gray-700">Adjust for Inflation</label>
+              <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                <input type="checkbox" name="toggle" id="inflation-toggle-lump"
+                  checked={isInflationAdjusted}
+                  onChange={() => setIsInflationAdjusted(!isInflationAdjusted)}
+                  className="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300 checked:right-0 checked:border-sky-500 transition-all duration-300"
+                  style={{ right: isInflationAdjusted ? "0" : "auto", left: isInflationAdjusted ? "auto" : "0" }}
+                />
+                <label htmlFor="inflation-toggle-lump" className={`toggle-label block overflow-hidden h-5 rounded-full cursor-pointer ${isInflationAdjusted ? "bg-sky-500" : "bg-gray-300"}`}></label>
+              </div>
+            </div>
+
+            {isInflationAdjusted && (
+              <div className="mt-3 animate-fade-in">
+                <InputWithSlider
+                  label="Inflation Rate (%)"
+                  value={inflationRate}
+                  onChange={setInflationRate}
+                  min={0} max={15} step={0.1} symbol="%"
+                  isDecimal={true}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
+    </>
+  );
 
-      <SummaryCards
-        totalValue={totalFuture}
-        invested={investedTotal}
-        gain={gain}
-        currency={currency}
-        {...(isTaxApplied
-          ? {
+  return (
+    <CalculatorLayout
+      inputs={inputsSection}
+      summary={
+        <SummaryCards
+          totalValue={totalFuture}
+          invested={investedTotal}
+          gain={gain}
+          currency={currency}
+          {...(isTaxApplied
+            ? {
               tax: {
                 applied: true,
                 postTaxValue: postTaxFuture,
@@ -156,24 +183,31 @@ export default function LumpSumOnly({ currency, setCurrency }) {
                 taxDeducted: taxDeductedAmount,
               },
             }
-          : {})}
-      />
-      <CompoundingBarChart data={yearlyRows} currency={currency} />
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12 items-start">
-        <div className="lg:col-span-1">
-          <InvestmentPieChart 
-            invested={investedTotal} 
-            gain={gain} 
-            total={totalFuture} 
-            currency={currency} 
-            years={years}
-          />
-        </div>
-        <div className="lg:col-span-2 h-full">
-          <ResultsTable data={yearlyRows} currency={currency} onExport={handleExport} />
-        </div>
-      </div>
-    </div>
+            : {})}
+          {...(isInflationAdjusted
+            ? {
+              inflation: {
+                applied: true,
+                realValue: realValue,
+                inflationRate: inflationRate,
+              },
+            }
+            : {})}
+        />
+      }
+      charts={<CompoundingBarChart data={yearlyRows} currency={currency} />}
+      pieChart={
+        <InvestmentPieChart
+          invested={investedTotal}
+          gain={gain}
+          total={totalFuture}
+          currency={currency}
+          years={years}
+        />
+      }
+      table={
+        <ResultsTable data={yearlyRows} currency={currency} onExport={handleExport} />
+      }
+    />
   );
 }

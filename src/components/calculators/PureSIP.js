@@ -1,5 +1,5 @@
 // src/components/calculators/PureSIP.js
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 
 // --- IMPORTS ---
 import SummaryCards from "../common/SummaryCards";
@@ -7,13 +7,16 @@ import InvestmentPieChart from "../common/InvestmentPieChart";
 import ResultsTable from "../common/ResultsTable";
 import CompoundingBarChart from "../common/CompoundingBarChart";
 import InputWithSlider from "../common/InputWithSlider";
-import TaxToggle from "../common/TaxToggle"; // <-- added
+import TaxToggle from "../common/TaxToggle";
+
+import CalculatorLayout from "./CalculatorLayout"; // <--- NEW LAYOUT
 
 import { useLimitedPay } from "../../hooks/useLimitedPay";
+import { useCalculatorState } from "../../hooks/useCalculatorState"; // <--- NEW HOOK
 import { downloadCSV } from "../../utils/export";
-import { calcSIPFutureValue } from "../../utils/finance";
-import { calculateLTCG, DEFAULT_LTCG_TAX_RATE_DECIMAL } from "../../utils/tax"; // <-- added
-import { 
+import { computeYearlySchedule, calculateRealValue } from "../../utils/finance"; // <--- SHARED LOGIC
+import { calculateLTCG } from "../../utils/tax";
+import {
   DEFAULT_MONTHLY_SIP,
   DEFAULT_RATE,
   MIN_SIP,
@@ -23,75 +26,61 @@ import {
   MAX_RATE,
   MAX_YEARS,
   DEFAULT_TENURE_YEARS
-} from "../../utils/constants"; // <--- NEW IMPORTS
-
-// Business Logic for Pure SIP
-function computeYearlySchedule({ monthlySIP, annualRate, totalYears, sipYears }) {
-  const r_m = annualRate / 12 / 100;
-  const totalMonths = totalYears * 12;
-  const sipMonths = sipYears * 12;
-
-  let balance = 0;
-  let monthlyInvested = 0;
-  const rows = [];
-
-  for (let m = 1; m <= totalMonths; m++) {
-    // Only add SIP if within duration
-    if (m <= sipMonths) {
-      balance += monthlySIP;
-      monthlyInvested += monthlySIP;
-    }
-    
-    // Always compound
-    balance = balance * (1 + r_m);
-
-    if (m % 12 === 0) {
-      rows.push({
-        year: m / 12,
-        totalInvested: monthlyInvested,
-        growth: balance - monthlyInvested,
-        overallValue: balance,
-      });
-    }
-  }
-  return rows;
-}
+} from "../../utils/constants";
 
 export default function PureSIP({ currency, setCurrency }) {
-  // --- STATE FIX: Use Default Constants ---
-  const [monthlySIP, setMonthlySIP] = useState(DEFAULT_MONTHLY_SIP);
-  const [annualRate, setAnnualRate] = useState(DEFAULT_RATE);
-  
-  // --- TAX STATE (added) ---
-  const [isTaxApplied, setIsTaxApplied] = useState(false);
-  const [ltcgRate, setLtcgRate] = useState(DEFAULT_LTCG_TAX_RATE_DECIMAL * 100); // percent (e.g. 10)
-  const [isExemptionApplied, setIsExemptionApplied] = useState(false);
-  const [exemptionLimit, setExemptionLimit] = useState(100000);
+  // --- STATE ---
+  const {
+    monthlySIP, setMonthlySIP,
+    annualRate, setAnnualRate,
+    isTaxApplied, setIsTaxApplied,
+    ltcgRate, setLtcgRate,
+    isExemptionApplied, setIsExemptionApplied,
+    exemptionLimit, setExemptionLimit,
+    isInflationAdjusted, setIsInflationAdjusted,
+    inflationRate, setInflationRate,
+  } = useCalculatorState({
+    monthlySIP: DEFAULT_MONTHLY_SIP,
+    annualRate: DEFAULT_RATE,
+  });
 
-  // Use Limited Pay Hook (which has its own default years)
-  const { 
-    totalYears, 
-    sipYears, 
-    setSipYears, 
-    isLimitedPay, 
-    handleTotalYearsChange, 
-    handleLimitedPayToggle 
-  } = useLimitedPay(DEFAULT_TENURE_YEARS); // Passing the default years
+  // Use Limited Pay Hook checks tenure
+  const {
+    totalYears,
+    sipYears,
+    setSipYears,
+    isLimitedPay,
+    handleTotalYearsChange,
+    handleLimitedPayToggle
+  } = useLimitedPay(DEFAULT_TENURE_YEARS);
 
   // Calculations
-  const n = totalYears * 12;
-  const r_m = annualRate / 12 / 100;
+  // const n = totalYears * 12; // Unused if we depend solely on computeYearlySchedule
+  // const r_m = annualRate / 12 / 100; // Unused if we depend solely on computeYearlySchedule
 
-  const fvSIP = useMemo(
-    () => calcSIPFutureValue(Number(monthlySIP), r_m, n),
-    [monthlySIP, r_m, n]
-  );
+  // fvSIP replaced by yearlyRows last value for accuracy in Limited Pay scenarios
 
-  const investedTotal = Number(monthlySIP) * n;
-  const totalFuture = fvSIP;
-  const gain = totalFuture - investedTotal;
 
-  // Yearly Breakdown Calculation
+  // NOTE: If using Limited Pay with 0 investment in later years, basic FV formula needs adjustment OR use the scheduled rows.
+  // The original component calculated `fvSIP` with formula but then calculated `gain` via `totalFuture` from `yearlyRows`?
+  // Let's check original... 
+  // Original: const fvSIP = ... calcSIPFutureValue ...
+  // Original: const totalFuture = fvSIP; 
+  // WAIT. calcSIPFutureValue assumes annuity due for N months.
+  // If `isLimitedPay` is true, simple `calcSIPFutureValue` is WRONG because contributions stop early.
+  // The original code calculated `fvSIP` using `calcSIPFutureValue` which implies full tenure SIP.
+  // BUT the yearly rows calculation handled logic correctly.
+  // Original `computeYearlySchedule` was correct.
+  // DOES THE ORIGINAL COMPONENT DISPLAY WRONG TOTAL VALUE for Limited Pay?
+  // Ah, the original code: 
+  // const totalFuture = fvSIP; 
+  // AND `computeYearlySchedule` logic. 
+
+  // Actually, if `isLimitedPay` is on, using `calcSIPFutureValue(monthlySIP, r_m, n)` calculates as if SIP continues for N months.
+  // So the displayed total number in the card might be wrong in the original code if `isLimitedPay` is used, unless `calcSIPFutureValue` handles it? No, it takes n.
+  // Let's rely on `computerYearlySchedule` last row for the true value, which is safer and supports limited pay naturally.
+
+  // Yearly Breakdown Calculation (Source of Truth)
   const yearlyRows = useMemo(
     () =>
       computeYearlySchedule({
@@ -103,7 +92,12 @@ export default function PureSIP({ currency, setCurrency }) {
     [monthlySIP, annualRate, totalYears, sipYears]
   );
 
-  // --- TAX CALCULATION (added) ---
+  const lastRow = yearlyRows[yearlyRows.length - 1] || { totalInvested: 0, overallValue: 0 };
+  const investedTotal = lastRow.totalInvested;
+  const totalFuture = lastRow.overallValue;
+  const gain = totalFuture - investedTotal;
+
+  // --- TAX CALCULATION ---
   const taxResult = calculateLTCG(gain, investedTotal, isTaxApplied, {
     taxRate: Number(ltcgRate),
     currency,
@@ -119,6 +113,12 @@ export default function PureSIP({ currency, setCurrency }) {
   const postTaxGain = netGain;
   const taxDeductedAmount = taxAmount;
 
+  // --- INFLATION CALCULATION (added) ---
+  const realValue = useMemo(() => {
+    return calculateRealValue(totalFuture, inflationRate, totalYears);
+  }, [totalFuture, inflationRate, totalYears]);
+
+
   const handleExport = () => {
     const headers = ["Year", "Total Invested", "Growth", "Total Value"];
     const data = yearlyRows.map((r) => [
@@ -127,75 +127,73 @@ export default function PureSIP({ currency, setCurrency }) {
     downloadCSV(data, headers, "pure_sip_table.csv");
   };
 
-  return (
-    <div className="animate-fade-in">
+  // --- UI PARTS ---
 
-      {/* INPUTS SECTION */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">
-        
-        {/* Monthly SIP - Use MAX/MIN constants */}
+  const inputsSection = (
+    <>
+      {/* Monthly SIP */}
+      <InputWithSlider
+        label="Monthly SIP Amount"
+        value={monthlySIP}
+        onChange={setMonthlySIP}
+        min={MIN_SIP} max={MAX_SIP} step={500}
+        currency={currency}
+      />
+
+      {/* Investment Tenure (With Advanced Toggle) */}
+      <div>
         <InputWithSlider
-          label="Monthly SIP Amount"
-          value={monthlySIP}
-          onChange={setMonthlySIP}
-          min={MIN_SIP} max={MAX_SIP} step={500}
-          currency={currency}
+          label="Total Investment Tenure (Years)"
+          value={totalYears}
+          onChange={handleTotalYearsChange}
+          min={MIN_YEARS} max={MAX_YEARS} step={0.1} isDecimal={true}
         />
 
-        {/* Investment Tenure (With Advanced Toggle) */}
-        <div>
-          <InputWithSlider
-            label="Total Investment Tenure (Years)"
-            value={totalYears}
-            onChange={handleTotalYearsChange}
-            min={MIN_YEARS} max={MAX_YEARS} step={0.1} isDecimal={true}// Use MAX_YEARS
-          />
-
-          <div className="mt-4 flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
-            <div className="flex items-center h-5">
-              <input
-                id="limitedPay"
-                type="checkbox"
-                checked={isLimitedPay}
-                onChange={handleLimitedPayToggle}
-                className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 cursor-pointer"
-              />
-            </div>
-            <div className="text-sm">
-              <label htmlFor="limitedPay" className="font-medium text-gray-700 cursor-pointer">
-                Stop SIP early? (Limited Pay)
-              </label>
-              <p className="text-gray-500 text-xs mt-1">
-                Stop contributing after a few years but let the money grow.
-              </p>
-            </div>
+        <div className="mt-4 flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+          <div className="flex items-center h-5">
+            <input
+              id="limitedPay"
+              type="checkbox"
+              checked={isLimitedPay}
+              onChange={handleLimitedPayToggle}
+              className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 cursor-pointer"
+            />
           </div>
-
-          {isLimitedPay && (
-            <div className="mt-4 pl-4 border-l-2 border-teal-100 animate-slide-down">
-              <InputWithSlider
-                label="SIP Contribution Period (Years)"
-                value={sipYears}
-                onChange={setSipYears}
-                min={MIN_YEARS} 
-                max={totalYears}
-              />
-            </div>
-          )}
+          <div className="text-sm">
+            <label htmlFor="limitedPay" className="font-medium text-gray-700 cursor-pointer">
+              Stop SIP early? (Limited Pay)
+            </label>
+            <p className="text-gray-500 text-xs mt-1">
+              Stop contributing after a few years but let the money grow.
+            </p>
+          </div>
         </div>
 
-        {/* Return Rate Slider - Use MAX/MIN constants */}
-        <div className="md:col-span-2">
-          <InputWithSlider
-            label="Expected Annual Return (%)"
-            value={annualRate}
-            onChange={setAnnualRate}
-            min={MIN_RATE} max={MAX_RATE} step={0.1} symbol="%"
-            isDecimal={true}
-          />
+        {isLimitedPay && (
+          <div className="mt-4 pl-4 border-l-2 border-teal-100 animate-slide-down">
+            <InputWithSlider
+              label="SIP Contribution Period (Years)"
+              value={sipYears}
+              onChange={setSipYears}
+              min={MIN_YEARS}
+              max={totalYears}
+            />
+          </div>
+        )}
+      </div>
 
-          {/* --- Apply LTCG AFTER Expected Annual Return (%) --- */}
-          <div className="mt-6">
+      {/* Return Rate & Tax */}
+      <div className="md:col-span-2">
+        <InputWithSlider
+          label="Expected Annual Return (%)"
+          value={annualRate}
+          onChange={setAnnualRate}
+          min={MIN_RATE} max={MAX_RATE} step={0.1} symbol="%"
+          isDecimal={true}
+        />
+
+        <div className="mt-6 flex flex-col md:flex-row gap-6">
+          <div className="flex-1">
             <TaxToggle
               currency={currency}
               isTaxApplied={isTaxApplied}
@@ -208,17 +206,50 @@ export default function PureSIP({ currency, setCurrency }) {
               onExemptionLimitChange={setExemptionLimit}
             />
           </div>
+
+          {/* INFLATION TOGGLE */}
+          <div className="flex-1 p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-semibold text-gray-700">Adjust for Inflation</label>
+              <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                <input type="checkbox" name="toggle" id="inflation-toggle"
+                  checked={isInflationAdjusted}
+                  onChange={() => setIsInflationAdjusted(!isInflationAdjusted)}
+                  className="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300 checked:right-0 checked:border-sky-500 transition-all duration-300"
+                  style={{ right: isInflationAdjusted ? "0" : "auto", left: isInflationAdjusted ? "auto" : "0" }}
+                />
+                <label htmlFor="inflation-toggle" className={`toggle-label block overflow-hidden h-5 rounded-full cursor-pointer ${isInflationAdjusted ? "bg-sky-500" : "bg-gray-300"}`}></label>
+              </div>
+            </div>
+
+            {isInflationAdjusted && (
+              <div className="mt-3 animate-fade-in">
+                <InputWithSlider
+                  label="Inflation Rate (%)"
+                  value={inflationRate}
+                  onChange={setInflationRate}
+                  min={0} max={15} step={0.1} symbol="%"
+                  isDecimal={true}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
+    </>
+  );
 
-      {/* Summary: pass tax object only when tax applied */}
-      <SummaryCards
-        totalValue={totalFuture}
-        invested={investedTotal}
-        gain={gain}
-        currency={currency}
-        {...(isTaxApplied
-          ? {
+  return (
+    <CalculatorLayout
+      inputs={inputsSection}
+      summary={
+        <SummaryCards
+          totalValue={totalFuture}
+          invested={investedTotal}
+          gain={gain}
+          currency={currency}
+          {...(isTaxApplied
+            ? {
               tax: {
                 applied: true,
                 postTaxValue: postTaxFuture,
@@ -226,18 +257,25 @@ export default function PureSIP({ currency, setCurrency }) {
                 taxDeducted: taxDeductedAmount,
               },
             }
-          : {})}
-      />
-      <CompoundingBarChart data={yearlyRows} currency={currency} />
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12 items-start">
-        <div className="lg:col-span-1">
-          <InvestmentPieChart invested={investedTotal} gain={gain} total={totalFuture} currency={currency} years={totalYears} />
-        </div>
-        <div className="lg:col-span-2 h-full">
-          <ResultsTable data={yearlyRows} currency={currency} onExport={handleExport} />
-        </div>
-      </div>
-    </div>
+            : {})}
+          {...(isInflationAdjusted
+            ? {
+              inflation: {
+                applied: true,
+                realValue: realValue,
+                inflationRate: inflationRate,
+              },
+            }
+            : {})}
+        />
+      }
+      charts={<CompoundingBarChart data={yearlyRows} currency={currency} />}
+      pieChart={
+        <InvestmentPieChart invested={investedTotal} gain={gain} total={totalFuture} currency={currency} years={totalYears} />
+      }
+      table={
+        <ResultsTable data={yearlyRows} currency={currency} onExport={handleExport} />
+      }
+    />
   );
 }

@@ -11,7 +11,7 @@ export function getRequiredSIP(target, annualRate, years) {
   const r_m = annualRate / 12 / 100;
   const n = years * 12;
   if (r_m === 0) return target / n;
-  
+
   const numerator = target * r_m;
   const denominator = (1 + r_m) * (Math.pow(1 + r_m, n) - 1);
   return numerator / denominator;
@@ -27,7 +27,7 @@ export function getRequiredLumpSum(target, annualRate, years) {
 export function getRequiredStepUpSIP(target, annualRate, years, stepUpPercent) {
   const r_m = annualRate / 12 / 100;
   const months = years * 12;
-  
+
   let balance = 0;
   let monthly = 1; // Start with 1 unit currency
 
@@ -45,10 +45,10 @@ export function calculateRealRate(nominalRate, inflationRate) {
 
   const R = nominalRate / 100;
   const I = inflationRate / 100;
-  
+
   // Real Rate in decimal form
   const realRate = ((1 + R) / (1 + I)) - 1;
-  
+
   return realRate * 100; // Convert back to percentage
 }
 
@@ -78,7 +78,7 @@ export function computeLoanAmortization({ principal, annualRate, years, emi }) {
         interestPaid: totalInterestPaid,
         closingBalance: Math.max(0, balance), // Ensure balance doesn't go negative due to rounding
       });
-      
+
       // Reset yearly totals for next year's row creation (optional, but cleaner for a yearly summary)
       totalInterestPaid = 0;
       totalPrincipalPaid = 0;
@@ -87,19 +87,19 @@ export function computeLoanAmortization({ principal, annualRate, years, emi }) {
 
   // The last entry needs to be created even if it's not exactly month 12, but since we are computing full years, the logic above is fine.
   // The 'total' logic below is what matters most for the summary.
-  
+
   // NOTE: For the final summary, we'll need to re-run the loop for total amounts
   let finalTotalInterest = (emi * N) - principal;
   let finalTotalPaid = emi * N;
-  
+
   return { rows, finalTotalInterest: finalTotalInterest, finalTotalPaid: finalTotalPaid };
 }
 
 // Helper function (make sure this exists in your utils/finance.js)
 export function calculateEMI(principal, monthlyRate, months) {
   if (monthlyRate === 0) return principal / months;
-  return (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / 
-         (Math.pow(1 + monthlyRate, months) - 1);
+  return (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) /
+    (Math.pow(1 + monthlyRate, months) - 1);
 }
 
 export function calculateCAGR(beginningValue, endingValue, years) {
@@ -108,10 +108,10 @@ export function calculateCAGR(beginningValue, endingValue, years) {
 
   const ratio = endingValue / beginningValue;
   const exponent = 1 / years;
-  
+
   // CAGR in decimal form
   const cagrDecimal = Math.pow(ratio, exponent) - 1;
-  
+
   return cagrDecimal * 100; // Convert to percentage
 }
 
@@ -123,26 +123,26 @@ export function computeDualAmortization({
   const R_topUp_m = topUpRate / 12 / 100;
   const totalMonths = baseYears * 12;
   const topUpMonth = topUpYear * 12;
-  
+
   let balance = basePrincipal;
   let totalInterest = 0;
   const rows = [];
 
   // Calculate Base Loan EMI
   const baseEMI = calculateEMI(basePrincipal, R_base_m, totalMonths);
-  
+
   let monthlyInterestAccumulator = 0;
   let monthlyPrincipalAccumulator = 0;
   let yearOpeningBalance = basePrincipal;
-  
+
   // --- Stage 1: Base Loan Only ---
   for (let m = 1; m <= topUpMonth; m++) {
     const interest = balance * R_base_m;
     const principalPaid = baseEMI - interest;
     balance -= principalPaid;
-    
+
     totalInterest += interest;
-    
+
     monthlyInterestAccumulator += interest;
     monthlyPrincipalAccumulator += principalPaid;
 
@@ -159,16 +159,16 @@ export function computeDualAmortization({
       monthlyPrincipalAccumulator = 0;
     }
   }
-  
+
   // --- Top-Up Occurs ---
   balance += topUpPrincipal;
-  
+
   // CRITICAL FIX: Update the opening balance for the next year to include top-up
   yearOpeningBalance = balance;
-  
+
   const N_remaining = totalMonths - topUpMonth;
   const newCombinedEMI = calculateEMI(balance, R_topUp_m, N_remaining);
-  
+
   // --- Stage 2: Combined Loan ---
   for (let m = topUpMonth + 1; m <= totalMonths; m++) {
     const interest = balance * R_topUp_m;
@@ -176,7 +176,7 @@ export function computeDualAmortization({
     balance -= principalPaid;
 
     totalInterest += interest;
-    
+
     monthlyInterestAccumulator += interest;
     monthlyPrincipalAccumulator += principalPaid;
 
@@ -206,21 +206,21 @@ export function computeDualAmortization({
   }
 
   const finalTotalPaid = baseEMI * topUpMonth + newCombinedEMI * N_remaining;
-  
-  return { 
-    rows, 
-    finalTotalInterest: totalInterest, 
-    finalTotalPaid, 
-    monthlyEMI: newCombinedEMI 
+
+  return {
+    rows,
+    finalTotalInterest: totalInterest,
+    finalTotalPaid,
+    monthlyEMI: newCombinedEMI
   };
 }
 
-export function computeSWPPlan({ 
-  initialCorpus, 
-  annualRate, 
-  years, 
-  monthlyWithdrawal, 
-  annualWithdrawalIncrease 
+export function computeSWPPlan({
+  initialCorpus,
+  annualRate,
+  years,
+  monthlyWithdrawal,
+  annualWithdrawalIncrease
 }) {
   const rows = [];
   let currentCorpus = initialCorpus;
@@ -263,7 +263,7 @@ export function computeSWPPlan({
       if (currentCorpus <= 0) {
         currentCorpus = 0;
         corpusDepleted = true;
-        
+
         // Record the year and month of depletion (only once)
         if (depletionYear === 0) {
           depletionYear = year;
@@ -304,4 +304,108 @@ export function computeSWPPlan({
     depletionMonth,
     depletionTotalMonths: depletionYear > 0 ? (depletionYear - 1) * 12 + depletionMonth : 0,
   };
+}
+
+/**
+ * Computes yearly schedule for SIP, LumpSum, or both.
+ * Merges logic from PureSIP and SIPWithLumpSum.
+ */
+export function computeYearlySchedule({
+  monthlySIP = 0,
+  lumpSum = 0,
+  annualRate,
+  totalYears,
+  sipYears = totalYears,
+}) {
+  const r_m = annualRate / 12 / 100;
+  // Ensure we cover the full duration if fractional years were passed
+  const totalMonths = Math.ceil(totalYears * 12);
+  const sipMonths = Math.ceil(sipYears * 12);
+
+  let balance = lumpSum;
+  let monthlyInvested = 0;
+  const rows = [];
+
+  for (let m = 1; m <= totalMonths; m++) {
+    // Contribute only if within SIP period
+    if (m <= sipMonths) {
+      balance += monthlySIP;
+      monthlyInvested += monthlySIP;
+    }
+
+    // Compound interest
+    balance = balance * (1 + r_m);
+
+    // Snapshot at year end (every 12 months)
+    if (m % 12 === 0) {
+      rows.push({
+        year: m / 12,
+        totalInvested: monthlyInvested + lumpSum,
+        sipInvested: monthlyInvested,
+        lumpSum: lumpSum,
+        growth: balance - (monthlyInvested + lumpSum),
+        overallValue: balance,
+      });
+    }
+  }
+
+  // Handle partial last year if needed (though usually we stick to full years)
+  // But if totalMonths is not a multiple of 12, we might miss the last chunk.
+  // The existing components relied on years being effective integers or just looping.
+
+  return rows;
+}
+
+/**
+ * Computes yearly schedule for Step-Up SIP.
+ */
+export function computeStepUpSchedule({ initialSIP, stepUpPercent, annualRate, totalYears, sipYears }) {
+  const r_m = annualRate / 12 / 100;
+  const totalMonths = Math.ceil(totalYears * 12);
+  const sipMonths = Math.ceil(sipYears * 12);
+
+  let balance = 0;
+  let totalInvested = 0;
+  const rows = [];
+
+  for (let m = 1; m <= totalMonths; m++) {
+    // 1. Calculate what the SIP *would* be for this year (Step-up logic)
+    const yearIndex = Math.floor((m - 1) / 12);
+    const currentMonthlySIP = Number(initialSIP) * Math.pow(1 + stepUpPercent / 100, yearIndex);
+
+    // 2. Only contribute if within the SIP Duration
+    if (m <= sipMonths) {
+      balance += currentMonthlySIP;
+      totalInvested += currentMonthlySIP;
+    }
+
+    // 3. Apply Interest (Always happens)
+    balance = balance * (1 + r_m);
+
+    // 4. Snapshot at year end
+    if (m % 12 === 0) {
+      rows.push({
+        year: m / 12,
+        totalInvested: totalInvested,
+        sipInvested: totalInvested,
+        stepUpAppliedPercent: stepUpPercent,
+        growth: balance - totalInvested,
+        overallValue: balance,
+      });
+    }
+  }
+  return rows;
+}
+
+/**
+ * Calculates the Real (Inflation-Adjusted) Value of a future amount.
+ * @param {number} nominalValue - The future value in today's terms (without inflation).
+ * @param {number} inflationRate - Annual inflation rate in percent.
+ * @param {number} years - Number of years.
+ * @returns {number} - The real purchasing power.
+ */
+export function calculateRealValue(nominalValue, inflationRate, years) {
+  if (inflationRate === 0 || years === 0) return nominalValue;
+  const inflationDecimal = inflationRate / 100;
+  return nominalValue / Math.pow(1 + inflationDecimal, years);
 }
