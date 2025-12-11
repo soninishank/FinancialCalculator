@@ -81,7 +81,8 @@ async function processPayload(payload, options = {}) {
         symbol = null,
         dryRun = true,
         allowedCats = ['QIB', 'NII', 'RII'],
-        reconciliationTolerance = 0.001 // default 0.1% fractional tolerance
+        reconciliationTolerance = 0.001, // default 0.1% fractional tolerance
+        faceValue = null // face value of the shares
     } = options;
 
     // Helpers
@@ -112,6 +113,12 @@ async function processPayload(payload, options = {}) {
         for (const item of arr) {
             if (isHeaderRow(item)) continue;
             const srNo = safeStr(item.srNo ?? item.sr_no ?? '');
+
+            // CRITICAL: Skip child rows (they have dots or parentheses)
+            // Examples: "1(a)", "2.1", "2.1(a)", "3(b)"
+            const isChild = srNo.includes('.') || srNo.includes('(');
+            if (isChild) continue;
+
             const catFromText = detectCategoryFromText(item.category ?? item.categoryName ?? '');
             const canonical = catFromText ?? canonicalFromSrNo(srNo);
             if (!canonical || !allowedCats.includes(canonical)) continue;
@@ -157,7 +164,9 @@ async function processPayload(payload, options = {}) {
 
             const entry = { offered, bid, rawCat, srNo: srRaw };
 
-            const isChild = srRaw.includes('.');
+            // Detect child rows: they have either dots (2.1, 2.2) or parentheses (1(a), 3(b))
+            // Examples: "1(a)", "1(b)", "2.1", "2.1(a)", "3(a)", "3(b)"
+            const isChild = srRaw.includes('.') || srRaw.includes('(');
             const bucket = bucketMap.get(canonical);
 
             if (isChild) bucket.children.push(entry);
@@ -284,16 +293,16 @@ async function processPayload(payload, options = {}) {
             });
         }
         for (const r of records) {
-            const text = `INSERT INTO ipo_bidding_details (ipo_id, category, sr_no, shares_offered, shares_bid, subscription_ratio, source, created_at)
-VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())`;
-            const params = [ipoId, r.category, r.srNo || null, r.shares_offered, r.shares_bid, r.subscription_ratio, sourceUsed];
+            const text = `INSERT INTO ipo_bidding_details (ipo_id, category, sr_no, shares_offered, shares_bid, subscription_ratio, face_value, source, created_at)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())`;
+            const params = [ipoId, r.category, r.srNo || null, r.shares_offered, r.shares_bid, r.subscription_ratio, faceValue, sourceUsed];
             sqlStatements.push({ text, params });
         }
         // Insert computed total (recommended) as a record with category = 'Total' (optional)
         if (ipoId) {
-            const textTotal = `INSERT INTO ipo_bidding_details (ipo_id, category, sr_no, shares_offered, shares_bid, subscription_ratio, source, created_at)
-VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())`;
-            const paramsTotal = [ipoId, 'Total', null, ensureInteger(computed_offered), ensureInteger(computed_bids), computed_ratio, sourceUsed];
+            const textTotal = `INSERT INTO ipo_bidding_details (ipo_id, category, sr_no, shares_offered, shares_bid, subscription_ratio, face_value, source, created_at)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())`;
+            const paramsTotal = [ipoId, 'Total', null, ensureInteger(computed_offered), ensureInteger(computed_bids), computed_ratio, faceValue, sourceUsed];
             sqlStatements.push({ text: textTotal, params: paramsTotal });
         }
     } else {
@@ -305,17 +314,17 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())`;
             }
             for (const r of records) {
                 await dbClient.query(
-                    `INSERT INTO ipo_bidding_details (ipo_id, category, sr_no, shares_offered, shares_bid, subscription_ratio, source, created_at)
-           VALUES ($1,$2,$3,$4,$5,$6,$7,NOW())`,
-                    [ipoId, r.category, r.srNo || null, r.shares_offered, r.shares_bid, r.subscription_ratio, sourceUsed]
+                    `INSERT INTO ipo_bidding_details (ipo_id, category, sr_no, shares_offered, shares_bid, subscription_ratio, face_value, source, created_at)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,NOW())`,
+                    [ipoId, r.category, r.srNo || null, r.shares_offered, r.shares_bid, r.subscription_ratio, faceValue, sourceUsed]
                 );
             }
             // insert computed total
             if (ipoId) {
                 await dbClient.query(
-                    `INSERT INTO ipo_bidding_details (ipo_id, category, sr_no, shares_offered, shares_bid, subscription_ratio, source, created_at)
-           VALUES ($1,$2,$3,$4,$5,$6,$7,NOW())`,
-                    [ipoId, 'Total', null, ensureInteger(computed_offered), ensureInteger(computed_bids), computed_ratio, sourceUsed]
+                    `INSERT INTO ipo_bidding_details (ipo_id, category, sr_no, shares_offered, shares_bid, subscription_ratio, face_value, source, created_at)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,NOW())`,
+                    [ipoId, 'Total', null, ensureInteger(computed_offered), ensureInteger(computed_bids), computed_ratio, faceValue, sourceUsed]
                 );
             }
             await dbClient.query('COMMIT');

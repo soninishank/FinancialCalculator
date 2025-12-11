@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { moneyFormat } from "../../utils/formatting";
+import { getRegistrarAllotmentLink } from "../../utils/registrarUtils";
 import BiddingChart from './BiddingChart';
 import SubscriptionStats from './SubscriptionStats';
 
@@ -48,12 +49,29 @@ export default function IPODetail() {
         documents, biddingData, subscription
     } = ipo;
 
-    const filteredDocuments = documents ? documents.filter(doc => ![
-        "List of mobile applications accepting UPI as Payment Option",
-        "Video link for UPI based ASBA process",
-        "Video link for BHIM UPI Registration",
-        "Processing of ASBA Applications"
-    ].includes(doc.title?.trim())) : [];
+    const filteredDocuments = documents ? documents.filter(doc => {
+        const title = doc.title?.trim().toLowerCase() || '';
+        return !(
+            title.includes('list of mobile applications') ||
+            title.includes('video link') ||
+            title.includes('processing of asba') ||
+            title.includes('e-form') ||
+            title.includes('branches of self certified syndicate banks') ||
+            title.includes('scsb')
+        );
+    }) : [];
+
+    // Helper function to enhance document title with descriptive text
+    const getEnhancedDocTitle = (title) => {
+        if (!title) return title;
+        const lowerTitle = title.toLowerCase();
+        if (lowerTitle.includes('red herring prospectus')) {
+            return `${title} (Final SEBI-Approved Document)`;
+        }
+        return title;
+    };
+
+    const allotmentLink = getRegistrarAllotmentLink(registrar_name);
 
     const priceRange = (price_range_low && price_range_high)
         ? `Rs.${price_range_low} - Rs.${price_range_high}`
@@ -100,7 +118,6 @@ export default function IPODetail() {
                             <InfoCard label="Issue Open" value={issue_start ? new Date(issue_start).toDateString() : 'TBA'} />
                             <InfoCard label="Issue Close" value={issue_end ? new Date(issue_end).toDateString() : 'TBA'} />
                             <InfoCard label="Listing Date" value={listing_date ? new Date(listing_date).toDateString() : 'TBA'} />
-                            <InfoCard label="UPI Mandate Cutoff" value={issue_end ? `${new Date(issue_end).toDateString()} 5:00 PM` : 'TBA'} />
                         </div>
                     </div>
 
@@ -159,7 +176,7 @@ export default function IPODetail() {
                                             rel="noreferrer"
                                             className="inline-flex items-center px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors shadow-sm"
                                         >
-                                            📄 {doc.title}
+                                            📄 {getEnhancedDocTitle(doc.title)}
                                         </a>
                                     ))}
                                 </div>
@@ -190,6 +207,16 @@ export default function IPODetail() {
                                     {registrar_website && (
                                         <a href={registrar_website.startsWith('http') ? registrar_website : `https://${registrar_website}`} target="_blank" rel="noreferrer" className="text-sm text-blue-600 font-medium hover:underline flex items-center gap-2">
                                             🌐 Visit Website
+                                        </a>
+                                    )}
+                                    {allotmentLink && (
+                                        <a
+                                            href={allotmentLink}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 mt-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm w-full"
+                                        >
+                                            🎯 Check Allotment Status
                                         </a>
                                     )}
                                 </div>

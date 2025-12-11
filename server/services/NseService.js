@@ -469,7 +469,8 @@ class NseService {
                 symbol: symbol,
                 dryRun: false,
                 allowedCats: ['QIB', 'NII', 'RII'],
-                reconciliationTolerance: 0.001
+                reconciliationTolerance: 0.001,
+                faceValue: faceValue
             });
 
             // 4. Documents
@@ -484,7 +485,9 @@ class NseService {
             const unwantedTitles = [
                 "Video link",
                 "List of mobile applications",
-                "Processing of ASBA"
+                "Processing of ASBA",
+                "e-form link",
+                "Branches of Self Certified Syndicate Banks"
             ];
 
             for (const d of dataList) {

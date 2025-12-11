@@ -93,6 +93,7 @@ async function createSchema() {
         shares_offered BIGINT,
         shares_bid BIGINT,
         subscription_ratio NUMERIC(8,3),
+        face_value NUMERIC(12,2),
         cutoff_bids BIGINT,
         price_bids BIGINT,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -159,6 +160,8 @@ async function createSchema() {
         shares_offered BIGINT,
         shares_bid BIGINT,
         subscription_ratio NUMERIC(12,8),
+        face_value NUMERIC(12,2),
+        source VARCHAR(50),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
       CREATE INDEX IF NOT EXISTS idx_bidding_ipo_id ON ipo_bidding_details(ipo_id);
