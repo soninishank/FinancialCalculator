@@ -1,6 +1,3 @@
-# Using a real browser to debug the NSE IPO page structure
-# We want to confirm the column indices.
-
 const puppeteer = require('puppeteer');
 
 (async () => {
@@ -12,11 +9,11 @@ const puppeteer = require('puppeteer');
 
         // Extract headers
         const headers = await page.$$eval('table thead th', ths => ths.map(th => th.innerText.trim()));
-        console.log('Headers:', headers);
+        console.log('Headers:', JSON.stringify(headers));
 
         // Extract first row
         const firstRow = await page.$$eval('table tbody tr:first-child td', tds => tds.map(td => td.innerText.trim()));
-        console.log('First Row:', firstRow);
+        console.log('First Row:', JSON.stringify(firstRow));
 
     } catch (error) {
         console.error('Error:', error);

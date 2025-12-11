@@ -1,0 +1,151 @@
+Starting scheduled IPO fetch...
+IPO scraper service running on http://localhost:8081
+Navigating to https://www.nseindia.com/market-data/all-upcoming-issues-ipo...
+Table 0 Headers: [
+  'PRODUCTS',
+  'TODAY',
+  'PREVIOUS TRADE DAY',
+  'VOLUME\n                                     (SHARES/CONTRACTS)',
+  'VALUE*\n                                     (₹ CRORES)',
+  'OPEN INTEREST  (CONTRACTS)',
+  'NO. OF ORDERS#',
+  'NO. OF TRADES',
+  'AVERAGE TRADE VALUE(₹)',
+  'UPDATED AT',
+  'VOLUME\n                                    (SHARES/CONTRACTS)',
+  'VALUE*\n                                     (₹ CRORES)',
+  'OPEN INTEREST\n                                     (CONTRACTS)'
+]
+Table 0 skipped: Missing essential columns.
+Table 1 Headers: [
+  'COMPANY NAME',
+  'SECURITY TYPE',
+  'ISSUE START DATE',
+  'ISSUE END DATE',
+  'STATUS',
+  'NSE BID DETAILS (ACROSS ALL CATEGORIES)',
+  'OFFERED/ RESERVED',
+  'BIDS',
+  'SUBSCRIPTION CATEGORY'
+]
+IPO fetch successful. Saved 2 items.
+Starting scheduled IPO fetch...
+Navigating to https://www.nseindia.com/market-data/all-upcoming-issues-ipo...
+Table 0 Headers: [
+  'PRODUCTS',
+  'TODAY',
+  'PREVIOUS TRADE DAY',
+  'VOLUME\n                                     (SHARES/CONTRACTS)',
+  'VALUE*\n                                     (₹ CRORES)',
+  'OPEN INTEREST  (CONTRACTS)',
+  'NO. OF ORDERS#',
+  'NO. OF TRADES',
+  'AVERAGE TRADE VALUE(₹)',
+  'UPDATED AT',
+  'VOLUME\n                                    (SHARES/CONTRACTS)',
+  'VALUE*\n                                     (₹ CRORES)',
+  'OPEN INTEREST\n                                     (CONTRACTS)'
+]
+Table 0 skipped: Missing essential columns.
+Table 1 Headers: [
+  'COMPANY NAME',
+  'SECURITY TYPE',
+  'ISSUE START DATE',
+  'ISSUE END DATE',
+  'STATUS',
+  'NSE BID DETAILS (ACROSS ALL CATEGORIES)',
+  'OFFERED/ RESERVED',
+  'BIDS',
+  'SUBSCRIPTION CATEGORY'
+]
+IPO fetch successful. Saved 2 items.
+Starting scheduled IPO fetch...
+Navigating to https://www.nseindia.com/market-data/all-upcoming-issues-ipo...
+Table 0 Headers: [
+  'PRODUCTS',
+  'TODAY',
+  'PREVIOUS TRADE DAY',
+  'VOLUME\n                                     (SHARES/CONTRACTS)',
+  'VALUE*\n                                     (₹ CRORES)',
+  'OPEN INTEREST  (CONTRACTS)',
+  'NO. OF ORDERS#',
+  'NO. OF TRADES',
+  'AVERAGE TRADE VALUE(₹)',
+  'UPDATED AT',
+  'VOLUME\n                                    (SHARES/CONTRACTS)',
+  'VALUE*\n                                     (₹ CRORES)',
+  'OPEN INTEREST\n                                     (CONTRACTS)'
+]
+Table 0 skipped: Missing essential columns.
+Table 1 Headers: [
+  'COMPANY NAME',
+  'SECURITY TYPE',
+  'ISSUE START DATE',
+  'ISSUE END DATE',
+  'STATUS',
+  'NSE BID DETAILS (ACROSS ALL CATEGORIES)',
+  'OFFERED/ RESERVED',
+  'BIDS',
+  'SUBSCRIPTION CATEGORY'
+]
+IPO fetch successful. Saved 2 items.
+Starting scheduled IPO fetch...
+Navigating to https://www.nseindia.com/market-data/all-upcoming-issues-ipo...
+Table 0 Headers: [
+  'PRODUCTS',
+  'TODAY',
+  'PREVIOUS TRADE DAY',
+  'VOLUME\n                                     (SHARES/CONTRACTS)',
+  'VALUE*\n                                     (₹ CRORES)',
+  'OPEN INTEREST  (CONTRACTS)',
+  'NO. OF ORDERS#',
+  'NO. OF TRADES',
+  'AVERAGE TRADE VALUE(₹)',
+  'UPDATED AT',
+  'VOLUME\n                                    (SHARES/CONTRACTS)',
+  'VALUE*\n                                     (₹ CRORES)',
+  'OPEN INTEREST\n                                     (CONTRACTS)'
+]
+Table 0 skipped: Missing essential columns.
+Table 1 Headers: [
+  'COMPANY NAME',
+  'SECURITY TYPE',
+  'ISSUE START DATE',
+  'ISSUE END DATE',
+  'STATUS',
+  'NSE BID DETAILS (ACROSS ALL CATEGORIES)',
+  'OFFERED/ RESERVED',
+  'BIDS',
+  'SUBSCRIPTION CATEGORY'
+]
+IPO fetch successful. Saved 2 items.
+Starting scheduled IPO fetch...
+Navigating to https://www.nseindia.com/market-data/all-upcoming-issues-ipo...
+Table 0 Headers: [
+  'PRODUCTS',
+  'TODAY',
+  'PREVIOUS TRADE DAY',
+  'VOLUME\n                                     (SHARES/CONTRACTS)',
+  'VALUE*\n                                     (₹ CRORES)',
+  'OPEN INTEREST  (CONTRACTS)',
+  'NO. OF ORDERS#',
+  'NO. OF TRADES',
+  'AVERAGE TRADE VALUE(₹)',
+  'UPDATED AT',
+  'VOLUME\n                                    (SHARES/CONTRACTS)',
+  'VALUE*\n                                     (₹ CRORES)',
+  'OPEN INTEREST\n                                     (CONTRACTS)'
+]
+Table 0 skipped: Missing essential columns.
+Table 1 Headers: [
+  'COMPANY NAME',
+  'SECURITY TYPE',
+  'ISSUE START DATE',
+  'ISSUE END DATE',
+  'STATUS',
+  'NSE BID DETAILS (ACROSS ALL CATEGORIES)',
+  'OFFERED/ RESERVED',
+  'BIDS',
+  'SUBSCRIPTION CATEGORY'
+]
+IPO fetch successful. Saved 2 items.

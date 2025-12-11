@@ -41,8 +41,10 @@ function normalize(scraped) {
       type: r.type || "EQ",
       openDate: r.issueStart || r.openDate || "",
       closeDate: r.issueEnd || r.closeDate || "",
+      listingDate: r.listingDate || "",
+      priceRange: r.priceRange || "",
       issuePrice: r.issuePrice ?? null,
-      issueSize: issueSize,         // numeric or null
+      issueSize: r.issueSize || issueSize, // Use provided issueSize if available
       gmp: r.gmp ?? null,
       estimatedPrice: r.estimatedPrice ?? null,
       gainPercentage: maybeRatio !== null ? maybeRatio : null,
@@ -52,7 +54,7 @@ function normalize(scraped) {
 }
 
 export function useIpoData({ live = true } = {}) {
-  const [categorizedData, setCategorizedData] = useState({ Upcoming: [], Open: [], Closed: [] });
+  const [categorizedData, setCategorizedData] = useState({ upcoming: [], open: [], closed: [] });
   const [isLoading, setIsLoading] = useState(live);
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
@@ -69,9 +71,9 @@ export function useIpoData({ live = true } = {}) {
 
         if (mounted) {
           setCategorizedData({
-            Upcoming: normalize(source.upcoming || []),
-            Open: normalize(source.open || []),
-            Closed: normalize(source.closed || [])
+            upcoming: normalize(source.upcoming || []),
+            open: normalize(source.open || []),
+            closed: normalize(source.closed || [])
           });
           setLastUpdated(new Date().toISOString());
         }
@@ -80,7 +82,7 @@ export function useIpoData({ live = true } = {}) {
         if (mounted) {
           setError(err);
           // Fallback to empty if error
-          setCategorizedData({ Upcoming: [], Open: [], Closed: [] });
+          setCategorizedData({ upcoming: [], open: [], closed: [] });
           setLastUpdated(null);
         }
       } finally {

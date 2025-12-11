@@ -1,48 +1,81 @@
 // src/pages/IPOTrackerPage.js
 import React, { useState } from "react";
-import { useIpoData } from "../hooks/useIpoData"; // <--- FIX 2: Import the hook
-import IpoListTable from "../components/ipo/IPOListTable";     // <--- FIX 3: Import the List Table
-import IpoStatusTabs from "../components/ipo/IPOStatusTabs";   // <--- FIX 4: Import the Tabs
-const TABS = ['Upcoming', 'Open', 'Closed'];
+import { useIpoData } from "../hooks/useIpoData";
+import IpoListTable from "../components/ipo/IPOListTable";
+import IpoStatusTabs from "../components/ipo/IPOStatusTabs";
+
+const TABS = ['Open', 'Upcoming', 'Closed']; // Changed order to prioritize Open
+const FILTERS = ['All', 'Equity', 'SME'];
 
 export default function IPOTracker() {
-    const [activeTab, setActiveTab] = useState('Upcoming');
+    const [activeTab, setActiveTab] = useState('Open'); // Default to Open
+    const [securityFilter, setSecurityFilter] = useState('All');
+
     const { categorizedData, isLoading } = useIpoData();
 
-    // --- FIX 1: Show Loading State First ---
     if (isLoading) {
         return (
             <div className="text-center py-10">
                 <div className="text-xl font-semibold text-indigo-600">Loading Live IPO Data...</div>
-                <p className="text-gray-500 mt-2">Connecting to data feed. This is the future automation point!</p>
+                <p className="text-gray-500 mt-2">Fetching latest data from NSE...</p>
             </div>
         );
     }
-    
-    // --- FIX 2: Safely access current data (default to empty array) ---
-    // If categorizedData is still undefined/null, or if the key is missing, default to [].
-    const currentData = categorizedData[activeTab] || []; 
+
+    // Get data for active tab
+    const rawData = categorizedData ? (categorizedData[activeTab.toLowerCase()] || []) : [];
+
+    // Apply Filters
+    const filteredData = rawData.filter(ipo => {
+        if (securityFilter === 'All') return true;
+        // Check for loose match (e.g. "SME" inside "SME Emerge")
+        const type = (ipo.type || "").toUpperCase();
+        if (securityFilter === 'SME') return type.includes('SME');
+        if (securityFilter === 'Equity') return !type.includes('SME'); // Assume non-SME is generic Equity
+        return true;
+    });
 
     return (
-        <div className="animate-fade-in">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">IPO & GMP Tracker</h2>
-            <p className="text-gray-500 mb-6">Live status and grey market premium for mainboard and SME IPOs.</p>
+        <div className="animate-fade-in w-full px-6 py-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <div>
+                    <h2 className="text-2xl font-bold text-gray-800">IPO Analysis</h2>
+                    <p className="text-gray-500 text-sm">Real-time status of Mainboard & SME issues</p>
+                </div>
+
+                {/* Security Type Filter */}
+                <div className="flex bg-gray-100 p-1 rounded-lg">
+                    {FILTERS.map(filter => (
+                        <button
+                            key={filter}
+                            onClick={() => setSecurityFilter(filter)}
+                            className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${securityFilter === filter
+                                ? 'bg-white text-indigo-600 shadow-sm'
+                                : 'text-gray-500 hover:text-gray-700'
+                                }`}
+                        >
+                            {filter}
+                        </button>
+                    ))}
+                </div>
+            </div>
 
             {/* Tab Navigation */}
-            <IpoStatusTabs 
-                tabs={TABS} 
-                activeTab={activeTab} 
+            <IpoStatusTabs
+                tabs={TABS}
+                activeTab={activeTab}
                 setActiveTab={setActiveTab}
             />
 
             {/* List Table View */}
-            <IpoListTable 
-                data={currentData} // This is now guaranteed to be an array or [].
-                status={activeTab} 
+            <IpoListTable
+                data={filteredData}
+                status={activeTab}
             />
-            
-            <p className="text-xs text-gray-400 mt-4">
-                *GMP (Grey Market Premium) is unofficial data and should be used for informational purposes only.
+
+            <p className="text-xs text-gray-400 mt-6 text-center">
+                *Data fetched directly from NSE. Dates and GMP are subject to market changes.
+                <br />Displaying {filteredData.length} of {rawData.length} items.
             </p>
         </div>
     );
