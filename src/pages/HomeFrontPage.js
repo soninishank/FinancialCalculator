@@ -42,7 +42,7 @@ export default function HomeFrontPage() {
           </Link>
 
           {/* IPOs */}
-          <Link to="/ipo" className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
+          <Link to="/ipo-tracker" className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
             <h3 className="font-semibold text-lg mb-2">IPOs</h3>
             <p className="text-sm text-gray-600">
               Upcoming IPOs, GMP, allotment status & more.

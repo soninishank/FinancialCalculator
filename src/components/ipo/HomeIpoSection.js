@@ -7,29 +7,13 @@ import { useIpoData } from "../../hooks/useIpoData";
 
 export default function HomeIpoSection() {
   // use live data from your local scraper
-  const { data, isLoading, error, lastUpdated } = useIpoData({ live: true });
+  // use live data from your local scraper
+  const { categorizedData, isLoading, error, lastUpdated } = useIpoData({ live: true });
   const [activeTab, setActiveTab] = React.useState("Upcoming");
   const tabs = ["Upcoming", "Open", "Closed"];
 
-  // helper to classify using open/close dates
-  const rowsByStatus = React.useMemo(() => {
-    const now = Date.now();
-    const upcoming = [];
-    const open = [];
-    const closed = [];
-    data.forEach((ipo) => {
-      const openMs = ipo.openDate ? new Date(ipo.openDate).getTime() : null;
-      const closeMs = ipo.closeDate ? new Date(ipo.closeDate).getTime() : null;
-      if (openMs && closeMs) {
-        if (openMs <= now && closeMs >= now) open.push(ipo);
-        else if (closeMs < now) closed.push(ipo);
-        else upcoming.push(ipo);
-      } else {
-        upcoming.push(ipo);
-      }
-    });
-    return { Upcoming: upcoming, Open: open, Closed: closed };
-  }, [data]);
+  // use categorizedData directly, defaulting to empty arrays if undefined
+  const currentData = categorizedData ? categorizedData[activeTab] : [];
 
   return (
     <section className="max-w-6xl mx-auto px-4 py-12">
@@ -53,7 +37,7 @@ export default function HomeIpoSection() {
           Failed to load IPOs. Showing cached / seed data.
         </div>
       ) : (
-        <IpoListTable data={rowsByStatus[activeTab] || []} status={activeTab} />
+        <IpoListTable data={currentData || []} status={activeTab} />
       )}
     </section>
   );

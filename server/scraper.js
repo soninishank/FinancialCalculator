@@ -1,20 +1,32 @@
-// server/scraper.js
 const express = require("express");
 const NodeCache = require("node-cache");
 const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 const puppeteer = require("puppeteer");
+const cron = require("node-cron");
 
 const app = express();
-const cache = new NodeCache({ stdTTL: 300 }); // 5 minutes cache
+const cache = new NodeCache({ stdTTL: 300 }); // 5 minutes cache for API responses (memory)
 app.use(cors());
 
 const NSE_IPO_URL = "https://www.nseindia.com/market-data/all-upcoming-issues-ipo";
+const DATA_FILE_PATH = path.resolve(__dirname, "data", "ipos.json");
 
+// --- Helper: Date Parsing ---
+function parseDate(dateStr) {
+  if (!dateStr) return null;
+  // Expected format: "DD-MMM-YYYY" e.g., "12-Dec-2025"
+  const parts = dateStr.split("-");
+  if (parts.length !== 3) return null;
+  return new Date(`${parts[1]} ${parts[0]} ${parts[2]}`); // "Dec 12 2025"
+}
+
+// --- Scraper Logic ---
 async function fetchNseHtmlWithPuppeteer(url) {
   const browser = await puppeteer.launch({
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    headless: "new"
   });
   try {
     const page = await browser.newPage();
@@ -22,136 +34,162 @@ async function fetchNseHtmlWithPuppeteer(url) {
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116 Safari/537.36"
     );
     await page.setViewport({ width: 1280, height: 900 });
-    // go to the page and wait for networkidle (page finished loading)
-    await page.goto(url, { waitUntil: "networkidle2", timeout: 45000 });
 
-    // optionally wait for a common selector to appear (if known)
-    // await page.waitForSelector("table", { timeout: 5000 }).catch(() => {});
+    // Go to page
+    console.log(`Navigating to ${url}...`);
+    await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
 
     const html = await page.content();
-
-    // save a debug snapshot to disk so you can inspect the exact HTML the scraper saw
-    try {
-      const outPath = path.resolve(process.cwd(), "last_nse.html");
-      fs.writeFileSync(outPath, html, "utf8");
-      console.log("Wrote debug snapshot to", outPath);
-    } catch (err) {
-      console.warn("Failed to write debug snapshot:", err && err.message);
-    }
-
     await browser.close();
     return html;
   } catch (err) {
-    await browser.close().catch(() => {});
+    await browser.close().catch(() => { });
     throw err;
   }
 }
 
-/**
- * Try to parse the HTML for IPO rows.
- * This tries multiple heuristics — adjust selectors if NSE changes layout.
- */
 function parseIpoTable(html) {
   const cheerio = require("cheerio");
   const $ = cheerio.load(html);
   const rows = [];
 
-  // Heuristic A: table rows in a normal table
+  // Try standard table parsing
   $("table tbody tr").each((i, el) => {
     const cols = $(el).find("td");
     if (cols.length >= 4) {
       const name = $(cols[0]).text().trim();
-      const type = $(cols[1]).text().trim();
+      // Sometimes the name might have a link, handled by .text()
+      const type = $(cols[1]).text().trim(); // "Book Building" etc
       const issueStart = $(cols[2]).text().trim();
       const issueEnd = $(cols[3]).text().trim();
-      // optional additional columns
-      const other = [];
-      for (let j = 4; j < cols.length; j++) other.push($(cols[j]).text().trim());
-      rows.push({
-        id: `${name}-${issueStart}-${i}`,
-        name,
-        type,
-        issueStart,
-        issueEnd,
-        raw: other.join(" | "),
-      });
-    }
-  });
 
-  if (rows.length > 0) return rows;
-
-  // Heuristic B: look for card/list style items (NSE sometimes uses divs)
-  // Try to find elements that look like IPO items
-  const itemSelectors = [
-    ".ipo-list .ipo-item",
-    ".upcoming-issues .issue",
-    ".market-data-card", // fallback guesses
-  ];
-  for (const sel of itemSelectors) {
-    $(sel).each((i, el) => {
-      const name = $(el).find(".company-name").text().trim() || $(el).find("h3").text().trim();
-      const dates = $(el).find(".dates").text().trim() || $(el).text().trim();
-      if (name) {
+      // Basic validation
+      if (name && (issueStart || issueEnd)) {
         rows.push({
           id: `${name}-${i}`,
           name,
-          type: $(el).find(".type").text().trim() || "",
-          issueStart: dates,
-          issueEnd: "",
-          raw: $(el).text().trim().slice(0, 200),
+          type,
+          issueStart,
+          issueEnd,
+          raw: $(el).text().trim().slice(0, 200)
         });
       }
-    });
-    if (rows.length) break;
-  }
-
-  // Heuristic C: fallback — look for any element that contains 'Open:' and parse lines
-  if (rows.length === 0) {
-    $("*:contains('Open')").each((i, el) => {
-      const txt = $(el).text();
-      if (txt && txt.length > 30) {
-        rows.push({
-          id: `fallback-${i}`,
-          name: txt.trim().split("\n")[0].slice(0, 80),
-          type: "",
-          issueStart: "",
-          issueEnd: "",
-          raw: txt.trim().slice(0, 400),
-        });
-      }
-    });
-  }
+    }
+  });
 
   return rows;
 }
 
-app.get("/api/ipos", async (req, res) => {
+function categorizeIPOs(rawIpos) {
+  const now = new Date();
+  // Reset time part to ensure fair comparison
+  now.setHours(0, 0, 0, 0);
+
+  const upcoming = [];
+  const open = [];
+  const closed = [];
+
+  rawIpos.forEach(ipo => {
+    const start = parseDate(ipo.issueStart);
+    const end = parseDate(ipo.issueEnd);
+
+    // If dates are invalid, maybe push to "upcoming" or "closed" based on context? 
+    // For safety, if we can't parse dates, we might skip or put in closed.
+    // Let's check "Open" first: Start <= Now <= End
+
+    if (start && end) {
+      if (now < start) {
+        upcoming.push(ipo);
+      } else if (now >= start && now <= end) {
+        open.push(ipo);
+      } else {
+        closed.push(ipo);
+      }
+    } else if (start && !end) {
+      // If only start is known and it's future
+      if (now < start) upcoming.push(ipo);
+      else open.push(ipo); // Assume open if started and no end date known yet
+    } else {
+      // Fallback or just 'Recently Closed' if mostly likely listing is past
+      closed.push(ipo);
+    }
+  });
+
+  return { upcoming, open, closed };
+}
+
+// --- Core Fetch Function ---
+async function fetchAndCacheIPOs() {
+  console.log("Starting scheduled IPO fetch...");
   try {
-    const cached = cache.get("ipos_full");
-    if (cached) return res.json({ ok: true, data: cached });
-
     const html = await fetchNseHtmlWithPuppeteer(NSE_IPO_URL);
-    const data = parseIpoTable(html);
+    const rawData = parseIpoTable(html);
+    const categorized = categorizeIPOs(rawData);
 
-    cache.set("ipos_full", data);
-    return res.json({ ok: true, data });
+    const payload = {
+      lastUpdated: new Date().toISOString(),
+      count: rawData.length,
+      data: categorized
+    };
+
+    // Save to file
+    fs.writeFileSync(DATA_FILE_PATH, JSON.stringify(payload, null, 2), "utf8");
+    console.log(`IPO fetch successful. Saved ${rawData.length} items.`);
+
+    // Update memory cache
+    cache.set("ipos_full", payload);
+    return payload;
   } catch (err) {
-    console.error("scrape error:", err && err.message ? err.message : err);
-    return res.status(500).json({ ok: false, error: "Failed to fetch IPOs" });
+    console.error("Error in fetchAndCacheIPOs:", err);
+    return null;
   }
+}
+
+// --- Initialization & Cron ---
+
+// Load initial data if exists
+if (fs.existsSync(DATA_FILE_PATH)) {
+  try {
+    const fileData = fs.readFileSync(DATA_FILE_PATH, "utf8");
+    cache.set("ipos_full", JSON.parse(fileData));
+    console.log("Loaded initial IPO data from disk.");
+  } catch (err) {
+    console.error("Failed to load existing data file:", err);
+  }
+}
+
+// Check if we need a fresh fetch immediately (if no data)
+if (!cache.get("ipos_full")) {
+  fetchAndCacheIPOs();
+}
+
+// Schedule Cron: Run every hour at minute 0
+cron.schedule("0 * * * *", () => {
+  fetchAndCacheIPOs();
 });
 
-// Debug endpoint to return the raw HTML the scraper fetched
-app.get("/api/debug-html", async (req, res) => {
-  try {
-    const html = await fetchNseHtmlWithPuppeteer(NSE_IPO_URL);
-    res.set("Content-Type", "text/html");
-    return res.send(html);
-  } catch (err) {
-    console.error("debug-html error", err && err.message);
-    return res.status(500).send("Failed to fetch debug HTML: " + (err.message || err));
+// --- API Endpoints ---
+app.get("/api/ipos", async (req, res) => {
+  const cached = cache.get("ipos_full");
+  if (cached) {
+    return res.json({ ok: true, ...cached });
   }
+
+  // If not in cache (and scraping failed or in progress), try triggering one, but return empty for now or wait?
+  // Let's try to fetch if missing
+  const data = await fetchAndCacheIPOs();
+  if (data) return res.json({ ok: true, ...data });
+
+  return res.status(500).json({ ok: false, error: "Data unavailable" });
+});
+
+// Force refresh endpoint
+app.post("/api/ipos/refresh", async (req, res) => {
+  const data = await fetchAndCacheIPOs();
+  if (data) return res.json({ ok: true, ...data });
+  return res.status(500).json({ ok: false, error: "Refresh failed" });
 });
 
 const PORT = process.env.SCRAPER_PORT || 8081;
-app.listen(PORT, () => console.log(`IPO scraper (puppeteer) running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`IPO scraper service running on http://localhost:${PORT}`));
+

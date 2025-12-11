@@ -1,5 +1,5 @@
 // src/hooks/useIpoData.js
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { fetchIpos } from "../api/ipo";
 
 /**
@@ -52,8 +52,8 @@ function normalize(scraped) {
 }
 
 export function useIpoData({ live = true } = {}) {
-  const [data, setData] = useState([]);
-  const [isLoading, setIsLoading] = useState(live); // if live, show loading
+  const [categorizedData, setCategorizedData] = useState({ Upcoming: [], Open: [], Closed: [] });
+  const [isLoading, setIsLoading] = useState(live);
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
 
@@ -64,17 +64,23 @@ export function useIpoData({ live = true } = {}) {
       setIsLoading(true);
       setError(null);
       try {
-        const source = live ? await fetchIpos() : [];
-        const processed = normalize(source || []);
+        // fetchIpos now returns { upcoming: [], open: [], closed: [] }
+        const source = live ? await fetchIpos() : { upcoming: [], open: [], closed: [] };
+
         if (mounted) {
-          setData(processed);
+          setCategorizedData({
+            Upcoming: normalize(source.upcoming || []),
+            Open: normalize(source.open || []),
+            Closed: normalize(source.closed || [])
+          });
           setLastUpdated(new Date().toISOString());
         }
       } catch (err) {
         console.error("useIpoData error:", err);
         if (mounted) {
           setError(err);
-          setData([]); // fallback empty
+          // Fallback to empty if error
+          setCategorizedData({ Upcoming: [], Open: [], Closed: [] });
           setLastUpdated(null);
         }
       } finally {
@@ -86,28 +92,5 @@ export function useIpoData({ live = true } = {}) {
     return () => { mounted = false; };
   }, [live]);
 
-  // categorized view computed on client
-  const categorizedData = useMemo(() => {
-    const now = Date.now();
-    const upcoming = [];
-    const open = [];
-    const closed = [];
-
-    data.forEach((ipo) => {
-      const openMs = ipo.openDate ? Date.parse(ipo.openDate) : null;
-      const closeMs = ipo.closeDate ? Date.parse(ipo.closeDate) : null;
-
-      if (openMs && closeMs) {
-        if (openMs <= now && closeMs >= now) open.push(ipo);
-        else if (closeMs < now) closed.push(ipo);
-        else upcoming.push(ipo);
-      } else {
-        upcoming.push(ipo);
-      }
-    });
-
-    return { Upcoming: upcoming, Open: open, Closed: closed };
-  }, [data]);
-
-  return { data, categorizedData, isLoading, error, lastUpdated };
+  return { categorizedData, isLoading, error, lastUpdated };
 }
