@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const { Client } = require('pg');
+const subscriptionService = require('./SubscriptionService');
 
 const CONNECTION_STRING = 'postgresql://neondb_owner:npg_as3VJZkdre9B@ep-polished-hill-a1o9tkl8-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
 
@@ -456,108 +457,20 @@ class NseService {
 
             // 3. Subscription (Detailed)
             // 3. Subscription (Detailed) - New Table
-            const subData = data.activeCat?.dataList || data.bidDetails;
-            if (subData && Array.isArray(subData)) {
-
-                try {
-                    await client.query('BEGIN');
-                    await client.query('DELETE FROM ipo_bidding_details WHERE ipo_id = $1', [ipoId]);
-
-                    // Buckets for Hierarchy Handling
-                    // key: 'QIB' | 'NII' | 'RII' | ... -> { parent: null, children: [] }
-                    // We will determine 'Parent' vs 'Child' based on sr_no
-                    const bucketMap = new Map();
-                    const allowed = ['QIB', 'NII', 'RII', 'Employees', 'Total', 'Shareholders'];
-                    allowed.forEach(c => bucketMap.set(c, { parent: null, children: [] }));
-
-                    for (const item of subData) {
-                        const getVal = (k1, k2, k3) => item[k1] || item[k2] || item[k3];
-
-                        let rawCategory = item.category || "";
-                        let srNo = item.srNo || item.sr_no || ""; // Get Serial Number
-                        let cleanCategory = null;
-
-                        // Identification
-                        if (rawCategory.includes("Qualified Institutional")) cleanCategory = "QIB";
-                        else if (rawCategory.includes("Non Institutional")) cleanCategory = "NII";
-                        else if (rawCategory.includes("Retail Individual")) cleanCategory = "RII";
-                        else if (rawCategory.includes("Employee")) cleanCategory = "Employees";
-                        else if (rawCategory.includes("Total")) cleanCategory = "Total";
-                        else if (rawCategory.includes("Shareholder")) cleanCategory = "Shareholders";
-
-                        // Fallback: If cleanCategory is null, try to map based on other clues or skip.
-                        // Strict whitelist requested.
-                        if (!cleanCategory) continue;
-
-                        const sharesOfferedStr = getVal('noOfSharesOffered', 'noOfShareOffered', 'noOfSharesReserved');
-                        const sharesBidStr = getVal('noOfsharesBid', 'noOfSharesBid', 'noOfSharesApplied');
-
-                        // Parse values safely
-                        const sharesOffered = sharesOfferedStr ? (parseFloat(sharesOfferedStr.toString().replace(/,/g, '')) || 0) : 0;
-                        const sharesBid = sharesBidStr ? (parseFloat(sharesBidStr.toString().replace(/,/g, '')) || 0) : 0;
-
-                        const entry = { offered: sharesOffered, bid: sharesBid, raw: rawCategory, srNo: srNo };
-                        const bucket = bucketMap.get(cleanCategory);
-
-                        // Hierarchy logic using srNo
-                        // Example: Parent "2", Children "2.1", "2.2"
-                        // Rule: If srNo contains '.', it's a child.
-                        const isChild = srNo.includes('.');
-
-                        if (isChild) {
-                            bucket.children.push(entry);
-                        } else {
-                            // It is a parent (or top-level)
-                            // If we already have a parent, we might be seeing duplicate rows or split batches. 
-                            // But usually unique per category.
-                            if (!bucket.parent) {
-                                bucket.parent = entry;
-                            } else {
-                                // If multiple parents found (rare), sum them? Or assume error. 
-                                // Let's sum for safety.
-                                bucket.parent.offered += sharesOffered;
-                                bucket.parent.bid += sharesBid;
-                            }
-                        }
-                    }
-
-                    // Process Buckets
-                    for (const [cat, bucket] of bucketMap.entries()) {
-                        let finalOffered = 0;
-                        let finalBid = 0;
-                        let finalSrNo = "";
-
-                        // Rule: Use Parent if exists (and has data), else sum Children.
-                        if (bucket.parent && bucket.parent.offered > 0) {
-                            finalOffered = bucket.parent.offered;
-                            finalBid = bucket.parent.bid;
-                            finalSrNo = bucket.parent.srNo;
-                        } else if (bucket.children.length > 0) {
-                            // Sum children
-                            for (const child of bucket.children) {
-                                finalOffered += child.offered;
-                                finalBid += child.bid;
-                                // For srNo, take the integer part of first child? e.g. "2.1" -> "2"
-                                if (!finalSrNo && child.srNo) finalSrNo = child.srNo.split('.')[0];
-                            }
-                        }
-
-                        if (finalOffered === 0) continue; // Skip empty/zero offered
-
-                        const ratio = finalOffered > 0 ? (finalBid / finalOffered) : 0;
-
-                        await client.query(`
-                            INSERT INTO ipo_bidding_details (ipo_id, category, sr_no, shares_offered, shares_bid, subscription_ratio, created_at)
-                            VALUES ($1, $2, $3, $4, $5, $6, NOW())
-                        `, [ipoId, cat, finalSrNo, finalOffered, finalBid, ratio]);
-                    }
-
-                    await client.query('COMMIT');
-                } catch (err) {
-                    await client.query('ROLLBACK');
-                    console.error(`Error saving bidding details for ${symbol}:`, err);
-                }
-            }
+            const payload = {
+                activeCat: data.activeCat,
+                bidDetails: data.bidDetails,
+                demandGraphALL: data.demandGraphALL,
+                totalIssueSize: totalIssueSize
+            };
+            await subscriptionService.processPayload(payload, {
+                dbClient: client,
+                ipoId: ipoId,
+                symbol: symbol,
+                dryRun: false,
+                allowedCats: ['QIB', 'NII', 'RII'],
+                reconciliationTolerance: 0.001
+            });
 
             // 4. Documents
             const docMap = {

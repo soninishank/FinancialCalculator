@@ -12,12 +12,6 @@ export default function SubscriptionStats({ data }) {
 
     // Sort function
     // Allowed categories as per user request
-    const allowedCategories = ['QIB', 'NII', 'RII', 'Total', 'Cutoff', 'Employees', 'Shareholders'];
-    // Added Employees/Shareholders as optional useful info, but primary request was QIB/NII/RII/Total/Cutoff.
-    // If user strictly wants ONLY those, I should limit it.
-    // "Remove unncessary things" -> I will stick to the core list + Cutoff.
-    // Let's stick to QIB, NII, RII, Total.
-    // "Cutoff / Price-bid split" -> If we have a category named "Cutoff", include it.
 
     const validCats = ['QIB', 'NII', 'RII', 'Total', 'Cutoff'];
 

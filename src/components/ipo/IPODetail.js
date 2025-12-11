@@ -48,6 +48,13 @@ export default function IPODetail() {
         documents, biddingData, subscription
     } = ipo;
 
+    const filteredDocuments = documents ? documents.filter(doc => ![
+        "List of mobile applications accepting UPI as Payment Option",
+        "Video link for UPI based ASBA process",
+        "Video link for BHIM UPI Registration",
+        "Processing of ASBA Applications"
+    ].includes(doc.title?.trim())) : [];
+
     const priceRange = (price_range_low && price_range_high)
         ? `Rs.${price_range_low} - Rs.${price_range_high}`
         : (price_range_low ? `Rs.${price_range_low}` : 'TBA');
@@ -69,10 +76,7 @@ export default function IPODetail() {
                             <h1 className="text-3xl font-bold tracking-tight">{company_name}</h1>
                             <div className="flex items-center gap-3 mt-3">
                                 <span className="px-3 py-1 bg-white/20 text-white rounded-full text-xs font-semibold backdrop-blur-sm border border-white/10 uppercase tracking-widest">
-                                    {series}
-                                </span>
-                                <span className="px-3 py-1 bg-white/20 text-white rounded-full text-xs font-semibold backdrop-blur-sm border border-white/10 uppercase tracking-widest">
-                                    {issue_type}
+                                    {series === 'SME' || issue_type === 'SME' ? 'SME' : 'EQUITY'}
                                 </span>
                             </div>
                         </div>
@@ -140,14 +144,14 @@ export default function IPODetail() {
                         )}
 
                         {/* Documents */}
-                        {documents && documents.length > 0 && (
+                        {filteredDocuments && filteredDocuments.length > 0 && (
                             <div>
                                 <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                                     <span className="w-1 h-6 bg-green-500 rounded-full"></span>
                                     Documents
                                 </h2>
                                 <div className="flex flex-wrap gap-3">
-                                    {documents.map((doc, idx) => (
+                                    {filteredDocuments.map((doc, idx) => (
                                         <a
                                             key={idx}
                                             href={doc.url}
