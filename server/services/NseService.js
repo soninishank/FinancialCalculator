@@ -35,33 +35,81 @@ function parsePriceRange(rangeStr) {
 
 class NseService {
     async fetchData(url) {
-        console.log(`Fetching ${url}...`);
-        const browser = await puppeteer.launch({
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            headless: "new"
-        });
+        // Randomize user agent slightly to look unique if needed, but standard modern is safer.
+        const USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
-        try {
-            const page = await browser.newPage();
-            await page.setUserAgent(
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116 Safari/537.36"
-            );
+        const MAX_RETRIES = 3;
+        let attempt = 0;
 
-            // Navigate to home to set cookies/headers
-            await page.goto('https://www.nseindia.com', { waitUntil: 'networkidle2' });
+        while (attempt < MAX_RETRIES) {
+            attempt++;
+            console.log(`Fetching ${url} (Attempt ${attempt}/${MAX_RETRIES})...`);
 
-            const data = await page.evaluate(async (apiUrl) => {
-                const response = await fetch(apiUrl);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                return await response.json();
-            }, url);
+            const browser = await puppeteer.launch({
+                args: ["--no-sandbox", "--disable-setuid-sandbox"],
+                headless: "new"
+            });
 
-            return data;
-        } catch (err) {
-            console.error(`Error fetching ${url}:`, err);
-            throw err;
-        } finally {
-            await browser.close();
+            try {
+                const page = await browser.newPage();
+                await page.setUserAgent(USER_AGENT);
+
+                // Add extra headers
+                await page.setExtraHTTPHeaders({
+                    'Accept-Language': 'en-US,en;q=0.9',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                    'Referer': 'https://www.nseindia.com/'
+                });
+
+                // 1. Visit Homepage first to set cookies
+                await page.goto('https://www.nseindia.com', { waitUntil: 'domcontentloaded', timeout: 30000 });
+
+                // 2. Random Delay (1s - 3s)
+                const delay = Math.floor(Math.random() * 2000) + 1000;
+                await new Promise(r => setTimeout(r, delay));
+
+                // 3. Navigate to API URL directly
+                console.log(`Navigating to ${url}...`);
+                const response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+                console.log(`Navigation complete. Status: ${response.status()}`);
+                const status = response.status();
+
+                if (status === 200) {
+                    // Success: Extract JSON from body
+                    // Sometimes API returns HTML error page even with 200, but usually 503/403 for blocks.
+                    const text = await response.text();
+                    try {
+                        const data = JSON.parse(text);
+                        return data;
+                    } catch (e) {
+                        // Check if HTML
+                        if (text.includes('<!DOCTYPE html>')) {
+                            throw new Error('Received HTML instead of JSON (Soft Block)');
+                        }
+                        throw e;
+                    }
+                } else if (status === 503 || status === 403) {
+                    console.warn(`Attempt ${attempt} blocked: Status ${status}`);
+                    // Exponential backoff or just continue to retry
+                    if (attempt < MAX_RETRIES) {
+                        // Wait longer before retry
+                        await new Promise(r => setTimeout(r, 2000 * attempt));
+                        continue;
+                    } else {
+                        throw new Error(`HTTP error! status: ${status}`);
+                    }
+                } else {
+                    throw new Error(`HTTP error! status: ${status}`);
+                }
+
+            } catch (err) {
+                console.error(`Error fetching ${url} (Attempt ${attempt}):`, err.message);
+                if (attempt >= MAX_RETRIES) throw err;
+                // Wait before retry
+                await new Promise(r => setTimeout(r, 2000));
+            } finally {
+                await browser.close();
+            }
         }
     }
 
@@ -128,7 +176,8 @@ class NseService {
                 await client.query(`
                     UPDATE ipo SET 
                         company_name = $1, status = $2, price_range_low = $3, price_range_high = $4, 
-                        issue_size = $5, issue_type = $6, series = $7, updated_at = NOW()
+                        issue_size = CASE WHEN fresh_issue_size IS NOT NULL THEN (fresh_issue_size + COALESCE(offer_for_sale_size, 0)) ELSE $5 END, 
+                        issue_type = $6, series = $7, updated_at = NOW()
                     WHERE ipo_id = $8
                 `, [companyName, status, priceRange.low, priceRange.high, issueSizeShares || 0, finalType, series, ipoId]);
             } else {
@@ -153,61 +202,11 @@ class NseService {
                 `, [ipoId, issueStart, issueEnd, listingDate]);
             }
 
-            // 3. Subscription
-            // Use 'activeCat' or 'bidDetails'
-            const subData = data.activeCat?.dataList || data.bidDetails;
-
-            if (subData && Array.isArray(subData)) {
-                // Clear old
-                await client.query('DELETE FROM subscription_summary WHERE ipo_id = $1', [ipoId]);
-
-                for (const item of subData) {
-                    // Filter out headers/totals if needed, though they might be useful.
-                    // Headers usually don't have 'noOfSharesBid'.
-                    if (!item.noOfSharesBid) continue;
-
-                    let category = item.category;
-                    const sharesOffered = item.noOfSharesOffered ? (parseFloat(item.noOfSharesOffered) || 0) : 0; // offered can be empty string
-                    const sharesBid = parseFloat(item.noOfSharesBid) || 0;
-                    const ratio = item.noOfTime ? (parseFloat(item.noOfTime) || 0) : 0; // noOfTime might be empty or "0.0"
-
-                    // Use category name directly (schema constraint removed)
-                    // or map if we want standardization. Let's keep verbose for now as requested ("QIBs", etc).
-                    // NSE data: "Qualified Institutional Buyers(QIBs)", "Retail Individual Investors(RIIs)"
-
-                    // Some items are sub-totals like "Total". We can include them or flag them.
-                    // Let's store everything that looks like data.
-
-                    await client.query(`
-                        INSERT INTO subscription_summary (ipo_id, category, shares_offered, shares_bid, subscription_ratio, updated_at)
-                        VALUES ($1, $2, $3, $4, $5, NOW())
-                    `, [ipoId, category, sharesOffered, sharesBid, ratio]);
-                }
-            } else if (item.noOfTime) {
-                // Fallback to the brief summary found in list api if detailed not available
-                const sharesOffered = parseFloat(item.noOfSharesOffered) || 0;
-                const sharesBid = parseFloat(item.noOfsharesBid) || 0;
-                const ratio = parseFloat(item.noOfTime) || 0;
-                const subCategory = 'Others';
-
-                // Check if we already inserted detailed data above? 
-                // Wait, 'item' here is from the list loop (upsertIpo arguments).
-                // 'subData' is from fetchAndStoreIpoDetails (data variable).
-                // Ah, this block is inside upsertIpo? 
-                // NO, wait.
-                // The REPLACE block I am targeting is inside `upsertIpo`.
-                // BUT `fetchAndStoreIpoDetails` also needs this logic. 
-                // `upsertIpo` handles the LIST api response. 
-                // `fetchAndStoreIpoDetails` handles the DETAIL api response.
-
-                // Detailed sub data is ONLY available in `fetchAndStoreIpoDetails` (detail API).
-                // The block I selected (lines 156-169) is inside `upsertIpo`.
-                // The user wants detailed data. `upsertIpo` only sees brief data.
-
-                // So I should keep `upsertIpo` as is (or basic), and put the extensive logic in `fetchAndStoreIpoDetails`.
-                // The instructions said "Replace generic subscription parsing...".
-                // I will add the logic to `fetchAndStoreIpoDetails` instad.
-            }
+            // 3. Subscription (Legacy/Brief) - REMOVED
+            // The list API does not provide detailed breakdown reliably.
+            // Detailed subscription logic is handled in fetchAndStoreIpoDetails (using 'bidDetails').
+            // We just clear the old summary table if needed, or leave it be.
+            // Actually, best to do nothing here regarding subscription to avoid conflicts/errors.
 
         } catch (err) {
             console.error(`Error upserting ${symbol}:`, err);
@@ -268,14 +267,39 @@ class NseService {
             const issueSizeStr = findVal("Issue Size") || "";
             // Example: "Initial Public Offer comprising Fresh Issue up to Rs. 7700 million and Offer for Sale up to Rs. 1500 million..."
 
+            // Helper to parse Price Band
+            const priceBandStr = findVal("Price Band") || findVal("Price Range") || "";
+            // We want the HIGHER price for calculation safety
+            const parseHighPrice = (str) => {
+                if (!str) return 0;
+                // Use exec loop to capture groups correctly
+                const regex = /Rs\.?\s*([\d,]+\.?\d*)/gi;
+                let match;
+                let lastVal = 0;
+                while ((match = regex.exec(str)) !== null) {
+                    lastVal = parseFloat(match[1].replace(/,/g, ''));
+                }
+                return lastVal;
+            };
+            const priceHigh = parseHighPrice(priceBandStr);
+
             const extractAmount = (text, key) => {
-                // Look for "Key... Rs. <Amount> <Unit>?"
-                // Regex: Find 'key' then search ahead for 'Rs.' then digits
-                const regex = new RegExp(`${key}.*?Rs\\.\\s*([\\d,]+\\.?\\d*)\\s*(million|crore|lakh)?`, 'i');
+                // Regex: Find 'key' then search ahead for 'Rs.' or 'Re.' 
+                // Enhanced to handle "upto" case-insensitive and spacing
+                const regex = new RegExp(`${key}.*?(?:Rs\\.|Re\\.|Rs|Re)\\.?\\s*([\\d,]+\\.?\\d*)\\s*(million|crore|lakhs?|Lakhs?)?`, 'i');
                 const match = text.match(regex);
                 if (match) {
+                    // Safety: Check if followed by "Shares"
+                    // If text is "Rs. 24,48,649 Equity Shares" -> It is NOT Amount.
+                    const fullMatch = match[0];
+                    const remaining = text.substring(match.index + fullMatch.length).trim();
+                    if (remaining.match(/^(Equity\s*)?Shares/i)) {
+                        return 0;
+                    }
+
                     let amount = parseFloat(match[1].replace(/,/g, ''));
-                    const unit = match[2] ? match[2].toLowerCase() : '';
+                    let unit = match[2] ? match[2].toLowerCase() : '';
+                    if (unit.startsWith('lakh')) unit = 'lakh';
 
                     // Convert to absolute INR using unit
                     if (unit === 'million') amount *= 1000000;
@@ -287,8 +311,68 @@ class NseService {
                 return 0;
             };
 
-            const freshIssueSize = extractAmount(issueSizeStr, "Fresh Issue");
-            const ofsSize = extractAmount(issueSizeStr, "Offer for Sale");
+            const extractShares = (text, key) => {
+                // Enhanced to handle "upto" and loose spacing
+                const regex = new RegExp(`${key}.*?(?:upto|up to)?\\s*([\\d,]+)\\s*(?:Equity\\s*)?Shares`, 'i');
+                const match = text.match(regex);
+                if (match) {
+                    return parseInt(match[1].replace(/,/g, ''), 10);
+                }
+                return 0;
+            };
+
+            let freshIssueSize = extractAmount(issueSizeStr, "Fresh Issue");
+            if (freshIssueSize === 0 && priceHigh > 0) {
+                const shares = extractShares(issueSizeStr, "Fresh Issue");
+                if (shares > 0) freshIssueSize = shares * priceHigh;
+            }
+
+            let ofsSize = extractAmount(issueSizeStr, "Offer for Sale");
+            if (ofsSize === 0 && priceHigh > 0) {
+                const shares = extractShares(issueSizeStr, "Offer for Sale");
+                if (shares > 0) ofsSize = shares * priceHigh;
+            }
+
+            // Calculate Total Issue Size
+            let totalIssueSize = freshIssueSize + ofsSize;
+
+            // Fallback: If still 0, try parsing broad "aggregating" amount
+            if (totalIssueSize === 0) {
+                const aggRegex = /(?:aggregating|aggregating up to|aggregating to)\s*(?:Rs\.|Re\.|Rs|Re)\.?\s*([\d,]+\.?\d*)\s*(million|crore|lakhs?|Lakhs?)?/i;
+                const match = issueSizeStr.match(aggRegex);
+                if (match) {
+                    let amount = parseFloat(match[1].replace(/,/g, ''));
+                    let unit = match[2] ? match[2].toLowerCase() : '';
+                    if (unit.startsWith('lakh')) unit = 'lakh';
+                    if (unit === 'million') amount *= 1000000;
+                    else if (unit === 'crore') amount *= 10000000;
+                    else if (unit === 'lakh') amount *= 100000;
+                    totalIssueSize = amount;
+                }
+            }
+
+            // Fallback: If still 0 and we have price, try parsing broad "aggregating ... Shares"
+            // Handles "Initial Public Offer of upto 47,71,200 Equity Shares"
+            if (totalIssueSize === 0 && priceHigh > 0) {
+                // 1. Broad aggregating shares
+                const aggSharesRegex = /(?:aggregating|aggregating up to|aggregating to).*?([\d,]+)\s*(?:Equity\s*)?Shares/i;
+                const match = issueSizeStr.match(aggSharesRegex);
+                if (match) {
+                    const shares = parseInt(match[1].replace(/,/g, ''), 10);
+                    totalIssueSize = shares * priceHigh;
+                }
+
+                // 2. Direct "Offer of upto X Shares" (Common in SME)
+                // "Initial Public Offer of upto 47,71,200 Equity Shares"
+                if (totalIssueSize === 0) {
+                    const directOfferRegex = /Offer\s+of\s+(?:upto|up\s*to)?\s*([\d,]+)\s*(?:Equity\s*)?Shares/i;
+                    const directMatch = issueSizeStr.match(directOfferRegex);
+                    if (directMatch) {
+                        const shares = parseInt(directMatch[1].replace(/,/g, ''), 10);
+                        totalIssueSize = shares * priceHigh;
+                    }
+                }
+            }
 
             // Parse Other Fields
             const fvStr = findVal("Face Value");
@@ -311,14 +395,28 @@ class NseService {
             const brlm = findVal("Book Running Lead Managers");
 
             // Update IPO Table
-            await client.query(`
-                UPDATE ipo SET
-                    face_value = $1, tick_size = $2, bid_lot = $3, min_order_qty = $4, 
-                    max_retail_amount = $5, book_running_lead_managers = $6, 
-                    fresh_issue_size = $7, offer_for_sale_size = $8,
-                    updated_at = NOW()
-                WHERE ipo_id = $9
-            `, [faceValue, tickSize, bidLot, minOrderQty, maxRetailAmount, brlm, freshIssueSize, ofsSize, ipoId]);
+            // Update issue_size if our calculated total is > 0
+            if (totalIssueSize > 0) {
+                await client.query(`
+                    UPDATE ipo SET
+                        face_value = $1, tick_size = $2, bid_lot = $3, min_order_qty = $4, 
+                        max_retail_amount = $5, book_running_lead_managers = $6, 
+                        fresh_issue_size = $7, offer_for_sale_size = $8,
+                        issue_size = $9,
+                        updated_at = NOW()
+                    WHERE ipo_id = $10
+                `, [faceValue, tickSize, bidLot, minOrderQty, maxRetailAmount, brlm, freshIssueSize, ofsSize, totalIssueSize, ipoId]);
+            } else {
+                // Keep existing issue_size but update others
+                await client.query(`
+                    UPDATE ipo SET
+                        face_value = $1, tick_size = $2, bid_lot = $3, min_order_qty = $4, 
+                        max_retail_amount = $5, book_running_lead_managers = $6, 
+                        fresh_issue_size = $7, offer_for_sale_size = $8,
+                        updated_at = NOW()
+                    WHERE ipo_id = $9
+                `, [faceValue, tickSize, bidLot, minOrderQty, maxRetailAmount, brlm, freshIssueSize, ofsSize, ipoId]);
+            }
 
 
             // 2. Registrar
@@ -357,29 +455,107 @@ class NseService {
             }
 
             // 3. Subscription (Detailed)
+            // 3. Subscription (Detailed) - New Table
             const subData = data.activeCat?.dataList || data.bidDetails;
             if (subData && Array.isArray(subData)) {
 
-                await client.query('DELETE FROM subscription_summary WHERE ipo_id = $1', [ipoId]);
+                try {
+                    await client.query('BEGIN');
+                    await client.query('DELETE FROM ipo_bidding_details WHERE ipo_id = $1', [ipoId]);
 
-                for (const item of subData) {
-                    const getVal = (k1, k2, k3) => item[k1] || item[k2] || item[k3];
+                    // Buckets for Hierarchy Handling
+                    // key: 'QIB' | 'NII' | 'RII' | ... -> { parent: null, children: [] }
+                    // We will determine 'Parent' vs 'Child' based on sr_no
+                    const bucketMap = new Map();
+                    const allowed = ['QIB', 'NII', 'RII', 'Employees', 'Total', 'Shareholders'];
+                    allowed.forEach(c => bucketMap.set(c, { parent: null, children: [] }));
 
-                    let category = item.category;
+                    for (const item of subData) {
+                        const getVal = (k1, k2, k3) => item[k1] || item[k2] || item[k3];
 
-                    const sharesOfferedStr = getVal('noOfSharesOffered', 'noOfShareOffered', 'noOfSharesReserved');
-                    const sharesBidStr = getVal('noOfsharesBid', 'noOfSharesBid', 'noOfSharesApplied');
-                    const ratioStr = getVal('noOfTime', 'noOfTotalMeant', 'timesSubscribed');
+                        let rawCategory = item.category || "";
+                        let srNo = item.srNo || item.sr_no || ""; // Get Serial Number
+                        let cleanCategory = null;
 
-                    const sharesOffered = sharesOfferedStr ? (parseFloat(sharesOfferedStr.toString().replace(/,/g, '')) || 0) : 0;
-                    const sharesBid = sharesBidStr ? (parseFloat(sharesBidStr.toString().replace(/,/g, '')) || 0) : 0;
-                    const ratio = ratioStr ? (parseFloat(ratioStr.toString().replace(/,/g, '')) || 0) : 0;
+                        // Identification
+                        if (rawCategory.includes("Qualified Institutional")) cleanCategory = "QIB";
+                        else if (rawCategory.includes("Non Institutional")) cleanCategory = "NII";
+                        else if (rawCategory.includes("Retail Individual")) cleanCategory = "RII";
+                        else if (rawCategory.includes("Employee")) cleanCategory = "Employees";
+                        else if (rawCategory.includes("Total")) cleanCategory = "Total";
+                        else if (rawCategory.includes("Shareholder")) cleanCategory = "Shareholders";
 
-                    // Ensure we capture all categories
-                    await client.query(`
-                        INSERT INTO subscription_summary (ipo_id, category, shares_offered, shares_bid, subscription_ratio, updated_at)
-                        VALUES ($1, $2, $3, $4, $5, NOW())
-                    `, [ipoId, category, sharesOffered, sharesBid, ratio]);
+                        // Fallback: If cleanCategory is null, try to map based on other clues or skip.
+                        // Strict whitelist requested.
+                        if (!cleanCategory) continue;
+
+                        const sharesOfferedStr = getVal('noOfSharesOffered', 'noOfShareOffered', 'noOfSharesReserved');
+                        const sharesBidStr = getVal('noOfsharesBid', 'noOfSharesBid', 'noOfSharesApplied');
+
+                        // Parse values safely
+                        const sharesOffered = sharesOfferedStr ? (parseFloat(sharesOfferedStr.toString().replace(/,/g, '')) || 0) : 0;
+                        const sharesBid = sharesBidStr ? (parseFloat(sharesBidStr.toString().replace(/,/g, '')) || 0) : 0;
+
+                        const entry = { offered: sharesOffered, bid: sharesBid, raw: rawCategory, srNo: srNo };
+                        const bucket = bucketMap.get(cleanCategory);
+
+                        // Hierarchy logic using srNo
+                        // Example: Parent "2", Children "2.1", "2.2"
+                        // Rule: If srNo contains '.', it's a child.
+                        const isChild = srNo.includes('.');
+
+                        if (isChild) {
+                            bucket.children.push(entry);
+                        } else {
+                            // It is a parent (or top-level)
+                            // If we already have a parent, we might be seeing duplicate rows or split batches. 
+                            // But usually unique per category.
+                            if (!bucket.parent) {
+                                bucket.parent = entry;
+                            } else {
+                                // If multiple parents found (rare), sum them? Or assume error. 
+                                // Let's sum for safety.
+                                bucket.parent.offered += sharesOffered;
+                                bucket.parent.bid += sharesBid;
+                            }
+                        }
+                    }
+
+                    // Process Buckets
+                    for (const [cat, bucket] of bucketMap.entries()) {
+                        let finalOffered = 0;
+                        let finalBid = 0;
+                        let finalSrNo = "";
+
+                        // Rule: Use Parent if exists (and has data), else sum Children.
+                        if (bucket.parent && bucket.parent.offered > 0) {
+                            finalOffered = bucket.parent.offered;
+                            finalBid = bucket.parent.bid;
+                            finalSrNo = bucket.parent.srNo;
+                        } else if (bucket.children.length > 0) {
+                            // Sum children
+                            for (const child of bucket.children) {
+                                finalOffered += child.offered;
+                                finalBid += child.bid;
+                                // For srNo, take the integer part of first child? e.g. "2.1" -> "2"
+                                if (!finalSrNo && child.srNo) finalSrNo = child.srNo.split('.')[0];
+                            }
+                        }
+
+                        if (finalOffered === 0) continue; // Skip empty/zero offered
+
+                        const ratio = finalOffered > 0 ? (finalBid / finalOffered) : 0;
+
+                        await client.query(`
+                            INSERT INTO ipo_bidding_details (ipo_id, category, sr_no, shares_offered, shares_bid, subscription_ratio, created_at)
+                            VALUES ($1, $2, $3, $4, $5, $6, NOW())
+                        `, [ipoId, cat, finalSrNo, finalOffered, finalBid, ratio]);
+                    }
+
+                    await client.query('COMMIT');
+                } catch (err) {
+                    await client.query('ROLLBACK');
+                    console.error(`Error saving bidding details for ${symbol}:`, err);
                 }
             }
 

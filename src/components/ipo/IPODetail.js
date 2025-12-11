@@ -96,6 +96,7 @@ export default function IPODetail() {
                             <InfoCard label="Issue Open" value={issue_start ? new Date(issue_start).toDateString() : 'TBA'} />
                             <InfoCard label="Issue Close" value={issue_end ? new Date(issue_end).toDateString() : 'TBA'} />
                             <InfoCard label="Listing Date" value={listing_date ? new Date(listing_date).toDateString() : 'TBA'} />
+                            <InfoCard label="UPI Mandate Cutoff" value={issue_end ? `${new Date(issue_end).toDateString()} 5:00 PM` : 'TBA'} />
                         </div>
                     </div>
 

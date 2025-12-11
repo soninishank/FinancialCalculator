@@ -78,7 +78,6 @@ async function createSchema() {
         ipo_id BIGINT REFERENCES ipo(ipo_id),
         issue_start DATE,
         issue_end DATE,
-        upi_cutoff_datetime TIMESTAMP,
         market_open_time TIME,
         market_close_time TIME
       );
@@ -139,6 +138,32 @@ async function createSchema() {
       );
     `);
     console.log('Created gmp table');
+
+    // 8) ipo_bidding_details
+    // Create Type if not exists
+    await client.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'ipo_category_type') THEN
+          CREATE TYPE ipo_category_type AS ENUM ('QIB', 'NII', 'RII', 'Employees', 'Shareholders', 'Total');
+        END IF;
+      END$$;
+    `);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS ipo_bidding_details (
+        id BIGSERIAL PRIMARY KEY,
+        ipo_id BIGINT REFERENCES ipo(ipo_id),
+        category ipo_category_type,
+        sr_no VARCHAR(16),
+        shares_offered BIGINT,
+        shares_bid BIGINT,
+        subscription_ratio NUMERIC(12,8),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+      CREATE INDEX IF NOT EXISTS idx_bidding_ipo_id ON ipo_bidding_details(ipo_id);
+    `);
+    console.log('Created ipo_bidding_details table');
 
     // Now add the FK from ipo to registrar
     try {

@@ -155,7 +155,7 @@ app.get("/api/ipos/:symbol", async (req, res) => {
     const NseService = require('./services/NseService');
     const fetchSeries = ipo.series || series;
 
-    const isMissingData = !ipo.book_running_lead_managers || !ipo.face_value;
+    const isMissingData = !ipo.book_running_lead_managers || !ipo.face_value || !ipo.issue_size || ipo.issue_size == 0;
 
     // Determine Staleness
     // Rule: Strict 1-hour refresh.
@@ -166,12 +166,28 @@ app.get("/api/ipos/:symbol", async (req, res) => {
     let isStale = false;
     if (ageMinutes >= 60) isStale = true;
 
+    // Verbose Debug
+    console.log(`[Request] Symbol: ${symbol}, ID: ${ipo.ipo_id}, Series: ${ipo.series}`);
+    console.log(`[Debug] Issue Size: ${ipo.issue_size} (${typeof ipo.issue_size}), Missing Check: ${isMissingData}`);
+
     // Also re-fetch if we have no bidding data or subscription data for an OPEN IPO?
     // Let's rely on updated_at for now.
 
-    if (isMissingData) {
-      console.log(`[Blocking] Fetching missing data for ${symbol}`);
+    // Prevent loop: Only blocking fetch if it's been at least 10 minutes since last update attempt
+    // even if data is missing.
+    if (isMissingData && ageMinutes > 10) {
+      console.log(`[Blocking] Fetching missing data for ${symbol} (Last updated: ${ageMinutes.toFixed(1)}m ago)`);
       const fetched = await NseService.fetchAndStoreIpoDetails(symbol, fetchSeries, ipo.ipo_id, client);
+      if (!fetched) {
+        console.error(`[CRITICAL] Blocking fetch failed for ${symbol} (returned null).`);
+        // Backoff: Update timestamp to prevent immediate retry loop on next request
+        try {
+          await client.query('UPDATE ipo SET updated_at = NOW() WHERE ipo_id = $1', [ipo.ipo_id]);
+        } catch (updateErr) {
+          console.error("Error updating timestamp for failed fetch:", updateErr);
+        }
+      }
+
       if (fetched) {
         // Re-fetch updated data to return immediately
         const updatedRes = await client.query(`
@@ -189,12 +205,16 @@ app.get("/api/ipos/:symbol", async (req, res) => {
     } else if (isStale) {
       console.log(`[Async] Triggering background refresh for ${symbol} (Age: ${ageMinutes.toFixed(0)}m)`);
       // Background Fetch - Do NOT await
-      NseService.fetchAndStoreIpoDetails(symbol, fetchSeries, ipo.ipo_id, client)
+      // Create a dedicated client since the main 'client' will be closed when response finishes
+      const bgClient = new Client({ connectionString });
+      bgClient.connect()
+        .then(() => NseService.fetchAndStoreIpoDetails(symbol, fetchSeries, ipo.ipo_id, bgClient))
         .then(res => {
           if (res) console.log(`[Async] updated ${symbol}`);
           else console.log(`[Async] failed/no-change for ${symbol}`);
         })
-        .catch(err => console.error(`[Async] Error updating ${symbol}:`, err));
+        .catch(err => console.error(`[Async] Error updating ${symbol}:`, err))
+        .finally(() => bgClient.end()); // Close the background client
 
       // Proceed to return existing (stale) data
     }
@@ -203,8 +223,8 @@ app.get("/api/ipos/:symbol", async (req, res) => {
     const docRes = await client.query('SELECT title, url, doc_type FROM documents WHERE ipo_id = $1', [ipo.ipo_id]);
     const documents = docRes.rows;
 
-    // 3. Get Subscription (Optional)
-    const subRes = await client.query('SELECT category, subscription_ratio FROM subscription_summary WHERE ipo_id = $1', [ipo.ipo_id]);
+    // 3. Get Subscription (New Table)
+    const subRes = await client.query('SELECT category, shares_offered, shares_bid, subscription_ratio FROM ipo_bidding_details WHERE ipo_id = $1', [ipo.ipo_id]);
     const subscription = subRes.rows;
 
     // 4. GMP (Latest)

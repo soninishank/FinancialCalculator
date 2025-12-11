@@ -6,6 +6,12 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+### `npm run dev`
+
+Runs both the React app and the Backend Scraper service concurrently.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The IPO data API will be available at [http://localhost:8081](http://localhost:8081).
+
 ### `npm start`
 
 Runs the app in the development mode.\

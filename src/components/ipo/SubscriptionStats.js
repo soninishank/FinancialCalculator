@@ -11,14 +11,28 @@ export default function SubscriptionStats({ data }) {
     // Let's define important categories to highlight or order
 
     // Sort function
-    const sortedData = [...data].sort((a, b) => {
-        // "Total" should be last or first? Usually highlighted separately.
-        if (a.category === 'Total') return 1;
-        if (b.category === 'Total') return -1;
-        return 0; // Keep original order for others
+    // Allowed categories as per user request
+    const allowedCategories = ['QIB', 'NII', 'RII', 'Total', 'Cutoff', 'Employees', 'Shareholders'];
+    // Added Employees/Shareholders as optional useful info, but primary request was QIB/NII/RII/Total/Cutoff.
+    // If user strictly wants ONLY those, I should limit it.
+    // "Remove unncessary things" -> I will stick to the core list + Cutoff.
+    // Let's stick to QIB, NII, RII, Total.
+    // "Cutoff / Price-bid split" -> If we have a category named "Cutoff", include it.
+
+    const validCats = ['QIB', 'NII', 'RII', 'Total', 'Cutoff'];
+
+    const filteredData = data.filter(d => validCats.includes(d.category));
+
+    // Sort: Total first (as header), then QIB, NII, RII, Cutoff
+    const sortOrder = { 'Total': 0, 'QIB': 1, 'NII': 2, 'RII': 3, 'Cutoff': 4 };
+
+    const sortedData = [...filteredData].sort((a, b) => {
+        const orderA = sortOrder[a.category] !== undefined ? sortOrder[a.category] : 99;
+        const orderB = sortOrder[b.category] !== undefined ? sortOrder[b.category] : 99;
+        return orderA - orderB;
     });
 
-    const totalRow = data.find(d => d.category === 'Total');
+    const totalRow = sortedData.find(d => d.category === 'Total');
     const categories = sortedData.filter(d => d.category !== 'Total');
 
     return (
