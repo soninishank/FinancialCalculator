@@ -79,7 +79,11 @@ async function createSchema() {
         issue_start DATE,
         issue_end DATE,
         market_open_time TIME,
-        market_close_time TIME
+        market_close_time TIME,
+        allotment_finalization_date DATE,
+        refund_initiation_date DATE,
+        demat_credit_date DATE,
+        listing_date DATE
       );
     `);
     console.log('Created ipo_dates table');

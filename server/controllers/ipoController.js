@@ -7,7 +7,7 @@ const cache = new NodeCache({ stdTTL: 60 }); // 1 minute cache
 // Helper to get IPO data (refactored from scraper.js)
 async function fetchIpoDataFromDb() {
     try {
-        // Fetch all IPOs with dates
+        // Fetch all IPOs with dates and sort by status-specific criteria
         const query = `
       SELECT 
         i.ipo_id, i.company_name, i.symbol, i.status, i.issue_type, 
@@ -15,6 +15,15 @@ async function fetchIpoDataFromDb() {
         d.issue_start, d.issue_end, d.listing_date
       FROM ipo i 
       LEFT JOIN ipo_dates d ON i.ipo_id = d.ipo_id
+      ORDER BY 
+        i.status,
+        CASE 
+          WHEN i.status = 'open' THEN d.issue_end
+          WHEN i.status = 'upcoming' THEN d.issue_start
+        END ASC NULLS LAST,
+        CASE 
+          WHEN i.status IN ('closed', 'listed', 'withdrawn') THEN d.listing_date
+        END DESC NULLS LAST
     `;
         const res = await db.query(query);
         const rows = res.rows;
@@ -78,6 +87,7 @@ const getIpoDetails = async (req, res) => {
       SELECT 
         i.*, 
         d.issue_start, d.issue_end, d.listing_date, d.market_open_time, d.market_close_time,
+        d.allotment_finalization_date, d.refund_initiation_date, d.demat_credit_date,
         r.name as registrar_name, r.email as registrar_email, r.website as registrar_website, r.phone as registrar_phone
       FROM ipo i 
       LEFT JOIN ipo_dates d ON i.ipo_id = d.ipo_id
@@ -118,6 +128,7 @@ const getIpoDetails = async (req, res) => {
                     SELECT 
                         i.*, 
                         d.issue_start, d.issue_end, d.listing_date, d.market_open_time, d.market_close_time,
+                        d.allotment_finalization_date, d.refund_initiation_date, d.demat_credit_date,
                         r.name as registrar_name, r.email as registrar_email, r.website as registrar_website, r.phone as registrar_phone
                     FROM ipo i 
                     LEFT JOIN ipo_dates d ON i.ipo_id = d.ipo_id
@@ -158,6 +169,20 @@ const getIpoDetails = async (req, res) => {
 
         // 5. Bidding Data
         const biddingRes = await db.query('SELECT price_label, price_value, cumulative_quantity FROM bidding_data WHERE ipo_id=$1 ORDER BY price_value ASC NULLS LAST', [ipo.ipo_id]);
+
+        // Convert paise to rupees for NLP-extracted fields
+        // (fresh_issue_amount, ofs_amount, and issue_size are stored in paise)
+        if (ipo.fresh_issue_amount) {
+            ipo.fresh_issue_size = ipo.fresh_issue_amount / 100;
+        }
+        if (ipo.ofs_amount) {
+            ipo.offer_for_sale_size = ipo.ofs_amount / 100;
+        }
+        // Convert main issue_size from paise to rupees (NLP extractor stores in paise)
+        if (ipo.issue_size && ipo.issue_size_extraction_model) {
+            // Only convert if it was extracted by NLP (has extraction_model)
+            ipo.issue_size = ipo.issue_size / 100;
+        }
 
         res.json({
             ok: true,

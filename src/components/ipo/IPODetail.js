@@ -44,6 +44,7 @@ export default function IPODetail() {
     const {
         company_name, series, issue_type, price_range_low, price_range_high,
         issue_size, issue_start, issue_end, listing_date,
+        allotment_finalization_date, refund_initiation_date, demat_credit_date,
         face_value, tick_size, bid_lot, min_order_qty, max_retail_amount,
         registrar_name, registrar_email, registrar_website, registrar_phone,
         documents, biddingData, subscription
@@ -121,6 +122,37 @@ export default function IPODetail() {
                         </div>
                     </div>
 
+                    {/* Indicative Timetable - Only show if at least one date is available */}
+                    {(allotment_finalization_date || refund_initiation_date || demat_credit_date) && (
+                        <div className="col-span-1 lg:col-span-3">
+                            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <span className="w-1 h-6 bg-orange-500 rounded-full"></span>
+                                Indicative Timetable
+                                <span className="text-xs font-normal text-gray-500 ml-2">(From Red Herring Prospectus)</span>
+                            </h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-orange-50/50 rounded-2xl p-6 border border-orange-100">
+                                {allotment_finalization_date && (
+                                    <InfoCard
+                                        label="Basis of Allotment"
+                                        value={new Date(allotment_finalization_date).toDateString()}
+                                    />
+                                )}
+                                {refund_initiation_date && (
+                                    <InfoCard
+                                        label="Refund Initiation"
+                                        value={new Date(refund_initiation_date).toDateString()}
+                                    />
+                                )}
+                                {demat_credit_date && (
+                                    <InfoCard
+                                        label="Credit to Demat"
+                                        value={new Date(demat_credit_date).toDateString()}
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Issue Details */}
                     <div className="col-span-1 lg:col-span-2 space-y-8">
                         <div>
@@ -133,10 +165,10 @@ export default function IPODetail() {
                                     issue_size ? (
                                         <div>
                                             <div className="font-bold">{moneyFormat(issue_size, 'INR', true)}</div>
-                                            {(ipo.fresh_issue_size || ipo.offer_for_sale_size) && (
+                                            {(ipo.fresh_issue_size !== undefined || ipo.offer_for_sale_size !== undefined) && (
                                                 <div className="text-xs text-gray-500 mt-1 font-normal">
-                                                    {ipo.fresh_issue_size && <div>Fresh: {moneyFormat(ipo.fresh_issue_size, 'INR', true)}</div>}
-                                                    {ipo.offer_for_sale_size && <div>OFS: {moneyFormat(ipo.offer_for_sale_size, 'INR', true)}</div>}
+                                                    {ipo.fresh_issue_size !== undefined && <div>Fresh: {moneyFormat(ipo.fresh_issue_size, 'INR', true)}</div>}
+                                                    {ipo.offer_for_sale_size !== undefined && <div>OFS: {moneyFormat(ipo.offer_for_sale_size, 'INR', true)}</div>}
                                                 </div>
                                             )}
                                         </div>

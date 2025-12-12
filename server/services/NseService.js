@@ -1,6 +1,8 @@
 const puppeteer = require('puppeteer');
 const { Client } = require('pg');
 const subscriptionService = require('./SubscriptionService');
+const documentProcessingService = require('./DocumentProcessingService');
+const issueSizeExtractor = require('./IssueSizeExtractor');
 
 const CONNECTION_STRING = 'postgresql://neondb_owner:npg_as3VJZkdre9B@ep-polished-hill-a1o9tkl8-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
 
@@ -149,15 +151,35 @@ class NseService {
 
         // Determine Status based on dates if category is not definitive or needs refinement
         const now = new Date();
+        // Strip time for date-only comparison
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         let status = 'closed';
 
         if (listingDate) {
             status = 'listed';
-        } else if (issueEnd && now > issueEnd) {
-            status = 'closed';
+        } else if (issueEnd) {
+            const endDate = new Date(issueEnd);
+            const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+
+            // IPO is closed AFTER issue_end date (not ON the date)
+            if (today > endDateOnly) {
+                status = 'closed';
+            } else if (issueStart) {
+                const startDate = new Date(issueStart);
+                const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+
+                if (today < startDateOnly) {
+                    status = 'upcoming';
+                } else {
+                    // Between start and end date (inclusive)
+                    status = 'open';
+                }
+            } else if (category === 'current') {
+                status = 'open';
+            }
         } else if (issueStart && now < issueStart) {
             status = 'upcoming';
-        } else if (category === 'current' || (issueStart && issueEnd && now >= issueStart && now <= issueEnd)) {
+        } else if (category === 'current') {
             status = 'open';
         }
 
@@ -263,17 +285,13 @@ class NseService {
                 return item ? item.value : null;
             };
 
-            // 1. Parsing Logic
-            // Parse Issue Size for breakdown
+            // Parse Issue Size using LLM extractor
             const issueSizeStr = findVal("Issue Size") || "";
-            // Example: "Initial Public Offer comprising Fresh Issue up to Rs. 7700 million and Offer for Sale up to Rs. 1500 million..."
-
-            // Helper to parse Price Band
             const priceBandStr = findVal("Price Band") || findVal("Price Range") || "";
-            // We want the HIGHER price for calculation safety
+
+            // Helper to parse Price Band (get highest price)
             const parseHighPrice = (str) => {
                 if (!str) return 0;
-                // Use exec loop to capture groups correctly
                 const regex = /Rs\.?\s*([\d,]+\.?\d*)/gi;
                 let match;
                 let lastVal = 0;
@@ -282,97 +300,15 @@ class NseService {
                 }
                 return lastVal;
             };
+
             const priceHigh = parseHighPrice(priceBandStr);
 
-            const extractAmount = (text, key) => {
-                // Regex: Find 'key' then search ahead for 'Rs.' or 'Re.' 
-                // Enhanced to handle "upto" case-insensitive and spacing
-                const regex = new RegExp(`${key}.*?(?:Rs\\.|Re\\.|Rs|Re)\\.?\\s*([\\d,]+\\.?\\d*)\\s*(million|crore|lakhs?|Lakhs?)?`, 'i');
-                const match = text.match(regex);
-                if (match) {
-                    // Safety: Check if followed by "Shares"
-                    // If text is "Rs. 24,48,649 Equity Shares" -> It is NOT Amount.
-                    const fullMatch = match[0];
-                    const remaining = text.substring(match.index + fullMatch.length).trim();
-                    if (remaining.match(/^(Equity\s*)?Shares/i)) {
-                        return 0;
-                    }
+            // Use LLM-based extractor
+            const parsed = await issueSizeExtractor.extractIssueSize(issueSizeStr, priceHigh);
 
-                    let amount = parseFloat(match[1].replace(/,/g, ''));
-                    let unit = match[2] ? match[2].toLowerCase() : '';
-                    if (unit.startsWith('lakh')) unit = 'lakh';
-
-                    // Convert to absolute INR using unit
-                    if (unit === 'million') amount *= 1000000;
-                    else if (unit === 'crore') amount *= 10000000;
-                    else if (unit === 'lakh') amount *= 100000;
-
-                    return amount;
-                }
-                return 0;
-            };
-
-            const extractShares = (text, key) => {
-                // Enhanced to handle "upto" and loose spacing
-                const regex = new RegExp(`${key}.*?(?:upto|up to)?\\s*([\\d,]+)\\s*(?:Equity\\s*)?Shares`, 'i');
-                const match = text.match(regex);
-                if (match) {
-                    return parseInt(match[1].replace(/,/g, ''), 10);
-                }
-                return 0;
-            };
-
-            let freshIssueSize = extractAmount(issueSizeStr, "Fresh Issue");
-            if (freshIssueSize === 0 && priceHigh > 0) {
-                const shares = extractShares(issueSizeStr, "Fresh Issue");
-                if (shares > 0) freshIssueSize = shares * priceHigh;
-            }
-
-            let ofsSize = extractAmount(issueSizeStr, "Offer for Sale");
-            if (ofsSize === 0 && priceHigh > 0) {
-                const shares = extractShares(issueSizeStr, "Offer for Sale");
-                if (shares > 0) ofsSize = shares * priceHigh;
-            }
-
-            // Calculate Total Issue Size
-            let totalIssueSize = freshIssueSize + ofsSize;
-
-            // Fallback: If still 0, try parsing broad "aggregating" amount
-            if (totalIssueSize === 0) {
-                const aggRegex = /(?:aggregating|aggregating up to|aggregating to)\s*(?:Rs\.|Re\.|Rs|Re)\.?\s*([\d,]+\.?\d*)\s*(million|crore|lakhs?|Lakhs?)?/i;
-                const match = issueSizeStr.match(aggRegex);
-                if (match) {
-                    let amount = parseFloat(match[1].replace(/,/g, ''));
-                    let unit = match[2] ? match[2].toLowerCase() : '';
-                    if (unit.startsWith('lakh')) unit = 'lakh';
-                    if (unit === 'million') amount *= 1000000;
-                    else if (unit === 'crore') amount *= 10000000;
-                    else if (unit === 'lakh') amount *= 100000;
-                    totalIssueSize = amount;
-                }
-            }
-
-            // Fallback: If still 0 and we have price, try parsing broad "aggregating ... Shares"
-            // Handles "Initial Public Offer of upto 47,71,200 Equity Shares"
-            if (totalIssueSize === 0 && priceHigh > 0) {
-                // 1. Broad aggregating shares
-                const aggSharesRegex = /(?:aggregating|aggregating up to|aggregating to).*?([\d,]+)\s*(?:Equity\s*)?Shares/i;
-                const match = issueSizeStr.match(aggSharesRegex);
-                if (match) {
-                    const shares = parseInt(match[1].replace(/,/g, ''), 10);
-                    totalIssueSize = shares * priceHigh;
-                }
-
-                // 2. Direct "Offer of upto X Shares" (Common in SME)
-                // "Initial Public Offer of upto 47,71,200 Equity Shares"
-                if (totalIssueSize === 0) {
-                    const directOfferRegex = /Offer\s+of\s+(?:upto|up\s*to)?\s*([\d,]+)\s*(?:Equity\s*)?Shares/i;
-                    const directMatch = issueSizeStr.match(directOfferRegex);
-                    if (directMatch) {
-                        const shares = parseInt(directMatch[1].replace(/,/g, ''), 10);
-                        totalIssueSize = shares * priceHigh;
-                    }
-                }
+            // Log extraction info
+            if (parsed.warnings.length > 0) {
+                console.log(`[Issue Size] Warnings for ${symbol}:`, parsed.warnings);
             }
 
             // Parse Other Fields
@@ -395,28 +331,56 @@ class NseService {
 
             const brlm = findVal("Book Running Lead Managers");
 
-            // Update IPO Table
-            // Update issue_size if our calculated total is > 0
-            if (totalIssueSize > 0) {
+            // Update IPO Table with parsed issue size data
+            if (parsed.totalAmount > 0) {
                 await client.query(`
                     UPDATE ipo SET
                         face_value = $1, tick_size = $2, bid_lot = $3, min_order_qty = $4, 
-                        max_retail_amount = $5, book_running_lead_managers = $6, 
-                        fresh_issue_size = $7, offer_for_sale_size = $8,
-                        issue_size = $9,
+                        max_retail_amount = $5, book_running_lead_managers = $6,
+                        issue_size_raw = $7,
+                        fresh_issue_amount = $8,
+                        fresh_issue_shares = $9,
+                        ofs_amount = $10,
+                        ofs_shares = $11,
+                        issue_size = $12,
+                        issue_size_confidence = $13,
+                        issue_size_extraction_model = $14,
+                        issue_size_reasoning = $15,
                         updated_at = NOW()
-                    WHERE ipo_id = $10
-                `, [faceValue, tickSize, bidLot, minOrderQty, maxRetailAmount, brlm, freshIssueSize, ofsSize, totalIssueSize, ipoId]);
+                    WHERE ipo_id = $16
+                `, [
+                    faceValue, tickSize, bidLot, minOrderQty, maxRetailAmount, brlm,
+                    parsed.raw,
+                    parsed.freshIssue.amount,
+                    parsed.freshIssue.shares,
+                    parsed.offerForSale.amount,
+                    parsed.offerForSale.shares,
+                    parsed.totalAmount,
+                    parsed.confidence,
+                    parsed.method,
+                    parsed.reasoning,
+                    ipoId
+                ]);
             } else {
                 // Keep existing issue_size but update others
                 await client.query(`
                     UPDATE ipo SET
                         face_value = $1, tick_size = $2, bid_lot = $3, min_order_qty = $4, 
-                        max_retail_amount = $5, book_running_lead_managers = $6, 
-                        fresh_issue_size = $7, offer_for_sale_size = $8,
+                        max_retail_amount = $5, book_running_lead_managers = $6,
+                        issue_size_raw = $7,
+                        issue_size_confidence = $8,
+                        issue_size_extraction_model = $9,
+                        issue_size_reasoning = $10,
                         updated_at = NOW()
-                    WHERE ipo_id = $9
-                `, [faceValue, tickSize, bidLot, minOrderQty, maxRetailAmount, brlm, freshIssueSize, ofsSize, ipoId]);
+                    WHERE ipo_id = $11
+                `, [
+                    faceValue, tickSize, bidLot, minOrderQty, maxRetailAmount, brlm,
+                    parsed.raw,
+                    parsed.confidence,
+                    parsed.method,
+                    parsed.reasoning,
+                    ipoId
+                ]);
             }
 
 
@@ -461,7 +425,7 @@ class NseService {
                 activeCat: data.activeCat,
                 bidDetails: data.bidDetails,
                 demandGraphALL: data.demandGraphALL,
-                totalIssueSize: totalIssueSize
+                totalIssueSize: parsed.totalAmount / 100  // Convert paise to INR
             };
             await subscriptionService.processPayload(payload, {
                 dbClient: client,
@@ -511,6 +475,16 @@ class NseService {
                         await client.query(`
                             INSERT INTO documents (ipo_id, doc_type, title, url) VALUES ($1, $2, $3, $4)
                         `, [ipoId, docType, d.title, url]);
+                    }
+
+                    // Trigger async RHP processing for zip files
+                    if (docType === 'RHP' && url.endsWith('.zip')) {
+                        console.log(`[NSE Service] Triggering async RHP processing for ${symbol}`);
+                        // Fire and forget - don't await
+                        documentProcessingService.processRhpDocument(url, ipoId, client)
+                            .catch(err => {
+                                console.error(`[NSE Service] RHP processing failed for ${symbol}:`, err.message);
+                            });
                     }
                 }
             }
