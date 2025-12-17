@@ -1,12 +1,11 @@
-
 import React, { useMemo } from "react";
 
 import SummaryCards from "../common/SummaryCards";
-import InvestmentPieChart from "../common/InvestmentPieChart";
 import ResultsTable from "../common/ResultsTable";
-import CompoundingBarChart from "../common/CompoundingBarChart";
 import InputWithSlider from "../common/InputWithSlider";
 import TaxToggle from "../common/TaxToggle";
+import InflationToggle from "../common/InflationToggle";
+import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from "../common/FinancialCharts";
 
 import CalculatorLayout from "./CalculatorLayout"; // <--- NEW LAYOUT
 
@@ -28,6 +27,10 @@ import {
   MAX_SIP,
   MAX_YEARS,
   MAX_RATE,
+  STEP_SIP,
+  STEP_AMOUNT,
+  DEFAULT_INFLATION,
+  MAX_INFLATION,
 } from "../../utils/constants";
 
 export default function SIPWithLumpSum({ currency, setCurrency }) {
@@ -46,6 +49,7 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
     monthlySIP: DEFAULT_MONTHLY_SIP,
     lumpSum: DEFAULT_LUMP_SUM,
     annualRate: DEFAULT_RATE,
+    inflationRate: DEFAULT_INFLATION,
   });
 
   // --- HOOK STATE (Tenure Inputs) ---
@@ -130,7 +134,7 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
         onChange={setMonthlySIP}
         min={MIN_SIP}
         max={MAX_SIP}
-        step={500}
+        step={STEP_SIP}
         currency={currency}
       />
 
@@ -148,7 +152,7 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
         />
 
         {/* --- Apply LTCG AFTER Expected Annual Return (%) --- */}
-        <div className="mt-6 flex flex-col md:flex-row gap-6">
+        <div className="mt-6 flex flex-col lg:flex-row gap-6">
           <div className="flex-1">
             <TaxToggle
               currency={currency}
@@ -163,33 +167,32 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
             />
           </div>
           {/* INFLATION TOGGLE */}
-          <div className="flex-1 p-4 bg-gray-50 rounded-xl border border-gray-100">
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-semibold text-gray-700">Adjust for Inflation</label>
-              <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                <input type="checkbox" name="toggle" id="inflation-toggle-sip-lump"
-                  checked={isInflationAdjusted}
-                  onChange={() => setIsInflationAdjusted(!isInflationAdjusted)}
-                  className="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300 checked:right-0 checked:border-sky-500 transition-all duration-300"
-                  style={{ right: isInflationAdjusted ? "0" : "auto", left: isInflationAdjusted ? "auto" : "0" }}
-                />
-                <label htmlFor="inflation-toggle-sip-lump" className={`toggle - label block overflow - hidden h - 5 rounded - full cursor - pointer ${isInflationAdjusted ? "bg-sky-500" : "bg-gray-300"} `}></label>
-              </div>
-            </div>
-
-            {isInflationAdjusted && (
-              <div className="mt-3 animate-fade-in">
-                <InputWithSlider
-                  label="Inflation Rate (%)"
-                  value={inflationRate}
-                  onChange={setInflationRate}
-                  min={0} max={15} step={0.1} symbol="%"
-                  isDecimal={true}
-                />
-              </div>
-            )}
+          <div className="flex-1">
+            <InflationToggle
+              isAdjusted={isInflationAdjusted}
+              setIsAdjusted={setIsInflationAdjusted}
+              rate={inflationRate}
+              setRate={setInflationRate}
+              showInput={false}
+            />
           </div>
         </div>
+
+        {/* Inflation Slider Row - Moves below toggles to avoid layout shift */}
+        {isInflationAdjusted && (
+          <div className="mt-4 animate-fade-in w-full">
+            <InputWithSlider
+              label="Expected Inflation Rate (%)"
+              value={inflationRate}
+              onChange={setInflationRate}
+              min={0}
+              max={MAX_INFLATION}
+              step={0.1}
+              symbol="%"
+              isDecimal
+            />
+          </div>
+        )}
       </div>
 
       <InputWithSlider
@@ -198,7 +201,7 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
         onChange={setLumpSum}
         min={MIN_AMOUNT}
         max={MAX_AMOUNT}
-        step={1000}
+        step={STEP_AMOUNT}
         currency={currency}
       />
 
@@ -286,9 +289,9 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
             : {})}
         />
       }
-      charts={<CompoundingBarChart data={yearlyRows} currency={currency} />}
+      charts={<FinancialCompoundingBarChart data={yearlyRows} currency={currency} />}
       pieChart={
-        <InvestmentPieChart
+        <FinancialInvestmentPieChart
           invested={investedTotal}
           gain={gain}
           total={totalFuture}

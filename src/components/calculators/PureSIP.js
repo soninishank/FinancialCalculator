@@ -3,11 +3,12 @@ import React, { useMemo } from "react";
 
 // --- IMPORTS ---
 import SummaryCards from "../common/SummaryCards";
-import InvestmentPieChart from "../common/InvestmentPieChart";
+import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from "../common/FinancialCharts";
 import ResultsTable from "../common/ResultsTable";
-import CompoundingBarChart from "../common/CompoundingBarChart";
+
 import InputWithSlider from "../common/InputWithSlider";
 import TaxToggle from "../common/TaxToggle";
+import InflationToggle from "../common/InflationToggle";
 
 import CalculatorLayout from "./CalculatorLayout"; // <--- NEW LAYOUT
 
@@ -25,7 +26,9 @@ import {
   MAX_SIP,
   MAX_RATE,
   MAX_YEARS,
-  DEFAULT_TENURE_YEARS
+  DEFAULT_TENURE_YEARS,
+  STEP_SIP,
+  DEFAULT_INFLATION
 } from "../../utils/constants";
 
 export default function PureSIP({ currency, setCurrency }) {
@@ -42,6 +45,8 @@ export default function PureSIP({ currency, setCurrency }) {
   } = useCalculatorState({
     monthlySIP: DEFAULT_MONTHLY_SIP,
     annualRate: DEFAULT_RATE,
+    years: DEFAULT_TENURE_YEARS,
+    inflationRate: DEFAULT_INFLATION,
   });
 
   // Use Limited Pay Hook checks tenure
@@ -136,7 +141,7 @@ export default function PureSIP({ currency, setCurrency }) {
         label="Monthly SIP Amount"
         value={monthlySIP}
         onChange={setMonthlySIP}
-        min={MIN_SIP} max={MAX_SIP} step={500}
+        min={MIN_SIP} max={MAX_SIP} step={STEP_SIP}
         currency={currency}
       />
 
@@ -192,7 +197,7 @@ export default function PureSIP({ currency, setCurrency }) {
           isDecimal={true}
         />
 
-        <div className="mt-6 flex flex-col md:flex-row gap-6">
+        <div className="mt-6 flex flex-col lg:flex-row gap-6">
           <div className="flex-1">
             <TaxToggle
               currency={currency}
@@ -208,31 +213,13 @@ export default function PureSIP({ currency, setCurrency }) {
           </div>
 
           {/* INFLATION TOGGLE */}
-          <div className="flex-1 p-4 bg-gray-50 rounded-xl border border-gray-100">
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-semibold text-gray-700">Adjust for Inflation</label>
-              <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                <input type="checkbox" name="toggle" id="inflation-toggle"
-                  checked={isInflationAdjusted}
-                  onChange={() => setIsInflationAdjusted(!isInflationAdjusted)}
-                  className="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300 checked:right-0 checked:border-sky-500 transition-all duration-300"
-                  style={{ right: isInflationAdjusted ? "0" : "auto", left: isInflationAdjusted ? "auto" : "0" }}
-                />
-                <label htmlFor="inflation-toggle" className={`toggle-label block overflow-hidden h-5 rounded-full cursor-pointer ${isInflationAdjusted ? "bg-sky-500" : "bg-gray-300"}`}></label>
-              </div>
-            </div>
-
-            {isInflationAdjusted && (
-              <div className="mt-3 animate-fade-in">
-                <InputWithSlider
-                  label="Inflation Rate (%)"
-                  value={inflationRate}
-                  onChange={setInflationRate}
-                  min={0} max={15} step={0.1} symbol="%"
-                  isDecimal={true}
-                />
-              </div>
-            )}
+          <div className="flex-1">
+            <InflationToggle
+              isAdjusted={isInflationAdjusted}
+              setIsAdjusted={setIsInflationAdjusted}
+              rate={inflationRate}
+              setRate={setInflationRate}
+            />
           </div>
         </div>
       </div>
@@ -269,9 +256,9 @@ export default function PureSIP({ currency, setCurrency }) {
             : {})}
         />
       }
-      charts={<CompoundingBarChart data={yearlyRows} currency={currency} />}
+      charts={<FinancialCompoundingBarChart data={yearlyRows} currency={currency} />}
       pieChart={
-        <InvestmentPieChart invested={investedTotal} gain={gain} total={totalFuture} currency={currency} years={totalYears} />
+        <FinancialInvestmentPieChart invested={investedTotal} gain={gain} total={totalFuture} currency={currency} years={totalYears} />
       }
       table={
         <ResultsTable data={yearlyRows} currency={currency} onExport={handleExport} />

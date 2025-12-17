@@ -3,15 +3,15 @@ import React, { useMemo, useState } from "react";
 
 // --- IMPORTS ---
 import InputWithSlider from "../common/InputWithSlider";
-import AmortizationTableWrapper from "../common/AmortizationTableWrapper"; 
-import CompoundingBarChart from "../common/CompoundingBarChart";
+import AmortizationTableWrapper from "../common/AmortizationTableWrapper";
+import { FinancialCompoundingBarChart } from "../common/FinancialCharts";
 import { moneyFormat } from "../../utils/formatting";
 import { calculateEMI, computeLoanAmortization } from "../../utils/finance";
 // We no longer need downloadCSV as we use window.print(), but we can't delete 
 // the export function reference unless we rename it. Let's keep it clean.
 // import { downloadCSV } from "../../utils/export"; 
 
-import { 
+import {
   DEFAULT_LOAN_PRINCIPAL,
   DEFAULT_LOAN_RATE,
   DEFAULT_LOAN_TENURE,
@@ -19,14 +19,16 @@ import {
   MIN_RATE,
   MAX_LOAN,
   MAX_RATE,
-  MAX_YEARS 
-} from "../../utils/constants"; 
+  MAX_YEARS,
+  MIN_LOAN,
+  STEP_LARGE
+} from "../../utils/constants";
 
 export default function LoanEMI({ currency, setCurrency }) {
   // Inputs: Use Default Constants
-  const [principal, setPrincipal] = useState(DEFAULT_LOAN_PRINCIPAL); 
-  const [annualRate, setAnnualRate] = useState(DEFAULT_LOAN_RATE);    
-  const [years, setYears] = useState(DEFAULT_LOAN_TENURE);             
+  const [principal, setPrincipal] = useState(DEFAULT_LOAN_PRINCIPAL);
+  const [annualRate, setAnnualRate] = useState(DEFAULT_LOAN_RATE);
+  const [years, setYears] = useState(DEFAULT_LOAN_TENURE);
 
   const R_m = annualRate / 12 / 100;
   const N = years * 12;
@@ -39,7 +41,7 @@ export default function LoanEMI({ currency, setCurrency }) {
     () => computeLoanAmortization({ principal, annualRate, years, emi: monthlyEMI }),
     [principal, annualRate, years, monthlyEMI]
   );
-  
+
   // --- PRINT HANDLER (FIX for 'handlePrint' is not defined) ---
   const handleExport = () => {
     // We are using window.print() instead of CSV export now.
@@ -78,33 +80,34 @@ export default function LoanEMI({ currency, setCurrency }) {
       {/* INPUTS SECTION */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">
         {/* Loan Principal Amount - Use MAX_LOAN */}
-        <InputWithSlider 
-          label="Loan Principal Amount" 
-          value={principal} 
-          onChange={setPrincipal} 
-          min={100000} max={MAX_LOAN} step={100000} 
-          currency={currency} 
+        <InputWithSlider
+          label="Loan Principal Amount"
+          value={principal}
+          onChange={setPrincipal}
+          min={MIN_LOAN} max={MAX_LOAN} step={STEP_LARGE}
+          currency={currency}
         />
-        
+
+
         {/* Loan Tenure - Use MAX_YEARS */}
-        <InputWithSlider 
-          label="Loan Tenure (Years)" 
-          value={years} 
-          onChange={setYears} 
-          min={MIN_YEARS} max={MAX_YEARS} 
+        <InputWithSlider
+          label="Loan Tenure (Years)"
+          value={years}
+          onChange={setYears}
+          min={MIN_YEARS} max={MAX_YEARS}
         />
-        
+
         {/* Annual Rate - Use MAX_RATE */}
         <div className="md:col-span-2">
-          <InputWithSlider 
-            label="Annual Interest Rate (%)" 
-            value={annualRate} 
-            onChange={setAnnualRate} 
-            min={MIN_RATE} max={MAX_RATE} symbol="%" 
+          <InputWithSlider
+            label="Annual Interest Rate (%)"
+            value={annualRate}
+            onChange={setAnnualRate}
+            min={MIN_RATE} max={MAX_RATE} symbol="%"
           />
         </div>
       </div>
-      
+
       {/* SUMMARY CARDS (Customized for Loan) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
         {/* Card 1: Monthly EMI */}
@@ -136,10 +139,10 @@ export default function LoanEMI({ currency, setCurrency }) {
       </div>
 
       {/* LOAN AMORTIZATION BAR CHART */}
-      <CompoundingBarChart 
-        data={yearlyRows} 
-        currency={currency} 
-        type="loan" 
+      <FinancialCompoundingBarChart
+        data={yearlyRows} // Changed from yearlyData to yearlyRows to match existing state
+        currency={currency}
+        type="loan"
       />
 
       {/* AMORTIZATION TABLE (Using the Wrapper) */}

@@ -33,19 +33,19 @@ export default function TaxToggle({
     taxRateNum === null
       ? null
       : taxRateNum < 0
-      ? "Tax rate cannot be negative."
-      : taxRateNum > MAX_LTCG_PERCENT
-      ? `Maximum allowed is ${MAX_LTCG_PERCENT}%.`
-      : null;
+        ? "Tax rate cannot be negative."
+        : taxRateNum > MAX_LTCG_PERCENT
+          ? `Maximum allowed is ${MAX_LTCG_PERCENT}%.`
+          : null;
 
   const exemptionError =
     exemptionNum === null
       ? null
       : exemptionNum < 0
-      ? "Exemption cannot be negative."
-      : exemptionNum > currencyExemptionMax
-      ? `Maximum allowed is ${moneyFormat(currencyExemptionMax, currency)}.`
-      : null;
+        ? "Exemption cannot be negative."
+        : exemptionNum > currencyExemptionMax
+          ? `Maximum allowed is ${moneyFormat(currencyExemptionMax, currency)}.`
+          : null;
 
   // Handlers: allow user to freely edit, clamp on blur
   const handleTaxRateChange = (raw) => {
@@ -120,7 +120,7 @@ export default function TaxToggle({
   const togglePopover = () => setOpen((v) => !v);
 
   return (
-    <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+    <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100 h-full">
       <div className="flex items-center h-5">
         <input
           id="applyLTCG"
@@ -198,9 +198,8 @@ export default function TaxToggle({
                 onBlur={handleTaxRateBlur}
                 aria-invalid={!!taxRateError}
                 aria-describedby={taxRateError ? "ltcg-rate-error" : undefined}
-                className={`w-20 px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-teal-500 ${
-                  taxRateError ? "border-rose-300 bg-rose-50" : "border-gray-300"
-                }`}
+                className={`w-20 px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-teal-500 ${taxRateError ? "border-rose-300 bg-rose-50" : "border-gray-300"
+                  }`}
               />
               <span className="text-xs text-gray-500">%</span>
             </div>
@@ -244,9 +243,8 @@ export default function TaxToggle({
                     onBlur={handleExemptionBlur}
                     aria-invalid={!!exemptionError}
                     aria-describedby={exemptionError ? "exemption-error" : undefined}
-                    className={`w-32 px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-teal-500 ${
-                      exemptionError ? "border-rose-300 bg-rose-50" : "border-gray-300"
-                    }`}
+                    className={`w-32 px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-teal-500 ${exemptionError ? "border-rose-300 bg-rose-50" : "border-gray-300"
+                      }`}
                   />
                 </div>
 

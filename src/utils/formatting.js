@@ -10,6 +10,7 @@ export function moneyFormat(x, currency = "INR", compact = false) {
 
   const locale = localeMap[currency] || "en-US";
   const num = Number(x);
+  if (isNaN(num)) return "0";
 
   // 1. Compact Mode with proper Indian formatting
   if (compact && Math.abs(num) >= 10000) {

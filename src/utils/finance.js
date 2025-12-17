@@ -409,3 +409,245 @@ export function calculateRealValue(nominalValue, inflationRate, years) {
   const inflationDecimal = inflationRate / 100;
   return nominalValue / Math.pow(1 + inflationDecimal, years);
 }
+
+// --- NEW FIRE & WEALTH CALCULATOR FUNCTIONS ---
+
+/**
+ * Calculates Time to FIRE (Financial Independence).
+ * Goal: Corpus where (Corpus * SWR) >= Annual Expenses
+ */
+export function calculateTimeToFIRE({
+  currentCorpus,
+  monthlyExpenses,
+  monthlyInvestment,
+  annualReturn,
+  swr, // Safe Withdrawal Rate (e.g., 4%)
+  inflation = 0 // Optional: if we want to target real corpus
+}) {
+  // Target Corpus = (Monthly Exp * 12) / (SWR / 100)
+  const annualExpenses = monthlyExpenses * 12;
+  const targetCorpus = annualExpenses / (swr / 100);
+
+  // If already reached
+  if (currentCorpus >= targetCorpus) return { years: 0, months: 0, targetCorpus };
+
+  const r_m = annualReturn / 12 / 100;
+
+  // Solving for n in Future Value of Annuity formula mixed with Loop for simplicity
+  // FV = CurrentCorpus*(1+r)^n + PMT * ...
+  // Since n is unknown and in exponent, we can solve logarithmically or iterate.
+  // Iteration is safer to avoid complex log edge cases with negative flows.
+
+  let corpus = currentCorpus;
+  let months = 0;
+  // Safety break at 100 years
+  while (corpus < targetCorpus && months < 1200) {
+    corpus = corpus * (1 + r_m) + monthlyInvestment;
+    months++;
+  }
+
+  return {
+    years: Math.floor(months / 12),
+    months: months % 12,
+    targetCorpus
+  };
+}
+
+/**
+ * Calculates Coast FIRE.
+ * The amount you need TODAY so that it grows to your FI Number by retirement age
+ * without any further contributions.
+ */
+export function calculateCoastFIRE({
+  currentAge,
+  retirementAge,
+  monthlyExpenses,
+  swr,
+  annualReturn,
+  inflation
+}) {
+  const yearsToGrow = retirementAge - currentAge;
+  if (yearsToGrow <= 0) return 0;
+
+  // 1. Calculate FI Number needed at Retirement Age
+  // We need to adjust expenses for inflation to get the nominal FI number needed then.
+  const inflationDec = inflation / 100;
+  const futureAnnualExpenses = (monthlyExpenses * 12) * Math.pow(1 + inflationDec, yearsToGrow);
+
+  const fiNumberAtRetirement = futureAnnualExpenses / (swr / 100);
+
+  // 2. PV of that FI Number
+  const r_dec = annualReturn / 100;
+  const neededToday = fiNumberAtRetirement / Math.pow(1 + r_dec, yearsToGrow);
+
+  return {
+    neededToday,
+    fiNumberAtRetirement,
+    futureMonthlyExpenses: futureAnnualExpenses / 12
+  };
+}
+
+/**
+ * Calculates Cost of Delay.
+ * Compares "Start Now" vs "Start Later".
+ */
+export function calculateCostOfDelay({
+  monthlyInvestment,
+  annualReturn,
+  delayYears,
+  investmentYears
+}) {
+  const r_m = annualReturn / 12 / 100;
+
+  // Scenario A: Start Now, invest for X years
+  // FV = P * ((1+r)^n - 1)/r * (1+r)
+  const n_total = investmentYears * 12;
+  const fv_now = monthlyInvestment * ((Math.pow(1 + r_m, n_total) - 1) / r_m) * (1 + r_m);
+
+  // Scenario B: Wait D years, then invest for (X - D) years? 
+  // OR usually "Cost of Delay" implies you invest for SAME duration but shift start?
+  // Common interpretation: You define a goal horizon (e.g. 20 years from now).
+  // If you start now, you have 20 years of compounding.
+  // If you wait 5 years, you only have 15 years of compounding.
+
+  const n_delayed = (investmentYears - delayYears) * 12;
+  const fv_delayed = n_delayed > 0
+    ? monthlyInvestment * ((Math.pow(1 + r_m, n_delayed) - 1) / r_m) * (1 + r_m)
+    : 0;
+
+  return {
+    startedNow: fv_now,
+    startedLater: fv_delayed,
+    cost: fv_now - fv_delayed
+  };
+}
+
+/**
+ * Rent vs Buy - Simplified NPV approach for 10-20 year horizon.
+ * This is complex; we'll provide a yearly ledger builder.
+ */
+export function computeRentVsBuyLedger({
+  homePrice,
+  downPayment, // value
+  loanRate,
+  loanTenureYears,
+  monthlyRent,
+  investReturnRate, // Opportunity cost rate
+  propertyAppreciationRate,
+  rentInflationRate,
+  maintenanceRate = 1 // % of property value per year
+}) {
+  const loanAmount = homePrice - downPayment;
+  const emi = calculateEMI(loanAmount, loanRate / 12 / 100, loanTenureYears * 12);
+
+  let currentPropertyVal = homePrice;
+  let currentRent = monthlyRent;
+  let investmentCorpus = downPayment; // Starts with DP amount if we rented
+  let loanBalance = loanAmount;
+
+  const ledger = [];
+  const years = Math.max(loanTenureYears, 20); // Analyze for at least 20 years or loan tenure
+
+  // Track cumulative costs
+  let totalRentPaid = 0;
+  let totalBuyOutflow = downPayment; // DP + EMIs + Maintenance
+
+  for (let y = 1; y <= years; y++) {
+    // --- BUY SCENARIO ---
+    // 1. Pay EMI (12 months)
+    const annualEMI = (y <= loanTenureYears) ? emi * 12 : 0;
+
+    // 2. Pay Maintenance (1% of value)
+    const annualMaintenance = currentPropertyVal * (maintenanceRate / 100);
+
+    // 3. Asset Appreciates
+    currentPropertyVal = currentPropertyVal * (1 + propertyAppreciationRate / 100);
+
+    // 4. Loan Balance Reduction (approx for year)
+    if (y <= loanTenureYears) {
+      // simplifed loan balance update
+      // For exactness we should loop months, but approx is okay for high level
+      // calculate interest component
+      const interestComp = loanBalance * (loanRate / 100);
+      const principalComp = annualEMI - interestComp;
+      loanBalance -= principalComp;
+      if (loanBalance < 0) loanBalance = 0;
+    }
+
+    totalBuyOutflow += annualEMI + annualMaintenance;
+
+    // --- RENT SCENARIO ---
+    // 1. Pay Rent
+    const annualRent = currentRent * 12;
+    totalRentPaid += annualRent;
+
+    // 2. Invest the Difference (Surplus)
+    // Surplus = (EMI + Maintenance) - Rent
+    // If negative (Rent > EMI+Maint), we withdraw from corpus? 
+    // Usually Buying is more expensive initially.
+    const costOfBuyingThisYear = annualEMI + annualMaintenance; // Maintenance is owner cost
+    const costOfRentingThisYear = annualRent;
+
+    const surplusToInvest = costOfBuyingThisYear - costOfRentingThisYear;
+
+    // Add surplus to investment (or subtract if rent is higher)
+    // Grow investment first? Usually invest monthly.
+    // Simplify: Grow corpus at start of year + add surplus at end? 
+    // Better: Mid-year avg or monthly. Let's do simple annual:
+    // Corpus grows
+    investmentCorpus = investmentCorpus * (1 + investReturnRate / 100);
+    // Add surplus (with half-year growth approx or just add)
+    investmentCorpus += surplusToInvest;
+
+    currentRent = currentRent * (1 + rentInflationRate / 100);
+
+    ledger.push({
+      year: y,
+      propertyValue: currentPropertyVal,
+      loanBalance: Math.max(0, loanBalance),
+      homeEquity: currentPropertyVal - Math.max(0, loanBalance),
+
+      rentPortfolioValue: investmentCorpus,
+
+      netWorthBuy: currentPropertyVal - Math.max(0, loanBalance),
+      netWorthRent: investmentCorpus,
+
+      difference: (currentPropertyVal - Math.max(0, loanBalance)) - investmentCorpus
+    });
+  }
+
+  return ledger;
+}
+
+/**
+ * Calculates Inflation Impact.
+ */
+export function calculateInflationImpact(amount, inflation, years) {
+  // Future Value of Amount if it sat in cash (0 growth) in real terms?
+  // No, usually means: "How much will X buy in future?" -> Real Value
+  return calculateRealValue(amount, inflation, years);
+}
+
+/**
+ * Asset Allocation Rebalance
+ */
+export function calculateRebalancing({
+  equity,
+  debt,
+  targetEquityPercent
+}) {
+  const total = equity + debt;
+  const targetEquity = total * (targetEquityPercent / 100);
+  const targetDebt = total - targetEquity;
+
+  const equityAction = targetEquity - equity; // +Buy / -Sell
+  const debtAction = targetDebt - debt;       // +Buy / -Sell
+
+  return {
+    equityAction,
+    debtAction,
+    targetEquity,
+    targetDebt,
+    currentEquityPercent: (equity / total) * 100
+  };
+}

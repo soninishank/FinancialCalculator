@@ -17,6 +17,23 @@ const importBySlug = (slug) => {
     case 'cagr-calculator': return import('../components/calculators/CAGRCalculator');
     case 'topup-loan-emi': return import('../components/calculators/TopUpLoanEMI');
     case 'swp-calculator': return import('../components/calculators/SWPCalculator');
+    // FIRE Calculators
+    case 'time-to-fire': return import('../components/calculators/TimeToFIRE');
+    case 'coast-fire': return import('../components/calculators/CoastFIRE');
+    case 'swr-simulator': return import('../components/calculators/SWRSimulator');
+    // Decision Making
+    case 'rent-vs-buy': return import('../components/calculators/RentVsBuy');
+    case 'cost-of-delay': return import('../components/calculators/CostOfDelay');
+    case 'step-down-withdrawal': return import('../components/calculators/StepDownWithdrawal');
+    // General / Hygiene
+    case 'inflation-impact': return import('../components/calculators/InflationImpact');
+    case 'asset-allocation': return import('../components/calculators/AssetAllocation');
+    case 'simple-interest': return import('../components/calculators/SimpleInterest');
+    case 'recurring-deposit': return import('../components/calculators/RecurringDeposit');
+    case 'credit-card-payoff': return import('../components/calculators/CreditCardPayoff');
+    case 'roi-calculator': return import('../components/calculators/ROICalculator');
+    case 'rule-of-72': return import('../components/calculators/RuleOf72');
+    case 'refinance-calculator': return import('../components/calculators/RefinanceCalculator');
     default: return Promise.reject(new Error('Unknown calculator'));
   }
 };

@@ -3,17 +3,16 @@ import React, { useMemo, useState } from "react";
 
 // --- IMPORTS ---
 import SummaryCards from "../common/SummaryCards";
-import InvestmentPieChart from "../common/InvestmentPieChart";
 import ResultsTable from "../common/ResultsTable";
-import CompoundingBarChart from "../common/CompoundingBarChart";
+import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from "../common/FinancialCharts";
 import InputWithSlider from "../common/InputWithSlider";
 import TaxToggle from "../common/TaxToggle"; // <-- added
 
-import { useLimitedPay } from "../../hooks/useLimitedPay"; 
+import { useLimitedPay } from "../../hooks/useLimitedPay";
 import { downloadCSV } from "../../utils/export";
 import { calculateLTCG, DEFAULT_LTCG_TAX_RATE_DECIMAL } from "../../utils/tax"; // <-- added
 
-import { 
+import {
   DEFAULT_MONTHLY_SIP,
   DEFAULT_LUMP_SUM,
   DEFAULT_RATE,
@@ -65,7 +64,7 @@ function computeStepUpWithLumpSchedule({ initialSIP, lumpSum, stepUpPercent, ann
   return rows;
 }
 
-export default function StepUpSIPWithLump({ currency, setCurrency }) {
+export default function StepUpSIPWithLump({ currency }) {
   // --- STATE ---
   const [initialSIP, setInitialSIP] = useState(DEFAULT_MONTHLY_SIP);
   const [lumpSum, setLumpSum] = useState(DEFAULT_LUMP_SUM);
@@ -74,18 +73,18 @@ export default function StepUpSIPWithLump({ currency, setCurrency }) {
 
   // --- TAX STATE (added) ---
   const [isTaxApplied, setIsTaxApplied] = useState(false);
-  const [ltcgRate, setLtcgRate] = useState(DEFAULT_LTCG_TAX_RATE_DECIMAL * 100); 
+  const [ltcgRate, setLtcgRate] = useState(DEFAULT_LTCG_TAX_RATE_DECIMAL * 100);
   const [isExemptionApplied, setIsExemptionApplied] = useState(false);
   const [exemptionLimit, setExemptionLimit] = useState(100000);
 
   // --- LIMITED PAY HOOK ---
-  const { 
-    totalYears, 
-    sipYears, 
-    setSipYears, 
-    isLimitedPay, 
-    handleTotalYearsChange, 
-    handleLimitedPayToggle 
+  const {
+    totalYears,
+    sipYears,
+    setSipYears,
+    isLimitedPay,
+    handleTotalYearsChange,
+    handleLimitedPayToggle
   } = useLimitedPay(DEFAULT_TENURE_YEARS);
 
   // CALCULATIONS
@@ -151,7 +150,7 @@ export default function StepUpSIPWithLump({ currency, setCurrency }) {
 
       {/* INPUTS SECTION */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">
-        
+
         <InputWithSlider
           label="Initial Monthly SIP"
           value={initialSIP}
@@ -182,7 +181,7 @@ export default function StepUpSIPWithLump({ currency, setCurrency }) {
             onChange={handleTotalYearsChange}
             min={MIN_YEARS} max={MAX_YEARS}
           />
-          
+
           <div className="mt-4 flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
             <div className="flex items-center h-5">
               <input
@@ -202,14 +201,14 @@ export default function StepUpSIPWithLump({ currency, setCurrency }) {
               </p>
             </div>
           </div>
-          
+
           {isLimitedPay && (
             <div className="mt-4 pl-4 border-l-2 border-teal-100 animate-slide-down">
               <InputWithSlider
                 label="SIP Contribution Period (Years)"
                 value={sipYears}
                 onChange={setSipYears}
-                min={MIN_YEARS} 
+                min={MIN_YEARS}
                 max={totalYears}
               />
             </div>
@@ -249,21 +248,21 @@ export default function StepUpSIPWithLump({ currency, setCurrency }) {
         currency={currency}
         {...(isTaxApplied
           ? {
-              tax: {
-                applied: true,
-                postTaxValue: postTaxFuture,
-                postTaxGain: postTaxGain,
-                taxDeducted: taxDeductedAmount,
-              },
-            }
+            tax: {
+              applied: true,
+              postTaxValue: postTaxFuture,
+              postTaxGain: postTaxGain,
+              taxDeducted: taxDeductedAmount,
+            },
+          }
           : {})}
       />
 
-      <CompoundingBarChart data={yearlyRows} currency={currency} />
+      <FinancialCompoundingBarChart data={yearlyRows} currency={currency} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12 items-start">
         <div className="lg:col-span-1">
-          <InvestmentPieChart
+          <FinancialInvestmentPieChart
             invested={investedTotal}
             gain={gain}
             total={totalFuture}

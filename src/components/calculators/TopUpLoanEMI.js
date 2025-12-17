@@ -4,7 +4,7 @@ import React, { useMemo, useState } from "react";
 // --- IMPORTS ---
 import InputWithSlider from "../common/InputWithSlider";
 import AmortizationTableWrapper from "../common/AmortizationTableWrapper";
-import CompoundingBarChart from "../common/CompoundingBarChart";
+import { FinancialCompoundingBarChart } from "../common/FinancialCharts";
 import { moneyFormat } from "../../utils/formatting";
 import { computeDualAmortization } from "../../utils/finance";
 
@@ -17,9 +17,11 @@ import {
   MAX_LOAN,
   MAX_RATE,
   MAX_YEARS,
+  MIN_LOAN,
+  STEP_LARGE
 } from "../../utils/constants";
 
-export default function TopUpLoanEMI({ currency, setCurrency }) {
+export default function TopUpLoanEMI({ currency }) {
   // --- BASE LOAN STATE (Loan A) ---
   const [basePrincipal, setBasePrincipal] = useState(DEFAULT_LOAN_PRINCIPAL);
   const [baseRate, setBaseRate] = useState(DEFAULT_LOAN_RATE);
@@ -97,15 +99,15 @@ export default function TopUpLoanEMI({ currency, setCurrency }) {
     <div className="animate-fade-in">
       {/* INPUTS SECTION: Split into two clear blocks */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">
-        
+
         {/* --- BLOCK 1: BASE LOAN (LEFT) --- */}
         <div className="md:col-span-1 border-r border-gray-200 pr-6">
           <h3 className="text-lg font-bold text-gray-800 mb-4">Base Loan (Original)</h3>
-          
+
           <InputWithSlider
             label="Original Principal"
             value={basePrincipal} onChange={setBasePrincipal}
-            min={100000} max={MAX_LOAN} step={100000} currency={currency}
+            min={MIN_LOAN} max={MAX_LOAN} step={STEP_LARGE} currency={currency}
           />
           <InputWithSlider
             label="Original Tenure (Years)"
@@ -122,16 +124,16 @@ export default function TopUpLoanEMI({ currency, setCurrency }) {
         {/* --- BLOCK 2: TOP-UP LOAN (RIGHT) --- */}
         <div className="md:col-span-1">
           <h3 className="text-lg font-bold text-gray-800 mb-4">Top-Up Loan (New)</h3>
-          
+
           <InputWithSlider
             label="Top-Up Amount"
             value={topUpPrincipal} onChange={setTopUpPrincipal}
-            min={100000} max={MAX_LOAN / 2} step={100000} currency={currency}
+            min={MIN_LOAN} max={MAX_LOAN / 2} step={STEP_LARGE} currency={currency}
           />
           <InputWithSlider
             label="Top-Up Year"
             value={topUpYear} onChange={setTopUpYear}
-            min={1} max={baseYears - 1}
+            min={MIN_YEARS} max={baseYears - 1}
           />
           <InputWithSlider
             label="Top-Up Rate (%)"
@@ -150,7 +152,7 @@ export default function TopUpLoanEMI({ currency, setCurrency }) {
           </div>
           <p className="text-xs text-gray-400 mt-2">After top-up is taken</p>
         </div>
-        
+
         <div className="bg-white border-l-4 border-rose-500 rounded-xl p-6 shadow-sm">
           <div className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Total Interest Paid</div>
           <div className="text-2xl font-extrabold text-rose-600 mt-2">
@@ -169,7 +171,7 @@ export default function TopUpLoanEMI({ currency, setCurrency }) {
       </div>
 
       {/* LOAN AMORTIZATION BAR CHART */}
-      <CompoundingBarChart data={yearlyRows} currency={currency} type="loan" />
+      <FinancialCompoundingBarChart data={yearlyRows} currency={currency} type="loan" />
 
       {/* AMORTIZATION TABLE */}
       <div className="mt-12">

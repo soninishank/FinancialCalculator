@@ -2,11 +2,11 @@ import React, { useMemo } from "react";
 
 // --- IMPORTS ---
 import SummaryCards from "../common/SummaryCards";
-import InvestmentPieChart from "../common/InvestmentPieChart";
 import ResultsTable from "../common/ResultsTable";
-import CompoundingBarChart from "../common/CompoundingBarChart";
+import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from "../common/FinancialCharts";
 import InputWithSlider from "../common/InputWithSlider";
 import TaxToggle from "../common/TaxToggle";
+import InflationToggle from "../common/InflationToggle";
 
 import CalculatorLayout from "./CalculatorLayout"; // <--- NEW LAYOUT
 
@@ -15,6 +15,20 @@ import { useCalculatorState } from "../../hooks/useCalculatorState"; // <--- NEW
 import { downloadCSV } from "../../utils/export";
 import { calculateLTCG } from "../../utils/tax";
 import { computeStepUpSchedule, calculateRealValue } from "../../utils/finance"; // <--- SHARED LOGIC
+import {
+  DEFAULT_MONTHLY_SIP,
+  DEFAULT_STEP_UP,
+  DEFAULT_RATE,
+  DEFAULT_INFLATION,
+  DEFAULT_TENURE_YEARS,
+  MIN_SIP,
+  MAX_SIP,
+  MIN_RATE,
+  MAX_RATE,
+  MIN_YEARS,
+  MAX_YEARS,
+  MAX_STEP_UP
+} from "../../utils/constants";
 
 export default function StepUpSIP({ currency, setCurrency }) {
   // --- STATE ---
@@ -29,11 +43,11 @@ export default function StepUpSIP({ currency, setCurrency }) {
     isInflationAdjusted, setIsInflationAdjusted,
     inflationRate, setInflationRate,
   } = useCalculatorState({
-    initialSIP: 5000,
-    stepUpPercent: 10,
-    annualRate: 12,
+    initialSIP: DEFAULT_MONTHLY_SIP,
+    stepUpPercent: DEFAULT_STEP_UP,
+    annualRate: DEFAULT_RATE,
     isInflationAdjusted: false,
-    inflationRate: 6,
+    inflationRate: DEFAULT_INFLATION,
   });
 
   // --- USE LIMITED PAY HOOK ---
@@ -44,7 +58,7 @@ export default function StepUpSIP({ currency, setCurrency }) {
     isLimitedPay,
     handleTotalYearsChange,
     handleLimitedPayToggle
-  } = useLimitedPay(10);
+  } = useLimitedPay(DEFAULT_TENURE_YEARS);
 
   // --- CALCULATIONS ---
   const yearlyRows = useMemo(
@@ -107,7 +121,7 @@ export default function StepUpSIP({ currency, setCurrency }) {
         label="Initial Monthly SIP"
         value={initialSIP}
         onChange={setInitialSIP}
-        min={500} max={500000} step={500}
+        min={MIN_SIP} max={MAX_SIP} step={500}
         currency={currency}
       />
 
@@ -116,7 +130,7 @@ export default function StepUpSIP({ currency, setCurrency }) {
         label="Annual Step-up (%)"
         value={stepUpPercent}
         onChange={setStepUpPercent}
-        min={0} max={50} symbol="%" isDecimal={true}
+        min={0} max={MAX_STEP_UP} symbol="%" isDecimal={true}
       />
 
       {/* Investment Tenure (With Advanced Toggle) */}
@@ -125,7 +139,7 @@ export default function StepUpSIP({ currency, setCurrency }) {
           label="Total Investment Tenure (Years)"
           value={totalYears}
           onChange={handleTotalYearsChange}
-          min={1} max={40} step={0.1}
+          min={MIN_YEARS} max={MAX_YEARS} step={0.1}
           isDecimal={true}
         />
 
@@ -169,11 +183,11 @@ export default function StepUpSIP({ currency, setCurrency }) {
           label="Expected Annual Return (%)"
           value={annualRate}
           onChange={setAnnualRate}
-          min={1} max={30} symbol="%"
+          min={MIN_RATE} max={MAX_RATE} symbol="%"
           isDecimal={true}
         />
 
-        <div className="mt-6 flex flex-col md:flex-row gap-6">
+        <div className="mt-6 flex flex-col lg:flex-row gap-6">
           <div className="flex-1">
             <TaxToggle
               currency={currency}
@@ -188,31 +202,13 @@ export default function StepUpSIP({ currency, setCurrency }) {
             />
           </div>
           {/* INFLATION TOGGLE */}
-          <div className="flex-1 p-4 bg-gray-50 rounded-xl border border-gray-100">
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-semibold text-gray-700">Adjust for Inflation</label>
-              <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                <input type="checkbox" name="toggle" id="inflation-toggle-step"
-                  checked={isInflationAdjusted}
-                  onChange={() => setIsInflationAdjusted(!isInflationAdjusted)}
-                  className="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300 checked:right-0 checked:border-sky-500 transition-all duration-300"
-                  style={{ right: isInflationAdjusted ? "0" : "auto", left: isInflationAdjusted ? "auto" : "0" }}
-                />
-                <label htmlFor="inflation-toggle-step" className={`toggle-label block overflow-hidden h-5 rounded-full cursor-pointer ${isInflationAdjusted ? "bg-sky-500" : "bg-gray-300"}`}></label>
-              </div>
-            </div>
-
-            {isInflationAdjusted && (
-              <div className="mt-3 animate-fade-in">
-                <InputWithSlider
-                  label="Inflation Rate (%)"
-                  value={inflationRate}
-                  onChange={setInflationRate}
-                  min={0} max={15} step={0.1} symbol="%"
-                  isDecimal={true}
-                />
-              </div>
-            )}
+          <div className="flex-1">
+            <InflationToggle
+              isAdjusted={isInflationAdjusted}
+              setIsAdjusted={setIsInflationAdjusted}
+              rate={inflationRate}
+              setRate={setInflationRate}
+            />
           </div>
         </div>
       </div>
@@ -249,9 +245,9 @@ export default function StepUpSIP({ currency, setCurrency }) {
             : {})}
         />
       }
-      charts={<CompoundingBarChart data={yearlyRows} currency={currency} />}
+      charts={<FinancialCompoundingBarChart data={yearlyRows} currency={currency} />}
       pieChart={
-        <InvestmentPieChart
+        <FinancialInvestmentPieChart
           invested={investedTotal}
           gain={gain}
           total={totalFuture}

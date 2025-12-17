@@ -5,29 +5,29 @@ import { getCurrencySymbol, moneyFormat } from "../../utils/formatting";
 
 // --- NEW HELPER FUNCTION FOR CURRENCY PREFIX ---
 const getDisplayPrefix = (currencyCode) => {
-    if (!currencyCode) return null;
-    
-    // Get the standard symbol (e.g., HK$, $, ¥)
-    const symbol = getCurrencySymbol(currencyCode); 
-    
-    // Logic to avoid redundancy (e.g., HKHK$)
-    switch (currencyCode) {
-        case 'CAD':
-        case 'AUD':
-        case 'SGD':
-            // Check if the symbol is just '$' (generic symbol). If so, prepend code.
-            if (symbol === '$') {
-                return `${currencyCode.substring(0, 2)}${symbol}`; 
-            }
-            return symbol; 
-        case 'HKD':
-            // HKD symbol is typically HK$, so we just return the symbol.
-            return symbol; 
-        
-        default:
-            // USD, EUR, JPY, INR (return standard symbol)
-            return symbol;
-    }
+  if (!currencyCode) return null;
+
+  // Get the standard symbol (e.g., HK$, $, ¥)
+  const symbol = getCurrencySymbol(currencyCode);
+
+  // Logic to avoid redundancy (e.g., HKHK$)
+  switch (currencyCode) {
+    case 'CAD':
+    case 'AUD':
+    case 'SGD':
+      // Check if the symbol is just '$' (generic symbol). If so, prepend code.
+      if (symbol === '$') {
+        return `${currencyCode.substring(0, 2)}${symbol}`;
+      }
+      return symbol;
+    case 'HKD':
+      // HKD symbol is typically HK$, so we just return the symbol.
+      return symbol;
+
+    default:
+      // USD, EUR, JPY, INR (return standard symbol)
+      return symbol;
+  }
 };
 
 export default function InputWithSlider({
@@ -41,22 +41,22 @@ export default function InputWithSlider({
   symbol,
   isDecimal = false,
 }) {
-  
+
   const currencyPrefix = getDisplayPrefix(currency);
   const genericPrefix = symbol;
 
   const prefix = currency ? currencyPrefix : genericPrefix;
-  
-  const sliderValue = Number(value) || 0; 
-  const effectiveStep = isDecimal ? step : 1;   
+
+  const sliderValue = Number(value) || 0;
+  const effectiveStep = isDecimal ? step : 1;
   // Helper for small range labels - CRITICAL USAGE OF moneyFormat(..., true)
   const formatRangeLabel = (val) => {
-      // If a currency is provided, use moneyFormat with compact=true
-      if (currency) {
-          return moneyFormat(val, currency, true);
-      }
-      // Otherwise, just return the raw number
-      return val; 
+    // If a currency is provided, use moneyFormat with compact=true
+    if (currency) {
+      return moneyFormat(val, currency, true);
+    }
+    // Otherwise, just return the raw number
+    return val;
   };
 
 
@@ -70,13 +70,13 @@ export default function InputWithSlider({
             ? moneyFormat(sliderValue, currency, true) // Use compact format (e.g., ₹5.49L)
             : `${sliderValue.toLocaleString('en-IN')}${symbol === "%" ? "%" : ""}` // Fallback for non-currency (e.g., %)
           }
-          </span>
+        </span>
       </div>
 
       {/* Input Box Container */}
       <div className="relative">
         {prefix && (
-          <div className="absolute inset-y-0 left-0 flex items-center px-3 sm:px-4 rounded-l-xl bg-gray-100 border border-r-0 border-gray-300 h-full">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 sm:px-4 rounded-l-xl bg-gray-100 border border-r-0 border-gray-300 h-full">
             <span className="text-gray-600 font-semibold text-sm">{prefix}</span>
           </div>
         )}
@@ -91,9 +91,9 @@ export default function InputWithSlider({
           className={`
             w-full py-2.5 sm:py-3 pr-4 border border-gray-300 rounded-xl outline-none 
             focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all
-            font-semibold text-gray-800
+            font-semibold text-gray-900
             text-base sm:text-lg
-            ${prefix ? "pl-[4.5rem] sm:pl-[5rem]" : "pl-4"} 
+            ${prefix ? "pl-16 sm:pl-20" : "pl-4"} 
           `}
         />
       </div>
@@ -110,8 +110,8 @@ export default function InputWithSlider({
           min={min}
           max={max}
           step={effectiveStep}
-          value={sliderValue > max ? max : sliderValue} 
-          onChange={(e) => onChange(e.target.value)} 
+          value={sliderValue > max ? max : sliderValue}
+          onChange={(e) => onChange(e.target.value)}
           className="
             w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer 
             accent-teal-600 hover:accent-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-300
