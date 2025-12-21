@@ -12,7 +12,7 @@ import CalculatorLayout from "./CalculatorLayout"; // <--- NEW LAYOUT
 
 import { useLimitedPay } from "../../hooks/useLimitedPay";
 import { useCalculatorState } from "../../hooks/useCalculatorState"; // <--- NEW HOOK
-import { downloadCSV } from "../../utils/export";
+import { downloadPDF } from "../../utils/export";
 import { calculateLTCG } from "../../utils/tax";
 import { computeStepUpSchedule, calculateRealValue } from "../../utils/finance"; // <--- SHARED LOGIC
 import {
@@ -110,7 +110,7 @@ export default function StepUpSIP({ currency, setCurrency }) {
       Math.round(r.growth),
       Math.round(r.overallValue),
     ]);
-    downloadCSV(rows, header, "stepup_sip_table.csv");
+    downloadPDF(rows, header, "stepup_sip_report.pdf");
   }
 
   // --- UI PARTS ---

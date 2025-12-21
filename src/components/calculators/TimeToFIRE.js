@@ -4,7 +4,7 @@ import InputWithSlider from '../common/InputWithSlider';
 import { FinancialLineChart } from '../common/FinancialCharts';
 import ResultsTable from '../common/ResultsTable';
 import { calculateTimeToFIRE } from '../../utils/finance';
-import { downloadCSV } from '../../utils/export';
+import { downloadPDF } from '../../utils/export';
 import {
     DEFAULT_SWR,
     DEFAULT_EXPENSE,
@@ -104,7 +104,7 @@ export default function TimeToFIRE({ currency }) {
             r.swr + '%',
             Math.round(r.targetCorpus)
         ]);
-        downloadCSV(data, headers, "time_to_fire_schedule.csv");
+        downloadPDF(data, headers, "time_to_fire_report.pdf");
     };
 
     const tableColumns = [

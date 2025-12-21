@@ -7,9 +7,7 @@ import AmortizationTableWrapper from "../common/AmortizationTableWrapper";
 import { FinancialCompoundingBarChart } from "../common/FinancialCharts";
 import { moneyFormat } from "../../utils/formatting";
 import { calculateEMI, computeLoanAmortization } from "../../utils/finance";
-// We no longer need downloadCSV as we use window.print(), but we can't delete 
-// the export function reference unless we rename it. Let's keep it clean.
-// import { downloadCSV } from "../../utils/export"; 
+import { downloadPDF } from "../../utils/export";
 
 import {
   DEFAULT_LOAN_PRINCIPAL,
@@ -42,10 +40,17 @@ export default function LoanEMI({ currency, setCurrency }) {
     [principal, annualRate, years, monthlyEMI]
   );
 
-  // --- PRINT HANDLER (FIX for 'handlePrint' is not defined) ---
+  // --- PDF EXPORT HANDLER ---
   const handleExport = () => {
-    // We are using window.print() instead of CSV export now.
-    window.print();
+    const headers = ["Year", "Opening Balance", "Interest Paid", "Principal Paid", "Closing Balance"];
+    const data = yearlyRows.map((r) => [
+      `Year ${r.year}`,
+      Math.round(r.openingBalance),
+      Math.round(r.interestPaid),
+      Math.round(r.principalPaid),
+      Math.round(r.closingBalance),
+    ]);
+    downloadPDF(data, headers, "loan_amortization_report.pdf");
   };
 
   // --- REUSABLE FUNCTION FOR TABLE CONTENT (Passed to the Wrapper) ---

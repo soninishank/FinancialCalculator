@@ -12,7 +12,7 @@ import InflationToggle from "../common/InflationToggle";
 import CalculatorLayout from "./CalculatorLayout"; // <--- NEW LAYOUT
 
 import { useCalculatorState } from "../../hooks/useCalculatorState"; // <--- NEW HOOK
-import { downloadCSV } from "../../utils/export";
+import { downloadPDF } from "../../utils/export";
 import { computeYearlySchedule, calculateRealValue } from "../../utils/finance"; // <--- SHARED LOGIC
 import { calculateLTCG } from "../../utils/tax";
 import {
@@ -91,7 +91,7 @@ export default function LumpSumOnly({ currency, setCurrency }) {
     const rows = yearlyRows.map((r) => [
       `Year ${r.year}`, Math.round(r.totalInvested), Math.round(r.lumpSum), Math.round(r.growth), Math.round(r.overallValue),
     ]);
-    downloadCSV(rows, header, "lump_sum_table.csv");
+    downloadPDF(rows, header, "lump_sum_report.pdf");
   }
 
   // --- UI PARTS ---

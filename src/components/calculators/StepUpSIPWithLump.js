@@ -9,7 +9,7 @@ import InputWithSlider from "../common/InputWithSlider";
 import TaxToggle from "../common/TaxToggle"; // <-- added
 
 import { useLimitedPay } from "../../hooks/useLimitedPay";
-import { downloadCSV } from "../../utils/export";
+import { downloadPDF } from "../../utils/export";
 import { calculateLTCG, DEFAULT_LTCG_TAX_RATE_DECIMAL } from "../../utils/tax"; // <-- added
 
 import {
@@ -142,7 +142,7 @@ export default function StepUpSIPWithLump({ currency }) {
       Math.round(r.growth),
       Math.round(r.overallValue),
     ]);
-    downloadCSV(rows, header, "stepup_sip_lumpsum_table.csv");
+    downloadPDF(rows, header, "stepup_sip_lumpsum_report.pdf");
   }
 
   return (

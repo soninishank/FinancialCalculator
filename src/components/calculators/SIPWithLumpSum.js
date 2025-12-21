@@ -13,7 +13,7 @@ import { calculateLTCG } from "../../utils/tax";
 import { useLimitedPay } from "../../hooks/useLimitedPay";
 import { useCalculatorState } from "../../hooks/useCalculatorState"; // <--- NEW HOOK
 import { computeYearlySchedule, calculateRealValue } from "../../utils/finance"; // <--- SHARED LOGIC
-import { downloadCSV } from "../../utils/export";
+import { downloadPDF } from "../../utils/export";
 import {
   DEFAULT_MONTHLY_SIP,
   DEFAULT_LUMP_SUM,
@@ -121,7 +121,7 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
       Math.round(r.growth),
       Math.round(r.overallValue),
     ]);
-    downloadCSV(data, headers, "sip_lumpsum_table.csv");
+    downloadPDF(data, headers, "sip_lumpsum_report.pdf");
   };
 
   // --- UI PARTS ---

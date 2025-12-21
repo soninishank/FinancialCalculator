@@ -8,7 +8,7 @@ import { FinancialLineChart } from "../common/FinancialCharts"; // <--- Import C
 
 import { moneyFormat } from "../../utils/formatting";
 import { computeSWPPlan } from "../../utils/finance";
-import { downloadCSV } from "../../utils/export";
+import { downloadPDF } from "../../utils/export";
 import {
   DEFAULT_RATE,
   MIN_YEARS,
@@ -80,7 +80,7 @@ export default function SWPCalculator({ currency }) {
       Math.round(r.interestEarned),
       Math.round(r.closingBalance),
     ]);
-    downloadCSV(data, headers, "swp_schedule.csv");
+    downloadPDF(data, headers, "swp_report.pdf");
   };
 
   // Render Table Content
