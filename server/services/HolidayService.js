@@ -20,7 +20,7 @@ const INDIAN_MARKET_HOLIDAYS = [
     '2024-12-25', // Christmas
 
     // 2025 (Estimated based on standard calendar, might need updates)
-    '2025-01-26', // Republic Day (Sunday - might be observed or not)
+    '2025-01-26', // Republic Day
     '2025-02-26', // Mahashivratri
     '2025-03-14', // Holi
     '2025-03-31', // Id-ul-Fitr
@@ -35,12 +35,16 @@ const INDIAN_MARKET_HOLIDAYS = [
 
 class HolidayService {
     isHoliday(date) {
+        if (!date) return false;
         const d = new Date(date);
-        const day = d.getDay(); // 0 = Sunday, 6 = Saturday
-        if (day === 0 || day === 6) return true;
 
-        const dateStr = d.toISOString().split('T')[0];
-        return INDIAN_MARKET_HOLIDAYS.includes(dateStr);
+        // Use IST (Asia/Kolkata) for both weekend and holiday checks
+        // This avoids timezone shifts where midnight IST falls on the previous day in UTC
+        const istDateStr = d.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }); // Format: YYYY-MM-DD
+        const weekday = d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Asia/Kolkata' });
+
+        if (weekday === 'Sat' || weekday === 'Sun') return true;
+        return INDIAN_MARKET_HOLIDAYS.includes(istDateStr);
     }
 
     addBusinessDays(startDate, days) {

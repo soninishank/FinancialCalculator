@@ -176,12 +176,16 @@ class BseService {
                         const a = nextTd.find('a');
                         if (a.length > 0) {
                             const href = a.attr('href');
-                            if (href && !href.includes('javascript')) {
+                            if (href && (href.toLowerCase().endsWith('.pdf') || href.toLowerCase().endsWith('.zip'))) {
+                                rhpLink = href;
+                                rhpTitle = 'Red Herring Prospectus';
+                            } else if (href && !href.includes('javascript')) {
+                                // If it's a page link, still keep it but label it as Source
                                 rhpLink = href;
                                 rhpTitle = 'Red Herring Prospectus';
                             } else {
                                 rhpLink = url;
-                                rhpTitle = 'Red Herring Prospectus (BSE Source)';
+                                rhpTitle = 'Red Herring Prospectus';
                             }
                         }
                     }
@@ -418,21 +422,6 @@ class BseService {
                     `, [ipoId, issueStart, issueEnd]);
             }
 
-            // Persist RHP Document
-            if (ipoId && scrapedData?.rhpLink) {
-                const docCheck = await client.query('SELECT doc_id FROM documents WHERE ipo_id = $1 AND doc_type = $2', [ipoId, 'RHP']);
-                if (docCheck.rows.length === 0) {
-                    await client.query(`
-                      INSERT INTO documents(ipo_id, doc_type, title, url)
-                      VALUES($1, 'RHP', $2, $3)
-                        `, [ipoId, scrapedData.rhpTitle, scrapedData.rhpLink]);
-                } else {
-                    await client.query(`
-                      UPDATE documents SET url = $3, title = $2, uploaded_at = NOW()
-                      WHERE doc_id = $1
-                    `, [docCheck.rows[0].doc_id, scrapedData.rhpTitle, scrapedData.rhpLink]);
-                }
-            }
 
         } catch (err) {
             console.error(`Error upserting BSE IPO ${companyName}: `, err);
@@ -570,17 +559,24 @@ class BseService {
 
             // Persist RHP Document
             if (scrapedData.rhpLink) {
-                const docCheck = await client.query('SELECT doc_id FROM documents WHERE ipo_id = $1 AND doc_type = $2', [ipoId, 'RHP']);
+                const docCheck = await client.query('SELECT doc_id, url FROM documents WHERE ipo_id = $1 AND doc_type = $2', [ipoId, 'RHP']);
+                const isDirect = scrapedData.rhpLink.toLowerCase().endsWith('.pdf') || scrapedData.rhpLink.toLowerCase().endsWith('.zip');
+
                 if (docCheck.rows.length === 0) {
                     await client.query(`
-                          INSERT INTO documents(ipo_id, doc_type, title, url)
-                VALUES($1, 'RHP', $2, $3)
-                    `, [ipoId, scrapedData.rhpTitle, scrapedData.rhpLink]);
+                        INSERT INTO documents(ipo_id, doc_type, title, url)
+                        VALUES($1, 'RHP', $2, $3)
+                    `, [ipoId, 'Red Herring Prospectus', scrapedData.rhpLink]);
                 } else {
-                    await client.query(`
-                          UPDATE documents SET url = $3, title = $2, uploaded_at = NOW()
-                          WHERE doc_id = $1
-                    `, [docCheck.rows[0].doc_id, scrapedData.rhpTitle, scrapedData.rhpLink]);
+                    const existingUrl = docCheck.rows[0].url || '';
+                    const wasDirect = existingUrl.toLowerCase().endsWith('.pdf') || existingUrl.toLowerCase().endsWith('.zip');
+
+                    if (isDirect || !wasDirect) {
+                        await client.query(`
+                            UPDATE documents SET url = $3, title = $2, uploaded_at = NOW()
+                            WHERE doc_id = $1
+                        `, [docCheck.rows[0].doc_id, 'Red Herring Prospectus', scrapedData.rhpLink]);
+                    }
                 }
             }
 

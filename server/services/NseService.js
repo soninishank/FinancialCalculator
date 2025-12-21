@@ -509,11 +509,8 @@ class NseService {
 
             // 4. Documents
             const docMap = {
-                'Red Herring Prospectus': 'RHP',
-                'Sample Application Forms': 'Sample_Form',
-                'Bidding Centers': 'Bidding_Centres',
-                'Security Parameters': 'Security_Parameters',
-                'Anchor Allocation Report': 'Anchor_Report'
+                'Red Herring Prospectus': 'RHP'
+                // Removed technical documents: Sample Forms, Bidding Centers, Security Parameters, Anchor Allocation Report
             };
 
             const unwantedTitles = [
@@ -521,7 +518,12 @@ class NseService {
                 "List of mobile applications",
                 "Processing of ASBA",
                 "e-form link",
-                "Branches of Self Certified Syndicate Banks"
+                "Branches of Self Certified Syndicate Banks",
+                "Ratios / Basis of Issue Price",
+                "Bidding Centers",
+                "Sample Application Forms",
+                "Security Parameters",
+                "Anchor Allocation Report"
             ];
 
             for (const d of dataList) {
@@ -540,21 +542,38 @@ class NseService {
                 }
 
                 if (url.startsWith('http') || (url.endsWith('.zip') || url.endsWith('.pdf'))) {
-                    const checkDoc = await client.query('SELECT doc_id FROM documents WHERE ipo_id=$1 AND title=$2', [ipoId, d.title]);
-                    if (checkDoc.rows.length === 0) {
-                        await client.query(`
-                            INSERT INTO documents (ipo_id, doc_type, title, url) VALUES ($1, $2, $3, $4)
-                        `, [ipoId, docType, d.title, url]);
-                    }
+                    if (docType === 'RHP') {
+                        // Deduplication: Only one RHP per IPO. Prefer direct PDF/ZIP over redirect pages.
+                        const existingRhp = await client.query('SELECT doc_id, url FROM documents WHERE ipo_id=$1 AND doc_type=$2', [ipoId, 'RHP']);
+                        const isDirect = url.toLowerCase().endsWith('.pdf') || url.toLowerCase().endsWith('.zip');
 
-                    // Trigger async RHP processing for zip files
-                    if (docType === 'RHP' && url.endsWith('.zip')) {
-                        // await scrapeIndicativeTimetable(...)
-                        // Fire and forget - don't await
-                        documentProcessingService.processRhpDocument(url, ipoId, client)
-                            .catch(err => {
-                                console.error(`[NSE Service] RHP processing failed for ${symbol}:`, err.message);
-                            });
+                        if (existingRhp.rows.length > 0) {
+                            const existingUrl = existingRhp.rows[0].url || '';
+                            const wasDirect = existingUrl.toLowerCase().endsWith('.pdf') || existingUrl.toLowerCase().endsWith('.zip');
+
+                            // Only update if current is direct and previous wasn't, or if previous didn't exist
+                            if (isDirect || !wasDirect) {
+                                await client.query('UPDATE documents SET title=$1, url=$2, uploaded_at=NOW() WHERE doc_id=$3', ['Red Herring Prospectus', url, existingRhp.rows[0].doc_id]);
+                            }
+                        } else {
+                            await client.query('INSERT INTO documents (ipo_id, doc_type, title, url) VALUES ($1, $2, $3, $4)', [ipoId, 'RHP', 'Red Herring Prospectus', url]);
+                        }
+
+                        // Trigger async RHP processing for zip files
+                        if (url.endsWith('.zip')) {
+                            documentProcessingService.processRhpDocument(url, ipoId, client)
+                                .catch(err => {
+                                    console.error(`[NSE Service] RHP processing failed for ${symbol}:`, err.message);
+                                });
+                        }
+                    } else {
+                        // For other (non-RHP) documents that passed filtering
+                        const checkDoc = await client.query('SELECT doc_id FROM documents WHERE ipo_id=$1 AND title=$2', [ipoId, d.title]);
+                        if (checkDoc.rows.length === 0) {
+                            await client.query(`
+                                INSERT INTO documents (ipo_id, doc_type, title, url) VALUES ($1, $2, $3, $4)
+                            `, [ipoId, docType, d.title, url]);
+                        }
                     }
                 }
             }

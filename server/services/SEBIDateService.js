@@ -10,6 +10,7 @@ class SEBIDateService {
         if (!issueEndDate) return {};
 
         const T = new Date(issueEndDate);
+        const formatDate = (date) => date.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
 
         // T+1: Basis of allotment
         const allotmentDate = holidayService.addBusinessDays(T, 1);
@@ -21,15 +22,15 @@ class SEBIDateService {
         const listingDate = holidayService.addBusinessDays(T, 3);
 
         return {
-            allotment_finalization_date: allotmentDate.toISOString().split('T')[0],
-            refund_initiation_date: refundDate.toISOString().split('T')[0],
-            demat_credit_date: listingDate.toISOString().split('T')[0],
-            listing_date: listingDate.toISOString().split('T')[0]
+            allotment_finalization_date: formatDate(allotmentDate),
+            refund_initiation_date: formatDate(refundDate),
+            demat_credit_date: formatDate(listingDate),
+            listing_date: formatDate(listingDate)
         };
     }
 
     /**
-     * Apply fallback dates to an IPO if they are missing
+     * Apply fallback dates to an IPO if they are missing or fall on invalid days (holidays/weekends)
      * @param {Object} client DB client
      * @param {string} ipoId 
      * @param {string|Date} issueEndDate 
@@ -37,7 +38,7 @@ class SEBIDateService {
     async applyFallbackIfMissing(client, ipoId, issueEndDate) {
         if (!issueEndDate) return;
 
-        // 1. Check current dates
+        // 1. Check current dates from DB
         const res = await client.query('SELECT * FROM ipo_dates WHERE ipo_id = $1', [ipoId]);
         const current = res.rows[0] || {};
 
@@ -55,9 +56,20 @@ class SEBIDateService {
         ];
 
         for (const field of fields) {
-            if (!current[field] && fallback[field]) {
-                updates.push(`${field} = $${i++}`);
-                params.push(fallback[field]);
+            const currentValue = current[field];
+            const newValue = fallback[field];
+
+            // Re-validate existing date using newest holiday service (IST-aware)
+            const isInvalid = currentValue && holidayService.isHoliday(currentValue);
+
+            if ((!currentValue || isInvalid) && newValue) {
+                // Determine if we need to update: either missing, invalid, or simply different from newest fallback
+                const currentStr = currentValue ? (currentValue instanceof Date ? currentValue.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }) : String(currentValue)) : null;
+
+                if (currentStr !== newValue) {
+                    updates.push(`${field} = $${i++}`);
+                    params.push(newValue);
+                }
             }
         }
 
@@ -68,7 +80,7 @@ class SEBIDateService {
                 SET ${updates.join(', ')}
                 WHERE ipo_id = $${i}
             `, params);
-            console.log(`[SEBI] Applied ${updates.length} fallback dates for IPO ${ipoId}`);
+            console.log(`[SEBI] Corrected ${updates.length} dates for IPO ${ipoId} to align with business days`);
         }
     }
 }
