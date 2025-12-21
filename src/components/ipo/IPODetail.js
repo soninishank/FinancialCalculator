@@ -19,7 +19,9 @@ export default function IPODetail() {
                 // Endpoint handles series param, but we might not know it from URL yet. 
                 // We could pass it in state or context, but usually symbol is enough if we fetch smart.
                 // Our backend handles it.
-                const res = await fetch(`http://localhost:8081/api/ipos/${symbol}`);
+                // Use environment variable or fallback
+                const baseUrl = process.env.REACT_APP_IPO_API_URL || "http://localhost:8081/api/ipos";
+                const res = await fetch(`${baseUrl.replace(/\/$/, '')}/${symbol}`);
                 const json = await res.json();
 
                 if (json.ok) {
