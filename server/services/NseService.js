@@ -333,7 +333,19 @@ class NseService {
                 return lastVal;
             };
 
+            // Helper to parse Price Band (get lowest price)
+            const parseLowPrice = (str) => {
+                if (!str) return 0;
+                const regex = /Rs\.?\s*([\d,]+\.?\d*)/gi;
+                const match = regex.exec(str);
+                if (match) {
+                    return parseFloat(match[1].replace(/,/g, ''));
+                }
+                return 0;
+            };
+
             const priceHigh = parseHighPrice(priceBandStr);
+            const priceLow = parseLowPrice(priceBandStr);
 
             // Use LLM-based extractor
             const parsed = await issueSizeExtractor.extractIssueSize(issueSizeStr, priceHigh);
@@ -365,8 +377,8 @@ class NseService {
 
             // Calculate Minimum Investment
             let minInvestment = null;
-            if (bidLot && priceHigh) {
-                minInvestment = bidLot * priceHigh;
+            if (bidLot && priceLow) {
+                minInvestment = bidLot * priceLow;
             }
 
             // Update IPO Table with parsed issue size data

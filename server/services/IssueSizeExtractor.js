@@ -54,15 +54,19 @@ class IssueSizeExtractor {
             extracted.special_notes = 'units';
         }
 
+        // Keywords for extraction - use more specific phrases to avoid generic overlap
+        const freshKeywords = ['fresh issue', 'new issue', 'fresh'];
+        const ofsKeywords = ['offer for sale', 'ofs', 'selling shareholder'];
+
         // Extract Fresh Issue amounts
-        const freshAmountMatch = this.findValueNearKeywords(moneyPatterns, ['fresh', 'issue']);
+        const freshAmountMatch = this.findValueNearKeywords(moneyPatterns, freshKeywords);
         if (freshAmountMatch) {
             extracted.fresh_issue.amount_inr = freshAmountMatch.value;
             extracted.confidence = 'high';
         }
 
         // Extract Fresh Issue shares
-        const freshSharesMatch = this.findValueNearKeywords(sharePatterns, ['fresh', 'issue'], true);
+        const freshSharesMatch = this.findValueNearKeywords(sharePatterns, freshKeywords, true);
         if (freshSharesMatch) {
             extracted.fresh_issue.shares = freshSharesMatch.value;
             // Calculate amount if we have price
@@ -73,20 +77,28 @@ class IssueSizeExtractor {
         }
 
         // Extract Offer for Sale amounts
-        const ofsAmountMatch = this.findValueNearKeywords(moneyPatterns, ['offer', 'sale']);
+        const ofsAmountMatch = this.findValueNearKeywords(moneyPatterns, ofsKeywords);
         if (ofsAmountMatch) {
             extracted.offer_for_sale.amount_inr = ofsAmountMatch.value;
             extracted.confidence = 'high';
         }
 
         // Extract Offer for Sale shares
-        const ofsSharesMatch = this.findValueNearKeywords(sharePatterns, ['offer', 'sale'], true);
+        const ofsSharesMatch = this.findValueNearKeywords(sharePatterns, ofsKeywords, true);
         if (ofsSharesMatch) {
-            extracted.offer_for_sale.shares = ofsSharesMatch.value;
-            // Calculate amount if we have price
-            if (price && !extracted.offer_for_sale.amount_inr) {
-                extracted.offer_for_sale.amount_inr = ofsSharesMatch.value * price;
-                extracted.confidence = 'high';
+            // Check if this matches the fresh issue match (to avoid double counting)
+            // If the match is identical (same value and index), we assume it belongs to Fresh Issue as that was matched first
+            const isDuplicate = freshSharesMatch &&
+                freshSharesMatch.value === ofsSharesMatch.value &&
+                Math.abs(freshSharesMatch.index - ofsSharesMatch.index) < 10;
+
+            if (!isDuplicate) {
+                extracted.offer_for_sale.shares = ofsSharesMatch.value;
+                // Calculate amount if we have price
+                if (price && !extracted.offer_for_sale.amount_inr) {
+                    extracted.offer_for_sale.amount_inr = ofsSharesMatch.value * price;
+                    extracted.confidence = 'high';
+                }
             }
         }
 
