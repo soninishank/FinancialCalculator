@@ -37,10 +37,11 @@
   "scripts": {
     "start": "NODE_NO_WARNINGS=1 react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "eject": "react-scripts eject",
     "scraper": "node server/app.js",
     "dev:scraper": "NODE_NO_WARNINGS=1 nodemon -q server/app.js",
+    "db:setup": "node server/db_setup/index.js",
     "dev": "concurrently \"npm start\" \"npm run dev:scraper\""
   },
   "eslintConfig": {
