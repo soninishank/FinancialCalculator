@@ -1,6 +1,8 @@
 const db = require('../config/db');
 const NodeCache = require("node-cache");
-const NseService = require('../services/NseService');
+const discoveryService = require('../services/DiscoveryService');
+const reconciliationService = require('../services/ReconciliationService');
+const enrichmentService = require('../services/EnrichmentService');
 
 const cache = new NodeCache({ stdTTL: 60 }); // 1 minute cache
 
@@ -11,7 +13,7 @@ async function fetchIpoDataFromDb() {
         const query = `
       SELECT 
         i.ipo_id, i.company_name, i.symbol, i.status, i.issue_type, 
-        i.price_range_low, i.price_range_high, i.issue_size, i.series,
+        i.price_range_low, i.price_range_high, i.issue_size, i.series, i.min_investment,
         d.issue_start, d.issue_end, d.listing_date
       FROM ipo i 
       LEFT JOIN ipo_dates d ON i.ipo_id = d.ipo_id
@@ -70,7 +72,8 @@ async function fetchIpoDataFromDb() {
                 issueEnd: row.issue_end ? new Date(row.issue_end).toDateString() : 'TBA',
                 listingDate: row.listing_date ? new Date(row.listing_date).toDateString() : '',
                 priceRange: priceRange,
-                issueSize: row.issue_size ? (row.issue_size / 100).toString() : '-'
+                issueSize: row.issue_size ? (row.issue_size / 100).toString() : '-',
+                minInvestment: row.min_investment ? row.min_investment.toString() : '-'
             };
 
             // Categorize based on DYNAMIC status
@@ -144,51 +147,10 @@ const getIpoDetails = async (req, res) => {
         const isMissingData = !ipo.book_running_lead_managers || !ipo.face_value || !ipo.issue_size || ipo.issue_size == 0;
         const isStale = ageMinutes >= 60;
 
-        // Blocking fetch if missing data and not updated recently (debounce 10m)
-        if (isMissingData && ageMinutes > 10) {
-            console.log(`[Blocking] Fetching missing data for ${symbol}`);
-            // We need a Client for NseService, or we update NseService to use pool.
-            // NseService.fetchAndStoreIpoDetails expects a client with transaction capability or just runs queries.
-            // Checking NseService (it wasn't viewed fully but likely takes client).
-            // Let's assume we can pass the pool or a client. NseService usually begins transaction?
-            // Let's checkout a client for this operation to be safe.
-            const client = await db.pool.connect();
-            try {
-                const fetched = await NseService.fetchAndStoreIpoDetails(symbol, ipo.series || series, ipo.ipo_id, client);
-                if (!fetched) {
-                    // Backoff
-                    await client.query('UPDATE ipo SET updated_at = NOW() WHERE ipo_id = $1', [ipo.ipo_id]);
-                } else {
-                    // Reload
-                    const updatedRes = await client.query(`
-                    SELECT 
-                        i.*, 
-                        d.issue_start, d.issue_end, d.listing_date, d.market_open_time, d.market_close_time,
-                        d.allotment_finalization_date, d.refund_initiation_date, d.demat_credit_date,
-                        r.name as registrar_name, r.email as registrar_email, r.website as registrar_website, r.phone as registrar_phone
-                    FROM ipo i 
-                    LEFT JOIN ipo_dates d ON i.ipo_id = d.ipo_id
-                    LEFT JOIN registrar r ON i.primary_registrar_id = r.registrar_id
-                    WHERE i.ipo_id = $1
-                 `, [ipo.ipo_id]);
-                    ipo = updatedRes.rows[0];
-                }
-            } finally {
-                client.release();
-            }
-        } else if (isStale) {
-            console.log(`[Async] Triggering background refresh for ${symbol}`);
-            // Background refresh
-            (async () => {
-                const client = await db.pool.connect();
-                try {
-                    await NseService.fetchAndStoreIpoDetails(symbol, ipo.series || series, ipo.ipo_id, client);
-                } catch (e) {
-                    console.error(`[Async] Error updating ${symbol}:`, e);
-                } finally {
-                    client.release();
-                }
-            })();
+        // Trigger background enrichment if needed (non-blocking)
+        if (isMissingData || isStale) {
+            enrichmentService.enrichSingle(ipo.ipo_id)
+                .catch(e => console.error(`[Async] Error updating ${symbol}:`, e));
         }
 
         // 2. Documents
@@ -239,18 +201,21 @@ const getIpoDetails = async (req, res) => {
 
 const refreshIpoData = async (req, res) => {
     try {
-        const result = await NseService.syncAllIPOs();
-        cache.del("ipos_db");
+        console.log('Manual refresh triggered');
 
-        if (result.success) {
-            const data = await fetchIpoDataFromDb();
-            res.json({ ok: true, data, details: result.counts });
-        } else {
-            res.status(500).json({ ok: false, error: result.error });
-        }
+        // Run discovery and reconciliation sync
+        await discoveryService.runDiscovery();
+        await reconciliationService.runReconciliation();
+
+        // Trigger enrichment batch in background
+        enrichmentService.enrichAll().catch(e => console.error("Background enrichment error:", e));
+
+        cache.del("ipos_db");
+        res.json({ ok: true, message: "Sync and Reconciliation completed. Enrichment triggered in background." });
+
     } catch (error) {
         console.error("Refresh Logic Error:", error);
-        res.status(500).json({ ok: false, error: error.message });
+        res.status(500).json({ ok: true, error: error.message });
     }
 };
 

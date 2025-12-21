@@ -6,7 +6,6 @@ const extractionCache = new NodeCache({ stdTTL: 86400 });
 
 class IssueSizeExtractor {
     constructor() {
-        console.log('[NLP Extractor] Initialized with Compromise.js');
     }
 
     async extractIssueSize(issueSizeText, pricePerShare = null) {

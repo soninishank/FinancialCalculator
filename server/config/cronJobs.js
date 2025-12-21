@@ -1,54 +1,69 @@
 const cron = require('node-cron');
-const NseService = require('../services/NseService');
+const discoveryService = require('../services/DiscoveryService');
+const reconciliationService = require('../services/ReconciliationService');
+const enrichmentService = require('../services/EnrichmentService');
 
-// Schedule data refresh every hour at minute 0
-// Cron format: minute hour day month weekday
-// '0 * * * *' = At minute 0 of every hour
-const REFRESH_SCHEDULE = '0 * * * *';
+// Discovery & Reconciliation: Every 30 minutes
+const DISCOVERY_SCHEDULE = '*/30 * * * *';
 
-let cronJob = null;
+// Enrichment: Every hour at minute 0 (processes a batch)
+const ENRICHMENT_SCHEDULE = '0 * * * *';
+
+let discoveryJob = null;
+let enrichmentJob = null;
 
 function startCronJobs() {
-    console.log('Setting up cron jobs...');
+    console.log('Setting up refactored cron jobs...');
 
-    // Hourly IPO data refresh
-    cronJob = cron.schedule(REFRESH_SCHEDULE, async () => {
+    // 1. Discovery & Reconciliation Workflow
+    discoveryJob = cron.schedule(DISCOVERY_SCHEDULE, async () => {
         const timestamp = new Date().toISOString();
-        console.log(`[${timestamp}] Running scheduled IPO data refresh...`);
+        console.log(`[${timestamp}] Running scheduled Discovery & Reconciliation...`);
 
         try {
-            const result = await NseService.syncAllIPOs();
-
-            if (result.success) {
-                console.log(`[${timestamp}] ✓ Scheduled refresh completed successfully`);
-                console.log(`  - Current: ${result.counts.current}, Upcoming: ${result.counts.upcoming}, Past: ${result.counts.past}`);
-            } else {
-                console.error(`[${timestamp}] ✗ Scheduled refresh failed:`, result.error);
-            }
+            await discoveryService.runDiscovery();
+            await reconciliationService.runReconciliation();
+            console.log(`[${timestamp}] ✓ Discovery & Reconciliation completed successfully`);
         } catch (err) {
-            console.error(`[${timestamp}] ✗ Error during scheduled refresh:`, err.message);
+            console.error(`[${timestamp}] ✗ Discovery workflow failed:`, err.message);
         }
     }, {
-        scheduled: false // Don't start immediately, we'll start it manually
+        scheduled: false
     });
 
-    console.log(`✓ Cron job configured (schedule: ${REFRESH_SCHEDULE})`);
-    console.log('  To enable automatic hourly refresh, set ENABLE_CRON=true in environment');
+    // 2. Enrichment Workflow
+    enrichmentJob = cron.schedule(ENRICHMENT_SCHEDULE, async () => {
+        const timestamp = new Date().toISOString();
+        console.log(`[${timestamp}] Running scheduled Enrichment batch...`);
+
+        try {
+            await enrichmentService.enrichAll();
+            console.log(`[${timestamp}] ✓ Enrichment batch completed successfully`);
+        } catch (err) {
+            console.error(`[${timestamp}] ✗ Enrichment workflow failed:`, err.message);
+        }
+    }, {
+        scheduled: false
+    });
+
+    console.log(`✓ Cron jobs configured (Discovery: ${DISCOVERY_SCHEDULE}, Enrichment: ${ENRICHMENT_SCHEDULE})`);
 }
 
 function enableCronJobs() {
-    if (cronJob) {
-        cronJob.start();
-        console.log('✓ Automatic hourly IPO data refresh enabled');
+    if (discoveryJob && enrichmentJob) {
+        discoveryJob.start();
+        enrichmentJob.start();
+        console.log('✓ Automatic IPO sync workflows enabled');
         return true;
     }
     return false;
 }
 
 function disableCronJobs() {
-    if (cronJob) {
-        cronJob.stop();
-        console.log('✓ Automatic hourly IPO data refresh disabled');
+    if (discoveryJob && enrichmentJob) {
+        discoveryJob.stop();
+        enrichmentJob.stop();
+        console.log('✓ Automatic IPO sync workflows disabled');
         return true;
     }
     return false;

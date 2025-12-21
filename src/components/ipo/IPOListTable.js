@@ -32,6 +32,11 @@ const Row = ({ ipo, status }) => {
         issueSizeDisplay = moneyFormat(ipo.issueSize, 'INR', true);
     }
 
+    let minInvestmentDisplay = "-";
+    if (ipo.minInvestment && ipo.minInvestment !== '-') {
+        minInvestmentDisplay = moneyFormat(ipo.minInvestment, 'INR', true);
+    }
+
     // Logic for "Closing Today"
     const isClosingToday = React.useMemo(() => {
         if (!closeDate || closeDate === 'TBA') return false;
@@ -97,6 +102,11 @@ const Row = ({ ipo, status }) => {
                     {issueSizeDisplay}
                 </td>
             )}
+
+            {/* Min Investment */}
+            <td className="py-3 px-4 text-right tabular-nums text-gray-600 whitespace-nowrap">
+                {minInvestmentDisplay}
+            </td>
         </tr>
     );
 };
@@ -120,6 +130,7 @@ export default function IpoListTable({ data, status }) {
                             {showPrice && <HeaderCell label="Price Range" align="right" />}
 
                             {showIssueSize && <HeaderCell label="Issue Size" align="right" />}
+                            <HeaderCell label="Min Investment" align="right" />
                         </tr>
                     </thead>
                     <tbody>

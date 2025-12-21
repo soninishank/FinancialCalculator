@@ -45,7 +45,7 @@ export default function IPODetail() {
         company_name, series, issue_type, price_range_low, price_range_high,
         issue_size, issue_start, issue_end, listing_date,
         allotment_finalization_date, refund_initiation_date, demat_credit_date,
-        face_value, tick_size, bid_lot, min_order_qty, max_retail_amount,
+        face_value, tick_size, bid_lot, min_order_qty, max_retail_amount, min_investment,
         registrar_name, registrar_email, registrar_website, registrar_phone,
         documents, biddingData, subscription
     } = ipo;
@@ -99,9 +99,19 @@ export default function IPODetail() {
                                 </span>
                             </div>
                         </div>
-                        <div className="text-right">
-                            <p className="text-gray-400 text-sm font-medium uppercase tracking-wider mb-1">Price Range</p>
-                            <p className="text-2xl font-bold text-white">{priceRange}</p>
+                        <div className="text-right flex flex-col items-end gap-2">
+                            <div>
+                                <p className="text-gray-400 text-[10px] font-medium uppercase tracking-widest mb-1">Price Range</p>
+                                <p className="text-2xl font-bold text-white">{priceRange}</p>
+                            </div>
+                            {min_investment && (
+                                <div className="bg-white/10 px-4 py-2 rounded-2xl border border-white/10 backdrop-blur-sm self-end">
+                                    <p className="text-blue-300 text-[10px] font-bold uppercase tracking-widest mb-0.5">Min Investment</p>
+                                    <p className="text-xl font-black text-white">
+                                        {moneyFormat(min_investment, 'INR', true)}
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -178,6 +188,7 @@ export default function IPODetail() {
                                 <DetailRow label="Tick Size" value={tick_size ? `Rs.${tick_size}` : '-'} />
                                 <DetailRow label="Bid Lot" value={bid_lot ? `${bid_lot} Shares` : '-'} />
                                 <DetailRow label="Min Order Qty" value={min_order_qty ? `${min_order_qty} Shares` : '-'} />
+                                <DetailRow label="Min Investment" value={min_investment ? moneyFormat(min_investment, 'INR', true) : '-'} />
                                 <DetailRow label="Max Retail Amount" value={max_retail_amount ? `Rs.${max_retail_amount}` : '-'} />
                             </div>
                         </div>

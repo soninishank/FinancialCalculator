@@ -35,12 +35,12 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "NODE_NO_WARNINGS=1 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "scraper": "node server/app.js",
-    "dev:scraper": "nodemon server/app.js",
+    "dev:scraper": "NODE_NO_WARNINGS=1 nodemon -q server/app.js",
     "dev": "concurrently \"npm start\" \"npm run dev:scraper\""
   },
   "eslintConfig": {

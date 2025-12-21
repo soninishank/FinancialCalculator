@@ -46,7 +46,7 @@ class NseService {
 
         while (attempt < MAX_RETRIES) {
             attempt++;
-            console.log(`Fetching ${url} (Attempt ${attempt}/${MAX_RETRIES})...`);
+            // Fetch attempt
 
             const browser = await puppeteer.launch({
                 args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -72,9 +72,7 @@ class NseService {
                 await new Promise(r => setTimeout(r, delay));
 
                 // 3. Navigate to API URL directly
-                console.log(`Navigating to ${url}...`);
                 const response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
-                console.log(`Navigation complete. Status: ${response.status()}`);
                 const status = response.status();
 
                 if (status === 200) {
@@ -236,29 +234,64 @@ class NseService {
         }
     }
 
+    async discover() {
+        try {
+            // 1. Current
+            const current = await this.fetchData('https://www.nseindia.com/api/ipo-current-issue');
+            const currentList = (current || []).map(item => ({
+                exchange: 'NSE',
+                symbol: item.symbol,
+                company_name: item.companyName,
+                status: 'open',
+                raw_payload: item
+            }));
+
+            // 2. Upcoming
+            const upcoming = await this.fetchData('https://www.nseindia.com/api/all-upcoming-issues?category=ipo');
+            const upcomingList = (upcoming || []).map(item => ({
+                exchange: 'NSE',
+                symbol: item.symbol,
+                company_name: item.companyName,
+                status: 'upcoming',
+                raw_payload: item
+            }));
+
+            // 3. Past
+            const past = await this.fetchData('https://www.nseindia.com/api/public-past-issues');
+            const pastList = (past || []).map(item => ({
+                exchange: 'NSE',
+                symbol: item.symbol,
+                company_name: item.companyName || item.company,
+                status: 'closed',
+                raw_payload: item
+            }));
+
+            const allDiscovered = [...currentList, ...upcomingList, ...pastList];
+            return allDiscovered;
+
+        } catch (err) {
+            console.error('NSE Discovery failed:', err);
+            return [];
+        }
+    }
+
     async syncAllIPOs() {
         const client = new Client({ connectionString: CONNECTION_STRING });
         try {
             await client.connect();
-            console.log('Connected to DB for Sync');
 
-            // 1. Current
-            const current = await this.fetchData('https://www.nseindia.com/api/ipo-current-issue');
-            console.log(`Processing ${current.length} current issues...`);
-            for (const item of current) await this.upsertIpo(client, item, 'current');
+            const discovered = await this.discover();
 
-            // 2. Upcoming
-            const upcoming = await this.fetchData('https://www.nseindia.com/api/all-upcoming-issues?category=ipo');
-            console.log(`Processing ${upcoming.length} upcoming issues...`);
-            for (const item of upcoming) await this.upsertIpo(client, item, 'upcoming');
+            for (const item of discovered) {
+                // Determine category for legacy upsert
+                let category = 'past';
+                if (item.status === 'open') category = 'current';
+                if (item.status === 'upcoming') category = 'upcoming';
 
-            // 3. Past
-            const past = await this.fetchData('https://www.nseindia.com/api/public-past-issues');
-            console.log(`Processing ${past.length} past issues...`);
-            for (const item of past) await this.upsertIpo(client, item, 'past');
+                await this.upsertIpo(client, item.raw_payload, category);
+            }
 
-            console.log('Sync Complete.');
-            return { success: true, counts: { current: current.length, upcoming: upcoming.length, past: past.length } };
+            return { success: true, counts: { total: discovered.length } };
 
         } catch (err) {
             console.error('Sync failed:', err);
@@ -269,7 +302,6 @@ class NseService {
     }
 
     async fetchAndStoreIpoDetails(symbol, series, ipoId, client) {
-        console.log(`Fetching details for ${symbol} (${series})`);
         const url = `https://www.nseindia.com/api/ipo-detail?symbol=${encodeURIComponent(symbol)}&series=${encodeURIComponent(series)}`;
 
         try {
@@ -308,7 +340,7 @@ class NseService {
 
             // Log extraction info
             if (parsed.warnings.length > 0) {
-                console.log(`[Issue Size] Warnings for ${symbol}:`, parsed.warnings);
+                // parsed.warnings handling?
             }
 
             // Parse Other Fields
@@ -331,6 +363,12 @@ class NseService {
 
             const brlm = findVal("Book Running Lead Managers");
 
+            // Calculate Minimum Investment
+            let minInvestment = null;
+            if (bidLot && priceHigh) {
+                minInvestment = bidLot * priceHigh;
+            }
+
             // Update IPO Table with parsed issue size data
             if (parsed.totalAmount > 0) {
                 await client.query(`
@@ -346,8 +384,9 @@ class NseService {
                         issue_size_confidence = $13,
                         issue_size_extraction_model = $14,
                         issue_size_reasoning = $15,
+                        min_investment = $16,
                         updated_at = NOW()
-                    WHERE ipo_id = $16
+                    WHERE ipo_id = $17
                 `, [
                     faceValue, tickSize, bidLot, minOrderQty, maxRetailAmount, brlm,
                     parsed.raw,
@@ -359,6 +398,7 @@ class NseService {
                     parsed.confidence,
                     parsed.method,
                     parsed.reasoning,
+                    minInvestment,
                     ipoId
                 ]);
             } else {
@@ -371,14 +411,16 @@ class NseService {
                         issue_size_confidence = $8,
                         issue_size_extraction_model = $9,
                         issue_size_reasoning = $10,
+                        min_investment = $11,
                         updated_at = NOW()
-                    WHERE ipo_id = $11
+                    WHERE ipo_id = $12
                 `, [
                     faceValue, tickSize, bidLot, minOrderQty, maxRetailAmount, brlm,
                     parsed.raw,
                     parsed.confidence,
                     parsed.method,
                     parsed.reasoning,
+                    minInvestment,
                     ipoId
                 ]);
             }
@@ -391,29 +433,57 @@ class NseService {
 
             let regPerson = null, regEmail = null, regPhone = null;
             if (regContactRaw) {
-                const emailMatch = regContactRaw.match(/E-mail:\s*([^\s,]+)/i);
-                if (emailMatch) regEmail = emailMatch[1];
+                // Better email extraction (looks for standard email pattern, with or without E-mail label)
+                const emailMatch = regContactRaw.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+                if (emailMatch) regEmail = emailMatch[0];
 
-                const phoneMatch = regContactRaw.match(/\+[\d\s\-]+/);
+                // Better phone extraction (look for standard phone number patterns with + and spaces)
+                const phoneMatch = regContactRaw.match(/(\+?\d[\d\s\-]{8,20})/);
                 if (phoneMatch) regPhone = phoneMatch[0].trim();
 
                 const parts = regContactRaw.split(',');
-                if (parts.length > 0) regPerson = parts[0].trim();
+                if (parts.length > 0) {
+                    // Only take the first part if it doesn't look like phone or email
+                    const first = parts[0].trim();
+                    if (!first.includes('@') && !first.match(/\d/)) {
+                        regPerson = first;
+                    }
+                }
             }
 
+            // Normalization of Registrar Name to avoid duplicates (e.g. from BSE vs NSE or name changes)
+            const normalizeRegistrarName = (name) => {
+                if (!name) return name;
+                // Remove "(Formerly ...)", "(formerly known as ...)", etc.
+                let clean = name.replace(/\(formerly.*?\)/i, '').trim();
+                // Standardize "Pvt Ltd" vs "Private Limited"
+                clean = clean.replace(/Pvt Ltd/gi, 'Private Limited').replace(/Pvt\. Ltd/gi, 'Private Limited');
+                // Remove extra spaces
+                clean = clean.replace(/\s+/g, ' ').trim();
+                return clean;
+            };
+
+            const normalizedRegName = normalizeRegistrarName(regName);
+
             let registrarId = null;
-            if (regName) {
-                const regRes = await client.query('SELECT registrar_id FROM registrar WHERE name = $1', [regName]);
+            if (normalizedRegName) {
+                const regRes = await client.query('SELECT registrar_id FROM registrar WHERE name = $1', [normalizedRegName]);
                 if (regRes.rows.length > 0) {
                     registrarId = regRes.rows[0].registrar_id;
+                    // Update only if missing or if we have new substantial info? For now, update always to keep fresh.
                     await client.query(`
-                        UPDATE registrar SET address=$1, contact_person=$2, phone=$3, email=$4 WHERE registrar_id=$5
+                        UPDATE registrar 
+                        SET address=COALESCE($1, address), 
+                            contact_person=COALESCE($2, contact_person), 
+                            phone=COALESCE($3, phone), 
+                            email=COALESCE($4, email) 
+                        WHERE registrar_id=$5
                     `, [regAddress, regPerson, regPhone, regEmail, registrarId]);
                 } else {
                     const insReg = await client.query(`
                         INSERT INTO registrar (name, address, contact_person, phone, email) 
                         VALUES ($1, $2, $3, $4, $5) RETURNING registrar_id
-                    `, [regName, regAddress, regPerson, regPhone, regEmail]);
+                    `, [normalizedRegName, regAddress, regPerson, regPhone, regEmail]);
                     registrarId = insReg.rows[0].registrar_id;
                 }
                 await client.query('UPDATE ipo SET primary_registrar_id = $1 WHERE ipo_id = $2', [registrarId, ipoId]);
@@ -479,7 +549,7 @@ class NseService {
 
                     // Trigger async RHP processing for zip files
                     if (docType === 'RHP' && url.endsWith('.zip')) {
-                        console.log(`[NSE Service] Triggering async RHP processing for ${symbol}`);
+                        // await scrapeIndicativeTimetable(...)
                         // Fire and forget - don't await
                         documentProcessingService.processRhpDocument(url, ipoId, client)
                             .catch(err => {
