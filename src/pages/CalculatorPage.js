@@ -3,6 +3,7 @@ import React, { Suspense, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import manifest from '../utils/calculatorsManifest';
 import { useCurrency } from '../contexts/CurrencyContext';
+import RelatedCalculators from '../components/common/RelatedCalculators';
 
 // Explicit dynamic imports so bundlers can split chunks
 const importBySlug = (slug) => {
@@ -38,6 +39,7 @@ const importBySlug = (slug) => {
   }
 };
 
+
 export default function CalculatorPage() {
   const { slug } = useParams();
   const meta = manifest.find(m => m.slug === slug);
@@ -53,18 +55,13 @@ export default function CalculatorPage() {
   const fallbackPath = location.state && location.state.from ? location.state.from : '/';
 
   const handleBack = useCallback(() => {
-    // If there's at least one entry in history, try to go back.
-    // window.history.length can be > 1 even for new tabs in some browsers, but this is a pragmatic check.
-    // We still guard with a fallback because navigate(-1) may not always produce the expected result (direct open).
     try {
       if (window.history.length > 1) {
         navigate(-1);
       } else {
-        // direct open, fallback to catalog/home
         navigate(fallbackPath);
       }
     } catch (err) {
-      // defensive fallback
       navigate(fallbackPath);
     }
   }, [navigate, fallbackPath]);
@@ -81,25 +78,45 @@ export default function CalculatorPage() {
   const LazyCalc = React.lazy(() => importBySlug(slug));
 
   return (
-    // single-column layout: calculator uses full width
-    <div className="w-full max-w-none px-0">
-      <main className="w-full bg-white rounded p-6 shadow mx-auto max-w-4xl">
-        {/* Back button — uses history with safe fallback */}
-        <button
-          onClick={handleBack}
-          className="text-sm text-teal-600 mb-4 inline-flex items-center"
-          aria-label="Go back"
-        >
-          ← Back
-        </button>
+    <div className="max-w-6xl mx-auto px-4 py-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Main Content: 9 columns on large screens */}
+        <main className="lg:col-span-9 order-1">
+          <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100">
+            {/* Back button */}
+            <button
+              onClick={handleBack}
+              className="text-sm font-medium text-teal-600 mb-6 inline-flex items-center hover:translate-x-[-4px] transition-transform"
+              aria-label="Go back"
+            >
+              <span className="mr-2">←</span> Back
+            </button>
 
-        <h1 className="text-2xl font-bold mb-2">{meta.title}</h1>
-        <p className="text-gray-600 mb-4">{meta.description}</p>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight mb-2">
+              {meta.title}
+            </h1>
+            <p className="text-gray-500 text-base mb-8 max-w-2xl leading-relaxed">
+              {meta.description}
+            </p>
 
-        <Suspense fallback={<div>Loading calculator…</div>}>
-          <LazyCalc currency={currency} setCurrency={setCurrency} />
-        </Suspense>
-      </main>
+            <Suspense fallback={
+              <div className="flex items-center justify-center p-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
+                <span className="ml-3 text-gray-500 font-medium">Loading calculator...</span>
+              </div>
+            }>
+              <LazyCalc currency={currency} setCurrency={setCurrency} />
+            </Suspense>
+          </div>
+        </main>
+
+        {/* Sidebar: 3 columns on large screens */}
+        <aside className="lg:col-span-3 order-2">
+          <div className="sticky top-6">
+            <RelatedCalculators currentSlug={slug} category={meta.category} />
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }
