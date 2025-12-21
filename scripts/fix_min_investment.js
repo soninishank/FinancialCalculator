@@ -1,5 +1,6 @@
 const { Client } = require('pg');
-const CONNECTION_STRING = 'postgresql://neondb_owner:npg_as3VJZkdre9B@ep-polished-hill-a1o9tkl8-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
+require('dotenv').config({ quiet: true });
+const CONNECTION_STRING = process.env.DATABASE_URL;
 
 async function fixMinInvestment() {
     const client = new Client({ connectionString: CONNECTION_STRING });

@@ -4,7 +4,9 @@ const subscriptionService = require('./SubscriptionService');
 const documentProcessingService = require('./DocumentProcessingService');
 const issueSizeExtractor = require('./IssueSizeExtractor');
 
-const CONNECTION_STRING = 'postgresql://neondb_owner:npg_as3VJZkdre9B@ep-polished-hill-a1o9tkl8-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
+require('dotenv').config({ quiet: true });
+
+const CONNECTION_STRING = process.env.DATABASE_URL;
 
 // Helper to parse dates like "10-Dec-2025" or "10-DEC-2025"
 function parseDate(dateStr) {

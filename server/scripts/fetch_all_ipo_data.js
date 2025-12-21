@@ -3,7 +3,9 @@ const path = require('path');
 const { Client } = require('pg');
 const NseService = require('../services/NseService');
 
-const CONNECTION_STRING = 'postgresql://neondb_owner:npg_as3VJZkdre9B@ep-polished-hill-a1o9tkl8-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
+require('dotenv').config({ quiet: true });
+
+const CONNECTION_STRING = process.env.DATABASE_URL;
 
 const logFilePath = path.join(__dirname, '../logs/issue_size_analysis.log');
 const logDir = path.dirname(logFilePath);

@@ -111,7 +111,23 @@ const getAllIpos = async (req, res) => {
     const cached = cache.get("ipos_db");
     if (cached) return res.json({ ok: true, data: cached });
 
-    const data = await fetchIpoDataFromDb();
+    let data = await fetchIpoDataFromDb();
+
+    // Auto-fetch if empty (Safety mechanism for fresh/empty DB)
+    const totalCount = data.upcoming.length + data.open.length + data.closed.length;
+    if (totalCount === 0) {
+        console.log('Database appears empty. Triggering auto-discovery...');
+        try {
+            await discoveryService.runDiscovery();
+            await reconciliationService.runReconciliation();
+            // Refetch after sync
+            data = await fetchIpoDataFromDb();
+        } catch (err) {
+            console.error('Auto-discovery failed:', err);
+            // Return empty data if sync fails, don't crash the request
+        }
+    }
+
     cache.set("ipos_db", data);
     res.json({ ok: true, data });
 };
