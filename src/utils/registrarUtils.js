@@ -53,7 +53,9 @@ export const getSupportedRegistrars = () => {
     return Object.keys(REGISTRAR_ALLOTMENT_LINKS);
 };
 
-export default {
+const registrarUtils = {
     getRegistrarAllotmentLink,
     getSupportedRegistrars
 };
+
+export default registrarUtils;

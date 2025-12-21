@@ -5,8 +5,8 @@ import HomeIpoSection from "../components/ipo/HomeIpoSection";
 
 export default function HomeFrontPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+
       {/* -------- HERO SECTION -------- */}
       <section className="bg-indigo-600 text-white py-14">
         <div className="max-w-6xl mx-auto px-4 text-center">
@@ -34,33 +34,33 @@ export default function HomeFrontPage() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Mutual Funds */}
-          <Link to="/mutual-funds" className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
-            <h3 className="font-semibold text-lg mb-2">Mutual Funds</h3>
-            <p className="text-sm text-gray-600">
+          <Link to="/mutual-funds" className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-md transition">
+            <h3 className="font-semibold text-lg mb-2 dark:text-white">Mutual Funds</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Compare funds, SIP returns, and top performers.
             </p>
           </Link>
 
           {/* IPOs */}
-          <Link to="/ipo-tracker" className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
-            <h3 className="font-semibold text-lg mb-2">IPOs</h3>
-            <p className="text-sm text-gray-600">
+          <Link to="/ipo-tracker" className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-md transition">
+            <h3 className="font-semibold text-lg mb-2 dark:text-white">IPOs</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Upcoming IPOs, GMP, allotment status & more.
             </p>
           </Link>
 
           {/* Demat Accounts */}
-          <Link to="/demat" className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
-            <h3 className="font-semibold text-lg mb-2">Demat Accounts</h3>
-            <p className="text-sm text-gray-600">
+          <Link to="/demat" className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-md transition">
+            <h3 className="font-semibold text-lg mb-2 dark:text-white">Demat Accounts</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Compare brokers, charges & features.
             </p>
           </Link>
 
           {/* Calculators */}
-          <Link to="/calculators" className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
-            <h3 className="font-semibold text-lg mb-2">Calculators</h3>
-            <p className="text-sm text-gray-600">
+          <Link to="/calculators" className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-md transition">
+            <h3 className="font-semibold text-lg mb-2 dark:text-white">Calculators</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               SIP, Loan EMI, CAGR and 10+ financial calculators.
             </p>
           </Link>
@@ -108,7 +108,7 @@ export default function HomeFrontPage() {
       </section>
 
       {/* -------- FOOTER -------- */}
-      <footer className="py-6 bg-gray-100 text-center text-sm text-gray-500">
+      <footer className="py-6 bg-gray-100 dark:bg-gray-900 text-center text-sm text-gray-500 dark:text-gray-400 border-t dark:border-gray-800">
         © 2025 Finance Planner. Built for investors.
       </footer>
     </div>

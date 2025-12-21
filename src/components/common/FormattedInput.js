@@ -7,8 +7,7 @@ export default function FormattedInput({ value, onChange, currency, className, m
 
   const currentValue = String(value);
   const limit = max ? Math.floor(Number(max)) : GLOBAL_SAFE_MAX;
-  // Get the integer minimum bound
-  const minLimit = Math.floor(Number(min));
+
 
   const getLocale = (curr) => { /* ... */ };
   const locale = getLocale(currency);

@@ -95,6 +95,15 @@ export default function TopUpLoanEMI({ currency }) {
     </>
   );
 
+  // FIX: Clamp topUpYear if baseYears reduces below it
+  const handleBaseYearsChange = (newVal) => {
+    const val = Number(newVal);
+    setBaseYears(val);
+    if (topUpYear >= val) {
+      setTopUpYear(Math.max(1, val - 1));
+    }
+  };
+
   return (
     <div className="animate-fade-in">
       {/* INPUTS SECTION: Split into two clear blocks */}
@@ -111,8 +120,8 @@ export default function TopUpLoanEMI({ currency }) {
           />
           <InputWithSlider
             label="Original Tenure (Years)"
-            value={baseYears} onChange={setBaseYears}
-            min={MIN_YEARS} max={MAX_YEARS}
+            value={baseYears} onChange={handleBaseYearsChange}
+            min={MIN_YEARS} max={MAX_YEARS} step={1}
           />
           <InputWithSlider
             label="Original Rate (%)"
@@ -133,7 +142,7 @@ export default function TopUpLoanEMI({ currency }) {
           <InputWithSlider
             label="Top-Up Year"
             value={topUpYear} onChange={setTopUpYear}
-            min={MIN_YEARS} max={baseYears - 1}
+            min={MIN_YEARS} max={baseYears - 1} step={1}
           />
           <InputWithSlider
             label="Top-Up Rate (%)"

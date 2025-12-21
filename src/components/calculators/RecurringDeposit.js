@@ -129,6 +129,7 @@ export default function RecurringDeposit({ currency }) {
                 onChange={setYears}
                 min={1}
                 max={10} // RDs usually have max tenure of 10 years
+                step={1}
             />
         </>
     );

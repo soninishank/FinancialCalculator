@@ -2,8 +2,9 @@ import React, { useState, useMemo } from 'react';
 import CalculatorLayout from './CalculatorLayout';
 import InputWithSlider from '../common/InputWithSlider';
 import { FinancialLineChart } from '../common/FinancialCharts';
-// SummaryCards unused
+import ResultsTable from '../common/ResultsTable';
 import { calculateTimeToFIRE } from '../../utils/finance';
+import { downloadCSV } from '../../utils/export';
 import {
     DEFAULT_SWR,
     DEFAULT_EXPENSE,
@@ -31,11 +32,11 @@ export default function TimeToFIRE({ currency }) {
     const [swr, setSwr] = useState(DEFAULT_SWR);
 
     const result = useMemo(() => calculateTimeToFIRE({
-        currentCorpus,
-        monthlyExpenses,
-        monthlyInvestment,
-        annualReturn,
-        swr
+        currentCorpus: Number(currentCorpus),
+        monthlyExpenses: Number(monthlyExpenses),
+        monthlyInvestment: Number(monthlyInvestment),
+        annualReturn: Number(annualReturn),
+        swr: Number(swr)
     }), [currentCorpus, monthlyExpenses, monthlyInvestment, annualReturn, swr]);
 
     const inputs = (
@@ -90,19 +91,60 @@ export default function TimeToFIRE({ currency }) {
         </>
     );
 
+    const handleExport = () => {
+        if (!result.rows) return;
+        const headers = ["Year", "Annual Inv.", "Total Invested", "Growth", "Portfolio Value", "Annual Expenses", "SWR", "Target Corpus"];
+        const data = result.rows.map(r => [
+            `Year ${r.year}`,
+            Math.round(r.annualInvestment),
+            Math.round(r.totalInvested),
+            Math.round(r.growth),
+            Math.round(r.overallValue),
+            Math.round(r.annualExpenses),
+            r.swr + '%',
+            Math.round(r.targetCorpus)
+        ]);
+        downloadCSV(data, headers, "time_to_fire_schedule.csv");
+    };
+
+    const tableColumns = [
+        { key: 'year', label: 'Year', align: 'left' },
+        { key: 'annualInvestment', label: 'Annual Inv.', align: 'right', format: 'money' },
+        { key: 'totalInvested', label: 'Total Inv.', align: 'right', format: 'money' },
+        { key: 'growth', label: 'Growth', align: 'right', format: 'money', color: 'green' },
+        { key: 'overallValue', label: 'Portfolio Value', align: 'right', format: 'money', highlight: true },
+        { key: 'annualExpenses', label: 'Annual Exp.', align: 'right', format: 'money' },
+        { key: 'swr', label: 'SWR', align: 'right', format: 'percent' },
+        { key: 'targetCorpus', label: 'Target', align: 'right', format: 'money' }
+    ];
+
     return (
         <CalculatorLayout
             inputs={inputs}
             summary={
                 <>
-                    <div className="p-6 bg-teal-50 rounded-xl border border-teal-100 text-center animate-fade-in shadow-sm">
-                        <h3 className="text-lg font-semibold text-teal-800">Time to Financial Independence</h3>
-                        <div className="text-4xl font-bold text-teal-600 mt-2 mb-1">
-                            {result.years} <span className="text-xl font-medium">Years</span> {result.months} <span className="text-xl font-medium">Months</span>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 animate-fade-in">
+                        {/* Time to FIRE */}
+                        <div className="p-6 bg-teal-50 rounded-2xl border border-teal-100 flex flex-col items-center justify-center text-center">
+                            <h3 className="text-sm font-bold text-teal-800 uppercase tracking-wide mb-1">Time to FIRE</h3>
+                            <div className="text-4xl font-extrabold text-teal-600">
+                                {result.years}<span className="text-lg font-medium text-teal-500 ml-1">Y</span> {result.months}<span className="text-lg font-medium text-teal-500 ml-1">M</span>
+                            </div>
+                            <p className="text-xs text-teal-600/70 mt-2 font-medium">Until Financial Independence</p>
                         </div>
-                        <p className="text-sm text-gray-600">
-                            You need a corpus of <span className="font-bold">{currency} {Math.round(result.targetCorpus).toLocaleString()}</span> to retire comfortably.
-                        </p>
+
+                        {/* Target Corpus */}
+                        <div className="p-6 bg-white rounded-2xl border border-gray-200 shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 to-emerald-400"></div>
+                            <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-1">Target Corpus Needed</h3>
+                            <div className="text-3xl font-extrabold text-gray-900">
+                                {currency} {Math.round(result.targetCorpus).toLocaleString()}
+                            </div>
+                            <div className="flex items-center gap-1 mt-2 text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-full border border-gray-100">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span>Annual Exp. ÷ {swr}% (SWR)</span>
+                            </div>
+                        </div>
                     </div>
 
                     {/* CHART */}
@@ -119,12 +161,25 @@ export default function TimeToFIRE({ currency }) {
                                             // FV = PV*(1+r)^n + PMT * ...
                                             const r = annualReturn / 100;
                                             const months = i * 12;
-                                            const monthlyRate = r / 12;
+                                            // Use correct monthly rate for chart consistency with main logic
+                                            const r_m_chart = Math.pow(1 + r, 1 / 12) - 1;
+
+                                            // We need to re-calculate here or just use result.rows if available?
+                                            // result.rows might not align perfectly with this chart logic if we want smooth yearly points
+                                            // But for now let's stick to the existing chart logic but fix the rate if needed
+                                            // Actually, let's keep the chart logic simple or updated.
+                                            // To ensure consistency, let's just use the same formula
 
                                             // FV of Corpus
-                                            const valCorpus = currentCorpus * Math.pow(1 + monthlyRate, months);
+                                            const valCorpus = currentCorpus * Math.pow(1 + r_m_chart, months);
+
                                             // FV of SIP
-                                            const valSIP = monthlyInvestment * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+                                            let valSIP;
+                                            if (r_m_chart === 0) {
+                                                valSIP = monthlyInvestment * months;
+                                            } else {
+                                                valSIP = monthlyInvestment * ((Math.pow(1 + r_m_chart, months) - 1) / r_m_chart);
+                                            }
 
                                             return Math.round(valCorpus + valSIP);
                                         }),
@@ -149,7 +204,14 @@ export default function TimeToFIRE({ currency }) {
                     </div>
                 </>
             }
+            table={
+                <ResultsTable
+                    data={result.rows}
+                    currency={currency}
+                    onExport={handleExport}
+                    columns={tableColumns}
+                />
+            }
         />
     );
 }
-

@@ -299,6 +299,7 @@ export default function StepDownWithdrawal({ currency }) {
                             onChange={(val) => setPhase1Years(Number(val))}
                             min={MIN_YEARS}
                             max={safePlanningHorizon - 1}
+                            step={1}
                         />
                         <InputWithSlider
                             label={

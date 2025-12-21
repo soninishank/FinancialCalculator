@@ -1,8 +1,19 @@
 import React from "react";
 import { moneyFormat } from "../../utils/formatting"; // Ensure path is correct
 
-export default function ResultsTable({ data, currency, onExport }) {
+export default function ResultsTable({ data, currency, onExport, columns }) {
   if (!data || data.length === 0) return null;
+
+
+
+  // Map 'growth' to standard key if needed or handle flexible keys
+  // Note: Previous code used row.growth. We should stick to that key in default.
+  const displayColumns = columns || [
+    { key: 'year', label: 'Year', align: 'left' },
+    { key: 'totalInvested', label: 'Invested', align: 'right', format: 'money' },
+    { key: 'growth', label: 'Growth', align: 'right', format: 'money', color: 'green' },
+    { key: 'overallValue', label: 'Total Value', align: 'right', format: 'money', highlight: true }
+  ];
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm flex flex-col h-full overflow-hidden">
@@ -23,34 +34,52 @@ export default function ResultsTable({ data, currency, onExport }) {
         <table className="w-full text-left border-collapse">
           <thead className="bg-white sticky top-0 z-10 shadow-sm">
             <tr>
-              <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200">Year</th>
-              <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200 text-right">Invested</th>
-              <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200 text-right">Growth</th>
-              <th className="py-3 px-4 text-xs font-semibold text-teal-700 uppercase tracking-wider bg-teal-50/50 border-b border-teal-100 text-right">Total Value</th>
+              {displayColumns.map((col, idx) => (
+                <th
+                  key={col.key || idx}
+                  className={`py-3 px-4 text-xs font-semibold uppercase tracking-wider border-b border-gray-200 whitespace-nowrap
+                     ${col.align === 'right' ? 'text-right' : 'text-left'}
+                     ${col.highlight ? 'text-teal-700 bg-teal-50/50 border-teal-100' : 'text-gray-500 bg-gray-50'}
+                   `}
+                >
+                  {col.label}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody className="text-sm divide-y divide-gray-100">
-            {data.map((row) => (
-              <tr key={row.year} className="hover:bg-gray-50 transition-colors group">
-                {/* Year Column */}
-                <td className="py-3 px-4 text-gray-600 font-medium whitespace-nowrap">
-                   {row.year}
-                </td>
+            {data.map((row, rIdx) => (
+              <tr key={row.year || rIdx} className="hover:bg-gray-50 transition-colors group">
+                {displayColumns.map((col, cIdx) => {
+                  const val = row[col.key];
 
-                {/* Invested */}
-                <td className="py-3 px-4 text-gray-600 text-right tabular-nums">
-                  {moneyFormat(row.totalInvested, currency)}
-                </td>
+                  // Styling Logic
+                  let cellClass = "py-3 px-4 whitespace-nowrap tabular-nums ";
+                  cellClass += col.align === 'right' ? 'text-right ' : 'text-left ';
 
-                {/* Growth */}
-                <td className="py-3 px-4 text-green-600 text-right tabular-nums">
-                  +{moneyFormat(row.growth, currency)}
-                </td>
+                  if (col.highlight) {
+                    cellClass += "text-gray-900 font-bold bg-teal-50/10 group-hover:bg-teal-50/30 ";
+                  } else if (col.color === 'green') {
+                    cellClass += "text-green-600 ";
+                  } else {
+                    cellClass += "text-gray-600 font-medium ";
+                  }
 
-                {/* Total Value (Highlighted) */}
-                <td className="py-3 px-4 text-gray-900 font-bold text-right tabular-nums bg-teal-50/10 group-hover:bg-teal-50/30">
-                  {moneyFormat(row.overallValue, currency)}
-                </td>
+                  // Formatting Logic
+                  let displayVal = val;
+                  if (col.format === 'money') {
+                    displayVal = moneyFormat(val, currency);
+                    if (col.color === 'green' && val > 0) displayVal = "+" + displayVal;
+                  } else if (col.format === 'percent') {
+                    displayVal = val + '%';
+                  }
+
+                  return (
+                    <td key={col.key || cIdx} className={cellClass}>
+                      {displayVal}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>

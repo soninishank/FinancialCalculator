@@ -45,11 +45,11 @@ export const CHART_COLORS = {
     PRIMARY: '#0f766e', // Teal-700
     SECONDARY: '#3B82F6', // Blue-500
     ACCENT: '#F59E0B', // Amber-500
-    NEUTRAL: '#268d70ff', // Slate-500 (Darker, less "grey")
+    NEUTRAL: '#198c6bff', // Slate-500 (Darker, less "grey")
     SUCCESS: '#10B981', // Emerald-500
     DANGER: '#EF4444', // Red-500
-    TEXT_LIGHT: '#94a3b8', // Slate-400
-    BACKGROUND_LIGHT: 'rgba(20, 184, 166, 0.1)', // Teal-500 with opacity
+    TEXT_LIGHT: '#102a4eff', // Slate-400
+    BACKGROUND_LIGHT: 'rgba(8, 82, 74, 0.1)', // Teal-500 with opacity
     BACKGROUND_SECONDARY: 'rgba(59, 130, 246, 0.1)', // Blue-500 with opacity
     BACKGROUND_SUCCESS: 'rgba(16, 185, 129, 0.1)', // Emerald-500 with opacity
 };

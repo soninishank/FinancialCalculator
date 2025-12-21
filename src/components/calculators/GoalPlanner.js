@@ -87,7 +87,7 @@ export default function GoalPlanner({ currency, setCurrency }) {
           label="Time Period (Years)"
           value={years}
           onChange={setYears}
-          min={MIN_YEARS} max={MAX_YEARS}
+          min={MIN_YEARS} max={MAX_YEARS} step={1}
         />
         <InputWithSlider
           label="Expected Return (%)"

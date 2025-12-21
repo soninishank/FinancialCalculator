@@ -18,11 +18,22 @@ import {
     CHART_COLORS
 } from '../../utils/constants';
 
+// ... imports remain same ...
+
 export default function CostOfDelay({ currency }) {
     const [monthlySIP, setMonthlySIP] = useState(DEFAULT_MONTHLY_SIP);
     const [annualReturn, setAnnualReturn] = useState(DEFAULT_RATE);
     const [delayYears, setDelayYears] = useState(DEFAULT_DELAY);
     const [investmentYears, setInvestmentYears] = useState(DEFAULT_INVESTMENT_YEARS);
+
+    // FIX: Clamp delayYears if investmentYears is reduced below current delay
+    const handleDurationChange = (newDuration) => {
+        const dur = Number(newDuration);
+        setInvestmentYears(dur);
+        if (delayYears >= dur) {
+            setDelayYears(dur - 1);
+        }
+    };
 
     const result = useMemo(() => calculateCostOfDelay({
         monthlyInvestment: monthlySIP,
@@ -66,7 +77,7 @@ export default function CostOfDelay({ currency }) {
                 <InputWithSlider
                     label="Total Duration (Years)"
                     value={investmentYears}
-                    onChange={setInvestmentYears}
+                    onChange={handleDurationChange}
                     min={10} max={MAX_YEARS}
                 />
                 <InputWithSlider

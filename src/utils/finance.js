@@ -426,12 +426,15 @@ export function calculateTimeToFIRE({
 }) {
   // Target Corpus = (Monthly Exp * 12) / (SWR / 100)
   const annualExpenses = monthlyExpenses * 12;
+  const annualInvestment = monthlyInvestment * 12;
   const targetCorpus = annualExpenses / (swr / 100);
 
   // If already reached
   if (currentCorpus >= targetCorpus) return { years: 0, months: 0, targetCorpus };
 
-  const r_m = annualReturn / 12 / 100;
+  // Calculate true monthly rate from annual return (proper compounding)
+  // (1 + r_annual)^(1/12) - 1 ensures monthly rate compounds to annual rate
+  const r_m = Math.pow(1 + annualReturn / 100, 1 / 12) - 1;
 
   // Solving for n in Future Value of Annuity formula mixed with Loop for simplicity
   // FV = CurrentCorpus*(1+r)^n + PMT * ...
@@ -440,16 +443,61 @@ export function calculateTimeToFIRE({
 
   let corpus = currentCorpus;
   let months = 0;
+  let cumulativeInvestment = currentCorpus;
+  const rows = [];
+
+  // Add initial state (Year 0)
+  rows.push({
+    year: 0,
+    totalInvested: cumulativeInvestment,
+    growth: 0,
+    overallValue: corpus,
+    targetCorpus,
+    annualExpenses,
+    annualInvestment,
+    swr
+  });
+
   // Safety break at 100 years
   while (corpus < targetCorpus && months < 1200) {
     corpus = corpus * (1 + r_m) + monthlyInvestment;
+    cumulativeInvestment += monthlyInvestment;
     months++;
+
+    if (months % 12 === 0) {
+      rows.push({
+        year: months / 12,
+        totalInvested: cumulativeInvestment,
+        growth: corpus - cumulativeInvestment,
+        overallValue: corpus,
+        targetCorpus,
+        annualExpenses,
+        annualInvestment,
+        swr
+      });
+    }
+  }
+
+  // Add final partial year if needed
+  if (months % 12 !== 0) {
+    const finalYear = +(months / 12).toFixed(1); // One decimal place for partial year
+    rows.push({
+      year: finalYear,
+      totalInvested: cumulativeInvestment,
+      growth: corpus - cumulativeInvestment,
+      overallValue: corpus,
+      targetCorpus,
+      annualExpenses,
+      annualInvestment,
+      swr
+    });
   }
 
   return {
     years: Math.floor(months / 12),
     months: months % 12,
-    targetCorpus
+    targetCorpus,
+    rows
   };
 }
 
@@ -528,92 +576,126 @@ export function calculateCostOfDelay({
  */
 export function computeRentVsBuyLedger({
   homePrice,
-  downPayment, // value
+  downPayment,
   loanRate,
   loanTenureYears,
   monthlyRent,
-  investReturnRate, // Opportunity cost rate
+  investReturnRate,
   propertyAppreciationRate,
   rentInflationRate,
   maintenanceRate = 1 // % of property value per year
 }) {
+  // 1. Setup Data
   const loanAmount = homePrice - downPayment;
-  const emi = calculateEMI(loanAmount, loanRate / 12 / 100, loanTenureYears * 12);
+  const totalLoanMonths = loanTenureYears * 12;
+  const emi = calculateEMI(loanAmount, loanRate / 12 / 100, totalLoanMonths);
 
   let currentPropertyVal = homePrice;
-  let currentRent = monthlyRent;
-  let investmentCorpus = downPayment; // Starts with DP amount if we rented
+  let currentMonthlyRent = monthlyRent;
+  let investmentCorpus = downPayment; // Starts with DP equivalent
   let loanBalance = loanAmount;
 
   const ledger = [];
-  const years = Math.max(loanTenureYears, 20); // Analyze for at least 20 years or loan tenure
+  const maxYears = Math.max(loanTenureYears, 30); // Show up to 30 years to see long term impact
+  const totalMonths = maxYears * 12;
 
-  // Track cumulative costs
-  let totalRentPaid = 0;
-  let totalBuyOutflow = downPayment; // DP + EMIs + Maintenance
+  // Monthly Rates
+  const monthlyLoanRate = loanRate / 12 / 100;
+  const monthlyInvestRate = investReturnRate / 12 / 100;
 
-  for (let y = 1; y <= years; y++) {
-    // --- BUY SCENARIO ---
-    // 1. Pay EMI (12 months)
-    const annualEMI = (y <= loanTenureYears) ? emi * 12 : 0;
 
-    // 2. Pay Maintenance (1% of value)
-    const annualMaintenance = currentPropertyVal * (maintenanceRate / 100);
 
-    // 3. Asset Appreciates
-    currentPropertyVal = currentPropertyVal * (1 + propertyAppreciationRate / 100);
+  for (let m = 1; m <= totalMonths; m++) {
 
-    // 4. Loan Balance Reduction (approx for year)
-    if (y <= loanTenureYears) {
-      // simplifed loan balance update
-      // For exactness we should loop months, but approx is okay for high level
-      // calculate interest component
-      const interestComp = loanBalance * (loanRate / 100);
-      const principalComp = annualEMI - interestComp;
-      loanBalance -= principalComp;
-      if (loanBalance < 0) loanBalance = 0;
+    // --- BUY SCENARIO (Monthly) ---
+    // A. Loan Payment
+    let monthlyEMI = 0;
+    let interestComponent = 0;
+
+    if (loanBalance > 0) {
+      if (m <= totalLoanMonths) {
+        monthlyEMI = emi;
+        interestComponent = loanBalance * monthlyLoanRate;
+        let principalComponent = monthlyEMI - interestComponent;
+
+        // Handle last month rounding or tiny balance
+        if (loanBalance - principalComponent < 0) {
+          principalComponent = loanBalance;
+          monthlyEMI = principalComponent + interestComponent;
+        }
+
+        loanBalance -= principalComponent;
+        if (loanBalance < 0) loanBalance = 0; // Floating point safety
+      } else {
+        // Loan finished but potentially tiny balance left due to math? 
+        // Should be handled above.
+        loanBalance = 0;
+      }
     }
 
-    totalBuyOutflow += annualEMI + annualMaintenance;
+    // B. Maintenance (Monthly share of annual maintenance)
+    // Maintenance is based on property value at start of year
+    const annualMaintenance = currentPropertyVal * (maintenanceRate / 100);
+    const monthlyMaintenance = annualMaintenance / 12;
 
-    // --- RENT SCENARIO ---
-    // 1. Pay Rent
-    const annualRent = currentRent * 12;
-    totalRentPaid += annualRent;
+    const totalMonthlyBuyCost = monthlyEMI + monthlyMaintenance;
 
-    // 2. Invest the Difference (Surplus)
-    // Surplus = (EMI + Maintenance) - Rent
-    // If negative (Rent > EMI+Maint), we withdraw from corpus? 
-    // Usually Buying is more expensive initially.
-    const costOfBuyingThisYear = annualEMI + annualMaintenance; // Maintenance is owner cost
-    const costOfRentingThisYear = annualRent;
 
-    const surplusToInvest = costOfBuyingThisYear - costOfRentingThisYear;
+    // --- RENT SCENARIO (Monthly) ---
+    // A. Pay Rent
+    const totalMonthlyRentCost = currentMonthlyRent;
 
-    // Add surplus to investment (or subtract if rent is higher)
-    // Grow investment first? Usually invest monthly.
-    // Simplify: Grow corpus at start of year + add surplus at end? 
-    // Better: Mid-year avg or monthly. Let's do simple annual:
-    // Corpus grows
-    investmentCorpus = investmentCorpus * (1 + investReturnRate / 100);
-    // Add surplus (with half-year growth approx or just add)
-    investmentCorpus += surplusToInvest;
 
-    currentRent = currentRent * (1 + rentInflationRate / 100);
+    // --- INVESTMENT (Monthly) ---
+    // Surplus = Cost of Buying - Cost of Renting
+    // If Buy > Rent, we "save" less (actually negative savings relative to baseline? No.)
+    // Logic: We have X amount of cash flow.
+    // Scenario Buy: We spend EMI + Maint.
+    // Scenario Rent: We spend Rent. Remainder = (EMI + Maint) - Rent.
+    // NOTE: This assumes we *have* the cashflow to afford Buying.
+    // If Surplus is negative (Rent > Buy), we withdraw from corpus to pay Rent.
 
-    ledger.push({
-      year: y,
-      propertyValue: currentPropertyVal,
-      loanBalance: Math.max(0, loanBalance),
-      homeEquity: currentPropertyVal - Math.max(0, loanBalance),
+    const monthlySurplus = totalMonthlyBuyCost - totalMonthlyRentCost;
 
-      rentPortfolioValue: investmentCorpus,
+    // 1. Apply Growth to existing corpus (Start of month or end? Monthly compounding usually applies to balance)
+    investmentCorpus = investmentCorpus * (1 + monthlyInvestRate);
 
-      netWorthBuy: currentPropertyVal - Math.max(0, loanBalance),
-      netWorthRent: investmentCorpus,
+    // 2. Add Surplus (End of month contribution)
+    investmentCorpus += monthlySurplus;
 
-      difference: (currentPropertyVal - Math.max(0, loanBalance)) - investmentCorpus
-    });
+    // --- END OF YEAR UPDATES ---
+    if (m % 12 === 0) {
+      const currentYear = m / 12;
+
+      // 1. Appreciate Property
+      // Value at END of year = Value * (1 + rate)
+      currentPropertyVal = currentPropertyVal * (1 + propertyAppreciationRate / 100);
+
+      // 2. Increase Rent for NEXT year
+      const nextYearRent = currentMonthlyRent * (1 + rentInflationRate / 100);
+
+      // 3. Push to Ledger
+      ledger.push({
+        year: currentYear,
+        propertyValue: currentPropertyVal,
+        loanBalance: Math.max(0, loanBalance),
+        homeEquity: currentPropertyVal - Math.max(0, loanBalance),
+
+        rentPortfolioValue: investmentCorpus,
+
+        netWorthBuy: currentPropertyVal - Math.max(0, loanBalance),
+        netWorthRent: investmentCorpus,
+
+        difference: Math.abs((currentPropertyVal - Math.max(0, loanBalance)) - investmentCorpus)
+      });
+
+      // Update Rent for next loop
+      currentMonthlyRent = nextYearRent;
+
+      // Reset annual trackers (not currently used in ledger output)
+      // yearlyBuyOutflow = 0;
+      // yearlyRentPaid = 0;
+    }
   }
 
   return ledger;

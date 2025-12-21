@@ -117,7 +117,7 @@ export default function RentVsBuy({ currency }) {
                         label="Tenure (Years)"
                         value={loanTenure}
                         onChange={setLoanTenure}
-                        min={5} max={30}
+                        min={5} max={30} step={1}
                     />
                 </div>
                 <InputWithSlider
