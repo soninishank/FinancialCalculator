@@ -60,7 +60,7 @@ export default function IpoListTable({ data, status }) {
     return (
         <div className="overflow-x-auto bg-white rounded-2xl shadow-xl border border-gray-100">
             {data.length > 0 ? (
-                <table className="min-w-full text-left text-sm divide-y divide-gray-200">
+                <table className="min-w-full text-left text-sm divide-y divide-gray-100">
                     <thead className="bg-gray-50 sticky top-0">
                         <tr>
                             <HeaderCell label="Company/Type" />

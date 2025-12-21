@@ -58,11 +58,11 @@ export default function LoanEMI({ currency, setCurrency }) {
     <>
       <thead className="bg-white sticky top-0 z-10 shadow-sm">
         <tr>
-          <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200">Year</th>
-          <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200 text-right">Opening Balance</th>
+          <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-100">Year</th>
+          <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-100 text-right">Opening Balance</th>
           <th className="py-3 px-4 text-xs font-semibold text-rose-600 uppercase tracking-wider bg-rose-50/50 border-b border-rose-100 text-right">Interest Paid</th>
           <th className="py-3 px-4 text-xs font-semibold text-indigo-600 uppercase tracking-wider bg-indigo-50/50 border-b border-indigo-100 text-right">Principal Paid</th>
-          <th className="py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200 text-right">Closing Balance</th>
+          <th className="py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-100 text-right">Closing Balance</th>
         </tr>
       </thead>
       <tbody className="text-sm divide-y divide-gray-100">

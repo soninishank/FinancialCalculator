@@ -5,9 +5,10 @@ import manifest from '../../utils/calculatorsManifest';
 const MANUAL_RELATIONS = {
     'simple-interest': ['lump-sum', 'recurring-deposit', 'cagr-calculator'],
     'pure-sip': ['step-up-sip', 'sip-plus-lump', 'swp-calculator'],
-    'loan-emi': ['refinance-calculator', 'topup-loan-emi', 'credit-card-payoff'],
+    'loan-emi': ['refinance-calculator', 'topup-loan-emi', 'credit-card-payoff', 'home-loan-eligibility'],
     'lump-sum': ['pure-sip', 'cagr-calculator', 'rule-of-72', 'compound-interest'],
     'compound-interest': ['lump-sum', 'simple-interest', 'recurring-deposit', 'cagr-calculator'],
+    'home-loan-eligibility': ['loan-emi', 'refinance-calculator', 'topup-loan-emi'],
 };
 
 const RelatedCalculators = ({ currentSlug, category }) => {

@@ -5,7 +5,7 @@ import React from 'react';
 export default function IpoStatusTabs({ tabs, activeTab, setActiveTab }) {
 
     return (
-        <div className="flex flex-wrap justify-start gap-2 mb-6 border-b border-gray-200 w-full pb-1">
+        <div className="flex flex-wrap justify-start gap-2 mb-6 border-b border-gray-100 w-full pb-1">
             {tabs.map((tab) => {
                 const isActive = activeTab === tab;
                 return (

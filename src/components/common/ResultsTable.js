@@ -16,7 +16,7 @@ export default function ResultsTable({ data, currency, onExport, columns }) {
   ];
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm flex flex-col h-full overflow-hidden">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col h-full overflow-hidden">
       {/* Header with Export Button */}
       <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
         <h3 className="font-semibold text-gray-700">Yearly Breakdown</h3>
@@ -37,7 +37,7 @@ export default function ResultsTable({ data, currency, onExport, columns }) {
               {displayColumns.map((col, idx) => (
                 <th
                   key={col.key || idx}
-                  className={`py-3 px-4 text-xs font-semibold uppercase tracking-wider border-b border-gray-200 whitespace-nowrap
+                  className={`py-3 px-4 text-xs font-semibold uppercase tracking-wider border-b border-gray-100 whitespace-nowrap
                      ${col.align === 'right' ? 'text-right' : 'text-left'}
                      ${col.highlight ? 'text-teal-700 bg-teal-50/50 border-teal-100' : 'text-gray-500 bg-gray-50'}
                    `}

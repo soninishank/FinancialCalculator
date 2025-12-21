@@ -36,6 +36,7 @@ const importBySlug = (slug) => {
     case 'rule-of-72': return import('../components/calculators/RuleOf72');
     case 'refinance-calculator': return import('../components/calculators/RefinanceCalculator');
     case 'compound-interest': return import('../components/calculators/CompoundInterest');
+    case 'home-loan-eligibility': return import('../components/calculators/HomeLoanEligibility');
     default: return Promise.reject(new Error('Unknown calculator'));
   }
 };

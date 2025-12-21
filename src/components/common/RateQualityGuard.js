@@ -14,7 +14,7 @@ export default function RateQualityGuard({ rate }) {
     const { label, color, description, isWarning } = getRateMetadata(rate);
 
     const colorMap = {
-        gray: 'bg-gray-50 text-gray-600 border-gray-200',
+        gray: 'bg-gray-50 text-gray-600 border-gray-100',
         blue: 'bg-blue-50 text-blue-600 border-blue-200',
         indigo: 'bg-indigo-50 text-indigo-600 border-indigo-200',
         teal: 'bg-teal-50 text-teal-600 border-teal-200',

@@ -13,6 +13,7 @@ export default function SummaryCards({
   // optional inflation object
   // { applied: true, realValue, inflationRate }
   inflation = null,
+  customLabels = {},
 }) {
   const showTax = tax && tax.applied === true;
   const showInflation = inflation && inflation.applied === true;
@@ -25,7 +26,7 @@ export default function SummaryCards({
   const cards = [
     {
       key: "invested",
-      label: "Total Invested",
+      label: customLabels.invested || "Total Invested",
       value: invested,
       color: "indigo",
       icon: (
@@ -36,7 +37,7 @@ export default function SummaryCards({
     },
     {
       key: "totalFuture",
-      label: showInflation ? "Nominal Future Value" : "Total Future Value",
+      label: customLabels.totalValue || (showInflation ? "Nominal Future Value" : "Total Future Value"),
       value: totalValue,
       color: "sky",
       icon: (
@@ -51,7 +52,7 @@ export default function SummaryCards({
     },
     {
       key: "wealth",
-      label: showInflation ? "Nominal Wealth Gain" : "Wealth Generated",
+      label: customLabels.gain || (showInflation ? "Nominal Wealth Gain" : "Wealth Generated"),
       value: gain,
       color: "emerald",
       icon: (
@@ -65,7 +66,7 @@ export default function SummaryCards({
   if (showTax) {
     const taxCard = {
       key: "postTax",
-      label: "Post-Tax Value",
+      label: customLabels.postTax || "Post-Tax Value",
       value: tax.postTaxValue ?? 0,
       color: "rose",
       icon: (

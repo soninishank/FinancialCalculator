@@ -76,11 +76,11 @@ export default function HomeFrontPage() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <CalcCard title="SIP Calculator" slug="pure-sip" />
+          <CalcCard title="Lump Sum Calculator" slug="lump-sum" />
+          <CalcCard title="Compound Interest" slug="compound-interest" />
           <CalcCard title="SIP + Lump Sum" slug="sip-plus-lump" />
           <CalcCard title="Loan EMI Calculator" slug="loan-emi" />
           <CalcCard title="CAGR Calculator" slug="cagr-calculator" />
-          <CalcCard title="Top-Up Loan EMI" slug="topup-loan-emi" />
-          <CalcCard title="Lump Sum Calculator" slug="lump-sum" />
         </div>
 
         <div className="text-center mt-6">

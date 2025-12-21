@@ -113,7 +113,7 @@ export default function InputWithSlider({
           value={sliderValue > max ? max : sliderValue}
           onChange={(e) => onChange(e.target.value)}
           className="
-            w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer 
+            w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer 
             accent-teal-600 hover:accent-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-300
           "
         />

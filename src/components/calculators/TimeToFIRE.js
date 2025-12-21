@@ -134,7 +134,7 @@ export default function TimeToFIRE({ currency }) {
                         </div>
 
                         {/* Target Corpus */}
-                        <div className="p-6 bg-white rounded-2xl border border-gray-200 shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden">
+                        <div className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden">
                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 to-emerald-400"></div>
                             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-1">Target Corpus Needed</h3>
                             <div className="text-3xl font-extrabold text-gray-900">

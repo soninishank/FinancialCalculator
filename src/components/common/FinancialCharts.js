@@ -270,7 +270,7 @@ export const FinancialCompoundingBarChart = ({ data, currency, type = 'investmen
                 backgroundColor: "rgba(255, 255, 255, 0.98)",
                 titleColor: "#1E293B", // Late-800
                 bodyColor: "#334155", // Slate-700
-                borderColor: "#E2E8F0", // Slate-200
+                borderColor: "#F1F5F9", // Slate-100 (Much cleaner)
                 borderWidth: 1,
                 padding: 12,
                 cornerRadius: 12, // Softer corners

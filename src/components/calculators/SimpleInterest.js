@@ -42,7 +42,7 @@ export default function SimpleInterest({ currency }) {
         datasets: [
             {
                 data: [principal, result.interest],
-                backgroundColor: [CHART_COLORS.NEUTRAL, CHART_COLORS.PRIMARY], // slate-200, teal-500
+                backgroundColor: ["#6366F1", CHART_COLORS.PRIMARY], // Indigo-500, Teal-700
                 borderWidth: 0
             }
         ]

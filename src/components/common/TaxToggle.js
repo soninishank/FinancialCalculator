@@ -171,7 +171,7 @@ export default function TaxToggle({
                 ref={popRef}
                 role="dialog"
                 aria-label="LTCG details"
-                className="absolute z-50 mt-2 w-64 bg-white border border-gray-200 rounded-md shadow-lg p-3 text-xs text-gray-700"
+                className="absolute z-50 mt-2 w-64 bg-white border border-gray-100 rounded-md shadow-lg p-3 text-xs text-gray-700"
                 style={{ transform: "translateY(4px)" }}
               >
                 <div className="leading-tight">{taxTooltipText}</div>

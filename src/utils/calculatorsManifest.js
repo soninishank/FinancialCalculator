@@ -3,14 +3,7 @@
 // Keep `component` values identical to your file export names so you can map slug -> import.
 
 const calculators = [
-  {
-    slug: 'sip-plus-lump',
-    title: 'SIP + Lump Sum Calculator',
-    description: 'Estimate future value by combining an initial lump sum with monthly SIP contributions and compounding returns.',
-    keywords: 'sip plus lump sum, sip calculator, lump sum calculator, investment growth',
-    category: 'SIP',
-    component: 'SIPWithLumpSum'
-  },
+  // --- Popular / Core ---
   {
     slug: 'pure-sip',
     title: 'SIP Calculator',
@@ -28,28 +21,28 @@ const calculators = [
     component: 'LumpSumOnly'
   },
   {
+    slug: 'sip-plus-lump',
+    title: 'SIP + Lump Sum Calculator',
+    description: 'Estimate future value by combining an initial lump sum with monthly SIP contributions and compounding returns.',
+    keywords: 'sip plus lump sum, sip calculator, lump sum calculator, investment growth',
+    category: 'SIP',
+    component: 'SIPWithLumpSum'
+  },
+  {
+    slug: 'compound-interest',
+    title: 'Compound Interest Calculator',
+    description: 'Calculate the growth of your investments with compounding at different frequencies (monthly, quarterly, yearly).',
+    keywords: 'compound interest calculator, compounding, investment growth, monthly compounding',
+    category: 'Math',
+    component: 'CompoundInterest'
+  },
+  {
     slug: 'step-up-sip',
     title: 'Step-Up SIP Calculator',
     description: 'Model SIPs that increase periodically (step-up) to reflect salary hikes or increasing savings capacity.',
     keywords: 'step-up sip, increasing sip, sip escalator, sip growth',
     category: 'SIP',
     component: 'StepUpSIP'
-  },
-  {
-    slug: 'step-up-plus-lump',
-    title: 'Step-Up SIP + Lump Sum',
-    description: 'Combine a step-up SIP schedule with an initial lump sum to forecast portfolio value over time.',
-    keywords: 'step-up sip lump sum, sip escalation, investment planning',
-    category: 'SIP',
-    component: 'StepUpSIPWithLump'
-  },
-  {
-    slug: 'goal-planner',
-    title: 'Goal Planner',
-    description: 'Plan financial goals (education, retirement, house) by estimating required monthly savings or lump sum to reach targets.',
-    keywords: 'goal planner, financial goals, savings plan, target planning',
-    category: 'Planner',
-    component: 'GoalPlanner'
   },
   {
     slug: 'loan-emi',
@@ -68,12 +61,38 @@ const calculators = [
     component: 'CAGRCalculator'
   },
   {
-    slug: 'topup-loan-emi',
-    title: 'Top-Up Loan EMI Calculator',
-    description: 'Estimate EMI impact and revised amortization when a top-up is taken on an existing loan.',
-    keywords: 'top-up loan emi, loan topup calculator, additional loan EMI',
-    category: 'Loan',
-    component: 'TopUpLoanEMI'
+    slug: 'time-to-fire',
+    title: 'Time to FIRE',
+    description: 'Calculate exactly when you can reach Financial Independence based on your current savings and expenses.',
+    keywords: 'fire, financial independence, retire early, retirement calculator',
+    category: 'FIRE',
+    component: 'TimeToFIRE'
+  },
+  {
+    slug: 'goal-planner',
+    title: 'Goal Planner',
+    description: 'Plan financial goals (education, retirement, house) by estimating required monthly savings or lump sum to reach targets.',
+    keywords: 'goal planner, financial goals, savings plan, target planning',
+    category: 'Planner',
+    component: 'GoalPlanner'
+  },
+  {
+    slug: 'rent-vs-buy',
+    title: 'Rent vs. Buy Calculator',
+    description: 'Compare the net worth impact of Renting & Investing vs. Buying a Home over the long term.',
+    keywords: 'rent vs buy, home loan vs rent, real estate investment',
+    category: 'Decision',
+    component: 'RentVsBuy'
+  },
+
+  // --- Specialized / Advanced ---
+  {
+    slug: 'step-up-plus-lump',
+    title: 'Step-Up SIP + Lump Sum',
+    description: 'Combine a step-up SIP schedule with an initial lump sum to forecast portfolio value over time.',
+    keywords: 'step-up sip lump sum, sip escalation, investment planning',
+    category: 'SIP',
+    component: 'StepUpSIPWithLump'
   },
   {
     slug: 'swp-calculator',
@@ -82,15 +101,6 @@ const calculators = [
     keywords: 'swp, systematic withdrawal plan, income, retirement',
     category: 'SIP',
     component: 'SWPCalculator'
-  },
-  // --- FIRE Specific ---
-  {
-    slug: 'time-to-fire',
-    title: 'Time to FIRE',
-    description: 'Calculate exactly when you can reach Financial Independence based on your current savings and expenses.',
-    keywords: 'fire, financial independence, retire early, retirement calculator',
-    category: 'FIRE',
-    component: 'TimeToFIRE'
   },
   {
     slug: 'coast-fire',
@@ -108,15 +118,6 @@ const calculators = [
     category: 'FIRE',
     component: 'SWRSimulator'
   },
-  // --- Decision Making ---
-  {
-    slug: 'rent-vs-buy',
-    title: 'Rent vs. Buy Calculator',
-    description: 'Compare the net worth impact of Renting & Investing vs. Buying a Home over the long term.',
-    keywords: 'rent vs buy, home loan vs rent, real estate investment',
-    category: 'Decision',
-    component: 'RentVsBuy'
-  },
   {
     slug: 'cost-of-delay',
     title: 'Cost of Delay Calculator',
@@ -133,7 +134,6 @@ const calculators = [
     category: 'Decision',
     component: 'StepDownWithdrawal'
   },
-  // --- Wealth / Hygiene ---
   {
     slug: 'inflation-impact',
     title: 'Inflation Impact',
@@ -149,14 +149,6 @@ const calculators = [
     keywords: 'asset allocation, portfolio rebalance, equity debt split',
     category: 'Wealth',
     component: 'AssetAllocation'
-  },
-  {
-    slug: 'simple-interest',
-    title: 'Simple Interest Calculator',
-    description: 'Calculate interest earned on a principal amount over time without compounding.',
-    keywords: 'simple interest, interest calculator, flat rate',
-    category: 'Math',
-    component: 'SimpleInterest'
   },
   {
     slug: 'recurring-deposit',
@@ -199,12 +191,28 @@ const calculators = [
     component: 'RefinanceCalculator'
   },
   {
-    slug: 'compound-interest',
-    title: 'Compound Interest Calculator',
-    description: 'Calculate the growth of your investments with compounding at different frequencies (monthly, quarterly, yearly).',
-    keywords: 'compound interest calculator, compounding, investment growth, monthly compounding',
+    slug: 'topup-loan-emi',
+    title: 'Top-Up Loan EMI Calculator',
+    description: 'Estimate EMI impact and revised amortization when a top-up is taken on an existing loan.',
+    keywords: 'top-up loan emi, loan topup calculator, additional loan EMI',
+    category: 'Loan',
+    component: 'TopUpLoanEMI'
+  },
+  {
+    slug: 'simple-interest',
+    title: 'Simple Interest Calculator',
+    description: 'Calculate interest earned on a principal amount over time without compounding.',
+    keywords: 'simple interest, interest calculator, flat rate',
     category: 'Math',
-    component: 'CompoundInterest'
+    component: 'SimpleInterest'
+  },
+  {
+    slug: 'home-loan-eligibility',
+    title: 'Home Loan Eligibility',
+    description: 'Calculate the maximum home loan amount you can borrow based on your salary, existing EMIs, and bank criteria.',
+    keywords: 'home loan eligibility, loan capacity, how much loan can i get, mortgage eligibility',
+    category: 'Loan',
+    component: 'HomeLoanEligibility'
   }
 ];
 

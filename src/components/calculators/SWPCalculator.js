@@ -88,10 +88,10 @@ export default function SWPCalculator({ currency }) {
     <>
       <thead className="bg-white sticky top-0 z-10 shadow-sm">
         <tr>
-          <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
+          <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-100">
             Year
           </th>
-          <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200 text-right">
+          <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-100 text-right">
             Opening Balance
           </th>
           <th className="py-3 px-4 text-xs font-semibold text-rose-600 uppercase tracking-wider bg-rose-50/50 border-b border-rose-100 text-right">
@@ -100,7 +100,7 @@ export default function SWPCalculator({ currency }) {
           <th className="py-3 px-4 text-xs font-semibold text-emerald-600 uppercase tracking-wider bg-emerald-50/50 border-b border-emerald-100 text-right">
             Interest Earned
           </th>
-          <th className="py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200 text-right">
+          <th className="py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-100 text-right">
             Closing Balance
           </th>
         </tr>

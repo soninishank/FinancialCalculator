@@ -127,7 +127,7 @@ export default function CoastFIRE({ currency }) {
                             )}
                         </div>
 
-                        <div className="mt-4 pt-4 border-t border-gray-200 text-sm text-gray-600">
+                        <div className="mt-4 pt-4 border-t border-gray-100 text-sm text-gray-600">
                             At age {retirementAge}, you will need <b>{currency} {Math.round(result.fiNumberAtRetirement).toLocaleString()}</b> to cover inflation-adjusted monthly expenses of <b>{currency} {Math.round(result.futureMonthlyExpenses).toLocaleString()}</b>.
                         </div>
                     </div>

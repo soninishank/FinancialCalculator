@@ -14,7 +14,7 @@ export default function AmortizationTableWrapper({
   const showToggleButton = rowCount > 10;
 
   return (
-    <div className="bg-white rounded-xl sm:rounded-2xl border border-gray-200 shadow-sm flex flex-col h-full overflow-hidden"> {/* Reduced rounded-2xl to rounded-xl on mobile */}
+    <div className="bg-white rounded-xl sm:rounded-2xl border border-gray-100 shadow-sm flex flex-col h-full overflow-hidden"> {/* Reduced rounded-2xl to rounded-xl on mobile */}
 
       {/* Table Header with Export Button */}
       {/* FIX: Reduced padding and title size on mobile */}

@@ -66,7 +66,7 @@ export default function SubscriptionStats({ data }) {
             {/* Categories Grid */}
             <div className="space-y-4">
                 {categories.map((cat, idx) => (
-                    <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-gray-200 transition-colors">
+                    <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-gray-100 transition-colors">
                         <div className="mb-2 sm:mb-0 max-w-full sm:max-w-[40%]">
                             <p className="font-semibold text-gray-900 text-sm">{cat.category}</p>
                             <p className="text-xs text-gray-500 mt-1">
@@ -75,7 +75,7 @@ export default function SubscriptionStats({ data }) {
                         </div>
 
                         <div className="flex items-center gap-4 w-full sm:w-auto">
-                            <div className="flex-1 sm:w-48 bg-gray-200 rounded-full h-2 overflow-hidden">
+                            <div className="flex-1 sm:w-48 bg-gray-100 rounded-full h-2 overflow-hidden">
                                 <div
                                     className={`h-full rounded-full ${parseFloat(cat.subscription_ratio) >= 1 ? 'bg-green-500' : 'bg-yellow-500'}`}
                                     style={{ width: `${Math.min(parseFloat(cat.subscription_ratio) * 10, 100)}%` }}

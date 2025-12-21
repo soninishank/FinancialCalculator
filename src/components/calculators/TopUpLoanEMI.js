@@ -55,11 +55,11 @@ export default function TopUpLoanEMI({ currency }) {
     <>
       <thead className="bg-white sticky top-0 z-10 shadow-sm">
         <tr>
-          <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200">Year</th>
-          <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200 text-right">Opening Balance</th>
+          <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-100">Year</th>
+          <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-100 text-right">Opening Balance</th>
           <th className="py-3 px-4 text-xs font-semibold text-emerald-600 uppercase tracking-wider bg-emerald-50/50 border-b border-emerald-100 text-right">Principal Paid</th>
           <th className="py-3 px-4 text-xs font-semibold text-rose-600 uppercase tracking-wider bg-rose-50/50 border-b border-rose-100 text-right">Interest Paid</th>
-          <th className="py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200 text-right">Closing Balance</th>
+          <th className="py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-100 text-right">Closing Balance</th>
         </tr>
       </thead>
       <tbody className="text-sm divide-y divide-gray-100">
@@ -110,7 +110,7 @@ export default function TopUpLoanEMI({ currency }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">
 
         {/* --- BLOCK 1: BASE LOAN (LEFT) --- */}
-        <div className="md:col-span-1 border-r border-gray-200 pr-6">
+        <div className="md:col-span-1 border-r border-gray-100 pr-6">
           <h3 className="text-lg font-bold text-gray-800 mb-4">Base Loan (Original)</h3>
 
           <InputWithSlider
