@@ -2,12 +2,12 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from '../components/home/Header';
 
-const Layout = () => {
+const Layout = ({ fullWidth = false }) => {
   return (
-    <div className="bg-gray-100 min-h-screen transition-colors duration-200">
+    <div className="bg-gray-50 min-h-screen transition-colors duration-200">
       <Header />
-      <main className="container mx-auto p-4">
-        <div className="bg-white rounded-lg shadow-lg p-6 transition-colors duration-200">
+      <main className="pt-20">
+        <div className={fullWidth ? "" : "container mx-auto px-4 md:px-6 py-8"}>
           <Outlet />
         </div>
       </main>

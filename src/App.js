@@ -15,7 +15,9 @@ export default function App() {
     <BrowserRouter>
       <CurrencyProvider>
         <Routes>
-          <Route path="/" element={<HomeFrontPage />} />
+          <Route element={<Layout fullWidth={true} />}>
+            <Route path="/" element={<HomeFrontPage />} />
+          </Route>
           <Route element={<Layout />}>
             <Route path="/calculators" element={<CalculatorsList />} />
             <Route path="/calculator/:slug" element={<CalculatorPage />} />

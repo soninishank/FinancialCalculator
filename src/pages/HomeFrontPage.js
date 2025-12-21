@@ -5,7 +5,7 @@ import HomeIpoSection from "../components/ipo/HomeIpoSection";
 
 export default function HomeFrontPage() {
   return (
-    <div className="min-h-screen bg-gray-50 transition-colors duration-200">
+    <>
 
       {/* -------- HERO SECTION -------- */}
       <section className="bg-indigo-600 text-white py-14">
@@ -111,7 +111,7 @@ export default function HomeFrontPage() {
       <footer className="py-6 bg-gray-100 text-center text-sm text-gray-500 border-t">
         © 2025 Finance Planner. Built for investors.
       </footer>
-    </div>
+    </>
   );
 }
 
