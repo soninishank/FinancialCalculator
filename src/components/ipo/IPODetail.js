@@ -247,21 +247,34 @@ export default function IPODetail() {
                                             ✉️ {registrar_email}
                                         </p>
                                     )}
-                                    {registrar_website && (
-                                        <a href={registrar_website.startsWith('http') ? registrar_website : `https://${registrar_website}`} target="_blank" rel="noreferrer" className="text-sm text-blue-600 font-medium hover:underline flex items-center gap-2">
-                                            🌐 Visit Website
-                                        </a>
-                                    )}
-                                    {allotmentLink && (
-                                        <a
-                                            href={allotmentLink}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 mt-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm w-full"
-                                        >
-                                            🎯 Check Allotment Status
-                                        </a>
-                                    )}
+                                    {(() => {
+                                        let primaryLink = allotmentLink;
+                                        let linkLabel = "🎯 Check Allotment Status";
+
+                                        // If no dedicated allotment link, fallback to main website
+                                        if (!primaryLink && registrar_website) {
+                                            primaryLink = registrar_website.startsWith('http') ? registrar_website : `https://${registrar_website}`;
+                                            linkLabel = "🌐 Visit Registrar Website";
+                                        }
+
+                                        // If neither, fallback to Google Search
+                                        if (!primaryLink) {
+                                            const query = encodeURIComponent(`${registrar_name} IPO allotment status`);
+                                            primaryLink = `https://www.google.com/search?q=${query}`;
+                                            linkLabel = "🔍 Search Allotment Status";
+                                        }
+
+                                        return (
+                                            <a
+                                                href={primaryLink}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 mt-2 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm w-full ${!allotmentLink && !registrar_website ? 'bg-gray-600 hover:bg-gray-700' : 'bg-blue-600 hover:bg-blue-700'}`}
+                                            >
+                                                {linkLabel}
+                                            </a>
+                                        );
+                                    })()}
                                 </div>
                             ) : (
                                 <p className="text-sm text-gray-500 italic">No Info Available</p>

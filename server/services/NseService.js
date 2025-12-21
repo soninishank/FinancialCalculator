@@ -360,7 +360,7 @@ class NseService {
             const faceValue = parsePrice(fvStr);
 
             const tickStr = findVal("Tick Size");
-            const tickSize = parsePrice(tickStr);
+            const tickSize = parsePrice(tickStr) || 1; // Default to 1 if missing
 
             const bidLotStr = findVal("Bid Lot");
             const bidLotMatch = bidLotStr ? bidLotStr.match(/^(\d+)/) : null;
