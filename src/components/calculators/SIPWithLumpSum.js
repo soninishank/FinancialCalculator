@@ -3,6 +3,7 @@ import React, { useMemo } from "react";
 import SummaryCards from "../common/SummaryCards";
 import ResultsTable from "../common/ResultsTable";
 import InputWithSlider from "../common/InputWithSlider";
+import RateQualityGuard from "../common/RateQualityGuard";
 import TaxToggle from "../common/TaxToggle";
 import InflationToggle from "../common/InflationToggle";
 import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from "../common/FinancialCharts";
@@ -150,6 +151,7 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
           symbol="%"
           isDecimal={true}
         />
+        <RateQualityGuard rate={annualRate} />
 
         {/* --- Apply LTCG AFTER Expected Annual Return (%) --- */}
         <div className="mt-6 flex flex-col lg:flex-row gap-6">

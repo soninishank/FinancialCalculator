@@ -1,9 +1,13 @@
 import React, { useMemo, useState } from "react";
 
 // --- IMPORTS ---
+import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from "../common/FinancialCharts";
+import ResultsTable from "../common/ResultsTable";
 import InputWithSlider from "../common/InputWithSlider";
-import { FinancialLineChart } from "../common/FinancialCharts";
+import RateQualityGuard from "../common/RateQualityGuard";
+import CalculatorLayout from "./CalculatorLayout";
 import { calculateCAGR } from "../../utils/finance";
+import { downloadPDF } from "../../utils/export";
 import {
   MIN_AMOUNT,
   MIN_YEARS,
@@ -13,13 +17,11 @@ import {
   STEP_AMOUNT
 } from "../../utils/constants";
 
-// We only use the initial state values for fields that are not passed via props (like annualRate, which is not used here)
 export default function CAGRCalculator({ currency, setCurrency }) {
   // Inputs
   const [beginningValue, setBeginningValue] = useState(DEFAULT_LUMP_SUM);
   const [endingValue, setEndingValue] = useState(200000);
-  const [years, setYears] = useState(5); // Years is defined locally here
-
+  const [years, setYears] = useState(5);
 
   // Calculation
   const cagr = useMemo(
@@ -27,99 +29,98 @@ export default function CAGRCalculator({ currency, setCurrency }) {
     [beginningValue, endingValue, years]
   );
 
-  // UX Logic
-  const isCagrPositive = cagr > 0;
-  const cagrColor = isCagrPositive ? "text-emerald-600" : "text-rose-600";
-  const cagrLabel = isCagrPositive ? "Compound Annual Growth Rate" : "Annual Decline Rate";
-
-  // --- CHART DATA ---
-  const chartData = useMemo(() => {
-    const dataPoints = [];
+  // --- YEARLY BREAKDOWN ---
+  const yearlyRows = useMemo(() => {
+    const rows = [];
     const rate = cagr / 100;
+    const P = Number(beginningValue);
 
-    for (let i = 0; i <= years; i++) {
-      const value = beginningValue * Math.pow(1 + rate, i);
-      dataPoints.push({
+    for (let i = 1; i <= years; i++) {
+      const value = P * Math.pow(1 + rate, i);
+      rows.push({
         year: i,
-        amount: Math.round(value)
+        totalInvested: P,
+        growth: value - P,
+        overallValue: value
       });
     }
+    return rows;
+  }, [beginningValue, cagr, years]);
 
-    return {
-      labels: dataPoints.map(d => `Year ${d.year}`),
-      datasets: [
-        {
-          label: 'Investment Value',
-          data: dataPoints.map(d => d.amount),
-          borderColor: isCagrPositive ? '#10B981' : '#F43F5E', // emerald-500 or rose-500
-          backgroundColor: isCagrPositive ? 'rgba(16, 185, 129, 0.1)' : 'rgba(244, 63, 94, 0.1)',
-          fill: true,
-          tension: 0.4,
-          pointRadius: 4,
-          pointHoverRadius: 6
-        }
-      ]
-    };
-  }, [beginningValue, cagr, years, isCagrPositive]);
+  function handleExport() {
+    const header = ["Year", "Initial Value", "Growth", "Final Value"];
+    const rows = yearlyRows.map((r) => [
+      `Year ${r.year}`, Math.round(r.totalInvested), Math.round(r.growth), Math.round(r.overallValue),
+    ]);
+    downloadPDF(rows, header, "cagr_report.pdf");
+  }
 
-  return (
-    <div className="animate-fade-in">
+  // --- UI PARTS ---
+  const inputsSection = (
+    <>
+      <InputWithSlider
+        label="Beginning Investment Value"
+        value={beginningValue}
+        onChange={setBeginningValue}
+        min={MIN_AMOUNT} max={MAX_AMOUNT} step={STEP_AMOUNT}
+        currency={currency}
+      />
 
-      {/* INPUTS SECTION */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">
+      <InputWithSlider
+        label="Ending Investment Value"
+        value={endingValue}
+        onChange={setEndingValue}
+        min={MIN_AMOUNT} max={MAX_AMOUNT} step={STEP_AMOUNT}
+        currency={currency}
+      />
 
-        {/* Beginning Value */}
+      <div className="md:col-span-2">
         <InputWithSlider
-          label="Beginning Investment Value"
-          value={beginningValue}
-          onChange={setBeginningValue}
-          min={MIN_AMOUNT} max={MAX_AMOUNT} step={STEP_AMOUNT}
-          currency={currency}
+          label="Investment Period (Years)"
+          value={years}
+          onChange={setYears}
+          min={MIN_YEARS} max={MAX_YEARS}
         />
-
-        {/* Ending Value */}
-        <InputWithSlider
-          label="Ending Investment Value"
-          value={endingValue}
-          onChange={setEndingValue}
-          min={MIN_AMOUNT} max={MAX_AMOUNT} step={STEP_AMOUNT}
-          currency={currency}
-        />
-
-        {/* Years */}
-        <div className="md:col-span-2">
-          <InputWithSlider
-            label="Investment Period (Years)"
-            value={years}
-            onChange={setYears}
-            min={MIN_YEARS} max={MAX_YEARS}
-          />
-        </div>
+        <RateQualityGuard rate={cagr} />
       </div>
+    </>
+  );
 
-      {/* SUMMARY CARD */}
-      <div className="mt-12 max-w-sm mx-auto">
-        <div className="bg-white border-l-4 border-indigo-500 rounded-xl p-6 shadow-xl text-center">
-          <p className="text-gray-500 text-sm font-bold uppercase tracking-wider mb-2">
-            {cagrLabel}
-          </p>
-          <div className={`text-5xl font-extrabold ${cagrColor}`}>
+  const summarySection = (
+    <div className="mt-8">
+      <div className="bg-white border-l-8 border-teal-500 rounded-2xl p-8 shadow-sm text-center md:text-left">
+        <p className="text-gray-500 text-xs font-bold uppercase tracking-[0.2em] mb-3">
+          Compound Annual Growth Rate
+        </p>
+        <div className="flex flex-col md:flex-row md:items-center gap-4">
+          <div className={`text-6xl font-black text-teal-600`}>
             {cagr.toFixed(2)}%
           </div>
-
-          <p className="text-gray-500 text-xs mt-4">
-            This means your investment grew (or shrank) by {cagr.toFixed(2)}% every year on average.
+          <p className="text-gray-500 text-sm max-w-md font-medium leading-relaxed">
+            This means your investment grew by an average of <strong>{cagr.toFixed(2)}%</strong> every year over the {years} year period.
           </p>
-        </div>
-      </div>
-
-      {/* CHART SECTION */}
-      <div className="mt-12">
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-          <h3 className="text-gray-800 font-bold text-lg mb-4">Growth Visualization</h3>
-          <FinancialLineChart data={chartData} currency={currency} height={350} />
         </div>
       </div>
     </div>
+  );
+
+  return (
+    <CalculatorLayout
+      inputs={inputsSection}
+      summary={summarySection}
+      charts={<FinancialCompoundingBarChart data={yearlyRows} currency={currency} />}
+      pieChart={
+        <FinancialInvestmentPieChart
+          invested={Number(beginningValue)}
+          gain={Number(endingValue) - Number(beginningValue)}
+          total={Number(endingValue)}
+          currency={currency}
+          years={years}
+        />
+      }
+      table={
+        <ResultsTable data={yearlyRows} currency={currency} onExport={handleExport} />
+      }
+    />
   );
 }

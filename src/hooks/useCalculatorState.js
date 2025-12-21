@@ -26,6 +26,9 @@ export function useCalculatorState(defaults = {}) {
     const [isInflationAdjusted, setIsInflationAdjusted] = useState(false);
     const [inflationRate, setInflationRate] = useState(6); // Default 6% inflation
 
+    // Compounding (Experimental/New)
+    const [compoundingFrequency, setCompoundingFrequency] = useState(defaults.compoundingFrequency || 12);
+
     return {
         monthlySIP, setMonthlySIP,
         lumpSum, setLumpSum,
@@ -39,5 +42,6 @@ export function useCalculatorState(defaults = {}) {
         exemptionLimit, setExemptionLimit,
         isInflationAdjusted, setIsInflationAdjusted,
         inflationRate, setInflationRate,
+        compoundingFrequency, setCompoundingFrequency,
     };
 }

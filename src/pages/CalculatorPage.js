@@ -35,6 +35,7 @@ const importBySlug = (slug) => {
     case 'roi-calculator': return import('../components/calculators/ROICalculator');
     case 'rule-of-72': return import('../components/calculators/RuleOf72');
     case 'refinance-calculator': return import('../components/calculators/RefinanceCalculator');
+    case 'compound-interest': return import('../components/calculators/CompoundInterest');
     default: return Promise.reject(new Error('Unknown calculator'));
   }
 };
@@ -78,9 +79,9 @@ export default function CalculatorPage() {
   const LazyCalc = React.lazy(() => importBySlug(slug));
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-6">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Main Content: 9 columns on large screens */}
+    <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
+        {/* Main Content: 9 columns on large screens for a balanced width */}
         <main className="lg:col-span-9 order-1">
           <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100">
             {/* Back button */}
@@ -95,7 +96,7 @@ export default function CalculatorPage() {
             <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight mb-2">
               {meta.title}
             </h1>
-            <p className="text-gray-500 text-base mb-8 max-w-2xl leading-relaxed">
+            <p className="text-gray-500 text-base mb-8 max-w-3xl leading-relaxed">
               {meta.description}
             </p>
 
@@ -110,7 +111,7 @@ export default function CalculatorPage() {
           </div>
         </main>
 
-        {/* Sidebar: 3 columns on large screens */}
+        {/* Sidebar: 3 columns for better readability */}
         <aside className="lg:col-span-3 order-2">
           <div className="sticky top-6">
             <RelatedCalculators currentSlug={slug} category={meta.category} />

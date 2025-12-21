@@ -6,6 +6,7 @@ import SummaryCards from "../common/SummaryCards";
 import ResultsTable from "../common/ResultsTable";
 import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from "../common/FinancialCharts";
 import InputWithSlider from "../common/InputWithSlider";
+import RateQualityGuard from "../common/RateQualityGuard";
 import TaxToggle from "../common/TaxToggle"; // <-- added
 
 import { useLimitedPay } from "../../hooks/useLimitedPay";
@@ -222,6 +223,7 @@ export default function StepUpSIPWithLump({ currency }) {
             onChange={setAnnualRate}
             min={MIN_RATE} max={MAX_RATE} symbol="%"
           />
+          <RateQualityGuard rate={annualRate} />
 
           {/* --- TAX TOGGLE ADDED HERE --- */}
           <div className="mt-6">

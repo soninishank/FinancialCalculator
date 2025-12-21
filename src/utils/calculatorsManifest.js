@@ -197,6 +197,14 @@ const calculators = [
     keywords: 'refinance, mortgage refinance, loan switch, savings, break even',
     category: 'Loan',
     component: 'RefinanceCalculator'
+  },
+  {
+    slug: 'compound-interest',
+    title: 'Compound Interest Calculator',
+    description: 'Calculate the growth of your investments with compounding at different frequencies (monthly, quarterly, yearly).',
+    keywords: 'compound interest calculator, compounding, investment growth, monthly compounding',
+    category: 'Math',
+    component: 'CompoundInterest'
   }
 ];
 

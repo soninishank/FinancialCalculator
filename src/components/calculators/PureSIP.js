@@ -7,6 +7,7 @@ import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from "../co
 import ResultsTable from "../common/ResultsTable";
 
 import InputWithSlider from "../common/InputWithSlider";
+import RateQualityGuard from "../common/RateQualityGuard";
 import TaxToggle from "../common/TaxToggle";
 import InflationToggle from "../common/InflationToggle";
 
@@ -196,6 +197,7 @@ export default function PureSIP({ currency, setCurrency }) {
           min={MIN_RATE} max={MAX_RATE} step={0.1} symbol="%"
           isDecimal={true}
         />
+        <RateQualityGuard rate={annualRate} />
 
         <div className="mt-6 flex flex-col lg:flex-row gap-6">
           <div className="flex-1">
