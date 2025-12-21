@@ -15,8 +15,8 @@ const Row = ({ ipo, status }) => {
     const name = ipo.name || "Unknown Company";
 
     // Conditional visibility
-    const showPrice = status !== 'Closed';
-    const showIssueSize = status !== 'Closed';
+    const showPrice = true; // Always show price for visibility/analysis
+    const showIssueSize = true; // Always show issue size
     const type = ipo.type || "Equity";
     const openDate = ipo.openDate || "TBA";
     const closeDate = ipo.closeDate || "TBA";
@@ -36,12 +36,12 @@ const Row = ({ ipo, status }) => {
     const isClosingToday = React.useMemo(() => {
         if (!closeDate || closeDate === 'TBA') return false;
         const now = new Date();
+        now.setHours(0, 0, 0, 0);
+
         const close = new Date(closeDate);
-        return (
-            now.getDate() === close.getDate() &&
-            now.getMonth() === close.getMonth() &&
-            now.getFullYear() === close.getFullYear()
-        );
+        close.setHours(0, 0, 0, 0);
+
+        return now.getTime() === close.getTime();
     }, [closeDate]);
 
     // Conditional Styles
@@ -104,8 +104,8 @@ const Row = ({ ipo, status }) => {
 // Main Component
 export default function IpoListTable({ data, status }) {
     const listData = data || [];
-    const showPrice = status !== 'Closed';
-    const showIssueSize = status !== 'Closed';
+    const showPrice = true;
+    const showIssueSize = true;
 
     return (
         <div className="overflow-x-auto bg-white rounded-2xl shadow-xl border border-gray-100">

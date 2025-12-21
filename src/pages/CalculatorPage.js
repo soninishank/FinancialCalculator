@@ -37,6 +37,7 @@ const importBySlug = (slug) => {
     case 'refinance-calculator': return import('../components/calculators/RefinanceCalculator');
     case 'compound-interest': return import('../components/calculators/CompoundInterest');
     case 'home-loan-eligibility': return import('../components/calculators/HomeLoanEligibility');
+    case 'property-loan-eligibility': return import('../components/calculators/PropertyLoanEligibility');
     default: return Promise.reject(new Error('Unknown calculator'));
   }
 };

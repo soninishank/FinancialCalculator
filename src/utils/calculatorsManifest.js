@@ -213,6 +213,14 @@ const calculators = [
     keywords: 'home loan eligibility, loan capacity, how much loan can i get, mortgage eligibility',
     category: 'Loan',
     component: 'HomeLoanEligibility'
+  },
+  {
+    slug: 'property-loan-eligibility',
+    title: 'Property-Centric Loan Eligibility',
+    description: 'A professional RM tool to calculate loan eligibility based on property value, LTV limits, and joint incomes.',
+    keywords: 'loan eligibility, rm tool, ltv calculator, home loan funding, property loan',
+    category: 'Loan',
+    component: 'PropertyLoanEligibility'
   }
 ];
 

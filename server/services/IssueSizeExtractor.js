@@ -152,7 +152,7 @@ class IssueSizeExtractor {
             }
 
             let inr = value;
-            if (unit.includes('million')) inr = value * 10000000;
+            if (unit.includes('million')) inr = value * 1000000;
             else if (unit.includes('crore')) inr = value * 10000000;
             else if (unit.startsWith('lakh')) inr = value * 100000;
 
@@ -239,7 +239,7 @@ class IssueSizeExtractor {
         const num = parseFloat(value.replace(/,/g, ''));
         const unitLower = (unit || '').toLowerCase();
 
-        if (unitLower.includes('million')) return num * 10000000;
+        if (unitLower.includes('million')) return num * 1000000;
         if (unitLower.includes('crore')) return num * 10000000;
         if (unitLower.startsWith('lakh')) return num * 100000;
 

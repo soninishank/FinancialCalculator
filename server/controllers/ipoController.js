@@ -32,6 +32,9 @@ async function fetchIpoDataFromDb() {
         const open = [];
         const closed = [];
 
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
         rows.forEach(row => {
             // Map to frontend structure
             const low = row.price_range_low;
@@ -39,6 +42,23 @@ async function fetchIpoDataFromDb() {
             let priceRange = "";
             if (low && high) priceRange = `Rs.${low} to Rs.${high}`;
             else if (low) priceRange = `Rs.${low}`;
+
+            // Dynamic Status Logic
+            let status = row.status;
+            const issueStart = row.issue_start ? new Date(row.issue_start) : null;
+            const issueEnd = row.issue_end ? new Date(row.issue_end) : null;
+
+            if (issueEnd) {
+                const issueEndOnly = new Date(issueEnd);
+                issueEndOnly.setHours(0, 0, 0, 0);
+                if (today > issueEndOnly) status = 'closed';
+                else if (issueStart) {
+                    const issueStartOnly = new Date(issueStart);
+                    issueStartOnly.setHours(0, 0, 0, 0);
+                    if (today < issueStartOnly) status = 'upcoming';
+                    else status = 'open';
+                }
+            }
 
             const ipoObj = {
                 id: row.ipo_id.toString(),
@@ -50,17 +70,33 @@ async function fetchIpoDataFromDb() {
                 issueEnd: row.issue_end ? new Date(row.issue_end).toDateString() : 'TBA',
                 listingDate: row.listing_date ? new Date(row.listing_date).toDateString() : '',
                 priceRange: priceRange,
-                issueSize: row.issue_size ? row.issue_size.toString() : '-'
+                issueSize: row.issue_size ? (row.issue_size / 100).toString() : '-'
             };
 
-            // Categorize
-            const status = row.status;
-            if (status === 'upcoming') upcoming.push(ipoObj);
-            else if (status === 'open') open.push(ipoObj);
-            else closed.push(ipoObj); // listed/closed/withdrawn
+            // Categorize based on DYNAMIC status
+            if (status === 'upcoming') upcoming.push({ ...ipoObj, _date: issueStart });
+            else if (status === 'open') open.push({ ...ipoObj, _date: issueEnd });
+            else closed.push({ ...ipoObj, _date: issueEnd || issueStart }); // fallback to start if no end
         });
 
-        return { upcoming, open, closed };
+        // --- SORTING LOGIC ---
+        // 1. Upcoming: Opening soonest at top (Asc)
+        upcoming.sort((a, b) => (a._date || Infinity) - (b._date || Infinity));
+
+        // 2. Open: Closing soonest at top (Asc)
+        open.sort((a, b) => (a._date || Infinity) - (b._date || Infinity));
+
+        // 3. Closed: Most recently closed at top (Desc)
+        closed.sort((a, b) => (b._date || 0) - (a._date || 0));
+
+        // Cleanup temporary date fields
+        const cleanup = (arr) => arr.map(({ _date, ...rest }) => rest);
+
+        return {
+            upcoming: cleanup(upcoming),
+            open: cleanup(open),
+            closed: cleanup(closed)
+        };
 
     } catch (err) {
         console.error("DB Query Error:", err);
