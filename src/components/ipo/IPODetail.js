@@ -108,7 +108,7 @@ export default function IPODetail() {
                                 <div className="bg-white/10 px-4 py-2 rounded-2xl border border-white/10 backdrop-blur-sm self-end">
                                     <p className="text-blue-300 text-[10px] font-bold uppercase tracking-widest mb-0.5">Min Investment</p>
                                     <p className="text-xl font-black text-white">
-                                        {moneyFormat(min_investment, 'INR', true)}
+                                        {moneyFormat(min_investment, 'INR', false)}
                                     </p>
                                 </div>
                             )}
@@ -186,9 +186,9 @@ export default function IPODetail() {
                                 } />
                                 <DetailRow label="Face Value" value={face_value ? `Rs.${face_value}` : '-'} />
                                 <DetailRow label="Tick Size" value={tick_size ? `Rs.${tick_size}` : '-'} />
-                                <DetailRow label="Bid Lot" value={bid_lot ? `${bid_lot} Shares` : '-'} />
+                                <DetailRow label="Bid Lot" value={bid_lot ? `${bid_lot} Shares (and in multiples thereof)` : '-'} />
                                 <DetailRow label="Min Order Qty" value={min_order_qty ? `${min_order_qty} Shares` : '-'} />
-                                <DetailRow label="Min Investment" value={min_investment ? moneyFormat(min_investment, 'INR', true) : '-'} />
+                                <DetailRow label="Min Investment" value={min_investment ? moneyFormat(min_investment, 'INR', false) : '-'} />
                                 <DetailRow label="Max Retail Amount" value={max_retail_amount ? `Rs.${max_retail_amount}` : '-'} />
                             </div>
                         </div>

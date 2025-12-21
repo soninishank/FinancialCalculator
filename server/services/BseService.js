@@ -432,7 +432,7 @@ class BseService {
         try {
             // Fetch required info from DB to construct scraping URL
             const res = await client.query(`
-                SELECT i.bse_scrip_code, i.bse_ipo_no, i.status, d.issue_start, i.price_range_high, i.bid_lot 
+                SELECT i.bse_scrip_code, i.bse_ipo_no, i.status, d.issue_start, i.price_range_high, i.price_range_low, i.bid_lot 
                 FROM ipo i
                 LEFT JOIN ipo_dates d ON i.ipo_id = d.ipo_id
                 WHERE i.ipo_id = $1
@@ -508,10 +508,10 @@ class BseService {
             }
 
             // Minimum Investment
-            const pHigh = scrapedData.priceHigh || row.price_range_high;
+            const pLow = scrapedData.priceLow || row.price_range_low;
             const bLot = scrapedData.bidLot || row.bid_lot;
-            if (pHigh && bLot) {
-                const minInvestment = pHigh * bLot;
+            if (pLow && bLot) {
+                const minInvestment = pLow * bLot;
                 queryUpdates.push(`min_investment = $${paramIndex} `);
                 queryParams.push(minInvestment);
                 paramIndex++;
