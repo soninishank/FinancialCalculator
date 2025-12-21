@@ -28,3 +28,11 @@ If you need to add a new table or column:
 1.  Open `schema_definitions.js`.
 2.  Add the new Table object to `tableDefinitions` OR add the new Column to `requiredColumns`.
 3.  Run `npm run db:setup` to apply and test.
+
+## ❌ DOES NOT COVER (Data / Maintenance)
+
+It does **not** run the following scripts, because they modify *data*, not structure, or are long-running processes:
+
+-   `populate_all_data.js` (Scraping data takes time, should be run separately)
+-   `cleanup_scsb_docs.js` (One-time cleanup for bad data)
+-   `cleanup_duplicate_subscriptions.js` (One-time cleanup)
