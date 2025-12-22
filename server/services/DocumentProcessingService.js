@@ -5,6 +5,7 @@ const https = require('https');
 const http = require('http');
 const AdmZip = require('adm-zip');
 const { PDFParse } = require('pdf-parse');
+const db = require('../config/db');
 
 class DocumentProcessingService {
     constructor() {
@@ -18,7 +19,7 @@ class DocumentProcessingService {
         }
     }
 
-    async processRhpDocument(url, ipoId, client) {
+    async processRhpDocument(url, ipoId) {
         const processingId = `${ipoId}-${Date.now()}`;
         const zipPath = path.join(this.tempDir, `${processingId}.zip`);
         const extractPath = path.join(this.tempDir, processingId);
@@ -44,10 +45,14 @@ class DocumentProcessingService {
                 return;
             }
 
-            // Step 5: Persist to database
-            await this.persistIndicativeDates(client, ipoId, dates);
-
-            console.log(`[RHP] Processed indicative timetable for IPO ${ipoId}: ${Object.keys(dates).length} dates extracted`);
+            // Step 5: Persist to database (Get FRESH client, don't use shared/closed one)
+            const client = await db.pool.connect();
+            try {
+                await this.persistIndicativeDates(client, ipoId, dates);
+                console.log(`[RHP] Processed indicative timetable for IPO ${ipoId}: ${Object.keys(dates).length} dates extracted`);
+            } finally {
+                client.release();
+            }
 
         } catch (error) {
             console.error(`[RHP] Error processing IPO ${ipoId}:`, error.message);

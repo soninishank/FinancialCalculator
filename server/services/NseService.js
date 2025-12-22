@@ -575,7 +575,7 @@ class NseService {
 
                         // Trigger async RHP processing for zip files
                         if (url.endsWith('.zip')) {
-                            documentProcessingService.processRhpDocument(url, ipoId, client)
+                            documentProcessingService.processRhpDocument(url, ipoId)
                                 .catch(err => {
                                     console.error(`[NSE Service] RHP processing failed for ${symbol}:`, err.message);
                                 });
