@@ -7,6 +7,7 @@ export async function fetchIpos() {
     throw new Error(`IPO fetch failed: ${resp.status} ${text}`);
   }
   const json = await resp.json();
+  console.log(`[API] Received IPO list: ${json.data ? 'Success' : 'No Data'}`);
   // The backend now returns { ok: true, data: { upcoming: [], open: [], closed: [] }, meta... }
   // We return the 'data' part which has the categories.
   return json.data || { upcoming: [], open: [], closed: [] };

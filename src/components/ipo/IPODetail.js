@@ -25,6 +25,7 @@ export default function IPODetail() {
                 console.log(`[API] Fetching details for ${symbol} from: ${fetchUrl}`);
                 const res = await fetch(fetchUrl);
                 const json = await res.json();
+                console.log(`[API] Detail response for ${symbol}:`, json.ok ? 'Success' : 'Failed');
 
                 if (json.ok) {
                     setIpo(json.data);

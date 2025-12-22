@@ -110,9 +110,13 @@ async function fetchIpoDataFromDb() {
 const getAllIpos = async (req, res) => {
     console.log(`[IPO Controller] GET / called from ${req.ip} | User-Agent: ${req.get('User-Agent')}`);
     const cached = cache.get("ipos_db");
-    if (cached) return res.json({ ok: true, data: cached });
+    if (cached) {
+        console.log(`[IPO Controller] Serving from cache`);
+        return res.json({ ok: true, data: cached });
+    }
 
     let data = await fetchIpoDataFromDb();
+    console.log(`[IPO Controller] Fetched from DB: ${data.upcoming.length} upcoming, ${data.open.length} open, ${data.closed.length} closed`);
 
     // Auto-fetch if empty (Safety mechanism for fresh/empty DB)
     const totalCount = data.upcoming.length + data.open.length + data.closed.length;
@@ -136,6 +140,7 @@ const getAllIpos = async (req, res) => {
 const getIpoDetails = async (req, res) => {
     const symbol = req.params.symbol;
     const series = req.query.series || 'EQ';
+    console.log(`[IPO Controller] Details requested for ${symbol}`);
 
     try {
         // 1. Get Basic Info
