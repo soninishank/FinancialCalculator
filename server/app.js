@@ -33,12 +33,9 @@ const ENABLE_CRON = process.env.ENABLE_CRON === 'true';
 const server = app.listen(PORT, () => {
     // console.log(`IPO API service running on http://localhost:${PORT}`);
 
-    // Cron jobs are available but disabled by default to prevent database connection issues
-    // To enable automatic hourly refresh, uncomment the lines below and set ENABLE_CRON=true
-    // cronJobs.startCronJobs();
-    // if (ENABLE_CRON) {
-    //     cronJobs.enableCronJobs();
-    // }
+    // Cron jobs - Automatically refresh data
+    cronJobs.startCronJobs();
+    cronJobs.enableCronJobs();
 
     // Check if database is empty and fetch initial data
     checkAndFetchInitialData();

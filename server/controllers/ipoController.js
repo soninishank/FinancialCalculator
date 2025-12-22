@@ -125,7 +125,12 @@ const getAllIpos = async (req, res) => {
         try {
             await discoveryService.runDiscovery();
             await reconciliationService.runReconciliation();
-            // Refetch after sync
+
+            // Trigger immediate background enrichment for the new data
+            // (Don't await this, let it run in background so user gets the list fast)
+            enrichmentService.enrichAll().catch(e => console.error("Auto-discovery enrichment error:", e));
+
+            // Refetch the basic list now that ID's exist
             data = await fetchIpoDataFromDb();
         } catch (err) {
             console.error('Auto-discovery failed:', err);
@@ -140,7 +145,16 @@ const getAllIpos = async (req, res) => {
 const getIpoDetails = async (req, res) => {
     const symbol = req.params.symbol;
     const series = req.query.series || 'EQ';
+    const cacheKey = `ipo_detail_${symbol}_${series}`;
+
     console.log(`[IPO Controller] Details requested for ${symbol}`);
+
+    // High-Scale: check cache first
+    const cached = cache.get(cacheKey);
+    if (cached) {
+        console.log(`[IPO Controller] Serving details from cache for ${symbol}`);
+        return res.json({ ok: true, data: cached });
+    }
 
     try {
         // 1. Get Basic Info
@@ -169,26 +183,40 @@ const getIpoDetails = async (req, res) => {
         const isMissingData = !ipo.book_running_lead_managers || !ipo.face_value || !ipo.issue_size || ipo.issue_size == 0;
         const isStale = ageMinutes >= 60;
 
-        // Trigger background enrichment if needed (non-blocking)
-        if (isMissingData || isStale) {
+        // Logic: If data is MISSING, we MUST wait for enrichment (User wait > Empty Data).
+        //        If data is just STALE, we send old data and update in background (Speed > Freshness).
+        if (isMissingData) {
+            console.log(`[IPO Controller] Data missing for ${symbol}. Triggering blocking enrichment...`);
+            await enrichmentService.enrichSingle(ipo.ipo_id);
+
+            // Refetch the updated record
+            const updatedRes = await db.query(`SELECT * FROM ipo WHERE ipo_id = $1`, [ipo.ipo_id]);
+            if (updatedRes.rows.length > 0) {
+                // Merge the new basic details into our 'ipo' object
+                // (We keep the joined fields from the original query since they likely haven't changed or aren't in 'ipo' table)
+                const newItem = updatedRes.rows[0];
+                ipo = { ...ipo, ...newItem };
+                console.log(`[IPO Controller] Enrichment complete. Serving fresh data.`);
+            }
+        } else if (isStale) {
+            console.log(`[IPO Controller] Data stale for ${symbol}. Triggering background update...`);
             enrichmentService.enrichSingle(ipo.ipo_id)
                 .catch(e => console.error(`[Async] Error updating ${symbol}:`, e));
         }
 
-        // 2. Documents
-        const docRes = await db.query('SELECT title, url, doc_type FROM documents WHERE ipo_id = $1', [ipo.ipo_id]);
+        // High-Scale: Run auxiliary queries in PARALLEL using Promise.all
+        // This reduces latency significantly compared to sequential awaits.
+        const [docRes, subRes, gmpRes, biddingRes] = await Promise.all([
+            db.query('SELECT title, url, doc_type FROM documents WHERE ipo_id = $1', [ipo.ipo_id]),
+            db.query('SELECT category, shares_offered, shares_bid, subscription_ratio FROM ipo_bidding_details WHERE ipo_id = $1', [ipo.ipo_id]),
+            db.query('SELECT gmp_value, snapshot_time FROM gmp WHERE ipo_id=$1 ORDER BY snapshot_time DESC LIMIT 1', [ipo.ipo_id]),
+            db.query('SELECT price_label, price_value, cumulative_quantity FROM bidding_data WHERE ipo_id=$1 ORDER BY price_value ASC NULLS LAST', [ipo.ipo_id])
+        ]);
+
         const documents = docRes.rows;
-
-        // 3. Subscription
-        const subRes = await db.query('SELECT category, shares_offered, shares_bid, subscription_ratio FROM ipo_bidding_details WHERE ipo_id = $1', [ipo.ipo_id]);
         const subscription = subRes.rows;
-
-        // 4. GMP
-        const gmpRes = await db.query('SELECT gmp_value, snapshot_time FROM gmp WHERE ipo_id=$1 ORDER BY snapshot_time DESC LIMIT 1', [ipo.ipo_id]);
         const gmp = gmpRes.rows.length > 0 ? gmpRes.rows[0] : null;
-
-        // 5. Bidding Data
-        const biddingRes = await db.query('SELECT price_label, price_value, cumulative_quantity FROM bidding_data WHERE ipo_id=$1 ORDER BY price_value ASC NULLS LAST', [ipo.ipo_id]);
+        const biddingData = biddingRes.rows;
 
         // Convert paise to rupees for NLP-extracted fields
         // (fresh_issue_amount, ofs_amount, and issue_size are stored in paise)
@@ -204,15 +232,20 @@ const getIpoDetails = async (req, res) => {
             ipo.issue_size = ipo.issue_size / 100;
         }
 
+        const responseData = {
+            ...ipo,
+            documents,
+            subscription,
+            gmp,
+            biddingData
+        };
+
+        // Cache the result for 60 seconds
+        cache.set(cacheKey, responseData);
+
         res.json({
             ok: true,
-            data: {
-                ...ipo,
-                documents,
-                subscription,
-                gmp,
-                biddingData: biddingRes.rows
-            }
+            data: responseData
         });
 
     } catch (err) {
