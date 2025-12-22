@@ -13,6 +13,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Content Security Policy for Render
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;");
+    next();
+});
+
+// Root route for health check
+app.get("/", (req, res) => {
+    res.json({ status: "alive", message: "IPO API Service is running. Use /api/ipos to fetch data." });
+});
+
 app.use("/api/ipos", ipoRoutes);
 
 const PORT = process.env.SCRAPER_PORT || 8081;
