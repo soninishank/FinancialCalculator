@@ -21,7 +21,9 @@ export default function IPODetail() {
                 // Our backend handles it.
                 // Use environment variable or fallback
                 const baseUrl = process.env.REACT_APP_IPO_API_URL || "http://localhost:8081/api/ipos";
-                const res = await fetch(`${baseUrl.replace(/\/$/, '')}/${symbol}`);
+                const fetchUrl = `${baseUrl.replace(/\/$/, '')}/${symbol}`;
+                console.log(`[API] Fetching details for ${symbol} from: ${fetchUrl}`);
+                const res = await fetch(fetchUrl);
                 const json = await res.json();
 
                 if (json.ok) {

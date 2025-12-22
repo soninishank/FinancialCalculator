@@ -108,6 +108,7 @@ async function fetchIpoDataFromDb() {
 }
 
 const getAllIpos = async (req, res) => {
+    console.log(`[IPO Controller] GET / called from ${req.ip} | User-Agent: ${req.get('User-Agent')}`);
     const cached = cache.get("ipos_db");
     if (cached) return res.json({ ok: true, data: cached });
 

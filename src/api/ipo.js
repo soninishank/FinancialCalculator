@@ -1,5 +1,6 @@
 export async function fetchIpos() {
   const url = process.env.REACT_APP_IPO_API_URL || "http://localhost:8081/api/ipos";
+  console.log(`[API] Fetching IPO list from: ${url}`);
   const resp = await fetch(url);
   if (!resp.ok) {
     const text = await resp.text();
