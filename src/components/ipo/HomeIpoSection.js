@@ -3,17 +3,18 @@ import React from "react";
 import IpoStatusTabs from "./IPOStatusTabs";
 import IpoListTable from "./IPOListTable";
 import { useIpoData } from "../../hooks/useIpoData";
-
+import { Link } from "react-router-dom";
 
 export default function HomeIpoSection() {
   // use live data from your local scraper
-  // use live data from your local scraper
   const { categorizedData, isLoading, error, lastUpdated } = useIpoData({ live: true });
-  const [activeTab, setActiveTab] = React.useState("Upcoming");
-  const tabs = ["Upcoming", "Open", "Closed"];
+  const [activeTab, setActiveTab] = React.useState("Open");
+  const tabs = ["Open", "Upcoming", "Closed"];
 
   // use categorizedData directly, defaulting to empty arrays if undefined
-  const currentData = categorizedData ? categorizedData[activeTab] : [];
+  const fullData = categorizedData ? categorizedData[activeTab.toLowerCase()] : [];
+  const displayData = fullData.slice(0, 5);
+  const startLink = fullData.length > 5;
 
   return (
     <section className="max-w-6xl mx-auto px-4 py-12">
@@ -37,7 +38,16 @@ export default function HomeIpoSection() {
           Failed to load IPOs. Showing cached / seed data.
         </div>
       ) : (
-        <IpoListTable data={currentData || []} status={activeTab} />
+        <>
+          <IpoListTable data={displayData || []} status={activeTab} />
+          {startLink && (
+            <div className="mt-4 text-center">
+              <Link to="/ipo-tracker" className="text-indigo-600 font-medium hover:text-indigo-800 transition-colors">
+                View all {fullData.length} IPOs →
+              </Link>
+            </div>
+          )}
+        </>
       )}
     </section>
   );
