@@ -12,17 +12,15 @@ import {
   DEFAULT_STEP_UP,
   DEFAULT_INFLATION,
   MIN_AMOUNT,
-  // MAX_AMOUNT unused
   MIN_YEARS,
   MAX_YEARS,
   MIN_RATE,
   MAX_RATE,
-  // MIN_STEP_UP unused
-  MAX_STEP_UP
+  MAX_STEP_UP,
+  TARGET_MAX_AMOUNT_GOAL_PLANNER
 } from '../../utils/constants';
 
 // Local fallbacks if not in constants
-const LOC_MAX_AMOUNT = 1000000000; // 100 Cr for Goal Planner
 const LOC_MIN_STEP_UP = 0;
 
 export default function GoalPlanner({ currency, setCurrency }) {
@@ -80,7 +78,7 @@ export default function GoalPlanner({ currency, setCurrency }) {
           label="Target Amount"
           value={targetAmount}
           onChange={setTargetAmount}
-          min={MIN_AMOUNT} max={LOC_MAX_AMOUNT} step={100000}
+          min={MIN_AMOUNT} max={TARGET_MAX_AMOUNT_GOAL_PLANNER} step={100000}
           currency={currency}
         />
         <InputWithSlider

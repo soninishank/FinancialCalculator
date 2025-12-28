@@ -20,6 +20,7 @@ export const MAX_LOAN = 100000000;     // 10 Crores
 export const MAX_YEARS = 50;
 export const MAX_RATE = 30;
 export const MAX_STEP_UP = 50;
+export const TARGET_MAX_AMOUNT_GOAL_PLANNER = 1000000000; // 100 cr
 
 // 3. Input Min Limits
 export const MIN_SIP = 100;

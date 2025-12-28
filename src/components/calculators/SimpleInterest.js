@@ -4,7 +4,7 @@ import CalculatorLayout from './CalculatorLayout';
 import InputWithSlider from '../common/InputWithSlider';
 import { moneyFormat } from '../../utils/formatting';
 import { FinancialLineChart, FinancialPieChart } from '../common/FinancialCharts';
-import { CHART_COLORS, LABELS, MAX_AMOUNT } from '../../utils/constants';
+import { CHART_COLORS, LABELS, MAX_AMOUNT, MAX_RATE, MAX_YEARS } from '../../utils/constants';
 
 export default function SimpleInterest({ currency }) {
     const [principal, setPrincipal] = useState(100000);
@@ -85,7 +85,7 @@ export default function SimpleInterest({ currency }) {
                 value={rate}
                 onChange={setRate}
                 min={1}
-                max={30}
+                max={MAX_RATE}
                 step={0.1}
                 symbol="%"
                 isDecimal={true}
@@ -95,7 +95,7 @@ export default function SimpleInterest({ currency }) {
                 value={time}
                 onChange={setTime}
                 min={1}
-                max={30}
+                max={MAX_YEARS}
             />
         </>
     );

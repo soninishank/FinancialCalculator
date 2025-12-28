@@ -7,6 +7,7 @@ import {
     CHART_COLORS,
     LABELS,
     MAX_AMOUNT,
+    MAX_YEARS,
     DEFAULT_ROI_INITIAL,
     DEFAULT_ROI_FINAL,
     DEFAULT_ROI_YEARS
@@ -165,7 +166,7 @@ export default function ROICalculator({ currency }) {
                         value={years}
                         onChange={setYears}
                         min={1}
-                        max={50}
+                        max={MAX_YEARS}
                         step={1}
                     />
                 ) : (
@@ -174,7 +175,7 @@ export default function ROICalculator({ currency }) {
                         value={months}
                         onChange={setMonths}
                         min={1}
-                        max={600}
+                        max={MAX_YEARS * 12}
                         step={1}
                     />
                 )}
