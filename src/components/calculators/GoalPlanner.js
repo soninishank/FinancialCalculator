@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import InputWithSlider from "../common/InputWithSlider";
 import { moneyFormat } from "../../utils/formatting";
 import { getRequiredLumpSum, getRequiredSIP, getRequiredStepUpSIP, calculateRealRate } from "../../utils/finance";
 import { useInflation } from "../../hooks/useInflation";
 import InflationToggle from "../common/InflationToggle";
 import { FinancialLineChart } from "../common/FinancialCharts";
+import ResultsTable from "../common/ResultsTable";
 import {
   DEFAULT_TARGET_AMOUNT,
   DEFAULT_TENURE_YEARS,
@@ -40,14 +41,71 @@ export default function GoalPlanner({ currency, setCurrency }) {
 
   // --- CRITICAL LOGIC: Calculate the Effective Rate ---
   const effectiveRate = isInflationAdjusted
-    ? calculateRealRate(annualRate, inflationRate)
-    : annualRate;
+    ? calculateRealRate(Number(annualRate), Number(inflationRate))
+    : Number(annualRate);
 
   // Calculations
   const requiredLump = getRequiredLumpSum(targetAmount, effectiveRate, years);
   const requiredSIP = getRequiredSIP(targetAmount, effectiveRate, years);
   const requiredStepUp = getRequiredStepUpSIP(targetAmount, effectiveRate, years, stepUpPercent);
   const isNegativeRealRate = effectiveRate <= 0 && isInflationAdjusted;
+
+  // --- Generate Table Data ---
+  const { lumpSumData, sipData, stepUpData } = useMemo(() => {
+    const r = effectiveRate / 100;
+    const monthlyRate = r / 12;
+    const lData = [];
+    const sData = [];
+    const suData = [];
+
+    for (let i = 0; i <= years; i++) {
+      // 1. Lump Sum
+      const lumpVal = requiredLump * Math.pow(1 + monthlyRate, i * 12);
+      lData.push({
+        year: i,
+        invested: requiredLump,
+        value: Math.round(lumpVal)
+      });
+
+      // 2. SIP
+      let sipVal = 0;
+      let sipInvested = 0;
+      if (i > 0) {
+        const months = i * 12;
+        sipInvested = requiredSIP * months;
+        sipVal = requiredSIP * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate) * (1 + monthlyRate);
+      }
+      sData.push({
+        year: i,
+        invested: Math.round(sipInvested),
+        value: Math.round(sipVal)
+      });
+
+      // 3. Step-Up
+      let stepUpVal = 0;
+      let stepUpInvested = 0;
+      if (i > 0) {
+        let total = 0;
+        let totalInv = 0;
+        let currentSip = requiredStepUp;
+        for (let y = 1; y <= i; y++) {
+          const yearVal = currentSip * ((Math.pow(1 + monthlyRate, 12) - 1) / monthlyRate) * (1 + monthlyRate);
+          total = total * Math.pow(1 + monthlyRate, 12) + yearVal;
+          totalInv += currentSip * 12;
+          currentSip = currentSip * (1 + stepUpPercent / 100);
+        }
+        stepUpVal = total;
+        stepUpInvested = totalInv;
+      }
+      suData.push({
+        year: i,
+        invested: Math.round(stepUpInvested),
+        value: Math.round(stepUpVal)
+      });
+    }
+
+    return { lumpSumData: lData, sipData: sData, stepUpData: suData };
+  }, [years, effectiveRate, requiredLump, requiredSIP, requiredStepUp, stepUpPercent]);
 
   return (
     <div className="animate-fade-in">
@@ -108,17 +166,19 @@ export default function GoalPlanner({ currency, setCurrency }) {
         rate={inflationRate}
         setRate={setInflationRate}
       />
-      <div className="text-sm font-medium text-gray-700 mt-4 p-3 bg-gray-50 rounded-xl border border-gray-100">
-        Effective Rate Used in Calculation:
-        <strong className="text-indigo-600 ml-1">
-          {effectiveRate.toFixed(2)}%
-        </strong>
-        {isNegativeRealRate && (
-          <span className="text-red-500 ml-3">
-            (Cannot reach goal: Real return is zero or negative.)
-          </span>
-        )}
-      </div>
+      {isInflationAdjusted && (
+        <div className="text-sm font-medium text-gray-700 mt-4 mb-8 p-3 bg-gray-50 rounded-xl border border-gray-100">
+          Effective Rate Used in Calculation:
+          <strong className="text-indigo-600 ml-1">
+            {effectiveRate.toFixed(2)}%
+          </strong>
+          {isNegativeRealRate && (
+            <span className="text-red-500 ml-3">
+              (Cannot reach goal: Real return is zero or negative.)
+            </span>
+          )}
+        </div>
+      )}
 
       {/* RESULT CARDS: The "Options" */}
       <h3 className="text-xl font-bold text-gray-800 mb-6">How to achieve this goal:</h3>
@@ -184,34 +244,26 @@ export default function GoalPlanner({ currency, setCurrency }) {
             labels: Array.from({ length: years + 1 }, (_, i) => `Year ${i}`),
             datasets: [
               {
-                label: 'Lump Sum Path',
+                label: 'One-time Path',
                 data: Array.from({ length: years + 1 }, (_, i) => {
-                  // FV = PV * (1+r)^n
                   const r = effectiveRate / 100;
-                  return Math.round(requiredLump * Math.pow(1 + r, i));
+                  const monthlyRate = r / 12;
+                  return Math.round(requiredLump * Math.pow(1 + monthlyRate, i * 12));
                 }),
-                borderColor: '#6366F1', // Indigo (Option 1)
+                borderColor: '#6366F1',
                 backgroundColor: 'transparent',
                 tension: 0.4
               },
               {
-                label: 'SIP Amount Path',
+                label: 'SIP Path',
                 data: Array.from({ length: years + 1 }, (_, i) => {
-                  // FV of SIP
-                  // A typical SIP accumulation logic approx per year
-                  const r = effectiveRate / 100;
-                  // Simple yearly accumulation for visualization
-                  // Year 0 = 0.
                   if (i === 0) return 0;
-
-                  // Precise monthly calculation for Year 'i'
-                  // FV = P * [ (1+i)^n - 1 ] / i * (1+i)
+                  const r = effectiveRate / 100;
                   const monthlyRate = r / 12;
                   const months = i * 12;
-                  const val = requiredSIP * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate) * (1 + monthlyRate);
-                  return Math.round(val);
+                  return Math.round(requiredSIP * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate) * (1 + monthlyRate));
                 }),
-                borderColor: '#10B981', // Emerald (Option 2)
+                borderColor: '#10B981',
                 backgroundColor: 'transparent',
                 tension: 0.4
               },
@@ -219,31 +271,18 @@ export default function GoalPlanner({ currency, setCurrency }) {
                 label: 'Step-Up Path',
                 data: Array.from({ length: years + 1 }, (_, i) => {
                   if (i === 0) return 0;
-                  // This is complex to behave exactly like the precise util, 
-                  // so we will approximate or simulate year by year for chart.
-                  // But since we are visualizing, a simple yearly compounding loop is better.
                   let total = 0;
                   let currentSip = requiredStepUp;
-                  const r = effectiveRate / 100; // annual
+                  const r = effectiveRate / 100;
                   const monthlyRate = r / 12;
-
-                  // Simulate 'i' years
                   for (let y = 1; y <= i; y++) {
-                    // 12 months at currentSip
                     const yearVal = currentSip * ((Math.pow(1 + monthlyRate, 12) - 1) / monthlyRate) * (1 + monthlyRate);
-
-                    // Current corpus grows for this year
-                    total = total * (1 + r) + yearVal; // Approx (corpus grows annually, new money added)
-                    // Actually better: detailed month simulation is too heavy for render here.
-                    // Let's use a simplified yearly model for the chart or just call it good.
-                    // For chart, let's assume monthly compounding within the year for the SIP part.
-
-                    // Step up for next year
+                    total = total * Math.pow(1 + monthlyRate, 12) + yearVal;
                     currentSip = currentSip * (1 + stepUpPercent / 100);
                   }
                   return Math.round(total);
                 }),
-                borderColor: '#F43F5E', // Rose (Option 3)
+                borderColor: '#F43F5E',
                 backgroundColor: 'transparent',
                 tension: 0.4,
                 borderDash: [5, 5]
@@ -253,6 +292,62 @@ export default function GoalPlanner({ currency, setCurrency }) {
           currency={currency}
           height={350}
         />
+      </div>
+
+      {/* INDIVIDUAL GROWTH TABLES */}
+      <div className="mt-12 space-y-12">
+
+        {/* Lump Sum Table */}
+        <div>
+          <h3 className="text-lg font-bold text-indigo-700 mb-3 flex items-center gap-2">
+            <span className="p-1 bg-indigo-100 rounded">Option 1</span>
+            Lump Sum Growth
+          </h3>
+          <ResultsTable
+            data={lumpSumData}
+            currency={currency}
+            columns={[
+              { key: 'year', label: 'Year', align: 'left' },
+              { key: 'invested', label: 'Invested Amount', align: 'right', format: 'money' },
+              { key: 'value', label: 'Expected Value', align: 'right', format: 'money', highlight: true }
+            ]}
+          />
+        </div>
+
+        {/* SIP Table */}
+        <div>
+          <h3 className="text-lg font-bold text-emerald-700 mb-3 flex items-center gap-2">
+            <span className="p-1 bg-emerald-100 rounded">Option 2</span>
+            SIP Growth
+          </h3>
+          <ResultsTable
+            data={sipData}
+            currency={currency}
+            columns={[
+              { key: 'year', label: 'Year', align: 'left' },
+              { key: 'invested', label: 'Total Invested', align: 'right', format: 'money' },
+              { key: 'value', label: 'Expected Value', align: 'right', format: 'money', highlight: true }
+            ]}
+          />
+        </div>
+
+        {/* Step-Up Table */}
+        <div>
+          <h3 className="text-lg font-bold text-rose-700 mb-3 flex items-center gap-2">
+            <span className="p-1 bg-rose-100 rounded">Option 3</span>
+            Step-Up SIP Growth
+          </h3>
+          <ResultsTable
+            data={stepUpData}
+            currency={currency}
+            columns={[
+              { key: 'year', label: 'Year', align: 'left' },
+              { key: 'invested', label: 'Total Invested', align: 'right', format: 'money' },
+              { key: 'value', label: 'Expected Value', align: 'right', format: 'money', highlight: true }
+            ]}
+          />
+        </div>
+
       </div>
     </div>
   );

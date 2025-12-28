@@ -63,7 +63,7 @@ const calculators = [
   {
     slug: 'time-to-fire',
     title: 'Time to FIRE',
-    description: 'Calculate exactly when you can reach Financial Independence based on your current savings and expenses.',
+    description: 'Calculate exactly when you can reach Financial Independence based on your current savings and expenses. Adjusts for Inflation and Real Returns.',
     keywords: 'fire, financial independence, retire early, retirement calculator',
     category: 'FIRE',
     component: 'TimeToFIRE'
@@ -75,6 +75,14 @@ const calculators = [
     keywords: 'goal planner, financial goals, savings plan, target planning',
     category: 'Planner',
     component: 'GoalPlanner'
+  },
+  {
+    slug: 'lean-fire',
+    title: 'Lean FIRE Calculator',
+    description: 'Calculate your path to Financial Independence with a minimalist lifestyle. Focus on essential expenses and lower target corpus.',
+    keywords: 'lean fire, minimalist fire, frugal retirement, early retirement',
+    category: 'FIRE',
+    component: 'LeanFire'
   },
   {
     slug: 'rent-vs-buy',

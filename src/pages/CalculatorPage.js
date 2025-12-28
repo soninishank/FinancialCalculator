@@ -20,6 +20,7 @@ const importBySlug = (slug) => {
     case 'swp-calculator': return import('../components/calculators/SWPCalculator');
     // FIRE Calculators
     case 'time-to-fire': return import('../components/calculators/TimeToFIRE');
+    case 'lean-fire': return import('../components/calculators/LeanFire');
     case 'coast-fire': return import('../components/calculators/CoastFIRE');
     case 'swr-simulator': return import('../components/calculators/SWRSimulator');
     // Decision Making

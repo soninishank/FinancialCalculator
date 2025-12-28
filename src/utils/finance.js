@@ -426,15 +426,21 @@ export function calculateTimeToFIRE({
 }) {
   // Target Corpus = (Monthly Exp * 12) / (SWR / 100)
   const annualExpenses = monthlyExpenses * 12;
-  const annualInvestment = monthlyInvestment * 12;
   const targetCorpus = annualExpenses / (swr / 100);
 
   // If already reached
   if (currentCorpus >= targetCorpus) return { years: 0, months: 0, targetCorpus };
 
-  // Calculate true monthly rate from annual return (proper compounding)
+  // Calculate Real Rate if inflation is provided
+  // Real Rate = ((1 + Nominal) / (1 + Inflation)) - 1
+  let effectiveAnnualRate = annualReturn;
+  if (inflation > 0) {
+    effectiveAnnualRate = ((1 + annualReturn / 100) / (1 + inflation / 100) - 1) * 100;
+  }
+
+  // Calculate true monthly rate from effective annual return (proper compounding)
   // (1 + r_annual)^(1/12) - 1 ensures monthly rate compounds to annual rate
-  const r_m = Math.pow(1 + annualReturn / 100, 1 / 12) - 1;
+  const r_m = Math.pow(1 + effectiveAnnualRate / 100, 1 / 12) - 1;
 
   // Solving for n in Future Value of Annuity formula mixed with Loop for simplicity
   // FV = CurrentCorpus*(1+r)^n + PMT * ...
@@ -444,6 +450,7 @@ export function calculateTimeToFIRE({
   let corpus = currentCorpus;
   let months = 0;
   let cumulativeInvestment = currentCorpus;
+  let investedThisYear = 0;
   const rows = [];
 
   // Add initial state (Year 0)
@@ -454,7 +461,7 @@ export function calculateTimeToFIRE({
     overallValue: corpus,
     targetCorpus,
     annualExpenses,
-    annualInvestment,
+    annualInvestment: 0, // No investment made at the very start instant
     swr
   });
 
@@ -462,6 +469,7 @@ export function calculateTimeToFIRE({
   while (corpus < targetCorpus && months < 1200) {
     corpus = corpus * (1 + r_m) + monthlyInvestment;
     cumulativeInvestment += monthlyInvestment;
+    investedThisYear += monthlyInvestment;
     months++;
 
     if (months % 12 === 0) {
@@ -472,9 +480,10 @@ export function calculateTimeToFIRE({
         overallValue: corpus,
         targetCorpus,
         annualExpenses,
-        annualInvestment,
+        annualInvestment: investedThisYear,
         swr
       });
+      investedThisYear = 0;
     }
   }
 
@@ -488,7 +497,7 @@ export function calculateTimeToFIRE({
       overallValue: corpus,
       targetCorpus,
       annualExpenses,
-      annualInvestment,
+      annualInvestment: investedThisYear,
       swr
     });
   }
