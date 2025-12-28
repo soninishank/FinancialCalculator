@@ -1,7 +1,6 @@
 // src/hooks/useLimitedPay.js
 import { useState } from "react";
-// Import constants or define Max Years:
-const MAX_YEARS = 40;
+import { MAX_YEARS } from "../utils/constants";
 
 export function useLimitedPay(initialYears = 10) {
 
@@ -70,7 +69,7 @@ export function useLimitedPay(initialYears = 10) {
   return {
     // Return values as numbers for calculation, but keep state as string
     totalYears: safeNumber(totalYears),
-    sipYears: safeNumber(sipYears),
+    sipYears: isLimitedPay ? safeNumber(sipYears) : safeNumber(totalYears), // Force match when OFF
     setSipYears: handleSipYearsChange, // Bind the SIP slider's onChange to this new handler
     isLimitedPay,
     handleTotalYearsChange,

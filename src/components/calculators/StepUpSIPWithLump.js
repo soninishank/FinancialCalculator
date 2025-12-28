@@ -8,6 +8,7 @@ import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from "../co
 import InputWithSlider from "../common/InputWithSlider";
 import RateQualityGuard from "../common/RateQualityGuard";
 import TaxToggle from "../common/TaxToggle"; // <-- added
+import LimitedPayTip from "../common/LimitedPayTip";
 
 import { useLimitedPay } from "../../hooks/useLimitedPay";
 import { downloadPDF } from "../../utils/export";
@@ -200,6 +201,7 @@ export default function StepUpSIPWithLump({ currency }) {
               <p className="text-gray-500 text-xs mt-1">
                 Stop contributions after a few years but let the money grow.
               </p>
+              <LimitedPayTip show={isLimitedPay} />
             </div>
           </div>
 

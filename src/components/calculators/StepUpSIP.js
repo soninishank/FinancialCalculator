@@ -8,6 +8,7 @@ import InputWithSlider from "../common/InputWithSlider";
 import RateQualityGuard from "../common/RateQualityGuard";
 import TaxToggle from "../common/TaxToggle";
 import InflationToggle from "../common/InflationToggle";
+import LimitedPayTip from "../common/LimitedPayTip";
 
 import CalculatorLayout from "./CalculatorLayout"; // <--- NEW LAYOUT
 
@@ -160,6 +161,7 @@ export default function StepUpSIP({ currency, setCurrency }) {
             <p className="text-gray-500 text-xs mt-1">
               Enable this if you want to stop contributions after a few years but let the money grow.
             </p>
+            <LimitedPayTip show={isLimitedPay} />
           </div>
         </div>
 
