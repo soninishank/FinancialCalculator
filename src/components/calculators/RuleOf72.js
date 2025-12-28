@@ -15,6 +15,9 @@ import {
     STEP_PERCENT
 } from '../../utils/constants';
 
+import ResultsTable from '../common/ResultsTable';
+import { downloadPDF } from '../../utils/export';
+
 export default function RuleOf72({ currency }) {
     const [rate, setRate] = useState(DEFAULT_RULE72_RATE);
     const [principal, setPrincipal] = useState(DEFAULT_RULE72_AMOUNT);
@@ -39,7 +42,9 @@ export default function RuleOf72({ currency }) {
             currentAmount = p * Math.pow((1 + r / 100), i);
             yearlyData.push({
                 year: i,
-                amount: currentAmount
+                amount: currentAmount,
+                invested: p,
+                growth: currentAmount - p,
             });
         }
 
@@ -100,6 +105,61 @@ export default function RuleOf72({ currency }) {
         </>
     );
 
+    // --- TABLE EXPORT ---
+    const handleExport = () => {
+        const headers = ["Year", "Invested", "Growth", "Total Value"];
+        const rows = result.yearlyData.map(row => [
+            `Year ${row.year}`,
+            row.invested,
+            row.growth,
+            row.amount
+        ]);
+        downloadPDF(rows, headers, "Rule_of_72_Report.pdf");
+    };
+
+    // --- DETAILS ---
+    const details = (
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding the Rule of 72</h3>
+            <div className="prose prose-teal max-w-none text-gray-600">
+                <p className="mb-4">
+                    The <strong>Rule of 72</strong> is a simple, mental math shortcut to estimate the number of years required to double your investment at a given annual fixed interest rate.
+                </p>
+
+                <div className="bg-teal-50 p-4 rounded-xl border border-teal-100 my-4">
+                    <p className="font-semibold text-teal-800 text-center text-lg">
+                        Years to Double ≈ 72 ÷ Interest Rate
+                    </p>
+                </div>
+
+                <p className="mb-4">
+                    For example, with an annual return of <strong>{rate}%</strong>:
+                </p>
+                <ul className="list-disc pl-5 space-y-2 mb-4">
+                    <li>
+                        The calculation is <strong>72 ÷ {rate}</strong>.
+                    </li>
+                    <li>
+                        This gives approximately <strong>{result.years.toFixed(1)} years</strong> to double your money.
+                    </li>
+                    <li>
+                        While the Rule of 72 is an approximation, the actual time (calculated using precise logarithmic formulas) is very close to this estimate for typical interest rates (between 6% and 10%).
+                    </li>
+                </ul>
+                <p>
+                    This rule applies to any investment with compound interest, helping investors quickly gauge the potential growth of their portfolio without complex calculations.
+                </p>
+            </div>
+        </div>
+    );
+
+    const tableColumns = [
+        { key: 'year', label: 'Year', align: 'left' },
+        { key: 'invested', label: 'Invested', align: 'right', format: 'money' },
+        { key: 'growth', label: 'Growth', align: 'right', format: 'money', color: 'green' },
+        { key: 'amount', label: 'Total Value', align: 'right', format: 'money', highlight: true }
+    ];
+
     // --- SUMMARY ---
     const summary = (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
@@ -138,7 +198,15 @@ export default function RuleOf72({ currency }) {
                 </div>
             }
             pieChart={null}
-            table={null}
+            table={
+                <ResultsTable
+                    data={result.yearlyData}
+                    columns={tableColumns}
+                    onExport={handleExport}
+                    currency={currency}
+                />
+            }
+            details={details}
         />
     );
 }
