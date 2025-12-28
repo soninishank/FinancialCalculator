@@ -8,9 +8,9 @@ import CollapsibleInvestmentTable from '../common/CollapsibleInvestmentTable';
 import { ShieldCheck, AlertTriangle } from 'lucide-react';
 
 export default function PPFCalculator({ currency = 'INR' }) {
-    const [investmentAmount, setInvestmentAmount] = useState(12500); // 1.5L / 12
-    const [frequency, setFrequency] = useState('monthly'); // 'monthly' | 'yearly'
-    const [rate, setRate] = useState(7.1); // Current PPF Rate
+    const [investmentAmount, setInvestmentAmount] = useState(12500); // Default for monthly
+    const [frequency, setFrequency] = useState('monthly'); // 'monthly' | 'quarterly' | 'half-yearly' | 'yearly'
+    const [rate, setRate] = useState(7.1); // Default PPF Rate 7.1%
     const [years, setYears] = useState(15);
     const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 7));
 
@@ -25,33 +25,45 @@ export default function PPFCalculator({ currency = 'INR' }) {
     }, [investmentAmount, frequency, rate, years, startDate]);
 
     // Warning for 1.5L Limit
-    const annualInvestment = frequency === 'monthly' ? investmentAmount * 12 : investmentAmount;
-    const isOverLimit = annualInvestment > 150000;
+    const multiplier = frequency === 'monthly' ? 12 : frequency === 'quarterly' ? 4 : frequency === 'half-yearly' ? 2 : 1;
+    const annualInvestment = investmentAmount * multiplier;
+    const isOverLimit = annualInvestment > 150001; // Tiny buffer for float math
 
     const inputs = (
         <div className="space-y-6">
             {/* Frequency Toggle */}
             <div className="flex bg-gray-100 p-1 rounded-xl w-full">
-                {['monthly', 'yearly'].map((freq) => (
+                {['monthly', 'quarterly', 'half-yearly', 'yearly'].map((freq) => (
                     <button
                         key={freq}
-                        onClick={() => setFrequency(freq)}
-                        className={`flex-1 py-2 text-sm font-bold capitalize rounded-lg transition-all ${frequency === freq
+                        onClick={() => {
+                            setFrequency(freq);
+                            // Adjust amount to stay within limits when switching
+                            if (freq === 'monthly') setInvestmentAmount(Math.min(investmentAmount, 12500));
+                            else if (freq === 'quarterly') setInvestmentAmount(Math.min(investmentAmount, 37500));
+                            else if (freq === 'half-yearly') setInvestmentAmount(Math.min(investmentAmount, 75000));
+                            else if (freq === 'yearly') setInvestmentAmount(Math.min(investmentAmount, 150000));
+                        }}
+                        className={`flex-1 py-2 text-[10px] md:text-xs font-bold capitalize rounded-lg transition-all ${frequency === freq
                             ? 'bg-white text-indigo-700 shadow-sm'
                             : 'text-gray-500 hover:text-gray-700'
                             }`}
                     >
-                        {freq} Investment
+                        {freq}
                     </button>
                 ))}
             </div>
 
             <InputWithSlider
-                label={frequency === 'monthly' ? "Monthly Deposit" : "Yearly Deposit"}
+                label={`${frequency.charAt(0).toUpperCase() + frequency.slice(1)} Deposit`}
                 value={investmentAmount}
                 onChange={setInvestmentAmount}
                 min={500}
-                max={frequency === 'monthly' ? 50000 : 200000}
+                max={
+                    frequency === 'monthly' ? 12500 :
+                        frequency === 'quarterly' ? 37500 :
+                            frequency === 'half-yearly' ? 75000 : 150000
+                }
                 step={500}
                 currency={currency}
             />
@@ -74,6 +86,7 @@ export default function PPFCalculator({ currency = 'INR' }) {
                 max={12}
                 step={0.1}
                 symbol="%"
+                isDecimal={true}
                 helperText="Current PPF Interest Rate is 7.1%"
             />
 
@@ -101,7 +114,7 @@ export default function PPFCalculator({ currency = 'INR' }) {
             </div>
 
             {/* INPUTS SECTION */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">
+            <div className="space-y-6 mt-8">
                 {inputs}
             </div>
 
@@ -176,6 +189,58 @@ export default function PPFCalculator({ currency = 'INR' }) {
                     monthlyData={result.monthlyData}
                     currency={currency}
                 />
+            </div>
+
+            {/* PPF DETAILS INFO SECTION */}
+            <div className="mt-12 space-y-6 border-t border-gray-100 pt-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                        <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            Key Features of PPF
+                        </h4>
+                        <ul className="space-y-3">
+                            <li className="flex gap-3 text-sm text-gray-600">
+                                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
+                                <span><strong>Lock-in Period:</strong> 15 years, extendable in blocks of 5 years indefinitely.</span>
+                            </li>
+                            <li className="flex gap-3 text-sm text-gray-600">
+                                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
+                                <span><strong>Tax Benefits (EEE):</strong> Exempt-Exempt-Exempt status (Tax deduction on investment, interest, and maturity).</span>
+                            </li>
+                            <li className="flex gap-3 text-sm text-gray-600">
+                                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
+                                <span><strong>Investment Limit:</strong> Min ₹500 and Max ₹1.5 Lakhs per financial year.</span>
+                            </li>
+                            <li className="flex gap-3 text-sm text-gray-600">
+                                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
+                                <span><strong>Withdrawals:</strong> Partial withdrawals allowed from the 7th year onward.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                        <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            Extension Rules
+                        </h4>
+                        <ul className="space-y-4">
+                            <li className="text-sm text-gray-600">
+                                <p className="font-semibold text-gray-800">1. Extension with Contribution</p>
+                                <p>Continue investing and earn interest. Must submit Form H within 1 year of maturity.</p>
+                            </li>
+                            <li className="text-sm text-gray-600">
+                                <p className="font-semibold text-gray-800">2. Extension without Contribution</p>
+                                <p>Balance continues to earn interest without new deposits. No fresh investment needed.</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="bg-indigo-50 rounded-xl p-5 border border-indigo-100">
+                    <p className="text-xs text-indigo-800 font-medium mb-2 uppercase tracking-wider italic font-bold">Important Information</p>
+                    <p className="text-[13px] text-indigo-900 leading-relaxed">
+                        PPF interest is compounded annually and calculated on the minimum balance in the account between the 5th and the last day of every month. For maximum interest benefit, try to invest before the 5th of each month. Current rate of 7.1% is reset by the government every quarter.
+                    </p>
+                </div>
             </div>
         </div>
     );

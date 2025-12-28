@@ -143,6 +143,7 @@ export default function FixedDeposit({ currency = 'INR' }) {
                     max={15}
                     step={0.1}
                     symbol="%"
+                    isDecimal={true}
                 />
 
                 {/* Tenure */}

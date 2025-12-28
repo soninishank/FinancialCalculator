@@ -1384,6 +1384,7 @@ export function computeMoratoriumLoanAmortization({
 export function computePPF({ investmentAmount, frequency, interestRate, years, startDate = new Date().toISOString().slice(0, 7) }) {
   const R = Number(interestRate) / 100;
   const N = Number(years);
+  const P = Number(investmentAmount);
 
   const [startYear, startMonth] = startDate.split('-').map(Number);
   const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -1391,92 +1392,79 @@ export function computePPF({ investmentAmount, frequency, interestRate, years, s
   const yearlyData = [];
   const monthlyData = [];
 
-  let totalInvestment = 0;
   let balance = 0;
+  let annualAccruedInterest = 0;
+  let cumulativeInvestment = 0;
+  let cumulativeInterest = 0;
 
-  if (frequency === 'monthly') {
-    const P = Number(investmentAmount);
-
-    for (let month = 1; month <= N * 12; month++) {
-      balance += P;
-      totalInvestment += P;
-
-      const monthsElapsed = month - 1;
-      const yearsElapsed = Math.floor((startMonth - 1 + monthsElapsed) / 12);
-      const actualYear = startYear + yearsElapsed;
-      const monthInYear = ((month - 1) % 12) + 1;
-      const isYearEnd = (month % 12 === 0);
-
-      if (isYearEnd) {
-        balance = balance * (1 + R);
-      }
-
-      const currentInterest = balance - totalInvestment;
-      const actualMonthIndex = (startMonth - 1 + month - 1) % 12;
-      const actualMonthName = monthNames[actualMonthIndex];
-
-      monthlyData.push({
-        year: actualYear,
-        month: monthInYear,
-        monthName: actualMonthName,
-        invested: totalInvestment,
-        interest: currentInterest,
-        balance: balance
-      });
-
-      if (isYearEnd || month === N * 12) {
-        yearlyData.push({
-          year: actualYear,
-          totalInvested: totalInvestment,
-          growth: currentInterest,
-          balance: balance,
-          investment: totalInvestment
-        });
-      }
+  for (let month = 1; month <= N * 12; month++) {
+    // Determine if we should invest this month based on frequency
+    let shouldInvest = false;
+    if (frequency === 'monthly') {
+      shouldInvest = true;
+    } else if (frequency === 'quarterly') {
+      shouldInvest = (month - 1) % 3 === 0;
+    } else if (frequency === 'half-yearly') {
+      shouldInvest = (month - 1) % 6 === 0;
+    } else if (frequency === 'yearly' || frequency === 'annually') {
+      shouldInvest = (month - 1) % 12 === 0;
     }
-  } else {
-    const P = Number(investmentAmount);
 
-    for (let year = 1; year <= N; year++) {
-      const actualYear = startYear + year - 1;
+    let monthlyInvested = 0;
+    if (shouldInvest) {
+      monthlyInvested = P;
       balance += P;
-      totalInvestment += P;
-      balance = balance * (1 + R);
+      cumulativeInvestment += P;
+    }
 
-      const currentInterest = balance - totalInvestment;
+    // PPF Interest Calculation:
+    // Interest is simple throughout the year and credited (compounded) at year-end.
+    const monthlyAccrued = balance * (R / 12);
+    annualAccruedInterest += monthlyAccrued;
+    cumulativeInterest += monthlyAccrued;
 
+    const monthsElapsed = month - 1;
+    const yearsElapsed = Math.floor((startMonth - 1 + monthsElapsed) / 12);
+    const actualYear = startYear + yearsElapsed;
+    const monthInYear = ((month - 1) % 12) + 1;
+    const isYearEnd = (month % 12 === 0);
+
+    if (isYearEnd) {
+      balance += annualAccruedInterest;
+      // Reset annual counter
+      annualAccruedInterest = 0;
+    }
+
+    const actualMonthIndex = (startMonth - 1 + month - 1) % 12;
+    const actualMonthName = monthNames[actualMonthIndex];
+
+    monthlyData.push({
+      year: actualYear,
+      month: monthInYear,
+      monthName: actualMonthName,
+      invested: cumulativeInvestment,
+      annualInvested: monthlyInvested, // Added for flexibility
+      interest: cumulativeInterest,
+      annualInterest: monthlyAccrued, // Added for flexibility
+      balance: balance + (isYearEnd ? 0 : annualAccruedInterest)
+    });
+
+    if (isYearEnd || month === N * 12) {
       yearlyData.push({
         year: actualYear,
-        totalInvested: totalInvestment,
-        growth: currentInterest,
+        totalInvested: cumulativeInvestment,
+        growth: cumulativeInterest,
         balance: balance,
-        investment: totalInvestment
+        investment: cumulativeInvestment
       });
-
-      for (let m = 1; m <= 12; m++) {
-        const monthOfScheme = (year - 1) * 12 + m;
-        const actualMonthIndex = (startMonth - 1 + monthOfScheme - 1) % 12;
-        const actualMonthName = monthNames[actualMonthIndex];
-        const monthBalance = m === 12 ? balance : balance * (m / 12);
-
-        monthlyData.push({
-          year: actualYear,
-          month: m,
-          monthName: actualMonthName,
-          invested: totalInvestment,
-          interest: monthBalance - totalInvestment,
-          balance: monthBalance
-        });
-      }
     }
   }
 
-  const finalData = yearlyData[yearlyData.length - 1] || { totalInvested: 0, balance: 0 };
-  const maturityValue = finalData.balance;
-  const totalInterest = maturityValue - finalData.totalInvested;
+  const maturityValue = balance;
+  const totalInterest = maturityValue - cumulativeInvestment;
 
   return {
-    totalInvestment: finalData.totalInvested,
+    totalInvestment: cumulativeInvestment,
     totalInterest,
     maturityValue,
     yearlyData,
