@@ -122,24 +122,20 @@ const tableDefinitions = [
         `
     },
     {
-        // Special case: Requires ENUM type created first in index.js
         name: 'ipo_bidding_details',
         query: `
             CREATE TABLE IF NOT EXISTS ipo_bidding_details (
-                id BIGSERIAL PRIMARY KEY,
-                ipo_id BIGINT REFERENCES ipo(ipo_id),
-                category ipo_category_type,
-                sr_no VARCHAR(16),
+                bid_id SERIAL PRIMARY KEY,
+                ipo_id INTEGER REFERENCES ipo(ipo_id) ON DELETE CASCADE,
+                category VARCHAR(50),
                 shares_offered BIGINT,
                 shares_bid BIGINT,
-                subscription_ratio NUMERIC(12,8),
-                face_value NUMERIC(12,2),
-                source VARCHAR(50),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                subscription_ratio NUMERIC(15, 4),
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
         `,
         postQueries: [
-            "CREATE INDEX IF NOT EXISTS idx_bidding_ipo_id ON ipo_bidding_details(ipo_id);"
+            "CREATE INDEX IF NOT EXISTS idx_bid_details_ipo_id ON ipo_bidding_details(ipo_id);"
         ]
     },
     {
@@ -202,9 +198,11 @@ const requiredColumns = [
     { table: 'ipo_dates', col: 'refund_initiation_date', type: 'DATE' },
     { table: 'ipo_dates', col: 'demat_credit_date', type: 'DATE' },
     { table: 'ipo_dates', col: 'listing_date', type: 'DATE' },
-
-    // Table: ipo_bidding_details
-    { table: 'ipo_bidding_details', col: 'face_value', type: 'NUMERIC(12,2)' }
+    { table: 'ipo', col: 'net_issue_shares', type: 'BIGINT' },
+    { table: 'ipo', col: 'market_maker_shares', type: 'BIGINT' },
+    { table: 'ipo', col: 'retail_reservation_pct', type: 'NUMERIC(5,2)' },
+    { table: 'ipo', col: 'nii_reservation_pct', type: 'NUMERIC(5,2)' },
+    { table: 'ipo', col: 'qib_reservation_pct', type: 'NUMERIC(5,2)' }
 ];
 
 const constraints = [

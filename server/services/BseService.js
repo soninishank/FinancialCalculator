@@ -3,6 +3,9 @@ const { Client } = require('pg');
 const cheerio = require('cheerio');
 const fs = require('fs');
 const path = require('path');
+const ipoUtils = require('../utils/ipoUtils');
+const subscriptionService = require('./SubscriptionService');
+const documentProcessingService = require('./DocumentProcessingService');
 
 require('dotenv').config({ quiet: true });
 const CONNECTION_STRING = process.env.DATABASE_URL;
@@ -432,7 +435,7 @@ class BseService {
         try {
             // Fetch required info from DB to construct scraping URL
             const res = await client.query(`
-                SELECT i.bse_scrip_code, i.bse_ipo_no, i.status, d.issue_start, i.price_range_high, i.price_range_low, i.bid_lot 
+                SELECT i.bse_scrip_code, i.bse_ipo_no, i.status, d.issue_start, i.price_range_high, i.price_range_low, i.bid_lot, i.series 
                 FROM ipo i
                 LEFT JOIN ipo_dates d ON i.ipo_id = d.ipo_id
                 WHERE i.ipo_id = $1
@@ -506,12 +509,16 @@ class BseService {
                 queryParams.push(scrapedData.priceHigh);
                 paramIndex++;
             }
-
-            // Minimum Investment
+            // Minimum Investment using refined common utility
+            // For DB storage, we use priceLow (pLow) to avoid overstating the minimum.
             const pLow = scrapedData.priceLow || row.price_range_low;
             const bLot = scrapedData.bidLot || row.bid_lot;
-            if (pLow && bLot) {
-                const minInvestment = pLow * bLot;
+            const series = row.series;
+
+            const minLots = ipoUtils.calculateMinLots(bLot, pLow, series);
+            const minInvestment = ipoUtils.calculateInvestment(minLots, bLot, pLow);
+
+            if (minInvestment !== null) {
                 queryUpdates.push(`min_investment = $${paramIndex} `);
                 queryParams.push(minInvestment);
                 paramIndex++;
@@ -567,6 +574,10 @@ class BseService {
                         INSERT INTO documents(ipo_id, doc_type, title, url)
                         VALUES($1, 'RHP', $2, $3)
                     `, [ipoId, 'Red Herring Prospectus', scrapedData.rhpLink]);
+
+                    // Trigger async RHP processing
+                    documentProcessingService.processRhpDocument(scrapedData.rhpLink, ipoId)
+                        .catch(err => console.error(`[BSE Service] RHP processing failed:`, err.message));
                 } else {
                     const existingUrl = docCheck.rows[0].url || '';
                     const wasDirect = existingUrl.toLowerCase().endsWith('.pdf') || existingUrl.toLowerCase().endsWith('.zip');
@@ -576,6 +587,10 @@ class BseService {
                             UPDATE documents SET url = $3, title = $2, uploaded_at = NOW()
                             WHERE doc_id = $1
                         `, [docCheck.rows[0].doc_id, 'Red Herring Prospectus', scrapedData.rhpLink]);
+
+                        // Trigger async RHP processing
+                        documentProcessingService.processRhpDocument(scrapedData.rhpLink, ipoId)
+                            .catch(err => console.error(`[BSE Service] RHP processing failed:`, err.message));
                     }
                 }
             }

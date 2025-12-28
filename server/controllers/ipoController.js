@@ -208,7 +208,7 @@ const getIpoDetails = async (req, res) => {
         // This reduces latency significantly compared to sequential awaits.
         const [docRes, subRes, gmpRes, biddingRes] = await Promise.all([
             db.query('SELECT title, url, doc_type FROM documents WHERE ipo_id = $1', [ipo.ipo_id]),
-            db.query('SELECT category, shares_offered, shares_bid, subscription_ratio FROM ipo_bidding_details WHERE ipo_id = $1', [ipo.ipo_id]),
+            db.query('SELECT category, shares_offered, shares_bid, subscription_ratio FROM ipo_bidding_details WHERE ipo_id = $1 ORDER BY shares_offered DESC', [ipo.ipo_id]),
             db.query('SELECT gmp_value, snapshot_time FROM gmp WHERE ipo_id=$1 ORDER BY snapshot_time DESC LIMIT 1', [ipo.ipo_id]),
             db.query('SELECT price_label, price_value, cumulative_quantity FROM bidding_data WHERE ipo_id=$1 ORDER BY price_value ASC NULLS LAST', [ipo.ipo_id])
         ]);

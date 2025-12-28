@@ -15,29 +15,62 @@ import {
 export default function ROICalculator({ currency }) {
     const [initialInvestment, setInitialInvestment] = useState(DEFAULT_ROI_INITIAL);
     const [finalValue, setFinalValue] = useState(DEFAULT_ROI_FINAL);
-    const [years, setYears] = useState(DEFAULT_ROI_YEARS); // Optional time period
+    const [absoluteProfit, setAbsoluteProfit] = useState(DEFAULT_ROI_FINAL - DEFAULT_ROI_INITIAL);
+    const [years, setYears] = useState(DEFAULT_ROI_YEARS);
+    const [months, setMonths] = useState(DEFAULT_ROI_YEARS * 12);
+    const [inputMode, setInputMode] = useState('value'); // 'value' for Final Value, 'profit' for Absolute Profit
+    const [timeMode, setTimeMode] = useState('years'); // 'years' or 'months'
 
     const result = useMemo(() => {
         const start = Number(initialInvestment);
-        const end = Number(finalValue);
-        const time = Number(years);
+        let end;
+        let gain;
 
-        const gain = end - start;
+        if (inputMode === 'profit') {
+            gain = Number(absoluteProfit);
+            end = start + gain;
+        } else {
+            end = Number(finalValue);
+            gain = end - start;
+        }
+
+        // Normalize time to years for CAGR formula
+        const timeInYears = timeMode === 'months' ? Number(months) / 12 : Number(years);
         const roiPercentage = start > 0 ? (gain / start) * 100 : 0;
 
         // Annualized ROI (CAGR essentially)
-        // Formula: (End / Start)^(1/n) - 1
         let annualizedRoi = 0;
-        if (start > 0 && end > 0 && time > 0) {
-            annualizedRoi = (Math.pow(end / start, 1 / time) - 1) * 100;
+        if (start > 0 && end > 0 && timeInYears > 0) {
+            annualizedRoi = (Math.pow(end / start, 1 / timeInYears) - 1) * 100;
         }
 
         return {
             gain,
             roiPercentage,
-            annualizedRoi
+            annualizedRoi,
+            computedFinalValue: end,
+            timeInYears
         };
-    }, [initialInvestment, finalValue, years]);
+    }, [initialInvestment, finalValue, absoluteProfit, years, months, inputMode, timeMode]);
+
+    // Handle initial calculation and sync
+    const handleModeChange = (mode) => {
+        if (mode === 'profit') {
+            setAbsoluteProfit(finalValue - initialInvestment);
+        } else {
+            setFinalValue(initialInvestment + absoluteProfit);
+        }
+        setInputMode(mode);
+    };
+
+    const handleTimeModeChange = (mode) => {
+        if (mode === 'months') {
+            setMonths(Math.round(years * 12));
+        } else {
+            setYears(Number((months / 12).toFixed(2)));
+        }
+        setTimeMode(mode);
+    };
 
     // --- CHART ---
     const pieData = {
@@ -46,7 +79,7 @@ export default function ROICalculator({ currency }) {
             {
                 data: [
                     initialInvestment,
-                    result.gain > 0 ? result.gain : 0 // Don't show negative slice
+                    result.gain > 0 ? result.gain : 0
                 ],
                 backgroundColor: [CHART_COLORS.NEUTRAL, CHART_COLORS.PRIMARY],
                 borderWidth: 0
@@ -57,6 +90,25 @@ export default function ROICalculator({ currency }) {
     // --- UI INPUTS ---
     const inputs = (
         <>
+            <div className="md:col-span-2 mb-2">
+                <div className="flex bg-gray-100 p-1 rounded-xl w-fit">
+                    <button
+                        onClick={() => handleModeChange('value')}
+                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${inputMode === 'value' ? 'bg-white shadow-sm text-teal-600' : 'text-gray-500 hover:text-gray-700'
+                            }`}
+                    >
+                        Final Value Mode
+                    </button>
+                    <button
+                        onClick={() => handleModeChange('profit')}
+                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${inputMode === 'profit' ? 'bg-white shadow-sm text-teal-600' : 'text-gray-500 hover:text-gray-700'
+                            }`}
+                    >
+                        Profit Mode
+                    </button>
+                </div>
+            </div>
+
             <InputWithSlider
                 label="Amount Invested"
                 value={initialInvestment}
@@ -66,25 +118,68 @@ export default function ROICalculator({ currency }) {
                 step={100}
                 currency={currency}
             />
-            <InputWithSlider
-                label="Amount Returned (Final Value)"
-                value={finalValue}
-                onChange={setFinalValue}
-                min={100}
-                max={MAX_AMOUNT * 2} // Allow larger output
-                step={100}
-                currency={currency}
-            />
 
-            <InputWithSlider
-                label="Investment Period (Years)"
-                value={years}
-                onChange={setYears}
-                min={0.1} // Allow months (e.g. 0.5)
-                max={50}
-                step={0.1}
-                isDecimal={true}
-            />
+            {inputMode === 'value' ? (
+                <InputWithSlider
+                    label="Amount Returned (Final Value)"
+                    value={finalValue}
+                    onChange={setFinalValue}
+                    min={100}
+                    max={MAX_AMOUNT * 2}
+                    step={100}
+                    currency={currency}
+                />
+            ) : (
+                <InputWithSlider
+                    label="Total Profit / Gain"
+                    value={absoluteProfit}
+                    onChange={setAbsoluteProfit}
+                    min={-MAX_AMOUNT} // Allow losses
+                    max={MAX_AMOUNT}
+                    step={100}
+                    currency={currency}
+                />
+            )}
+
+            <div className="md:col-span-2 mt-4">
+                <div className="flex bg-gray-100 p-1 rounded-xl w-fit mb-4">
+                    <button
+                        onClick={() => handleTimeModeChange('years')}
+                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${timeMode === 'years' ? 'bg-white shadow-sm text-teal-600' : 'text-gray-500 hover:text-gray-700'
+                            }`}
+                    >
+                        Years
+                    </button>
+                    <button
+                        onClick={() => handleTimeModeChange('months')}
+                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${timeMode === 'months' ? 'bg-white shadow-sm text-teal-600' : 'text-gray-500 hover:text-gray-700'
+                            }`}
+                    >
+                        Months
+                    </button>
+                </div>
+
+                {timeMode === 'years' ? (
+                    <InputWithSlider
+                        label="Investment Period (Years)"
+                        value={years}
+                        onChange={setYears}
+                        min={0.1}
+                        max={50}
+                        step={0.1}
+                        isDecimal={true}
+                    />
+                ) : (
+                    <InputWithSlider
+                        label="Investment Period (Months)"
+                        value={months}
+                        onChange={setMonths}
+                        min={1}
+                        max={600}
+                        step={1}
+                    />
+                )}
+            </div>
         </>
     );
 

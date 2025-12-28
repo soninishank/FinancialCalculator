@@ -3,6 +3,7 @@ const { Client } = require('pg');
 const subscriptionService = require('./SubscriptionService');
 const documentProcessingService = require('./DocumentProcessingService');
 const issueSizeExtractor = require('./IssueSizeExtractor');
+const ipoUtils = require('../utils/ipoUtils');
 
 require('dotenv').config({ quiet: true });
 
@@ -364,7 +365,7 @@ class NseService {
             const tickStr = findVal("Tick Size");
             const tickSize = parsePrice(tickStr) || 1; // Default to 1 if missing
 
-            const bidLotStr = findVal("Bid Lot");
+            const bidLotStr = findVal("Bid Lot") || findVal("Lot Size");
             const bidLotMatch = bidLotStr ? bidLotStr.match(/^(\d+)/) : null;
             const bidLot = bidLotMatch ? parseInt(bidLotMatch[1]) : null;
 
@@ -377,11 +378,10 @@ class NseService {
 
             const brlm = findVal("Book Running Lead Managers");
 
-            // Calculate Minimum Investment
-            let minInvestment = null;
-            if (bidLot && priceLow) {
-                minInvestment = bidLot * priceLow;
-            }
+            // Calculate Minimum Investment using refined common utility
+            // For DB storage, we use priceLow to avoid overstating the minimum.
+            const minLots = ipoUtils.calculateMinLots(bidLot, priceLow, series);
+            const minInvestment = ipoUtils.calculateInvestment(minLots, bidLot, priceLow);
 
             // Update IPO Table with parsed issue size data
             if (parsed.totalAmount > 0) {
@@ -511,15 +511,11 @@ class NseService {
                 demandGraphALL: data.demandGraphALL,
                 totalIssueSize: parsed.totalAmount / 100  // Convert paise to INR
             };
-            await subscriptionService.processPayload(payload, {
-                dbClient: client,
-                ipoId: ipoId,
-                symbol: symbol,
-                dryRun: false,
-                allowedCats: ['QIB', 'NII', 'RII'],
-                reconciliationTolerance: 0.001,
-                faceValue: faceValue
-            });
+            try {
+                await subscriptionService.processExchangeBids(ipoId, payload);
+            } catch (err) {
+                console.warn(`[NSE Service] Subscription extraction failed for ${symbol}:`, err.message);
+            }
 
             // 4. Documents
             const docMap = {
@@ -573,8 +569,8 @@ class NseService {
                             await client.query('INSERT INTO documents (ipo_id, doc_type, title, url) VALUES ($1, $2, $3, $4)', [ipoId, 'RHP', 'Red Herring Prospectus', url]);
                         }
 
-                        // Trigger async RHP processing for zip files
-                        if (url.endsWith('.zip')) {
+                        // Trigger async RHP processing for documents
+                        if (url.endsWith('.zip') || url.endsWith('.pdf')) {
                             documentProcessingService.processRhpDocument(url, ipoId)
                                 .catch(err => {
                                     console.error(`[NSE Service] RHP processing failed for ${symbol}:`, err.message);

@@ -50,6 +50,13 @@ class DocumentProcessingService {
             try {
                 await this.persistIndicativeDates(client, ipoId, dates);
                 console.log(`[RHP] Processed indicative timetable for IPO ${ipoId}: ${Object.keys(dates).length} dates extracted`);
+
+                // Step 6: Parse Issue Structure
+                const issueStructure = await this.parseIssueStructure(rhpPdfPath);
+                if (issueStructure && Object.keys(issueStructure).length > 0) {
+                    await this.persistIssueStructure(client, ipoId, issueStructure);
+                    console.log(`[RHP] Processed issue structure for IPO ${ipoId}: ${Object.keys(issueStructure).length} fields extracted`);
+                }
             } finally {
                 client.release();
             }
@@ -264,6 +271,136 @@ class DocumentProcessingService {
         } catch (error) {
             console.error('[RHP Processing] Error normalizing date:', dateStr, error.message);
             return null;
+        }
+    }
+
+    /**
+     * Parse issue structure/allocation from RHP PDF
+     * @returns {Object} Object with extracted proportions
+     */
+    async parseIssueStructure(pdfPath) {
+        try {
+            const fileUrl = `file://${pdfPath}`;
+            const parser = new PDFParse({
+                url: fileUrl,
+                verbosity: 0
+            });
+
+            const result = await parser.getText();
+            const text = result.text;
+
+            // 1. Look for Issue Structure keywords
+            const sectionKeywords = ["ISSUE STRUCTURE", "ALLOCATION", "THE ISSUE"];
+            let sectionText = "";
+            for (const kw of sectionKeywords) {
+                const match = text.match(new RegExp(kw, 'i'));
+                if (match) {
+                    sectionText = text.substring(match.index, match.index + 5000);
+                    break;
+                }
+            }
+
+            if (!sectionText) return {};
+
+            const data = {};
+
+            // 2. Parse Total Issue Size and Market Maker
+            const totalMatch = sectionText.match(/Total\s+Issue\s+Size\s*(?::|of)?\s*([\d,]+)/i);
+            const marketMakerMatch = sectionText.match(/Market\s+Maker\s+Reservation\s*(?:Portion)?\s*(?::|of)?\s*([\d,]+)/i);
+            const netIssueMatch = sectionText.match(/Net\s+Issue\s*(?:to\s+the\s+Public)?\s*(?::|of)?\s*([\d,]+)/i);
+
+            if (totalMatch) data.total_issue_shares = parseInt(totalMatch[1].replace(/,/g, ''));
+            if (marketMakerMatch) data.market_maker_shares = parseInt(marketMakerMatch[1].replace(/,/g, ''));
+            if (netIssueMatch) data.net_issue_shares = parseInt(netIssueMatch[1].replace(/,/g, ''));
+
+            // 3. Parse Percentages (Retail, NII, QIB)
+            // Support two main styles:
+            // Style A (Direct): "Category: 35%" or "Category ... 35%"
+            // Style B (Legalese): "35% ... available for allocation to Category"
+            const categories = [
+                { key: 'retail_reservation_pct', names: ["\\bIndividual\\s+(?:Investors|Bidders)\\b", "\\bRetail\\b"] },
+                { key: 'nii_reservation_pct', names: ["\\bNon\\s*-?\\s*Institutional\\b", "\\bNII\\b"] },
+                { key: 'qib_reservation_pct', names: ["\\bQualified\\s+Institutional\\b", "\\bQIB\\b"] }
+            ];
+
+            for (const cat of categories) {
+                for (const nameStr of cat.names) {
+                    // Style A: Same-line mapping (Table/List)
+                    const p1 = new RegExp(`${nameStr}[^%\\n\\r]{1,60}?\\s*(\\d+(?:\\.\\d+)?)\\s*%`, 'i');
+                    const match1 = sectionText.match(p1);
+                    if (match1) {
+                        data[cat.key] = parseFloat(match1[1]);
+                        break;
+                    }
+
+                    // Style B: Legalese mapping (must have bridge words) - allows newlines
+                    const p2 = new RegExp(`(\\d+(?:\\.\\d+)?)\\s*%[^%]{1,150}?(?:available|allocated)[^%]{1,50}?to\\s+[^%]{1,30}?${nameStr}`, 'i');
+                    const match2 = sectionText.match(p2);
+                    if (match2) {
+                        data[cat.key] = parseFloat(match2[1]);
+                        break;
+                    }
+
+                    // Style C: Simple reverse mapping (Percentage followed by Name) - no newlines
+                    const p3 = new RegExp(`(\\d+(?:\\.\\d+)?)\\s*%[^%\\n\\r]{1,100}?\\s*${nameStr}`, 'i');
+                    const match3 = sectionText.match(p3);
+                    if (match3) {
+                        data[cat.key] = parseFloat(match3[1]);
+                        break;
+                    }
+                }
+            }
+
+            return data;
+        } catch (error) {
+            console.error('[RHP Processing] Error parsing issue structure:', error.message);
+            return {};
+        }
+    }
+
+    /**
+     * Persist extracted issue structure to database
+     */
+    async persistIssueStructure(client, ipoId, data) {
+        try {
+            const updateFields = [];
+            const values = [];
+            let paramIndex = 1;
+
+            if (data.net_issue_shares) {
+                updateFields.push(`net_issue_shares = $${paramIndex++}`);
+                values.push(data.net_issue_shares);
+            }
+            if (data.market_maker_shares) {
+                updateFields.push(`market_maker_shares = $${paramIndex++}`);
+                values.push(data.market_maker_shares);
+            }
+            if (data.retail_reservation_pct) {
+                updateFields.push(`retail_reservation_pct = $${paramIndex++}`);
+                values.push(data.retail_reservation_pct);
+            }
+            if (data.nii_reservation_pct) {
+                updateFields.push(`nii_reservation_pct = $${paramIndex++}`);
+                values.push(data.nii_reservation_pct);
+            }
+            if (data.qib_reservation_pct) {
+                updateFields.push(`qib_reservation_pct = $${paramIndex++}`);
+                values.push(data.qib_reservation_pct);
+            }
+
+            if (updateFields.length === 0) return;
+
+            values.push(ipoId);
+            const query = `
+                UPDATE ipo 
+                SET ${updateFields.join(', ')}
+                WHERE ipo_id = $${paramIndex}
+            `;
+
+            await client.query(query, values);
+        } catch (error) {
+            console.error('[RHP] Error persisting issue structure:', error.message);
+            throw error;
         }
     }
 
