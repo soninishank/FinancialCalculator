@@ -312,21 +312,47 @@ export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, y
     const [hoveredData, setHoveredData] = React.useState(null);
     const chartRef = React.useRef(null);
 
-    // --- NEW VIBRANT COLORS ---
-    const COLOR_INVESTED = "#6366F1"; // Indigo-500 (Vibrant Blue-Purple)
-    const COLOR_RETURNS = "#14B8A6";  // Teal-500   (Bright Growth Green)
+    // --- COLORS ---
+    const COLOR_INVESTED = "#6366F1"; // Indigo-500
+    const COLOR_RETURNS = "#14B8A6";  // Teal-500
+    const COLOR_LOSS = "#EF4444";     // Red-500
 
-    // Hover versions (slightly darker)
-    const HOVER_INVESTED = "#4F46E5"; // Indigo-600
-    const HOVER_RETURNS = "#0D9488";  // Teal-600
+    // Hover versions
+    const HOVER_INVESTED = "#4F46E5";
+    const HOVER_RETURNS = "#0D9488";
+    const HOVER_LOSS = "#DC2626";
+
+    const isLoss = gain < 0;
+    const lossAmount = Math.abs(gain);
+
+    // Configuration based on Profit vs Loss
+    const chartConfig = isLoss ? {
+        labels: ["Remaining Value", "Loss"],
+        data: [total, lossAmount], // Total (Remaining) + Loss = Initial Invested
+        backgroundColor: [COLOR_INVESTED, COLOR_LOSS],
+        hoverBackgroundColor: [HOVER_INVESTED, HOVER_LOSS],
+        legendLabels: [
+            { label: "Remaining Value", val: total, color: COLOR_INVESTED },
+            { label: "Loss", val: lossAmount, color: COLOR_LOSS }
+        ]
+    } : {
+        labels: ["Invested Amount", "Est. Returns"],
+        data: [invested, gain],
+        backgroundColor: [COLOR_INVESTED, COLOR_RETURNS],
+        hoverBackgroundColor: [HOVER_INVESTED, HOVER_RETURNS],
+        legendLabels: [
+            { label: "Invested Amount", val: invested, color: COLOR_INVESTED },
+            { label: "Est. Returns", val: gain, color: COLOR_RETURNS }
+        ]
+    };
 
     const data = {
-        labels: ["Invested Amount", "Est. Returns"],
+        labels: chartConfig.labels,
         datasets: [
             {
-                data: [invested, Math.max(0, gain)],
-                backgroundColor: [COLOR_INVESTED, COLOR_RETURNS],
-                hoverBackgroundColor: [HOVER_INVESTED, HOVER_RETURNS],
+                data: chartConfig.data,
+                backgroundColor: chartConfig.backgroundColor,
+                hoverBackgroundColor: chartConfig.hoverBackgroundColor,
                 borderWidth: 0,
                 hoverOffset: 10,
                 cutout: "82%",
@@ -356,6 +382,17 @@ export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, y
         },
     };
 
+    // Smartly handle the time label.
+    // If 'years' is a number or numeric string, append " years".
+    // If it already has text (e.g. "120 months"), leave it alone.
+    const isNumeric = (val) => {
+        if (typeof val === 'number') return true;
+        if (typeof val === 'string') return /^\d+(\.\d+)?$/.test(val);
+        return false;
+    };
+
+    const timeLabel = isNumeric(years) ? `${years} years` : years;
+
     return (
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center h-full">
             <h3 className="text-gray-500 font-medium mb-6 text-sm uppercase tracking-wide self-start pl-2">
@@ -382,10 +419,10 @@ export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, y
                     ) : (
                         <>
                             <span className="text-gray-500 text-xs font-medium leading-tight">
-                                After <strong className="text-gray-800">{years} years</strong>, <br />
+                                After <strong className="text-gray-800">{timeLabel}</strong>, <br />
                                 you will have
                             </span>
-                            <span className="text-3xl font-extrabold text-gray-800 mt-2">
+                            <span className={`text-3xl font-extrabold mt-2 ${isLoss ? "text-red-500" : "text-gray-800"}`}>
                                 {moneyFormat(total, currency, true)}
                             </span>
                         </>
@@ -395,41 +432,25 @@ export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, y
 
             {/* LEGEND SECTION */}
             <div className="w-full px-4 space-y-6">
-                <div className="flex items-start gap-4">
-                    <div
-                        className="w-4 h-4 rounded-full mt-1 shrink-0"
-                        style={{ backgroundColor: COLOR_INVESTED }}
-                    ></div>
-                    <div className="flex flex-col">
-                        <span className="text-gray-500 font-medium text-sm">
-                            Invested Amount
-                        </span>
-                        <span
-                            className="text-xl font-bold"
-                            style={{ color: COLOR_INVESTED }}
-                        >
-                            {moneyFormat(invested, currency)}
-                        </span>
+                {chartConfig.legendLabels.map((item, idx) => (
+                    <div key={idx} className="flex items-start gap-4">
+                        <div
+                            className="w-4 h-4 rounded-full mt-1 shrink-0"
+                            style={{ backgroundColor: item.color }}
+                        ></div>
+                        <div className="flex flex-col">
+                            <span className="text-gray-500 font-medium text-sm">
+                                {item.label}
+                            </span>
+                            <span
+                                className="text-xl font-bold"
+                                style={{ color: item.color }}
+                            >
+                                {moneyFormat(item.val, currency)}
+                            </span>
+                        </div>
                     </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                    <div
-                        className="w-4 h-4 rounded-full mt-1 shrink-0"
-                        style={{ backgroundColor: COLOR_RETURNS }}
-                    ></div>
-                    <div className="flex flex-col">
-                        <span className="text-gray-500 font-medium text-sm">
-                            Est. Returns
-                        </span>
-                        <span
-                            className="text-xl font-bold"
-                            style={{ color: COLOR_RETURNS }}
-                        >
-                            {moneyFormat(gain, currency)}
-                        </span>
-                    </div>
-                </div>
+                ))}
             </div>
         </div>
     );

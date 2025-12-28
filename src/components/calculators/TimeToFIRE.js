@@ -120,7 +120,6 @@ export default function TimeToFIRE({ currency }) {
     }), [currentAge, retirementAge, safeTotalMonthlyExpenses, swr, annualReturn, blendedInflation]);
 
     const isCoasted = Number(currentCorpus) >= coastResult.neededToday;
-    const coastShortfall = coastResult.neededToday - Number(currentCorpus);
 
 
     // Essentials Calculation (Memoized for use in Barista and FIRE Level)

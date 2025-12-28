@@ -2,10 +2,9 @@ import React, { useState, useMemo } from 'react';
 import CalculatorLayout from './CalculatorLayout';
 import InputWithSlider from '../common/InputWithSlider';
 import { moneyFormat } from '../../utils/formatting';
-import { FinancialPieChart } from '../common/FinancialCharts';
+import { FinancialInvestmentPieChart } from '../common/FinancialCharts';
+import ResultsTable from '../common/ResultsTable';
 import {
-    CHART_COLORS,
-    LABELS,
     MAX_AMOUNT,
     MAX_YEARS,
     DEFAULT_ROI_INITIAL,
@@ -50,9 +49,41 @@ export default function ROICalculator({ currency }) {
             roiPercentage,
             annualizedRoi,
             computedFinalValue: end,
-            timeInYears
+            timeInYears,
+            start
         };
     }, [initialInvestment, finalValue, absoluteProfit, years, months, inputMode, timeMode]);
+
+    // --- TABLE DATA GENERATION ---
+    const tableData = useMemo(() => {
+        const data = [];
+        const periods = timeMode === 'years' ? years : months;
+        const rate = result.annualizedRoi / 100;
+
+        let currentValue = result.start;
+
+        // For accurate yearly/monthly projection steps strictly adhering to the final value:
+        // If we simply compound `annualizedRoi` annually, we should hit exact `end` after `timeInYears`.
+        // If months, we need monthly rate: (1 + annual)^ (1/12) - 1.
+
+        const monthlyRate = Math.pow(1 + rate, 1 / 12) - 1;
+        const effectiveRate = timeMode === 'years' ? rate : monthlyRate;
+
+        for (let i = 1; i <= periods; i++) {
+            currentValue = currentValue * (1 + effectiveRate);
+            const totalGrowth = currentValue - result.start;
+
+            data.push({
+                year: timeMode === 'years' ? i : `${i} (Mo)`,
+                totalInvested: result.start,
+                growth: totalGrowth,
+                overallValue: currentValue
+            });
+        }
+
+        return data;
+    }, [result.start, result.annualizedRoi, years, months, timeMode]);
+
 
     // Handle initial calculation and sync
     const handleModeChange = (mode) => {
@@ -71,21 +102,6 @@ export default function ROICalculator({ currency }) {
             setYears(Number((months / 12).toFixed(2)));
         }
         setTimeMode(mode);
-    };
-
-    // --- CHART ---
-    const pieData = {
-        labels: [LABELS.INVESTED_AMOUNT, LABELS.WEALTH_GAINED],
-        datasets: [
-            {
-                data: [
-                    initialInvestment,
-                    result.gain > 0 ? result.gain : 0
-                ],
-                backgroundColor: [CHART_COLORS.NEUTRAL, CHART_COLORS.PRIMARY],
-                borderWidth: 0
-            }
-        ]
     };
 
     // --- UI INPUTS ---
@@ -189,23 +205,66 @@ export default function ROICalculator({ currency }) {
 
             {/* CARD 1: ROI % */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center">
-                <p className="text-gray-500 text-sm font-medium uppercase tracking-wide">Return on Investment</p>
+                <p className="text-gray-500 text-sm font-medium uppercase tracking-wide">Total Return (Absolute ROI)</p>
                 <p className={`text-4xl font-extrabold mt-2 ${result.roiPercentage >= 0 ? "text-emerald-500" : "text-red-500"}`}>
                     {result.roiPercentage.toFixed(2)}%
                 </p>
                 <p className={`text-sm mt-1 font-medium ${result.gain >= 0 ? "text-emerald-600" : "text-red-600"}`}>
                     {result.gain >= 0 ? "+" : ""}{moneyFormat(result.gain, currency)}
                 </p>
+                <p className="text-xs text-gray-400 mt-2">
+                    Total % Gain over full period
+                </p>
             </div>
 
             {/* CARD 2: Annualized */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center">
-                <p className="text-gray-500 text-sm font-medium uppercase tracking-wide">Annualized Return</p>
+                <p className="text-gray-500 text-sm font-medium uppercase tracking-wide">Annualized Return (CAGR)</p>
                 <p className="text-3xl font-bold text-blue-600 mt-2">
                     {result.annualizedRoi.toFixed(2)}%
                 </p>
-                <p className="text-xs text-gray-400 mt-1">
-                    Compounded Annual Growth Rate
+                <p className="text-xs text-gray-400 mt-2">
+                    Average Yearly Growth Rate
+                </p>
+            </div>
+        </div>
+    );
+
+    const details = (
+        <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm space-y-6">
+            <h3 className="text-xl font-bold text-gray-800">Confused between ROI and CAGR?</h3>
+
+            <div className="space-y-4 text-gray-600 leading-relaxed">
+                <p>
+                    This calculator provides <strong>both metrics</strong> because they answer different questions:
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                    <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                        <p className="font-bold text-emerald-800 mb-1">Absolute ROI (Total Return)</p>
+                        <p className="text-sm text-emerald-700">
+                            How much total profit did I make?
+                        </p>
+                        <ul className="list-disc pl-4 mt-2 text-xs text-emerald-800 space-y-1">
+                            <li>Best for: Simple profit check.</li>
+                            <li>Problem: Ignores time. 50% in 1 year is better than 50% in 10 years, but ROI looks the same.</li>
+                        </ul>
+                    </div>
+
+                    <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                        <p className="font-bold text-blue-800 mb-1">CAGR (Annualized Return)</p>
+                        <p className="text-sm text-blue-700">
+                            How hard did my money work each year?
+                        </p>
+                        <ul className="list-disc pl-4 mt-2 text-xs text-blue-800 space-y-1">
+                            <li>Best for: Comparing different investments.</li>
+                            <li>Benefit: Accounts for time. It shows the effective yearly interest rate.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <p className="text-sm italic text-gray-500 mt-2">
+                    *CAGR = Compounded Annual Growth Rate
                 </p>
             </div>
         </div>
@@ -215,14 +274,30 @@ export default function ROICalculator({ currency }) {
         <CalculatorLayout
             inputs={inputs}
             summary={summary}
-            // Pie chart only makes sense if there is a gain. If loss, standard pie might look weird but we handle it.
             pieChart={
-                <div className="h-64 flex justify-center items-center bg-white p-4 rounded-xl border mt-6">
-                    <FinancialPieChart data={pieData} currency={currency} height={250} />
+                <div className="h-full">
+                    <FinancialInvestmentPieChart
+                        invested={initialInvestment}
+                        gain={result.gain}
+                        total={result.computedFinalValue}
+                        currency={currency}
+                        years={timeMode === 'years' ? `${years} years` : `${months} months`}
+                    />
                 </div>
             }
-            charts={null}
-            table={null}
+            table={
+                <ResultsTable
+                    data={tableData}
+                    currency={currency}
+                    columns={[
+                        { key: 'year', label: timeMode === 'years' ? 'Year' : 'Month', align: 'left' },
+                        { key: 'totalInvested', label: 'Invested', align: 'right', format: 'money' },
+                        { key: 'growth', label: 'Growth', align: 'right', format: 'money', color: 'green' },
+                        { key: 'overallValue', label: 'Total Value', align: 'right', format: 'money', highlight: true }
+                    ]}
+                />
+            }
+            details={details}
         />
     );
 }
