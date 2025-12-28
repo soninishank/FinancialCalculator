@@ -45,7 +45,7 @@ const RelatedCalculators = ({ currentSlug, category }) => {
                 {recommendations.map((calc) => (
                     <Link
                         key={calc.slug}
-                        to={`/calculator/${calc.slug}`}
+                        to={`/calculators/${calc.slug}`}
                         className="block px-5 py-5 hover:bg-gray-50 transition-all group"
                     >
                         <div className="flex justify-between items-start gap-2">

@@ -121,7 +121,7 @@ function CalcCard({ title, slug }) {
 
   return (
     <Link
-      to={`/calculator/${slug}`}
+      to={`/calculators/${slug}`}
       state={{ from: location.pathname }}  // <-- send the origin page
       className="p-6 bg-white rounded-xl shadow hover:shadow-md transition"
     >
