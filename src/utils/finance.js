@@ -1114,3 +1114,372 @@ export function calculateFIRELevel(annualEssentialExpenses, annualTotalSWRIncome
   if (needsRatio > 20) return 'ChubbyFIRE';
   return 'FatFIRE';
 }
+
+/**
+ * FIXED DEPOSIT CALCULATOR
+ * Supports: Cumulative, Quarterly Payout, Monthly Payout, Short Term (Simple Interest)
+ */
+export function computeFixedDeposit({
+  principal,
+  rate, // Annual %
+  tenureValue,
+  tenureMode, // 'Years', 'Months', 'Days'
+  payoutType, // 'cumulative', 'monthly', 'quarterly'
+}) {
+  const P = Number(principal);
+  const R = Number(rate);
+
+  // Normalize tenure to Year fraction for Rate use, or Quarters for Compounding
+  let years = 0;
+  if (tenureMode === 'Years') years = tenureValue;
+  else if (tenureMode === 'Months') years = tenureValue / 12;
+  else if (tenureMode === 'Days') years = tenureValue / 365;
+
+  let maturityValue = 0;
+  let totalInterest = 0;
+  let payoutAmount = 0; // Periodic payout
+
+  // Short Term (< 180 days usually) or 'Days' mode often implies Simple Interest 
+  // unless specified otherwise. Banks differ. 
+  // Usually < 6 months = Simple Interest. >= 6 months = Quarterly Compounding.
+  // However, for a generic calculator, we try to follow standard rules.
+  // If Mode is Days, use Simple Interest.
+
+  // 1. SHORT TERM / SIMPLE INTEREST (Days)
+  if (tenureMode === 'Days') {
+    // Simple Interest = P * R * (Days/365) / 100
+    totalInterest = (P * R * tenureValue) / (365 * 100);
+    maturityValue = P + totalInterest;
+    return {
+      maturityValue,
+      totalInterest,
+      payoutAmount: 0,
+      isSimple: true
+    };
+  }
+
+  // 2. PAYOUT SCHEMES (Monthly/Quarterly/Half-Yearly/Yearly) -> Non-Cumulative
+  // Principal is returned at end. Interest is paid out periodically.
+  if (payoutType === 'monthly') {
+    // Monthly Payout = P * R / 1200
+    payoutAmount = (P * R) / 1200;
+    totalInterest = payoutAmount * (years * 12);
+    maturityValue = P; // Returns Principal only
+  }
+  else if (payoutType === 'quarterly') {
+    // Quarterly Payout = P * R / 400
+    payoutAmount = (P * R) / 400;
+    totalInterest = payoutAmount * (years * 4);
+    maturityValue = P; // Returns Principal only
+  }
+  else if (payoutType === 'half-yearly') {
+    // Half-Yearly Payout = P * R / 200
+    payoutAmount = (P * R) / 200;
+    totalInterest = payoutAmount * (years * 2);
+    maturityValue = P; // Returns Principal only
+  }
+  else if (payoutType === 'yearly') {
+    // Yearly Payout = P * R / 100
+    payoutAmount = (P * R) / 100;
+    totalInterest = payoutAmount * years;
+    maturityValue = P; // Returns Principal only
+  }
+  // 3. CUMULATIVE (Standard FD) -> Quarterly Compounding
+  else {
+    // Formula: A = P * (1 + R/400)^(4n)
+    const n = years; // years
+    const amount = P * Math.pow(1 + R / 400, 4 * n);
+    maturityValue = amount;
+    totalInterest = amount - P;
+  }
+
+  return {
+    maturityValue,
+    totalInterest,
+    payoutAmount,
+    totalInvestment: P
+  };
+}
+
+/**
+ * Step-Up Loan Amortization
+ * Supports:
+ * 1. Annual Step-Up of EMI (by % or fixed amount)
+ * 2. Interest Rate Change (Simulating Refinance/Floating Rate Drop)
+ */
+export function computeStepUpLoanAmortization({
+  principal,
+  annualRate,
+  years,
+  stepUpType, // 'percent' | 'amount'
+  stepUpValue, // e.g. 5 (5%) or 2000 (₹2000)
+  rateChangeYear = null,
+  newRate = null,
+  startDate
+}) {
+  const R_m_Initial = annualRate / 12 / 100;
+  let currentRate = annualRate;
+  let currentR_m = R_m_Initial;
+
+  let N = years * 12;
+
+  // Base EMI (Standard)
+  const baseEMI = calculateEMI(principal, R_m_Initial, N);
+  let currentEMI = baseEMI;
+
+  let balance = principal;
+
+  const monthlyRows = [];
+
+  let totalInterest = 0;
+  let totalPaid = 0;
+
+  let processingMonth = 1;
+  const LIMIT_MONTHS = 600; // 50 years cap
+
+  while (balance > 1 && processingMonth <= LIMIT_MONTHS) {
+    // 1. Handle Rate Change
+    if (rateChangeYear && processingMonth === ((rateChangeYear - 1) * 12) + 1) {
+      if (newRate && newRate !== currentRate) {
+        currentRate = newRate;
+        currentR_m = currentRate / 12 / 100;
+      }
+    }
+
+    // 2. Handle Step-Up (Annually)
+    // Apply step up at start of each year (Month 13, 25...)
+    if (processingMonth > 1 && (processingMonth - 1) % 12 === 0) {
+      if (stepUpType === 'percent') {
+        currentEMI = currentEMI * (1 + (stepUpValue / 100));
+      } else {
+        currentEMI = currentEMI + stepUpValue;
+      }
+    }
+
+    // 3. Payment
+    const interestPart = balance * currentR_m;
+    let principalPart = currentEMI - interestPart;
+
+    // Last Month Adjustment
+    if (principalPart > balance) {
+      principalPart = balance;
+      // Adjust EMI for last month
+      currentEMI = principalPart + interestPart;
+    }
+
+    balance -= principalPart;
+    totalInterest += interestPart;
+    totalPaid += currentEMI;
+
+    // Rows
+    monthlyRows.push({
+      month: processingMonth,
+      emi: currentEMI,
+      interest: interestPart,
+      principal: principalPart,
+      balance: Math.max(0, balance)
+    });
+
+    processingMonth++;
+  }
+
+  return {
+    monthlyRows,
+    finalTotalInterest: totalInterest,
+    finalTotalPaid: totalPaid,
+    monthsTaken: processingMonth - 1,
+    baseEMI
+  };
+}
+
+/**
+ * Moratorium Loan Amortization
+ * @param {Object} params
+ */
+export function computeMoratoriumLoanAmortization({
+  principal,
+  annualRate,
+  totalTenureYears,
+  moratoriumMonths,
+  payInterestDuringMoratorium = false
+}) {
+  const R_m = annualRate / 12 / 100;
+
+  let currentPrincipal = principal;
+
+  const monthlyRows = [];
+
+  // Phase 1: Moratorium
+  for (let m = 1; m <= moratoriumMonths; m++) {
+    const interest = currentPrincipal * R_m;
+    let payment = 0;
+
+    if (payInterestDuringMoratorium) {
+      payment = interest; // Pay off interest
+      // Principal remains same
+    } else {
+      // Capitalize Interest
+      currentPrincipal += interest;
+      // No payment made
+      // Interest is added to principal, so it counts as "Principal" growth, 
+      // but cost-wise it IS interest cost incurred.
+    }
+
+    monthlyRows.push({
+      month: m,
+      emi: payment,
+      interest: interest,
+      principal: 0,
+      balance: currentPrincipal,
+      isMoratorium: true
+    });
+  }
+
+  // Phase 2: Repayment
+  const repaymentMonths = (totalTenureYears * 12);
+  // Wait, does tenure stay same (extension) or reduce? 
+  // User input "Tenure" usually means "Repayment Tenure" in loose terms, 
+  // OR "Total Tenure" (10y loan). 
+  // If 10y loan and 6m moratorium -> Remainder = 9.5y? 
+  // Usually moratorium EXTENDS tenure. So Repayment = Original Tenure.
+  // Let's assume Repayment Tenure = totalTenureYears (so Total Life = Tenure + Moratorium)
+
+  let emi = 0;
+  if (repaymentMonths > 0) {
+    emi = calculateEMI(currentPrincipal, R_m, repaymentMonths);
+  }
+
+  let balance = currentPrincipal;
+
+  for (let m = 1; m <= repaymentMonths; m++) {
+    const interest = balance * R_m;
+    const principalPart = emi - interest;
+    balance -= principalPart;
+
+    if (balance < 0) balance = 0;
+
+    monthlyRows.push({
+      month: moratoriumMonths + m,
+      emi: emi,
+      interest: interest,
+      principal: principalPart,
+      balance: balance,
+      isMoratorium: false
+    });
+  }
+
+  // Recalculate strict Total Interest derived from Cashflow
+  const realTotalPaid = monthlyRows.reduce((sum, row) => sum + row.emi, 0);
+  const realTotalInterest = realTotalPaid - principal; // Only deduct original principal
+
+  return {
+    monthlyRows,
+    finalTotalInterest: realTotalInterest,
+    finalTotalPaid: realTotalPaid,
+    emiBefore: calculateEMI(principal, R_m, totalTenureYears * 12),
+    emiAfter: emi
+  };
+}
+// PPF Calculator Function
+export function computePPF({ investmentAmount, frequency, interestRate, years, startDate = new Date().toISOString().slice(0, 7) }) {
+  const R = Number(interestRate) / 100;
+  const N = Number(years);
+
+  const [startYear, startMonth] = startDate.split('-').map(Number);
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  const yearlyData = [];
+  const monthlyData = [];
+
+  let totalInvestment = 0;
+  let balance = 0;
+
+  if (frequency === 'monthly') {
+    const P = Number(investmentAmount);
+
+    for (let month = 1; month <= N * 12; month++) {
+      balance += P;
+      totalInvestment += P;
+
+      const monthsElapsed = month - 1;
+      const yearsElapsed = Math.floor((startMonth - 1 + monthsElapsed) / 12);
+      const actualYear = startYear + yearsElapsed;
+      const monthInYear = ((month - 1) % 12) + 1;
+      const isYearEnd = (month % 12 === 0);
+
+      if (isYearEnd) {
+        balance = balance * (1 + R);
+      }
+
+      const currentInterest = balance - totalInvestment;
+      const actualMonthIndex = (startMonth - 1 + month - 1) % 12;
+      const actualMonthName = monthNames[actualMonthIndex];
+
+      monthlyData.push({
+        year: actualYear,
+        month: monthInYear,
+        monthName: actualMonthName,
+        invested: totalInvestment,
+        interest: currentInterest,
+        balance: balance
+      });
+
+      if (isYearEnd || month === N * 12) {
+        yearlyData.push({
+          year: actualYear,
+          totalInvested: totalInvestment,
+          growth: currentInterest,
+          balance: balance,
+          investment: totalInvestment
+        });
+      }
+    }
+  } else {
+    const P = Number(investmentAmount);
+
+    for (let year = 1; year <= N; year++) {
+      const actualYear = startYear + year - 1;
+      balance += P;
+      totalInvestment += P;
+      balance = balance * (1 + R);
+
+      const currentInterest = balance - totalInvestment;
+
+      yearlyData.push({
+        year: actualYear,
+        totalInvested: totalInvestment,
+        growth: currentInterest,
+        balance: balance,
+        investment: totalInvestment
+      });
+
+      for (let m = 1; m <= 12; m++) {
+        const monthOfScheme = (year - 1) * 12 + m;
+        const actualMonthIndex = (startMonth - 1 + monthOfScheme - 1) % 12;
+        const actualMonthName = monthNames[actualMonthIndex];
+        const monthBalance = m === 12 ? balance : balance * (m / 12);
+
+        monthlyData.push({
+          year: actualYear,
+          month: m,
+          monthName: actualMonthName,
+          invested: totalInvestment,
+          interest: monthBalance - totalInvestment,
+          balance: monthBalance
+        });
+      }
+    }
+  }
+
+  const finalData = yearlyData[yearlyData.length - 1] || { totalInvested: 0, balance: 0 };
+  const maturityValue = finalData.balance;
+  const totalInterest = maturityValue - finalData.totalInvested;
+
+  return {
+    totalInvestment: finalData.totalInvested,
+    totalInterest,
+    maturityValue,
+    yearlyData,
+    monthlyData
+  };
+}

@@ -5,7 +5,7 @@ import SummaryCards from "../common/SummaryCards";
 import { FinancialDoughnutChart, FinancialBarChart } from "../common/FinancialCharts";
 import ResultsTable from "../common/ResultsTable";
 import InputWithSlider from "../common/InputWithSlider";
-import CalculatorLayout from "./CalculatorLayout";
+import CalculatorLayout from "../common/CalculatorLayout";
 import { moneyFormat } from "../../utils/formatting";
 import { downloadPDF } from "../../utils/export";
 import {

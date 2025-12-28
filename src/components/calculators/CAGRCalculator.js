@@ -5,7 +5,7 @@ import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from "../co
 import ResultsTable from "../common/ResultsTable";
 import InputWithSlider from "../common/InputWithSlider";
 import RateQualityGuard from "../common/RateQualityGuard";
-import CalculatorLayout from "./CalculatorLayout";
+import CalculatorLayout from "../common/CalculatorLayout";
 import { calculateCAGR } from "../../utils/finance";
 import { downloadPDF } from "../../utils/export";
 import {

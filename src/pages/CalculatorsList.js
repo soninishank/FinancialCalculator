@@ -50,9 +50,23 @@ export default function CalculatorsList() {
             No calculators match <strong>{q}</strong>.
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map(meta => (
-              <Card key={meta.slug} meta={meta} />
+          <div className="space-y-12">
+            {Object.entries(
+              filtered.reduce((acc, item) => {
+                const cat = item.category || 'Other';
+                if (!acc[cat]) acc[cat] = [];
+                acc[cat].push(item);
+                return acc;
+              }, {})
+            ).map(([category, items]) => (
+              <div key={category}>
+                <h3 className="text-xl font-bold text-gray-800 mb-4 border-l-4 border-indigo-500 pl-3">{category}</h3>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {items.map(meta => (
+                    <Card key={meta.slug} meta={meta} />
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         )}

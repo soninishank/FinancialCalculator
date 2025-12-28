@@ -8,7 +8,7 @@ import InputWithSlider from "../common/InputWithSlider";
 import RateQualityGuard from "../common/RateQualityGuard";
 import TaxToggle from "../common/TaxToggle";
 import InflationToggle from "../common/InflationToggle";
-import CalculatorLayout from "./CalculatorLayout";
+import CalculatorLayout from "../common/CalculatorLayout";
 import { useCalculatorState } from "../../hooks/useCalculatorState";
 import { downloadPDF } from "../../utils/export";
 import { calculateRealValue } from "../../utils/finance";

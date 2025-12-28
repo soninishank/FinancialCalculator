@@ -10,7 +10,7 @@ import RateQualityGuard from "../common/RateQualityGuard";
 import TaxToggle from "../common/TaxToggle";
 import InflationToggle from "../common/InflationToggle";
 
-import CalculatorLayout from "./CalculatorLayout"; // <--- NEW LAYOUT
+import CalculatorLayout from "../common/CalculatorLayout"; // <--- NEW LAYOUT
 
 import { useCalculatorState } from "../../hooks/useCalculatorState"; // <--- NEW HOOK
 import { downloadPDF } from "../../utils/export";

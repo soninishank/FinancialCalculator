@@ -3,7 +3,7 @@ import React, { useMemo, useState } from "react";
 // --- IMPORTS ---
 import { FinancialDoughnutChart } from "../common/FinancialCharts";
 import InputWithSlider from "../common/InputWithSlider";
-import CalculatorLayout from "./CalculatorLayout";
+import CalculatorLayout from "../common/CalculatorLayout";
 import { moneyFormat } from "../../utils/formatting";
 import {
     DEFAULT_LOAN_RATE,

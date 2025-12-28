@@ -53,6 +53,30 @@ const calculators = [
     component: 'LoanEMI'
   },
   {
+    slug: 'vehicle-loan-emi',
+    title: 'Vehicle Loan EMI Calculator',
+    description: 'Plan your dream car or bike purchase. Calculate monthly EMIs with accurate interest rates and processing fees.',
+    keywords: 'car loan emi, bike loan calculator, vehicle loan interest, auto loan planner',
+    category: 'Loan',
+    component: 'VehicleLoanEMI'
+  },
+  {
+    slug: 'step-up-loan-emi',
+    title: 'Loan Step-Up & Prepayment Analysis',
+    description: 'Visualize the impact of increasing your EMI annually (Step-Up) or getting a lower interest rate.',
+    keywords: 'step up loan, increasing emi, loan prepayment calculator, interest rate drop calculator',
+    category: 'Loan',
+    component: 'StepUpLoanEMI'
+  },
+  {
+    slug: 'moratorium-loan-emi',
+    title: 'Moratorium Calculator',
+    description: 'Calculate the financial impact of opting for a loan moratorium (EMI Holiday). See how interest capitalization affects your future EMI.',
+    keywords: 'moratorium calculator, loan holiday, skip emi, interest capitalization',
+    category: 'Loan',
+    component: 'MoratoriumLoanEMI'
+  },
+  {
     slug: 'compare-loans',
     title: 'Compare Loans (Flat vs Reducing)',
     description: 'Compare Flat Interest Rate vs Reducing Balance Rate to find the true cost of your loan.',
@@ -68,14 +92,7 @@ const calculators = [
     category: 'Loan',
     component: 'AdvancedHomeLoanEMI'
   },
-  {
-    slug: 'advanced-home-loan',
-    title: 'Home Loan with Prepayments & Taxes',
-    description: 'The most detailed Home Loan planner. Factor in Home Value, Down Payment, Loan Insurance, Property Taxes, and multiple Prepayment strategies.',
-    keywords: 'home loan prepayment, mortgage calculator, property tax calculator, loan insurance, home loan planning',
-    category: 'Loan',
-    component: 'AdvancedHomeLoanEMI'
-  },
+
   {
     slug: 'cagr-calculator',
     title: 'CAGR Calculator',
@@ -175,6 +192,22 @@ const calculators = [
     keywords: 'recurring deposit, rd calculator, post office rd, bank rd',
     category: 'Bank Scheme',
     component: 'RecurringDeposit'
+  },
+  {
+    slug: 'fixed-deposit',
+    title: 'Fixed Deposit (FD) Calculator',
+    description: 'Calculate returns on FDs with Cumulative (Reinvestment), Monthly, Quarterly Payouts, or Short-Term schemes.',
+    keywords: 'fd calculator, fixed deposit, term deposit, bank fd, interest payout',
+    category: 'Bank Scheme',
+    component: 'FixedDeposit'
+  },
+  {
+    slug: 'ppf-calculator',
+    title: 'PPF Calculator',
+    description: 'Calculate Public Provident Fund (PPF) returns. Tax-free investment with 15-year lock-in.',
+    keywords: 'ppf calculator, public provident fund, tax saving, 80c, retirement',
+    category: 'Bank Scheme',
+    component: 'PPFCalculator'
   },
   {
     slug: 'credit-card-payoff',

@@ -21,16 +21,18 @@ export default function CalculatorLayout({
             {/* MAIN CHART (Compounding Bar Chart) */}
             {charts}
 
-            {/* RESULTS GRID (Pie Chart + Table) */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12 items-start">
+            {/* RESULTS GRID (Pie Chart + Table - Stacked Vertically) */}
+            <div className="flex flex-col gap-8 mt-12">
                 {pieChart && (
-                    <div className="lg:col-span-1">
+                    <div className="w-full">
                         {pieChart}
                     </div>
                 )}
-                <div className={`${pieChart ? 'lg:col-span-2' : 'lg:col-span-3'} h-full`}>
-                    {table}
-                </div>
+                {table && (
+                    <div className="w-full">
+                        {table}
+                    </div>
+                )}
             </div>
 
             {/* DETAILS / EXPLANATION SECTION */}

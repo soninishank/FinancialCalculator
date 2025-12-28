@@ -15,6 +15,7 @@ import {
 } from 'chart.js';
 import { Line, Bar, Pie, Doughnut } from 'react-chartjs-2';
 import { moneyFormat } from '../../utils/formatting';
+import { CHART_COLORS } from '../../utils/constants';
 
 // Register all commonly used components
 ChartJS.register(
@@ -181,12 +182,13 @@ export const FinancialCompoundingBarChart = ({ data, currency, type = 'investmen
         };
     } else {
         chartConfig = {
+            // Standard Wealth Projection
             title: "Wealth Compounding Projection",
             subtitle: "Visualizing how your principal amount and interest grow over time.",
             labels: ["Invested Amount", "Interest Gained"],
             // Using a more sophisticated palette
-            color1: "#818CF8", // Indigo-400 (Soft Indigo)
-            color2: "#2DD4BF", // Teal-400 (Soft Teal)
+            color1: CHART_COLORS.SECONDARY, // Use constant
+            color2: CHART_COLORS.PRIMARY, // Use constant
             data1Key: 'totalInvested',
             data2Key: 'growth',
             stackLabel: "Total Value"
@@ -313,14 +315,14 @@ export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, y
     const chartRef = React.useRef(null);
 
     // --- COLORS ---
-    const COLOR_INVESTED = "#6366F1"; // Indigo-500
-    const COLOR_RETURNS = "#14B8A6";  // Teal-500
-    const COLOR_LOSS = "#EF4444";     // Red-500
+    const COLOR_INVESTED = CHART_COLORS.SECONDARY; // Blue/Indigo
+    const COLOR_RETURNS = CHART_COLORS.PRIMARY;  // Teal
+    const COLOR_LOSS = CHART_COLORS.DANGER;     // Red
 
-    // Hover versions
-    const HOVER_INVESTED = "#4F46E5";
-    const HOVER_RETURNS = "#0D9488";
-    const HOVER_LOSS = "#DC2626";
+    // Hover versions (Calculated or hardcoded specific)
+    const HOVER_INVESTED = CHART_COLORS.SECONDARY;
+    const HOVER_RETURNS = CHART_COLORS.PRIMARY;
+    const HOVER_LOSS = CHART_COLORS.DANGER;
 
     const isLoss = gain < 0;
     const lossAmount = Math.abs(gain);
@@ -353,9 +355,9 @@ export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, y
                 data: chartConfig.data,
                 backgroundColor: chartConfig.backgroundColor,
                 hoverBackgroundColor: chartConfig.hoverBackgroundColor,
-                borderWidth: 0,
+                borderWidth: 2,
+                borderColor: '#ffffff',
                 hoverOffset: 10,
-                cutout: "82%",
             },
         ],
     };
@@ -382,75 +384,30 @@ export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, y
         },
     };
 
-    // Smartly handle the time label.
-    // If 'years' is a number or numeric string, append " years".
-    // If it already has text (e.g. "120 months"), leave it alone.
-    const isNumeric = (val) => {
-        if (typeof val === 'number') return true;
-        if (typeof val === 'string') return /^\d+(\.\d+)?$/.test(val);
-        return false;
-    };
-
-    const timeLabel = isNumeric(years) ? `${years} years` : years;
 
     return (
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center h-full">
-            <h3 className="text-gray-500 font-medium mb-6 text-sm uppercase tracking-wide self-start pl-2">
-                Asset Allocation
-            </h3>
-
-            <div className="relative h-64 w-64 mb-8">
-                <Doughnut ref={chartRef} data={data} options={options} />
-
-                {/* DYNAMIC CENTER TEXT */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none px-4 text-center transition-all duration-200">
-                    {hoveredData ? (
-                        <>
-                            <span className="text-gray-500 text-sm font-medium uppercase tracking-wider mb-1">
-                                {hoveredData.label}
-                            </span>
-                            <span
-                                className="text-2xl font-extrabold"
-                                style={{ color: hoveredData.color }}
-                            >
-                                {moneyFormat(hoveredData.value, currency, true)}
-                            </span>
-                        </>
-                    ) : (
-                        <>
-                            <span className="text-gray-500 text-xs font-medium leading-tight">
-                                After <strong className="text-gray-800">{timeLabel}</strong>, <br />
-                                you will have
-                            </span>
-                            <span className={`text-3xl font-extrabold mt-2 ${isLoss ? "text-red-500" : "text-gray-800"}`}>
-                                {moneyFormat(total, currency, true)}
-                            </span>
-                        </>
-                    )}
-                </div>
+        <div className="flex flex-col items-center justify-center h-full w-full">
+            <div className="relative h-64 w-64 mb-4">
+                <Pie ref={chartRef} data={data} options={options} />
             </div>
 
-            {/* LEGEND SECTION */}
-            <div className="w-full px-4 space-y-6">
+            {/* LEGEND SECTION - Match LoanEMI Style */}
+            <div className="flex flex-wrap justify-center gap-4 bg-gray-100 p-2 rounded-lg w-full max-w-md">
                 {chartConfig.legendLabels.map((item, idx) => (
-                    <div key={idx} className="flex items-start gap-4">
-                        <div
-                            className="w-4 h-4 rounded-full mt-1 shrink-0"
-                            style={{ backgroundColor: item.color }}
-                        ></div>
-                        <div className="flex flex-col">
-                            <span className="text-gray-500 font-medium text-sm">
-                                {item.label}
-                            </span>
-                            <span
-                                className="text-xl font-bold"
-                                style={{ color: item.color }}
-                            >
-                                {moneyFormat(item.val, currency)}
-                            </span>
-                        </div>
+                    <div key={idx} className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
+                        <span className="text-xs font-bold text-gray-700">{item.label}</span>
                     </div>
                 ))}
+            </div>
+
+            {/* Hover Detail */}
+            <div className="h-6 mt-2 text-center">
+                {hoveredData && (
+                    <p className="text-sm font-semibold text-gray-800">
+                        {hoveredData.label}: {moneyFormat(hoveredData.value, currency)}
+                    </p>
+                )}
             </div>
         </div>
     );
@@ -469,7 +426,6 @@ export const FinancialLoanPieChart = ({ principal, totalInterest, fees = 0, curr
     const HOVER_INTEREST = "#14b8a6";
     const HOVER_FEES = "#f43f5e";
 
-    const totalAmount = principal + totalInterest + fees;
 
     // Labels corresponding to data
     const labels = ["Principal", "Interest", "Fees & Charges"];

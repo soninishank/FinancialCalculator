@@ -28,11 +28,11 @@ import {
 } from "../../utils/constants";
 import { calculateAPR } from "../../utils/finance"; // Import APR helper
 
-export default function LoanEMI({ currency, setCurrency }) {
-  // Inputs: Use Default Constants
-  const [principal, setPrincipal] = useState(DEFAULT_LOAN_PRINCIPAL);
-  const [annualRate, setAnnualRate] = useState(DEFAULT_LOAN_RATE);
-  const [years, setYears] = useState(DEFAULT_LOAN_TENURE);
+export default function LoanEMI({ currency, setCurrency, defaults }) {
+  // Inputs: Use Default Constants or Props
+  const [principal, setPrincipal] = useState(defaults?.principal || DEFAULT_LOAN_PRINCIPAL);
+  const [annualRate, setAnnualRate] = useState(defaults?.rate || DEFAULT_LOAN_RATE);
+  const [years, setYears] = useState(defaults?.tenure || DEFAULT_LOAN_TENURE);
   // viewFrequency state removed as CollapsibleTable handles both views
 
   const [processingFeePercent, setProcessingFeePercent] = useState(0);

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { calculatorDetails } from '../../data/calculatorDetails';
-import CalculatorLayout from './CalculatorLayout';
+import CalculatorLayout from '../common/CalculatorLayout';
 import InputWithSlider from '../common/InputWithSlider';
 import { moneyFormat } from '../../utils/formatting';
 import { FinancialLineChart } from '../common/FinancialCharts';

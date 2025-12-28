@@ -9,7 +9,7 @@ import InflationToggle from "../common/InflationToggle";
 import LimitedPayTip from "../common/LimitedPayTip";
 import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from "../common/FinancialCharts";
 
-import CalculatorLayout from "./CalculatorLayout"; // <--- NEW LAYOUT
+import CalculatorLayout from "../common/CalculatorLayout"; // <--- NEW LAYOUT
 
 import { calculateLTCG } from "../../utils/tax";
 import { useLimitedPay } from "../../hooks/useLimitedPay";

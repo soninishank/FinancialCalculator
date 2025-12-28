@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import CalculatorLayout from './CalculatorLayout';
+import CalculatorLayout from '../common/CalculatorLayout';
 import InputWithSlider from '../common/InputWithSlider';
 import { moneyFormat } from '../../utils/formatting';
 import { calculateEMI, calculateFlatRateEMI, calculateEffectiveInterestRate } from '../../utils/finance';

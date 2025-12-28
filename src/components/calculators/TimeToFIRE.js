@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import CalculatorLayout from './CalculatorLayout';
+import CalculatorLayout from '../common/CalculatorLayout';
 import InputWithSlider from '../common/InputWithSlider';
 import { FinancialLineChart } from '../common/FinancialCharts';
 import ResultsTable from '../common/ResultsTable';

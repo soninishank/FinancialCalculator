@@ -15,8 +15,12 @@ const importBySlug = (slug) => {
     case 'step-up-plus-lump': return import('../components/calculators/StepUpSIPWithLump');
     case 'goal-planner': return import('../components/calculators/GoalPlanner');
     case 'loan-emi': return import('../components/calculators/LoanEMI');
+    case 'vehicle-loan-emi': return import('../components/calculators/VehicleLoanEMI');
+    case 'step-up-loan-emi': return import('../components/calculators/StepUpLoanEMI');
+    case 'moratorium-loan-emi': return import('../components/calculators/MoratoriumLoanEMI');
     case 'cagr-calculator': return import('../components/calculators/CAGRCalculator');
     case 'compare-loans': return import('../components/calculators/CompareLoans');
+    case 'advanced-home-loan': return import('../components/calculators/AdvancedHomeLoanEMI');
     case 'topup-loan-emi': return import('../components/calculators/TopUpLoanEMI');
     case 'swp-calculator': return import('../components/calculators/SWPCalculator');
     // FIRE Calculators
@@ -31,6 +35,8 @@ const importBySlug = (slug) => {
     case 'asset-allocation': return import('../components/calculators/AssetAllocation');
     case 'simple-interest': return import('../components/calculators/SimpleInterest');
     case 'recurring-deposit': return import('../components/calculators/RecurringDeposit');
+    case 'fixed-deposit': return import('../components/calculators/FixedDeposit');
+    case 'ppf-calculator': return import('../components/calculators/PPFCalculator');
     case 'credit-card-payoff': return import('../components/calculators/CreditCardPayoff');
     case 'roi-calculator': return import('../components/calculators/ROICalculator');
     case 'rule-of-72': return import('../components/calculators/RuleOf72');
