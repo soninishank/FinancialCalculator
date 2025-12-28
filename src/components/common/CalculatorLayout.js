@@ -11,12 +11,14 @@ export default function CalculatorLayout({
     return (
         <div className="animate-fade-in">
             {/* INPUTS SECTION */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">
+            <div className="space-y-6 mt-8">
                 {inputs}
             </div>
 
             {/* SUMMARY CARDS */}
-            {summary}
+            <div className="mt-10">
+                {summary}
+            </div>
 
             {/* MAIN CHART (Compounding Bar Chart) */}
             {charts}

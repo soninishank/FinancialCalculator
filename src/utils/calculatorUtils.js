@@ -40,3 +40,38 @@ export function getActualYearAndMonth(startDate, monthNumber) {
 }
 
 export const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/**
+ * Validates a date range for financial calculations.
+ * Checks for valid years (1000-3000) and ensures end > start.
+ * @returns {boolean}
+ */
+export function validateDateRange(startDate, endDate) {
+    if (!startDate || !endDate) return false;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    const currentYear = new Date().getFullYear();
+    const minYear = currentYear - 100;
+    const maxYear = currentYear + 100;
+
+    const sy = start.getFullYear();
+    const ey = end.getFullYear();
+
+    if (isNaN(sy) || isNaN(ey) || sy < minYear || ey < minYear || sy > maxYear || ey > maxYear || end <= start) {
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Returns the effective schedule start date.
+ * If in 'dates' mode, it uses the month/year of the start date.
+ * Otherwise, uses the manually selected schedule start date.
+ */
+export function getEffectiveScheduleStart(mode, startDate, scheduleStartDate) {
+    if (mode === 'dates' && startDate) {
+        return startDate.slice(0, 7);
+    }
+    return scheduleStartDate;
+}

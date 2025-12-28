@@ -1,9 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import CalculatorLayout from '../common/CalculatorLayout';
 import InputWithSlider from '../common/InputWithSlider';
-import { moneyFormat } from '../../utils/formatting';
 import { FinancialInvestmentPieChart } from '../common/FinancialCharts';
-import ResultsTable from '../common/ResultsTable';
+import MonthYearPicker from '../common/MonthYearPicker';
+import CollapsibleInvestmentTable from '../common/CollapsibleInvestmentTable';
 import {
     MAX_AMOUNT,
     MAX_YEARS,
@@ -11,15 +11,33 @@ import {
     DEFAULT_ROI_FINAL,
     DEFAULT_ROI_YEARS
 } from '../../utils/constants';
+import { useCalculatorState } from '../../hooks/useCalculatorState';
+import UnifiedSummary from '../common/UnifiedSummary';
 
-export default function ROICalculator({ currency }) {
-    const [initialInvestment, setInitialInvestment] = useState(DEFAULT_ROI_INITIAL);
-    const [finalValue, setFinalValue] = useState(DEFAULT_ROI_FINAL);
-    const [absoluteProfit, setAbsoluteProfit] = useState(DEFAULT_ROI_FINAL - DEFAULT_ROI_INITIAL);
-    const [years, setYears] = useState(DEFAULT_ROI_YEARS);
-    const [months, setMonths] = useState(DEFAULT_ROI_YEARS * 12);
-    const [inputMode, setInputMode] = useState('value'); // 'value' for Final Value, 'profit' for Absolute Profit
-    const [timeMode, setTimeMode] = useState('years'); // 'years' or 'months'
+export default function ROICalculator({ currency = 'INR' }) {
+    const {
+        initialInvestment, setInitialInvestment,
+        finalValue, setFinalValue,
+        absoluteProfit, setAbsoluteProfit,
+        years, setYears,
+        months, setMonths,
+        inputMode, setInputMode,
+        timeMode, setTimeMode,
+    } = useCalculatorState({
+        initialInvestment: DEFAULT_ROI_INITIAL,
+        finalValue: DEFAULT_ROI_FINAL,
+        absoluteProfit: DEFAULT_ROI_FINAL - DEFAULT_ROI_INITIAL,
+        years: DEFAULT_ROI_YEARS,
+        months: DEFAULT_ROI_YEARS * 12,
+        inputMode: 'value',
+        timeMode: 'years'
+    });
+
+    const {
+        startDate, setStartDate,
+    } = useCalculatorState();
+
+    // timeMode 'years' | 'months' for duration input
 
     const result = useMemo(() => {
         const start = Number(initialInvestment);
@@ -34,11 +52,11 @@ export default function ROICalculator({ currency }) {
             gain = end - start;
         }
 
-        // Normalize time to years for CAGR formula
-        const timeInYears = timeMode === 'months' ? Number(months) / 12 : Number(years);
+        let timeInYears = timeMode === 'months' ? Number(months) / 12 : Number(years);
+
         const roiPercentage = start > 0 ? (gain / start) * 100 : 0;
 
-        // Annualized ROI (CAGR essentially)
+        // Annualized ROI (CAGR)
         let annualizedRoi = 0;
         if (start > 0 && end > 0 && timeInYears > 0) {
             annualizedRoi = (Math.pow(end / start, 1 / timeInYears) - 1) * 100;
@@ -55,34 +73,47 @@ export default function ROICalculator({ currency }) {
     }, [initialInvestment, finalValue, absoluteProfit, years, months, inputMode, timeMode]);
 
     // --- TABLE DATA GENERATION ---
-    const tableData = useMemo(() => {
-        const data = [];
-        const periods = timeMode === 'years' ? years : months;
+    const tableResult = useMemo(() => {
+        const yearlyData = [];
+        const monthlyData = [];
+        const totalMonthsRequested = Math.round((timeMode === 'years' ? years : months / 12) * 12);
         const rate = result.annualizedRoi / 100;
+        const monthlyRate = Math.pow(1 + rate, 1 / 12) - 1;
 
         let currentValue = result.start;
+        const startObj = new Date(startDate);
+        const startMonth = startObj.getMonth();
+        const startYear = startObj.getFullYear();
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-        // For accurate yearly/monthly projection steps strictly adhering to the final value:
-        // If we simply compound `annualizedRoi` annually, we should hit exact `end` after `timeInYears`.
-        // If months, we need monthly rate: (1 + annual)^ (1/12) - 1.
+        for (let m = 1; m <= totalMonthsRequested; m++) {
+            currentValue = currentValue * (1 + monthlyRate);
 
-        const monthlyRate = Math.pow(1 + rate, 1 / 12) - 1;
-        const effectiveRate = timeMode === 'years' ? rate : monthlyRate;
+            const calendarMonthTotal = startMonth + (m - 1);
+            const calendarYear = startYear + Math.floor(calendarMonthTotal / 12);
+            const calendarMonth = calendarMonthTotal % 12;
 
-        for (let i = 1; i <= periods; i++) {
-            currentValue = currentValue * (1 + effectiveRate);
-            const totalGrowth = currentValue - result.start;
-
-            data.push({
-                year: timeMode === 'years' ? i : `${i} (Mo)`,
-                totalInvested: result.start,
-                growth: totalGrowth,
-                overallValue: currentValue
+            monthlyData.push({
+                year: calendarYear,
+                month: calendarMonth + 1,
+                monthName: monthNames[calendarMonth],
+                invested: result.start,
+                interest: currentValue - result.start,
+                balance: currentValue
             });
+
+            if (m % 12 === 0 || m === totalMonthsRequested) {
+                yearlyData.push({
+                    year: calendarYear,
+                    totalInvested: result.start,
+                    growth: currentValue - result.start,
+                    balance: currentValue
+                });
+            }
         }
 
-        return data;
-    }, [result.start, result.annualizedRoi, years, months, timeMode]);
+        return { yearlyData, monthlyData };
+    }, [result.start, result.annualizedRoi, years, months, timeMode, startDate]);
 
 
     // Handle initial calculation and sync
@@ -158,7 +189,7 @@ export default function ROICalculator({ currency }) {
                 />
             )}
 
-            <div className="md:col-span-2 mt-4">
+            <div className="md:col-span-2">
                 <div className="flex bg-gray-100 p-1 rounded-xl w-fit mb-4">
                     <button
                         onClick={() => handleTimeModeChange('years')}
@@ -199,35 +230,23 @@ export default function ROICalculator({ currency }) {
         </>
     );
 
-    // --- SUMMARY CARDS ---
-    const summary = (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-
-            {/* CARD 1: ROI % */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center">
-                <p className="text-gray-500 text-sm font-medium uppercase tracking-wide">Total Return (Absolute ROI)</p>
-                <p className={`text-4xl font-extrabold mt-2 ${result.roiPercentage >= 0 ? "text-emerald-500" : "text-red-500"}`}>
-                    {result.roiPercentage.toFixed(2)}%
-                </p>
-                <p className={`text-sm mt-1 font-medium ${result.gain >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                    {result.gain >= 0 ? "+" : ""}{moneyFormat(result.gain, currency)}
-                </p>
-                <p className="text-xs text-gray-400 mt-2">
-                    Total % Gain over full period
-                </p>
-            </div>
-
-            {/* CARD 2: Annualized */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center">
-                <p className="text-gray-500 text-sm font-medium uppercase tracking-wide">Annualized Return (CAGR)</p>
-                <p className="text-3xl font-bold text-blue-600 mt-2">
-                    {result.annualizedRoi.toFixed(2)}%
-                </p>
-                <p className="text-xs text-gray-400 mt-2">
-                    Average Yearly Growth Rate
-                </p>
-            </div>
-        </div>
+    // --- SUMMARY ---
+    const summarySection = (
+        <UnifiedSummary
+            invested={result.start}
+            gain={result.gain}
+            total={result.computedFinalValue}
+            currency={currency}
+            years={result.timeInYears}
+            customCards={[
+                {
+                    label: "Annualized Return (CAGR)",
+                    value: `${result.annualizedRoi.toFixed(2)}%`,
+                    color: "text-blue-600",
+                    subtext: "Effective yearly growth rate"
+                }
+            ]}
+        />
     );
 
     const details = (
@@ -273,7 +292,7 @@ export default function ROICalculator({ currency }) {
     return (
         <CalculatorLayout
             inputs={inputs}
-            summary={summary}
+            summary={summarySection}
             pieChart={
                 <div className="h-full">
                     <FinancialInvestmentPieChart
@@ -286,16 +305,25 @@ export default function ROICalculator({ currency }) {
                 </div>
             }
             table={
-                <ResultsTable
-                    data={tableData}
-                    currency={currency}
-                    columns={[
-                        { key: 'year', label: timeMode === 'years' ? 'Year' : 'Month', align: 'left' },
-                        { key: 'totalInvested', label: 'Invested', align: 'right', format: 'money' },
-                        { key: 'growth', label: 'Growth', align: 'right', format: 'money', color: 'green' },
-                        { key: 'overallValue', label: 'Total Value', align: 'right', format: 'money', highlight: true }
-                    ]}
-                />
+                <div className="mt-8">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
+                        <div className="flex items-center">
+                            <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
+                            <div className="w-48">
+                                <MonthYearPicker
+                                    value={startDate}
+                                    onChange={setStartDate}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <CollapsibleInvestmentTable
+                        yearlyData={tableResult.yearlyData}
+                        monthlyData={tableResult.monthlyData}
+                        currency={currency}
+                    />
+                </div>
             }
             details={details}
         />

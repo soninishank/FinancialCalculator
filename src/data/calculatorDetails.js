@@ -38,36 +38,71 @@ export const calculatorDetails = {
             </div>
         )
     },
-    compoundInterest: {
-        title: "Understanding Compound Interest",
+    simple_interest: {
+        title: "How Simple Interest Works for You",
         render: () => (
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding Compound Interest</h3>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">When is Simple Interest Used?</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
-                        <strong>Compound Interest</strong> is the interest calculated on the initial principal, which also includes all of the accumulated interest from previous periods. It makes your money grow faster because you earn returns on your returns.
+                        Simple interest is most common in short-term financial arrangements. Unlike compounding, where interest earns interest, simple interest remains constant based on your initial principal.
                     </p>
 
-                    <div className="bg-teal-50 p-4 rounded-xl border border-teal-100 my-4">
-                        <p className="font-semibold text-teal-800 text-center text-lg">
-                            A = P(1 + r/n)^(nt)
-                        </p>
-                        <p className="text-center text-sm text-teal-600 mt-2">
-                            A = Final Amount, P = Principal, r = Rate, n = Frequency, t = Time
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                            <h4 className="font-bold text-indigo-800 mb-2">Common Use Cases</h4>
+                            <ul className="list-disc pl-5 space-y-1 text-sm text-indigo-700">
+                                <li><strong>Short-term Loans:</strong> Often used for personal or bridge loans.</li>
+                                <li><strong>Auto Loans:</strong> Many car loans use simple interest daily methods.</li>
+                                <li><strong>Certificates of Deposit (CDs):</strong> Some non-compounding fixed deposits.</li>
+                            </ul>
+                        </div>
+                        <div className="bg-amber-50 p-4 rounded-xl border border-amber-100">
+                            <h4 className="font-bold text-amber-800 mb-2">The "Linear" Advantage</h4>
+                            <p className="text-sm text-amber-700">
+                                Because interest doesn't pile up, it's easier to calculate exactly how much you'll pay or earn. This predictability is great for budgeting fixed-income returns.
+                            </p>
+                        </div>
+                    </div>
+
+                    <h4 className="font-semibold text-gray-800 mb-2">Tax Tip</h4>
+                    <p>
+                        Most interest earned on deposits is taxable as "Income from Other Sources" based on your regular tax slab. Always keep aside a portion of your earnings for year-end tax liabilities.
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    compound_interest: {
+        title: "The Power of Compounding",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Maximizing Your Wealth with Compounding</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Compounding is often called the "Eighth Wonder of the World." Its real power comes from <strong>time</strong> and <strong>frequency</strong>. The earlier you start and the more frequently your interest is reinvested, the faster your wealth multiplies.
+                    </p>
+
+                    <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100 my-6">
+                        <h4 className="font-bold text-emerald-800 mb-2">Why Frequency Matters</h4>
+                        <p className="text-sm text-emerald-700">
+                            A 10% interest rate compounded <strong>monthly</strong> yields a higher actual return than 10% compounded <strong>yearly</strong>. Our calculator handles these different intervals automatically to show you the "Effective Annual Yield."
                         </p>
                     </div>
 
-                    <h4 className="font-semibold text-gray-800 mb-2">Key Components:</h4>
+                    <h4 className="font-semibold text-gray-800 mb-2">Strategic Insights</h4>
                     <ul className="list-disc pl-5 space-y-2 mb-4">
-                        <li><strong>Principal (P):</strong> The initial amount you invest.</li>
-                        <li><strong>Rate (r):</strong> The annual interest rate.</li>
-                        <li><strong>Frequency (n):</strong> How often interest is added (Monthly, Quarterly, Yearbook). More frequent compounding leads to higher returns.</li>
-                        <li><strong>Time (t):</strong> The duration of the investment. Time is the most powerful factor in compounding.</li>
+                        <li><strong>Start Small, Start Early:</strong> Small amounts invested in your 20s can far exceed large amounts invested in your 40s due to the longer "snowball" effect.</li>
+                        <li><strong>Inflation Hack:</strong> Compounding is your best defense against inflation. To maintain your lifestyle, your compounding rate must exceed the inflation rate.</li>
+                        <li><strong>Reinvestment:</strong> To get the results shown in the table, ensure that you do not withdraw any interest earned during the tenure.</li>
                     </ul>
 
-                    <p>
-                        The "magic" of compounding allows even small contributions to grow into significant wealth over long periods.
-                    </p>
+                    <div className="bg-rose-50 p-4 rounded-xl border border-rose-100">
+                        <h4 className="font-bold text-rose-800 mb-2">A Note on Taxes</h4>
+                        <p className="text-sm text-rose-700">
+                            Depending on your investment type (Fixed Deposits vs. Mutual Funds), you might be taxed on interest every year or only upon withdrawal (LTCG). Check our Tax toggle to see how this impacts your net wealth.
+                        </p>
+                    </div>
                 </div>
             </div>
         )
@@ -253,6 +288,40 @@ export const calculatorDetails = {
                     <p>
                         This calculator gives you the <strong>Real Total Cost of Ownership</strong>, not just the loan interest.
                     </p>
+                </div>
+            </div>
+        )
+    },
+    cagr_calculator: {
+        title: "Mastering CAGR",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Why CAGR Matters</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        The <strong>Compound Annual Growth Rate (CAGR)</strong> is the best way to measure how an investment has performed over time. Unlike simple returns, CAGR accounts for the effect of compounding, giving you the "smoothed" annual return.
+                    </p>
+
+                    <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100 my-6">
+                        <h4 className="font-bold text-indigo-800 mb-2">CAGR vs. Absolute Return</h4>
+                        <p className="text-sm text-indigo-700">
+                            If your ₹1 Lakh becomes ₹2 Lakh in 5 years, your absolute return is 100%. But your CAGR is about 14.87%. This tells you how hard your money worked for you <strong>every single year</strong>.
+                        </p>
+                    </div>
+
+                    <h4 className="font-semibold text-gray-800 mb-2 mt-6">How to use this tool</h4>
+                    <ul className="list-disc pl-5 space-y-2 mb-4">
+                        <li><strong>Performance Check:</strong> Use it to compare different mutual funds or stocks over the same period.</li>
+                        <li><strong>Strategy Validation:</strong> See if your long-term investments are actually beating inflation.</li>
+                        <li><strong>Flexibility:</strong> Calculate based on exact dates (like from a bank statement) or simple duration.</li>
+                    </ul>
+
+                    <div className="bg-amber-50 p-4 rounded-xl border border-amber-100">
+                        <h4 className="font-bold text-amber-800 mb-2">Pro Tip</h4>
+                        <p className="text-sm text-amber-700">
+                            CAGR is great for historical analysis, but it assumes growth was steady. In reality, markets go up and down. Always look at the <strong>Growth Schedule</strong> below to see the simulated path of your investment.
+                        </p>
+                    </div>
                 </div>
             </div>
         )

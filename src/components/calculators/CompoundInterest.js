@@ -1,32 +1,19 @@
-import React, { useMemo } from "react";
-
-// --- IMPORTS ---
-import SummaryCards from "../common/SummaryCards";
-import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from "../common/FinancialCharts";
-import ResultsTable from "../common/ResultsTable";
-import InputWithSlider from "../common/InputWithSlider";
-import RateQualityGuard from "../common/RateQualityGuard";
-import TaxToggle from "../common/TaxToggle";
-import InflationToggle from "../common/InflationToggle";
-import CalculatorLayout from "../common/CalculatorLayout";
-import { useCalculatorState } from "../../hooks/useCalculatorState";
-import { downloadPDF } from "../../utils/export";
-import { calculateRealValue } from "../../utils/finance";
-import { calculateLTCG } from "../../utils/tax";
-import { calculatorDetails } from "../../data/calculatorDetails";
-import {
-    DEFAULT_LUMP_SUM,
-    DEFAULT_TENURE_YEARS,
-    DEFAULT_RATE,
-    MIN_AMOUNT,
-    MIN_YEARS,
-    MIN_RATE,
-    MAX_AMOUNT,
-    MAX_YEARS,
-    MAX_RATE,
-    STEP_AMOUNT,
-    DEFAULT_INFLATION
-} from "../../utils/constants";
+import React, { useState, useMemo } from 'react';
+import CalculatorLayout from '../common/CalculatorLayout';
+import InputWithSlider from '../common/InputWithSlider';
+import UnifiedSummary from '../common/UnifiedSummary';
+import CollapsibleInvestmentTable from '../common/CollapsibleInvestmentTable';
+import MonthYearPicker from '../common/MonthYearPicker';
+import TaxToggle from '../common/TaxToggle';
+import InflationToggle from '../common/InflationToggle';
+import { FinancialCompoundingBarChart } from '../common/FinancialCharts';
+import { calculateCompoundInterest, calculateRealValue } from '../../utils/finance';
+import { calculateLTCG } from '../../utils/tax';
+import { calculatorDetails } from '../../data/calculatorDetails';
+import { useCalculatorState } from '../../hooks/useCalculatorState';
+import { MAX_AMOUNT, MAX_RATE, DEFAULT_INFLATION } from '../../utils/constants';
+import { validateDateRange, getEffectiveScheduleStart } from '../../utils/calculatorUtils';
+import { CalculationModeToggle, DateRangeInputs } from '../common/CommonCalculatorFields';
 
 const COMPOUND_FREQUENCIES = [
     { label: 'Monthly', value: 12 },
@@ -35,126 +22,57 @@ const COMPOUND_FREQUENCIES = [
     { label: 'Yearly', value: 1 },
 ];
 
-export default function CompoundInterest({ currency, setCurrency }) {
-    // --- STATE ---
+const CompoundInterest = ({ currency }) => {
     const {
         lumpSum, setLumpSum,
         annualRate, setAnnualRate,
         years, setYears,
+        compoundingFrequency, setCompoundingFrequency,
         isTaxApplied, setIsTaxApplied,
         ltcgRate, setLtcgRate,
         isExemptionApplied, setIsExemptionApplied,
         exemptionLimit, setExemptionLimit,
         isInflationAdjusted, setIsInflationAdjusted,
         inflationRate, setInflationRate,
-        compoundingFrequency, setCompoundingFrequency,
+        calculationMode, setCalculationMode,
+        startDate, setStartDate,
+        endDate, setEndDate,
+        scheduleStartDate, setScheduleStartDate
     } = useCalculatorState({
-        lumpSum: DEFAULT_LUMP_SUM,
-        annualRate: DEFAULT_RATE,
-        years: DEFAULT_TENURE_YEARS,
+        lumpSum: 100000,
+        annualRate: 8,
+        years: 10,
+        compoundingFrequency: 1,
         inflationRate: DEFAULT_INFLATION,
-        compoundingFrequency: 1, // Default to yearly
     });
 
-    // --- CALCULATIONS ---
-    const yearlyRows = useMemo(() => {
-        const P = Number(lumpSum);
-        const r = Number(annualRate) / 100;
-        const n = Number(compoundingFrequency);
-        const t_total = Number(years);
+    const [timeUnit, setTimeUnit] = useState('years');
 
-        const rows = [];
-        const fullYears = Math.floor(t_total);
+    const effectiveScheduleStartDate = getEffectiveScheduleStart(calculationMode, startDate, scheduleStartDate);
 
-        for (let y = 1; y <= fullYears; y++) {
-            // Amount A = P(1 + r/n)^(n*t)
-            const amount = P * Math.pow(1 + r / n, n * y);
-            rows.push({
-                year: y,
-                totalInvested: P,
-                lumpSum: P,
-                growth: amount - P,
-                overallValue: amount,
-            });
+    const result = useMemo(() => {
+        // Performance & Validation guard
+        if (calculationMode === 'dates') {
+            if (!validateDateRange(startDate, endDate)) {
+                return { totalAmount: lumpSum, timeInYears: 0, yearlyData: [], monthlyData: [] };
+            }
         }
 
-        // Handle partial last year if any
-        if (t_total > fullYears) {
-            const amount = P * Math.pow(1 + r / n, n * t_total);
-            rows.push({
-                year: parseFloat(t_total.toFixed(1)),
-                totalInvested: P,
-                lumpSum: P,
-                growth: amount - P,
-                overallValue: amount,
-            });
-        }
+        return calculateCompoundInterest({
+            principal: lumpSum,
+            rate: annualRate,
+            time: years,
+            timeUnit,
+            frequency: compoundingFrequency,
+            startDate: calculationMode === 'dates' ? startDate : null,
+            endDate: calculationMode === 'dates' ? endDate : null,
+            scheduleStartDate: effectiveScheduleStartDate
+        });
+    }, [lumpSum, annualRate, years, timeUnit, compoundingFrequency, startDate, endDate, calculationMode, effectiveScheduleStartDate]);
 
-        return rows;
-    }, [lumpSum, annualRate, years, compoundingFrequency]);
-
-    const breakdownRows = useMemo(() => {
-        const P = Number(lumpSum);
-        const r = Number(annualRate) / 100;
-        const n = Number(compoundingFrequency);
-        const t_total = Number(years);
-
-        const rows = [];
-        const totalPeriods = Math.floor(t_total * n);
-
-        let labelPrefix = "Year";
-        if (n === 12) labelPrefix = "Month";
-        else if (n === 4) labelPrefix = "Quarter";
-        else if (n === 2) labelPrefix = "Half-Year";
-
-        for (let p = 1; p <= totalPeriods; p++) {
-            const amount = P * Math.pow(1 + r / n, p);
-            rows.push({
-                label: `${labelPrefix} ${p}`,
-                totalInvested: P,
-                lumpSum: P,
-                growth: amount - P,
-                overallValue: amount,
-            });
-        }
-
-        if (t_total * n > totalPeriods) {
-            const amount = P * Math.pow(1 + r / n, n * t_total);
-            rows.push({
-                label: `Final (Partial)`,
-                totalInvested: P,
-                lumpSum: P,
-                growth: amount - P,
-                overallValue: amount,
-            });
-        }
-
-        return rows;
-    }, [lumpSum, annualRate, years, compoundingFrequency]);
-
-    const tableColumns = useMemo(() => {
-        return [
-            { key: 'label', label: 'Period', align: 'left' },
-            { key: 'totalInvested', label: 'Invested', align: 'right', format: 'money' },
-            { key: 'growth', label: 'Growth', align: 'right', format: 'money', color: 'green' },
-            { key: 'overallValue', label: 'Total Value', align: 'right', format: 'money', highlight: true }
-        ];
-    }, []);
-
-    const breakdownTitle = useMemo(() => {
-        if (compoundingFrequency === 12) return "Monthly Breakdown";
-        if (compoundingFrequency === 4) return "Quarterly Breakdown";
-        if (compoundingFrequency === 2) return "Half-Yearly Breakdown";
-        return "Yearly Breakdown";
-    }, [compoundingFrequency]);
-
-    const lastRow = yearlyRows[yearlyRows.length - 1] || { totalInvested: 0, overallValue: 0 };
-    const investedTotal = lastRow.totalInvested;
-    const totalFuture = lastRow.overallValue;
-    const gain = totalFuture - investedTotal;
-
-    // --- TAX CALCULATION ---
-    const taxResult = calculateLTCG(gain, investedTotal, isTaxApplied, {
+    // --- TAX & INFLATION ---
+    const gain = (result.totalAmount || 0) - lumpSum;
+    const taxResult = calculateLTCG(gain, lumpSum, isTaxApplied, {
         taxRate: Number(ltcgRate),
         currency,
         exemptionApplied: Boolean(isExemptionApplied),
@@ -162,57 +80,47 @@ export default function CompoundInterest({ currency, setCurrency }) {
     });
 
     const taxAmount = taxResult?.taxAmount ?? 0;
-    const netGain = taxResult?.netGain ?? gain - (taxResult?.taxAmount ?? 0);
-    const netFutureValue = taxResult?.netFutureValue ?? totalFuture - (taxResult?.taxAmount ?? 0);
+    const netGainVal = taxResult?.netGain ?? gain - taxAmount;
+    const netFutureValueVal = taxResult?.netFutureValue ?? result.totalAmount - taxAmount;
 
-    // --- INFLATION CALCULATION ---
-    const realValue = useMemo(() => {
-        return calculateRealValue(totalFuture, inflationRate, years);
-    }, [totalFuture, inflationRate, years]);
+    const realValueVal = useMemo(() => {
+        return calculateRealValue(result.totalAmount || lumpSum, inflationRate, result.timeInYears || 0);
+    }, [result.totalAmount, lumpSum, inflationRate, result.timeInYears]);
 
-    function handleExport() {
-        const header = ["Period", "Total Invested", "Principal", "Interest Earned", "Total Value"];
-        const rows = breakdownRows.map((r) => [
-            r.label, Math.round(r.totalInvested), Math.round(r.lumpSum), Math.round(r.growth), Math.round(r.overallValue),
-        ]);
-        downloadPDF(rows, header, "compound_interest_report.pdf");
-    }
+    const inputs = (
+        <div className="space-y-6">
+            <CalculationModeToggle mode={calculationMode} setMode={setCalculationMode} />
 
-    // --- UI PARTS ---
-    const inputsSection = (
-        <>
             <InputWithSlider
                 label="Principal Amount"
                 value={lumpSum}
                 onChange={setLumpSum}
-                min={MIN_AMOUNT} max={MAX_AMOUNT} step={STEP_AMOUNT}
+                min={1000}
+                max={MAX_AMOUNT}
+                step={1000}
                 currency={currency}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <InputWithSlider
-                    label="Tenure (Years)"
-                    value={years}
-                    onChange={setYears}
-                    min={MIN_YEARS} max={MAX_YEARS}
+                    label="Interest Rate (%)"
+                    value={annualRate}
+                    onChange={setAnnualRate}
+                    min={1}
+                    max={MAX_RATE}
+                    step={0.1}
+                    symbol="%"
+                    isDecimal={true}
                 />
-
                 <div className="flex flex-col">
-                    {/* Consistent label height to match sibling InputWithSlider */}
-                    <div className="flex justify-between items-end mb-1 h-7">
-                        <label className="text-sm font-medium text-gray-700 whitespace-nowrap">Compounding Frequency</label>
-                    </div>
+                    <label className="text-sm font-bold text-gray-700 mb-1">Compounding Frequency</label>
                     <div className="relative">
                         <select
                             value={compoundingFrequency}
                             onChange={(e) => setCompoundingFrequency(Number(e.target.value))}
-                            className="w-full py-2.5 sm:py-3 pl-4 pr-10 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all font-semibold text-gray-900 text-base sm:text-lg bg-white appearance-none cursor-pointer"
+                            className="w-full p-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 bg-white font-semibold text-gray-900 appearance-none cursor-pointer"
                         >
-                            {COMPOUND_FREQUENCIES.map((freq) => (
-                                <option key={freq.value} value={freq.value}>
-                                    {freq.label}
-                                </option>
-                            ))}
+                            {COMPOUND_FREQUENCIES.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
                         </select>
                         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -220,99 +128,113 @@ export default function CompoundInterest({ currency, setCurrency }) {
                             </svg>
                         </div>
                     </div>
-                    {/* Visual spacer to match the slider height in the sibling component */}
-                    <div className="mt-3 h-[24px] sm:h-[32px] hidden md:block"></div>
                 </div>
             </div>
 
-            <div className="md:col-span-2">
-                <InputWithSlider
-                    label="Interest Rate (%)"
-                    value={annualRate}
-                    onChange={setAnnualRate}
-                    min={MIN_RATE} max={MAX_RATE} step={0.1}
-                    symbol="%"
-                    isDecimal={true}
+            {calculationMode === 'duration' ? (
+                <div>
+                    <div className="flex justify-between items-center mb-2">
+                        <label className="text-sm font-bold text-gray-700">Time Period</label>
+                        <div className="flex bg-gray-100 p-1 rounded-lg">
+                            {['years', 'months', 'days'].map((u) => (
+                                <button
+                                    key={u}
+                                    onClick={() => setTimeUnit(u)}
+                                    className={`px-3 py-1 text-xs font-semibold rounded-md transition-all capitalize ${timeUnit === u ? 'bg-white text-teal-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                                        }`}
+                                >
+                                    {u}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    <InputWithSlider
+                        label=""
+                        value={years}
+                        onChange={setYears}
+                        min={1}
+                        max={timeUnit === 'years' ? 50 : timeUnit === 'months' ? 360 : 3650}
+                        suffix={timeUnit}
+                    />
+                </div>
+            ) : (
+                <DateRangeInputs
+                    startDate={startDate}
+                    setStartDate={setStartDate}
+                    endDate={endDate}
+                    setEndDate={setEndDate}
                 />
-                <RateQualityGuard rate={annualRate} />
+            )}
 
-                <div className="mt-6 flex flex-col lg:flex-row gap-6">
-                    <div className="flex-1">
-                        <TaxToggle
-                            currency={currency}
-                            isTaxApplied={isTaxApplied}
-                            setIsTaxApplied={setIsTaxApplied}
-                            taxRate={ltcgRate}
-                            onTaxRateChange={setLtcgRate}
-                            isExemptionApplied={isExemptionApplied}
-                            setIsExemptionApplied={setIsExemptionApplied}
-                            exemptionLimit={exemptionLimit}
-                            onExemptionLimitChange={setExemptionLimit}
-                        />
-                    </div>
-                    <div className="flex-1">
-                        <InflationToggle
-                            isAdjusted={isInflationAdjusted}
-                            setIsAdjusted={setIsInflationAdjusted}
-                            rate={inflationRate}
-                            setRate={setInflationRate}
-                        />
-                    </div>
-                </div>
+            <div className="flex flex-col lg:flex-row gap-6">
+                <TaxToggle
+                    currency={currency}
+                    isTaxApplied={isTaxApplied}
+                    setIsTaxApplied={setIsTaxApplied}
+                    taxRate={ltcgRate}
+                    onTaxRateChange={setLtcgRate}
+                    isExemptionApplied={isExemptionApplied}
+                    setIsExemptionApplied={setIsExemptionApplied}
+                    exemptionLimit={exemptionLimit}
+                    onExemptionLimitChange={setExemptionLimit}
+                />
+                <InflationToggle
+                    isAdjusted={isInflationAdjusted}
+                    setIsAdjusted={setIsInflationAdjusted}
+                    rate={inflationRate}
+                    setRate={setInflationRate}
+                />
             </div>
-        </>
+        </div>
     );
 
     return (
         <CalculatorLayout
-            inputs={inputsSection}
+            inputs={inputs}
             summary={
-                <SummaryCards
-                    totalValue={totalFuture}
-                    invested={investedTotal}
-                    gain={gain}
-                    currency={currency}
-                    {...(isTaxApplied
-                        ? {
-                            tax: {
-                                applied: true,
-                                postTaxValue: netFutureValue,
-                                postTaxGain: netGain,
-                                taxDeducted: taxAmount,
-                            },
-                        }
-                        : {})}
-                    {...(isInflationAdjusted
-                        ? {
-                            inflation: {
-                                applied: true,
-                                realValue: realValue,
-                                inflationRate: inflationRate,
-                            },
-                        }
-                        : {})}
-                />
+                <div className="space-y-8">
+                    <UnifiedSummary
+                        invested={lumpSum}
+                        gain={gain}
+                        total={result.totalAmount}
+                        currency={currency}
+                        years={(result.timeInYears || 0).toFixed(2)}
+                        tax={{ applied: isTaxApplied, postTaxValue: netFutureValueVal, postTaxGain: netGainVal, taxDeducted: taxAmount }}
+                        inflation={{ applied: isInflationAdjusted, realValue: realValueVal, inflationRate: inflationRate }}
+                    />
+                </div>
             }
-            charts={<FinancialCompoundingBarChart data={yearlyRows} currency={currency} />}
-            pieChart={
-                <FinancialInvestmentPieChart
-                    invested={investedTotal}
-                    gain={gain}
-                    total={totalFuture}
-                    currency={currency}
-                    years={years}
-                />
-            }
+            charts={<FinancialCompoundingBarChart data={result.yearlyData} currency={currency} type="investment" />}
             table={
-                <ResultsTable
-                    data={breakdownRows}
-                    currency={currency}
-                    onExport={handleExport}
-                    columns={tableColumns}
-                    title={breakdownTitle}
-                />
+                <div className="mt-8">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
+                        <div className="flex items-center">
+                            <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
+                            <div className="w-48 relative">
+                                <MonthYearPicker
+                                    value={effectiveScheduleStartDate}
+                                    onChange={setScheduleStartDate}
+                                />
+                                {calculationMode === 'dates' && (
+                                    <div
+                                        className="absolute inset-0 bg-gray-50/50 cursor-not-allowed rounded-lg"
+                                        title="Starts from selected Start Date"
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                    <CollapsibleInvestmentTable
+                        yearlyData={result.yearlyData}
+                        monthlyData={result.monthlyData}
+                        currency={currency}
+                    />
+                </div>
             }
-            details={calculatorDetails.compoundInterest.render()}
+            details={calculatorDetails.compound_interest.render()}
         />
     );
-}
+};
+
+export default CompoundInterest;

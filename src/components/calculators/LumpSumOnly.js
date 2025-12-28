@@ -1,19 +1,18 @@
 import React, { useMemo } from "react";
 
 // --- IMPORTS ---
-import SummaryCards from "../common/SummaryCards";
 import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from "../common/FinancialCharts";
-import ResultsTable from "../common/ResultsTable";
-
 import InputWithSlider from "../common/InputWithSlider";
 import RateQualityGuard from "../common/RateQualityGuard";
 import TaxToggle from "../common/TaxToggle";
 import InflationToggle from "../common/InflationToggle";
+import MonthYearPicker from "../common/MonthYearPicker";
+import CollapsibleInvestmentTable from "../common/CollapsibleInvestmentTable";
+import UnifiedSummary from "../common/UnifiedSummary";
 
 import CalculatorLayout from "../common/CalculatorLayout"; // <--- NEW LAYOUT
 
 import { useCalculatorState } from "../../hooks/useCalculatorState"; // <--- NEW HOOK
-import { downloadPDF } from "../../utils/export";
 import { computeYearlySchedule, calculateRealValue } from "../../utils/finance"; // <--- SHARED LOGIC
 import { calculateLTCG } from "../../utils/tax";
 import {
@@ -42,6 +41,7 @@ export default function LumpSumOnly({ currency, setCurrency }) {
     exemptionLimit, setExemptionLimit,
     isInflationAdjusted, setIsInflationAdjusted,
     inflationRate, setInflationRate,
+    startDate, setStartDate,
   } = useCalculatorState({
     lumpSum: DEFAULT_LUMP_SUM,
     annualRate: DEFAULT_RATE,
@@ -49,16 +49,20 @@ export default function LumpSumOnly({ currency, setCurrency }) {
     inflationRate: DEFAULT_INFLATION,
   });
 
-  // --- CALCULATIONS ---
-  const yearlyRows = useMemo(
-    () => computeYearlySchedule({
+
+  // Yearly & Monthly Breakdown Calculation
+  const result = useMemo(() => {
+    return computeYearlySchedule({
       monthlySIP: 0,
       lumpSum: Number(lumpSum),
       annualRate: Number(annualRate),
-      totalYears: Number(years)
-    }),
-    [lumpSum, annualRate, years]
-  );
+      totalYears: Number(years),
+      calculationMode: 'duration',
+      startDate
+    });
+  }, [lumpSum, annualRate, years, startDate]);
+
+  const { rows: yearlyRows = [], monthlyRows = [] } = result || {};
 
   const lastRow = yearlyRows[yearlyRows.length - 1] || { totalInvested: 0, overallValue: 0 };
   const investedTotal = lastRow.totalInvested; // Should constitute only lump sum
@@ -87,13 +91,6 @@ export default function LumpSumOnly({ currency, setCurrency }) {
   }, [totalFuture, inflationRate, years]);
 
 
-  function handleExport() {
-    const header = ["Year", "Total Invested", "Lump Sum", "Growth", "Overall Value"];
-    const rows = yearlyRows.map((r) => [
-      `Year ${r.year}`, Math.round(r.totalInvested), Math.round(r.lumpSum), Math.round(r.growth), Math.round(r.overallValue),
-    ]);
-    downloadPDF(rows, header, "lump_sum_report.pdf");
-  }
 
   // --- UI PARTS ---
   const inputsSection = (
@@ -156,30 +153,23 @@ export default function LumpSumOnly({ currency, setCurrency }) {
     <CalculatorLayout
       inputs={inputsSection}
       summary={
-        <SummaryCards
-          totalValue={totalFuture}
+        <UnifiedSummary
           invested={investedTotal}
           gain={gain}
+          total={totalFuture}
           currency={currency}
-          {...(isTaxApplied
-            ? {
-              tax: {
-                applied: true,
-                postTaxValue: postTaxFuture,
-                postTaxGain: postTaxGain,
-                taxDeducted: taxDeductedAmount,
-              },
-            }
-            : {})}
-          {...(isInflationAdjusted
-            ? {
-              inflation: {
-                applied: true,
-                realValue: realValue,
-                inflationRate: inflationRate,
-              },
-            }
-            : {})}
+          years={years}
+          tax={isTaxApplied ? {
+            applied: true,
+            postTaxValue: postTaxFuture,
+            postTaxGain: postTaxGain,
+            taxDeducted: taxDeductedAmount
+          } : null}
+          inflation={isInflationAdjusted ? {
+            applied: true,
+            realValue: realValue,
+            inflationRate: inflationRate
+          } : null}
         />
       }
       charts={<FinancialCompoundingBarChart data={yearlyRows} currency={currency} />}
@@ -193,7 +183,25 @@ export default function LumpSumOnly({ currency, setCurrency }) {
         />
       }
       table={
-        <ResultsTable data={yearlyRows} currency={currency} onExport={handleExport} />
+        <div className="mt-8">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
+            <div className="flex items-center">
+              <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
+              <div className="w-48">
+                <MonthYearPicker
+                  value={startDate}
+                  onChange={setStartDate}
+                />
+              </div>
+            </div>
+          </div>
+          <CollapsibleInvestmentTable
+            yearlyData={yearlyRows}
+            monthlyData={monthlyRows}
+            currency={currency}
+          />
+        </div>
       }
     />
   );

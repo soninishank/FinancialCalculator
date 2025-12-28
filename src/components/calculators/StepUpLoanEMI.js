@@ -60,7 +60,7 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
         });
 
         return { regular, smart };
-    }, [principal, rate, effectiveTenureYears, stepUpType, stepUpValue, enableRateChange, rateChangeYear, newRate]);
+    }, [principal, rate, tenure, effectiveTenureYears, stepUpType, stepUpValue, enableRateChange, rateChangeYear, newRate]);
 
     const { regular, smart } = results;
 

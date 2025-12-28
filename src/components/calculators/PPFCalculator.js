@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import InputWithSlider from '../common/InputWithSlider';
+import CalculatorLayout from '../common/CalculatorLayout';
+import UnifiedSummary from '../common/UnifiedSummary';
 import MonthYearPicker from '../common/MonthYearPicker';
 import { moneyFormat } from '../../utils/formatting';
 import { computePPF } from '../../utils/finance';
@@ -113,135 +115,81 @@ export default function PPFCalculator({ currency = 'INR' }) {
                 <p className="text-sm text-indigo-700">A safe, government-backed long term investment with tax-free returns.</p>
             </div>
 
-            {/* INPUTS SECTION */}
-            <div className="space-y-6 mt-8">
-                {inputs}
-            </div>
-
-            {/* SUMMARY & PIE CHART - Side by Side */}
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm mt-8 overflow-hidden">
-                <div className="grid grid-cols-1 lg:grid-cols-5 md:divide-x divide-gray-100">
-
-                    {/* LEFT: METRICS (2/5) */}
-                    <div className="lg:col-span-2 flex flex-col divide-y divide-gray-100">
-                        <div className="p-6 text-center">
-                            <p className="text-sm font-semibold text-gray-500 mb-1">Total Investment</p>
-                            <p className="text-3xl font-extrabold text-gray-800">
-                                {moneyFormat(result.totalInvestment, currency)}
+            <CalculatorLayout
+                inputs={inputs}
+                summary={
+                    <UnifiedSummary
+                        invested={result.totalInvestment}
+                        gain={result.totalInterest}
+                        total={result.maturityValue}
+                        currency={currency}
+                        years={years}
+                    />
+                }
+                charts={<FinancialCompoundingBarChart data={result.yearlyData} currency={currency} type="investment" />}
+                pieChart={
+                    <FinancialInvestmentPieChart
+                        invested={result.totalInvestment}
+                        gain={result.totalInterest}
+                        total={result.maturityValue}
+                        currency={currency}
+                        years={`${years} Years`}
+                    />
+                }
+                table={
+                    <div className="mt-8">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
+                            <div className="flex items-center">
+                                <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
+                                <div className="w-48">
+                                    <MonthYearPicker
+                                        value={startDate}
+                                        onChange={setStartDate}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <CollapsibleInvestmentTable
+                            yearlyData={result.yearlyData}
+                            monthlyData={result.monthlyData}
+                            currency={currency}
+                        />
+                    </div>
+                }
+                details={
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                                <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                    Key Features of PPF
+                                </h4>
+                                <ul className="space-y-3">
+                                    <li className="flex gap-3 text-sm text-gray-600">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
+                                        <span><strong>Lock-in Period:</strong> 15 years, extendable in blocks of 5 years indefinitely.</span>
+                                    </li>
+                                    <li className="flex gap-3 text-sm text-gray-600">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
+                                        <span><strong>Tax Benefits (EEE):</strong> Exempt-Exempt-Exempt status.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                                <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                    Extension Rules
+                                </h4>
+                                <p className="text-sm text-gray-600">Continue investing or earn interest without fresh deposits after 15 years.</p>
+                            </div>
+                        </div>
+                        <div className="bg-indigo-50 rounded-xl p-5 border border-indigo-100">
+                            <p className="text-[13px] text-indigo-900 leading-relaxed font-medium">
+                                PPF interest is compounded annually. For maximum benefit, invest before the 5th of each month.
                             </p>
                         </div>
-
-                        <div className="p-6 text-center bg-emerald-50/30">
-                            <p className="text-sm font-semibold text-emerald-900 mb-1">Total Interest</p>
-                            <p className="text-2xl font-bold text-emerald-700 tracking-tight">
-                                {moneyFormat(result.totalInterest, currency)}
-                            </p>
-                        </div>
-
-                        <div className="p-6 text-center bg-indigo-50/30">
-                            <p className="text-sm font-semibold text-indigo-900 mb-1">Maturity Amount</p>
-                            <p className="text-xs text-indigo-600 mb-2 font-medium opacity-80">
-                                After {years} Years
-                            </p>
-                            <p className="text-2xl font-bold text-indigo-700 tracking-tight">
-                                {moneyFormat(result.maturityValue, currency)}
-                            </p>
-                        </div>
                     </div>
-
-                    {/* RIGHT: PIE CHART (3/5) */}
-                    <div className="lg:col-span-3 p-6 flex flex-col justify-center items-center bg-gray-50/30">
-                        <h4 className="text-sm font-bold text-gray-700 mb-4 self-start">Break-up of Maturity Value</h4>
-                        <div className="w-full h-80">
-                            <FinancialInvestmentPieChart
-                                invested={result.totalInvestment}
-                                gain={result.totalInterest}
-                                total={result.maturityValue}
-                                currency={currency}
-                                years={`${years} Years`}
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* BAR CHART */}
-            <div className="mt-8">
-                <FinancialCompoundingBarChart data={result.yearlyData} currency={currency} type="investment" />
-            </div>
-
-            {/* TABLE */}
-            <div className="mt-8">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
-                    <div className="flex items-center">
-                        <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
-                        <div className="w-48">
-                            <MonthYearPicker
-                                value={startDate}
-                                onChange={setStartDate}
-                            />
-                        </div>
-                    </div>
-                </div>
-                <CollapsibleInvestmentTable
-                    yearlyData={result.yearlyData}
-                    monthlyData={result.monthlyData}
-                    currency={currency}
-                />
-            </div>
-
-            {/* PPF DETAILS INFO SECTION */}
-            <div className="mt-12 space-y-6 border-t border-gray-100 pt-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                        <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                            Key Features of PPF
-                        </h4>
-                        <ul className="space-y-3">
-                            <li className="flex gap-3 text-sm text-gray-600">
-                                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
-                                <span><strong>Lock-in Period:</strong> 15 years, extendable in blocks of 5 years indefinitely.</span>
-                            </li>
-                            <li className="flex gap-3 text-sm text-gray-600">
-                                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
-                                <span><strong>Tax Benefits (EEE):</strong> Exempt-Exempt-Exempt status (Tax deduction on investment, interest, and maturity).</span>
-                            </li>
-                            <li className="flex gap-3 text-sm text-gray-600">
-                                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
-                                <span><strong>Investment Limit:</strong> Min ₹500 and Max ₹1.5 Lakhs per financial year.</span>
-                            </li>
-                            <li className="flex gap-3 text-sm text-gray-600">
-                                <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
-                                <span><strong>Withdrawals:</strong> Partial withdrawals allowed from the 7th year onward.</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                        <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                            Extension Rules
-                        </h4>
-                        <ul className="space-y-4">
-                            <li className="text-sm text-gray-600">
-                                <p className="font-semibold text-gray-800">1. Extension with Contribution</p>
-                                <p>Continue investing and earn interest. Must submit Form H within 1 year of maturity.</p>
-                            </li>
-                            <li className="text-sm text-gray-600">
-                                <p className="font-semibold text-gray-800">2. Extension without Contribution</p>
-                                <p>Balance continues to earn interest without new deposits. No fresh investment needed.</p>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div className="bg-indigo-50 rounded-xl p-5 border border-indigo-100">
-                    <p className="text-xs text-indigo-800 font-medium mb-2 uppercase tracking-wider italic font-bold">Important Information</p>
-                    <p className="text-[13px] text-indigo-900 leading-relaxed">
-                        PPF interest is compounded annually and calculated on the minimum balance in the account between the 5th and the last day of every month. For maximum interest benefit, try to invest before the 5th of each month. Current rate of 7.1% is reset by the government every quarter.
-                    </p>
-                </div>
-            </div>
+                }
+            />
         </div>
     );
 }

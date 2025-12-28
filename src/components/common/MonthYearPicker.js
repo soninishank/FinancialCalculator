@@ -91,8 +91,8 @@ export default function MonthYearPicker({ value, onChange }) {
 
                         <input
                             type="range"
-                            min={new Date().getFullYear() - 1}
-                            max={new Date().getFullYear() + 30}
+                            min={new Date().getFullYear() - 100}
+                            max={new Date().getFullYear() + 100}
                             value={selectedYear}
                             onChange={handleYearChange}
                             className="w-full h-2 bg-indigo-100 rounded-lg appearance-none cursor-pointer accent-indigo-600"

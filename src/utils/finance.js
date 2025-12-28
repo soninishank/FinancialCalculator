@@ -7,6 +7,133 @@ export function calcLumpFutureValue(L, r_m, n) {
   return L * Math.pow(1 + r_m, n);
 }
 
+// Precise interest functions
+export function calculateSimpleInterest({ principal, rate, time, timeUnit = 'years', startDate, endDate, scheduleStartDate = new Date().toISOString().slice(0, 7) }) {
+  let t = 0;
+  if (startDate && endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = Math.abs(end - start);
+    t = diffTime / (1000 * 60 * 60 * 24 * 365.25); // years
+  } else {
+    if (timeUnit === 'years') t = Number(time);
+    else if (timeUnit === 'months') t = Number(time) / 12;
+    else if (timeUnit === 'days') t = Number(time) / 365;
+  }
+
+  const P = Number(principal);
+  const R = Number(rate);
+  const interest = (P * R * t) / 100;
+
+  // Generate breakdown data
+  const yearlyData = [];
+  const monthlyData = [];
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const [startYear, startMonth] = scheduleStartDate.split('-').map(Number);
+
+  const totalMonths = Math.min(Math.ceil(t * 12), 1200); // Cap at 100 years for safety
+  if (isNaN(totalMonths) || totalMonths <= 0) return { interest, totalAmount: P + interest, timeInYears: t, yearlyData: [], monthlyData: [] };
+
+  for (let m = 1; m <= totalMonths; m++) {
+    const monthsElapsed = m;
+    const currentT = monthsElapsed / 12;
+    const currentInterest = (P * R * currentT) / 100;
+
+    const actualMonthIndex = (startMonth - 1 + m - 1) % 12;
+    const yearsElapsed = Math.floor((startMonth - 1 + m - 1) / 12);
+    const actualYear = startYear + yearsElapsed;
+
+    monthlyData.push({
+      year: actualYear,
+      month: (actualMonthIndex % 12) + 1,
+      monthName: monthNames[actualMonthIndex],
+      invested: P,
+      interest: currentInterest,
+      balance: P + currentInterest
+    });
+
+    if (actualMonthIndex === 11 || m === totalMonths) {
+      yearlyData.push({
+        year: actualYear,
+        totalInvested: P,
+        growth: currentInterest,
+        balance: P + currentInterest
+      });
+    }
+  }
+
+  return {
+    interest,
+    totalAmount: P + interest,
+    timeInYears: t,
+    yearlyData,
+    monthlyData
+  };
+}
+
+export function calculateCompoundInterest({ principal, rate, time, timeUnit = 'years', frequency = 1, startDate, endDate, scheduleStartDate = new Date().toISOString().slice(0, 7) }) {
+  let t = 0;
+  if (startDate && endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = Math.abs(end - start);
+    t = diffTime / (1000 * 60 * 60 * 24 * 365.25); // years
+  } else {
+    if (timeUnit === 'years') t = Number(time);
+    else if (timeUnit === 'months') t = Number(time) / 12;
+    else if (timeUnit === 'days') t = Number(time) / 365;
+  }
+
+  const P = Number(principal);
+  const r = Number(rate) / 100;
+  const n = Number(frequency);
+  const amount = P * Math.pow(1 + r / n, n * t);
+
+  // Generate breakdown data
+  const yearlyData = [];
+  const monthlyData = [];
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const [startYear, startMonth] = scheduleStartDate.split('-').map(Number);
+
+  const totalMonths = Math.min(Math.ceil(t * 12), 1200); // Cap at 100 years for safety
+  if (isNaN(totalMonths) || totalMonths <= 0) return { interest: amount - P, totalAmount: amount, timeInYears: t, yearlyData: [], monthlyData: [] };
+
+  for (let m = 1; m <= totalMonths; m++) {
+    const currentT = m / 12;
+    const currentAmount = P * Math.pow(1 + r / n, n * currentT);
+
+    const actualMonthIndex = (startMonth - 1 + m - 1) % 12;
+    const yearsElapsed = Math.floor((startMonth - 1 + m - 1) / 12);
+    const actualYear = startYear + yearsElapsed;
+
+    monthlyData.push({
+      year: actualYear,
+      month: (actualMonthIndex % 12) + 1,
+      monthName: monthNames[actualMonthIndex],
+      invested: P,
+      interest: currentAmount - P,
+      balance: currentAmount
+    });
+
+    if (actualMonthIndex === 11 || m === totalMonths) {
+      yearlyData.push({
+        year: actualYear,
+        totalInvested: P,
+        growth: currentAmount - P,
+        balance: currentAmount
+      });
+    }
+  }
+
+  return {
+    interest: amount - P,
+    totalAmount: amount,
+    timeInYears: t,
+    yearlyData,
+    monthlyData
+  };
+}
+
 export function getRequiredSIP(target, annualRate, years) {
   const r_m = annualRate / 12 / 100;
   const n = years * 12;
@@ -428,6 +555,86 @@ export function calculateCAGR(beginningValue, endingValue, years) {
   return cagrDecimal * 100; // Convert to percentage
 }
 
+export function calculateDetailedCAGR({ beginningValue, endingValue, time, timeUnit = 'years', startDate, endDate, scheduleStartDate = new Date().toISOString().slice(0, 7) }) {
+  let t = 0;
+  if (startDate && endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = Math.abs(end - start);
+    t = diffTime / (1000 * 60 * 60 * 24 * 365.25); // years
+  } else {
+    if (timeUnit === 'years') t = Number(time);
+    else if (timeUnit === 'months') t = Number(time) / 12;
+    else if (timeUnit === 'days') t = Number(time) / 365.25;
+  }
+
+  const P = Number(beginningValue);
+  const FV = Number(endingValue);
+
+  if (t === 0 || P === 0) return { cagr: 0, timeInYears: t, yearlyData: [], monthlyData: [] };
+
+  // Handle case where ending value is less than beginning (negative CAGR)
+  let cagr = 0;
+  if (FV > 0) {
+    // Math guard for ultra-short durations to prevent Infinity/NaN
+    if (t < 1 / 365.25) { // Less than 1 day
+      cagr = ((FV / P) - 1) * 100; // Just show absolute return for < 1 day
+    } else {
+      cagr = (Math.pow(FV / P, 1 / t) - 1) * 100;
+      // Cap at a massive but displayable number to prevent scientific notation explosion
+      if (cagr > 1e15) cagr = 1e15;
+    }
+  } else {
+    cagr = -100; // Total loss
+  }
+
+  // Generate breakdown data
+  const yearlyData = [];
+  const monthlyData = [];
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const [startYear, startMonth] = scheduleStartDate.split('-').map(Number);
+
+  const totalMonths = Math.min(Math.ceil(t * 12), 1200); // Cap at 100 years for safety
+  if (isNaN(totalMonths) || totalMonths <= 0) return { cagr, timeInYears: t, yearlyData: [], monthlyData: [] };
+
+  const rate = cagr / 100;
+
+  for (let m = 1; m <= totalMonths; m++) {
+    const monthsElapsed = m;
+    const currentT = monthsElapsed / 12;
+    const currentValue = P * Math.pow(1 + rate, currentT);
+
+    const actualMonthIndex = (startMonth - 1 + m - 1) % 12;
+    const yearsElapsed = Math.floor((startMonth - 1 + m - 1) / 12);
+    const actualYear = startYear + yearsElapsed;
+
+    monthlyData.push({
+      year: actualYear,
+      month: (actualMonthIndex % 12) + 1,
+      monthName: monthNames[actualMonthIndex],
+      invested: P,
+      interest: currentValue - P,
+      balance: currentValue
+    });
+
+    if (actualMonthIndex === 11 || m === totalMonths) {
+      yearlyData.push({
+        year: actualYear,
+        totalInvested: P,
+        growth: currentValue - P,
+        balance: currentValue
+      });
+    }
+  }
+
+  return {
+    cagr,
+    timeInYears: t,
+    yearlyData,
+    monthlyData
+  };
+}
+
 export function computeDualAmortization({
   basePrincipal, baseRate, baseYears,
   topUpPrincipal, topUpRate, topUpYear
@@ -554,97 +761,126 @@ export function computeDualAmortization({
   };
 }
 
+/**
+ * Computes SWP (Systematic Withdrawal Plan) schedule.
+ * Supports date-based tenure.
+ */
 export function computeSWPPlan({
   initialCorpus,
   annualRate,
   years,
+  totalYears = years,
   monthlyWithdrawal,
-  annualWithdrawalIncrease
+  annualWithdrawalIncrease = 0,
+  calculationMode = 'duration',
+  startDate = new Date().toISOString().slice(0, 10),
+  endDate = null
 }) {
   const rows = [];
   const monthlyRows = [];
-  let currentCorpus = initialCorpus;
+  let currentCorpus = Number(initialCorpus);
   let totalWithdrawn = 0;
   let totalInterest = 0;
   let depletionYear = 0;
   let depletionMonth = 0;
-  let currentMonthlyWithdrawal = monthlyWithdrawal;
+  let currentMonthlyWithdrawal = Number(monthlyWithdrawal);
 
-  const monthlyRate = annualRate / 12 / 100;
-  const annualIncreaseFactor = 1 + annualWithdrawalIncrease / 100;
+  const monthlyRate = Number(annualRate) / 12 / 100;
+  const annualIncreaseFactor = 1 + (Number(annualWithdrawalIncrease) || 0) / 100;
 
-  for (let year = 1; year <= years; year++) {
-    const openingBalance = currentCorpus;
+  let effectiveYears = 0;
+  if (calculationMode === 'date' && startDate && endDate) {
+    const s = new Date(startDate);
+    const e = new Date(endDate);
+    const months = (e.getFullYear() - s.getFullYear()) * 12 + (e.getMonth() - s.getMonth());
+    effectiveYears = Math.max(0, months / 12);
+  } else {
+    effectiveYears = Number(totalYears);
+  }
+
+  // Safety caps
+  const MAX_YEARS_SWP = 100;
+  effectiveYears = Math.min(effectiveYears, MAX_YEARS_SWP);
+  const totalMonthsRequested = Math.ceil(effectiveYears * 12);
+
+  const startObj = new Date(startDate);
+  const startMonth = startObj.getMonth();
+  const startYear = startObj.getFullYear();
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  // Process Year by Year
+  const numYearsToLoop = Math.ceil(effectiveYears);
+
+  for (let yearNum = 1; yearNum <= numYearsToLoop; yearNum++) {
+    const openingBalanceYear = currentCorpus;
     let yearlyWithdrawal = 0;
     let yearlyInterest = 0;
     let corpusDepleted = false;
 
-    // Process 12 months for this year
-    for (let month = 1; month <= 12; month++) {
-      const openingBalanceMonth = currentCorpus; // Capture opening balance for the month
+    // Process up to 12 months for this year
+    for (let mInYear = 1; mInYear <= 12; mInYear++) {
+      const globalMonthIdx = (yearNum - 1) * 12 + mInYear;
+      if (globalMonthIdx > totalMonthsRequested) break;
 
-      // Stop if corpus is already depleted
+      const openingBalanceMonth = currentCorpus;
+
       if (currentCorpus <= 0) {
         corpusDepleted = true;
         currentCorpus = 0;
         break;
       }
 
-      // Step 1: Calculate and add monthly interest on current balance FIRST
-      // This is how SWP actually works - corpus grows first, then you withdraw
+      // Step 1: Interest
       const monthlyInterest = currentCorpus * monthlyRate;
       yearlyInterest += monthlyInterest;
       currentCorpus += monthlyInterest;
 
-      // Step 2: Withdraw money (full amount if available)
+      // Step 2: Withdrawal
       const actualWithdrawal = Math.min(currentMonthlyWithdrawal, currentCorpus);
       currentCorpus -= actualWithdrawal;
       yearlyWithdrawal += actualWithdrawal;
 
-      // Track monthly data
+      // Calendar date
+      const currentMonthTotal = startMonth + (globalMonthIdx - 1);
+      const calendarYear = startYear + Math.floor(currentMonthTotal / 12);
+      const calendarMonth = currentMonthTotal % 12;
+
       monthlyRows.push({
-        month: (year - 1) * 12 + month,
-        monthName: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][month - 1],
-        year: year,
+        id: globalMonthIdx,
+        month: calendarMonth + 1,
+        monthName: monthNames[calendarMonth],
+        year: calendarYear,
+        yearNumber: yearNum,
         openingBalance: openingBalanceMonth,
         withdrawal: actualWithdrawal,
         interestEarned: monthlyInterest,
         closingBalance: Math.max(0, currentCorpus),
       });
 
-      // Step 3: Check if corpus depleted this month
       if (currentCorpus <= 0) {
         currentCorpus = 0;
         corpusDepleted = true;
-
-        // Record the year and month of depletion (only once)
         if (depletionYear === 0) {
-          depletionYear = year;
-          depletionMonth = month;
+          depletionYear = calendarYear;
+          depletionMonth = calendarMonth + 1;
         }
         break;
       }
     }
 
-    // Record this year's data
     rows.push({
-      year,
-      openingBalance,
+      year: startYear + yearNum - 1, // Calendar year approx logic
+      yearNumber: yearNum,
+      openingBalance: openingBalanceYear,
       totalWithdrawal: yearlyWithdrawal,
       interestEarned: yearlyInterest,
       closingBalance: Math.max(0, currentCorpus),
     });
 
-    // Update totals
     totalWithdrawn += yearlyWithdrawal;
     totalInterest += yearlyInterest;
 
-    // If corpus depleted, stop processing future years
-    if (corpusDepleted) {
-      break;
-    }
-
-    // Apply annual withdrawal increase for next year
+    if (corpusDepleted) break;
     currentMonthlyWithdrawal *= annualIncreaseFactor;
   }
 
@@ -656,13 +892,13 @@ export function computeSWPPlan({
     totalInterest,
     depletionYear,
     depletionMonth,
-    depletionTotalMonths: depletionYear > 0 ? (depletionYear - 1) * 12 + depletionMonth : 0,
+    depletionTotalMonths: depletionYear > 0 ? (depletionYear - startYear) * 12 + (depletionMonth - startMonth - 1) : 0,
   };
 }
 
 /**
  * Computes yearly schedule for SIP, LumpSum, or both.
- * Merges logic from PureSIP and SIPWithLumpSum.
+ * Supports Step-Up SIP and Date-based tenure.
  */
 export function computeYearlySchedule({
   monthlySIP = 0,
@@ -670,44 +906,94 @@ export function computeYearlySchedule({
   annualRate,
   totalYears,
   sipYears = totalYears,
+  stepUpPercent = 0,
+  calculationMode = 'duration',
+  startDate = new Date().toISOString().slice(0, 10),
+  endDate = null
 }) {
-  const r_m = annualRate / 12 / 100;
-  // Ensure we cover the full duration if fractional years were passed
-  const totalMonths = Math.ceil(totalYears * 12);
-  const sipMonths = Math.ceil(sipYears * 12);
+  const r_m = Number(annualRate) / 12 / 100;
 
-  let balance = lumpSum;
-  let monthlyInvested = 0;
+  let totalMonths = 0;
+  let sipMonths = 0;
+
+  if (calculationMode === 'date' && startDate && endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    totalMonths = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+    // Since we usually treat "end of month" for calculations, if end date is same month as start, it's 0 or 1.
+    // Let's ensure at least 1 month if they are different days? 
+    // Actually, simple month diff is standard for these calculators.
+    totalMonths = Math.max(0, totalMonths);
+    sipMonths = totalMonths; // Default SIP duration to full tenure in date mode
+  } else {
+    totalMonths = Math.ceil(totalYears * 12);
+    sipMonths = Math.ceil(sipYears * 12);
+  }
+
+  // Safety caps
+  const MAX_MONTHS = 1200; // 100 years
+  totalMonths = Math.min(totalMonths, MAX_MONTHS);
+  sipMonths = Math.min(sipMonths, totalMonths);
+
+  let balance = Number(lumpSum);
+  let cumulativeInvested = Number(lumpSum);
+  let sipInvested = 0;
   const rows = [];
+  const monthlyRows = [];
+
+  const startObj = new Date(startDate);
+  const startMonth = startObj.getMonth();
+  const startYear = startObj.getFullYear();
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   for (let m = 1; m <= totalMonths; m++) {
-    // Contribute only if within SIP period
+    const yearIndex = Math.floor((m - 1) / 12);
+    const currentSIP = Number(monthlySIP) * Math.pow(1 + Number(stepUpPercent) / 100, yearIndex);
+
+    const monthInYear = ((m - 1) % 12) + 1;
+
+    // Calendar date
+    const currentMonthTotal = startMonth + (m - 1);
+    const calendarYear = startYear + Math.floor(currentMonthTotal / 12);
+    const calendarMonth = currentMonthTotal % 12;
+
     if (m <= sipMonths) {
-      balance += monthlySIP;
-      monthlyInvested += monthlySIP;
+      balance += currentSIP;
+      cumulativeInvested += currentSIP;
+      sipInvested += currentSIP;
     }
 
-    // Compound interest
     balance = balance * (1 + r_m);
 
-    // Snapshot at year end (every 12 months)
-    if (m % 12 === 0) {
+    monthlyRows.push({
+      id: m,
+      month: calendarMonth + 1,
+      monthInYear,
+      monthName: monthNames[calendarMonth],
+      year: calendarYear,
+      invested: cumulativeInvested,
+      sipInvested: sipInvested,
+      lumpSum: Number(lumpSum),
+      growth: balance - cumulativeInvested,
+      balance: balance
+    });
+
+    if (m % 12 === 0 || m === totalMonths) {
       rows.push({
-        year: m / 12,
-        totalInvested: monthlyInvested + lumpSum,
-        sipInvested: monthlyInvested,
-        lumpSum: lumpSum,
-        growth: balance - (monthlyInvested + lumpSum),
+        year: calendarYear,
+        yearNumber: Math.ceil(m / 12),
+        totalInvested: cumulativeInvested,
+        sipInvested: sipInvested,
+        lumpSum: Number(lumpSum),
+        stepUpAppliedPercent: Number(stepUpPercent),
+        growth: balance - cumulativeInvested,
         overallValue: balance,
+        investment: cumulativeInvested // Alias for some charts
       });
     }
   }
 
-  // Handle partial last year if needed (though usually we stick to full years)
-  // But if totalMonths is not a multiple of 12, we might miss the last chunk.
-  // The existing components relied on years being effective integers or just looping.
-
-  return rows;
+  return { rows, monthlyRows };
 }
 
 /**

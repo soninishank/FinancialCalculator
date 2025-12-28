@@ -29,6 +29,12 @@ export function useCalculatorState(defaults = {}) {
     // Compounding (Experimental/New)
     const [compoundingFrequency, setCompoundingFrequency] = useState(defaults.compoundingFrequency || 12);
 
+    // Date Range Modes (New)
+    const [calculationMode, setCalculationMode] = useState(defaults.calculationMode || 'duration');
+    const [startDate, setStartDate] = useState(defaults.startDate || new Date().toISOString().slice(0, 7));
+    const [endDate, setEndDate] = useState(defaults.endDate || new Date(new Date().setFullYear(new Date().getFullYear() + (defaults.years || 10))).toISOString().slice(0, 10));
+    const [scheduleStartDate, setScheduleStartDate] = useState(defaults.scheduleStartDate || new Date().toISOString().slice(0, 7));
+
     return {
         monthlySIP, setMonthlySIP,
         lumpSum, setLumpSum,
@@ -43,5 +49,9 @@ export function useCalculatorState(defaults = {}) {
         isInflationAdjusted, setIsInflationAdjusted,
         inflationRate, setInflationRate,
         compoundingFrequency, setCompoundingFrequency,
+        calculationMode, setCalculationMode,
+        startDate, setStartDate,
+        endDate, setEndDate,
+        scheduleStartDate, setScheduleStartDate,
     };
 }
