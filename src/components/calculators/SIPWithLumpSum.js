@@ -215,8 +215,6 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
           onChange={handleTotalYearsChange}
           min={MIN_YEARS}
           max={MAX_YEARS}
-          step={0.1}
-          isDecimal={true}
         />
 
         <div className="mt-4 flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
@@ -251,8 +249,6 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
               onChange={setSipYears}
               min={MIN_YEARS}
               max={totalYears}
-              step={0.1}
-              isDecimal={true}
             />
           </div>
         )}

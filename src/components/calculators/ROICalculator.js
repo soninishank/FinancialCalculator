@@ -164,10 +164,9 @@ export default function ROICalculator({ currency }) {
                         label="Investment Period (Years)"
                         value={years}
                         onChange={setYears}
-                        min={0.1}
+                        min={1}
                         max={50}
-                        step={0.1}
-                        isDecimal={true}
+                        step={1}
                     />
                 ) : (
                     <InputWithSlider
