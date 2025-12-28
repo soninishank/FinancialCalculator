@@ -13,6 +13,7 @@ import { useCalculatorState } from "../../hooks/useCalculatorState";
 import { downloadPDF } from "../../utils/export";
 import { calculateRealValue } from "../../utils/finance";
 import { calculateLTCG } from "../../utils/tax";
+import { calculatorDetails } from "../../data/calculatorDetails";
 import {
     DEFAULT_LUMP_SUM,
     DEFAULT_TENURE_YEARS,
@@ -92,6 +93,61 @@ export default function CompoundInterest({ currency, setCurrency }) {
         return rows;
     }, [lumpSum, annualRate, years, compoundingFrequency]);
 
+    const breakdownRows = useMemo(() => {
+        const P = Number(lumpSum);
+        const r = Number(annualRate) / 100;
+        const n = Number(compoundingFrequency);
+        const t_total = Number(years);
+
+        const rows = [];
+        const totalPeriods = Math.floor(t_total * n);
+
+        let labelPrefix = "Year";
+        if (n === 12) labelPrefix = "Month";
+        else if (n === 4) labelPrefix = "Quarter";
+        else if (n === 2) labelPrefix = "Half-Year";
+
+        for (let p = 1; p <= totalPeriods; p++) {
+            const amount = P * Math.pow(1 + r / n, p);
+            rows.push({
+                label: `${labelPrefix} ${p}`,
+                totalInvested: P,
+                lumpSum: P,
+                growth: amount - P,
+                overallValue: amount,
+            });
+        }
+
+        if (t_total * n > totalPeriods) {
+            const amount = P * Math.pow(1 + r / n, n * t_total);
+            rows.push({
+                label: `Final (Partial)`,
+                totalInvested: P,
+                lumpSum: P,
+                growth: amount - P,
+                overallValue: amount,
+            });
+        }
+
+        return rows;
+    }, [lumpSum, annualRate, years, compoundingFrequency]);
+
+    const tableColumns = useMemo(() => {
+        return [
+            { key: 'label', label: 'Period', align: 'left' },
+            { key: 'totalInvested', label: 'Invested', align: 'right', format: 'money' },
+            { key: 'growth', label: 'Growth', align: 'right', format: 'money', color: 'green' },
+            { key: 'overallValue', label: 'Total Value', align: 'right', format: 'money', highlight: true }
+        ];
+    }, []);
+
+    const breakdownTitle = useMemo(() => {
+        if (compoundingFrequency === 12) return "Monthly Breakdown";
+        if (compoundingFrequency === 4) return "Quarterly Breakdown";
+        if (compoundingFrequency === 2) return "Half-Yearly Breakdown";
+        return "Yearly Breakdown";
+    }, [compoundingFrequency]);
+
     const lastRow = yearlyRows[yearlyRows.length - 1] || { totalInvested: 0, overallValue: 0 };
     const investedTotal = lastRow.totalInvested;
     const totalFuture = lastRow.overallValue;
@@ -115,9 +171,9 @@ export default function CompoundInterest({ currency, setCurrency }) {
     }, [totalFuture, inflationRate, years]);
 
     function handleExport() {
-        const header = ["Year", "Total Invested", "Principal", "Interest Earned", "Total Value"];
-        const rows = yearlyRows.map((r) => [
-            `Year ${r.year}`, Math.round(r.totalInvested), Math.round(r.lumpSum), Math.round(r.growth), Math.round(r.overallValue),
+        const header = ["Period", "Total Invested", "Principal", "Interest Earned", "Total Value"];
+        const rows = breakdownRows.map((r) => [
+            r.label, Math.round(r.totalInvested), Math.round(r.lumpSum), Math.round(r.growth), Math.round(r.overallValue),
         ]);
         downloadPDF(rows, header, "compound_interest_report.pdf");
     }
@@ -248,8 +304,15 @@ export default function CompoundInterest({ currency, setCurrency }) {
                 />
             }
             table={
-                <ResultsTable data={yearlyRows} currency={currency} onExport={handleExport} />
+                <ResultsTable
+                    data={breakdownRows}
+                    currency={currency}
+                    onExport={handleExport}
+                    columns={tableColumns}
+                    title={breakdownTitle}
+                />
             }
+            details={calculatorDetails.compoundInterest.render()}
         />
     );
 }

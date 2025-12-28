@@ -5,6 +5,7 @@ import {
   getLTCGExemption,
 } from "../../utils/tax";
 import { moneyFormat } from "../../utils/formatting";
+import FormattedInput from "./FormattedInput";
 
 // Convert decimal max (0.30) to percent for UI (30)
 const MAX_LTCG_PERCENT = Math.round(MAX_LTCG_TAX_RATE_DECIMAL * 100);
@@ -233,17 +234,12 @@ export default function TaxToggle({
               <>
                 <div className="mt-2 flex items-center gap-2 ml-6">
                   <span className="text-xs text-gray-500">Exemption Limit</span>
-                  <input
-                    type="number"
-                    min={0}
-                    max={currencyExemptionMax}
-                    step={1000}
+                  <FormattedInput
                     value={exemptionLimit}
-                    onChange={(e) => handleExemptionChange(e.target.value)}
-                    onBlur={handleExemptionBlur}
-                    aria-invalid={!!exemptionError}
-                    aria-describedby={exemptionError ? "exemption-error" : undefined}
-                    className={`w-32 px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-teal-500 ${exemptionError ? "border-rose-300 bg-rose-50" : "border-gray-300"
+                    onChange={handleExemptionChange}
+                    max={currencyExemptionMax}
+                    currency={currency}
+                    className={`w-36 px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-teal-500 ${exemptionError ? "border-rose-300 bg-rose-50" : "border-gray-300"
                       }`}
                   />
                 </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import { moneyFormat } from "../../utils/formatting"; // Ensure path is correct
 
-export default function ResultsTable({ data, currency, onExport, columns }) {
+export default function ResultsTable({ data, currency, onExport, columns, title }) {
   if (!data || data.length === 0) return null;
 
 
@@ -19,7 +19,7 @@ export default function ResultsTable({ data, currency, onExport, columns }) {
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col h-full overflow-hidden">
       {/* Header with Export Button */}
       <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-        <h3 className="font-semibold text-gray-700">Yearly Breakdown</h3>
+        <h3 className="font-semibold text-gray-700">{title || "Yearly Breakdown"}</h3>
         <button
           onClick={onExport}
           className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-2"

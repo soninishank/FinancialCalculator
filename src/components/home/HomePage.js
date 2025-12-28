@@ -1,19 +1,22 @@
 // src/components/home/HomePage.js
 import React, { useMemo, useState } from 'react';
+import Fuse from 'fuse.js';
 import { Link } from 'react-router-dom';
 import calculators from '../../utils/calculatorsManifest';
 
 export default function HomePage() {
   const [q, setQ] = useState('');
+  const fuse = useMemo(() => new Fuse(calculators, {
+    keys: ['title', 'keywords', 'description'],
+    threshold: 0.4,
+    distance: 100
+  }), []);
+
   const list = useMemo(() => {
-    const term = q.trim().toLowerCase();
+    const term = q.trim();
     if (!term) return calculators;
-    return calculators.filter(c =>
-      c.title.toLowerCase().includes(term) ||
-      c.description.toLowerCase().includes(term) ||
-      (c.keywords || '').toLowerCase().includes(term)
-    );
-  }, [q]);
+    return fuse.search(term).map(result => result.item);
+  }, [q, fuse]);
 
   return (
     <div>

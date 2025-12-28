@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { calculatorDetails } from '../../data/calculatorDetails';
 import CalculatorLayout from './CalculatorLayout';
 import InputWithSlider from '../common/InputWithSlider';
 import { moneyFormat } from '../../utils/formatting';
@@ -118,40 +119,10 @@ export default function RuleOf72({ currency }) {
     };
 
     // --- DETAILS ---
-    const details = (
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding the Rule of 72</h3>
-            <div className="prose prose-teal max-w-none text-gray-600">
-                <p className="mb-4">
-                    The <strong>Rule of 72</strong> is a simple, mental math shortcut to estimate the number of years required to double your investment at a given annual fixed interest rate.
-                </p>
-
-                <div className="bg-teal-50 p-4 rounded-xl border border-teal-100 my-4">
-                    <p className="font-semibold text-teal-800 text-center text-lg">
-                        Years to Double ≈ 72 ÷ Interest Rate
-                    </p>
-                </div>
-
-                <p className="mb-4">
-                    For example, with an annual return of <strong>{rate}%</strong>:
-                </p>
-                <ul className="list-disc pl-5 space-y-2 mb-4">
-                    <li>
-                        The calculation is <strong>72 ÷ {rate}</strong>.
-                    </li>
-                    <li>
-                        This gives approximately <strong>{result.years.toFixed(1)} years</strong> to double your money.
-                    </li>
-                    <li>
-                        While the Rule of 72 is an approximation, the actual time (calculated using precise logarithmic formulas) is very close to this estimate for typical interest rates (between 6% and 10%).
-                    </li>
-                </ul>
-                <p>
-                    This rule applies to any investment with compound interest, helping investors quickly gauge the potential growth of their portfolio without complex calculations.
-                </p>
-            </div>
-        </div>
-    );
+    const details = calculatorDetails.ruleOf72.render({
+        rate,
+        yearsToDouble: result.years.toFixed(1)
+    });
 
     const tableColumns = [
         { key: 'year', label: 'Year', align: 'left' },

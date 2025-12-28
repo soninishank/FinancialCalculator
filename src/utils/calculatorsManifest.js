@@ -31,7 +31,7 @@ const calculators = [
   {
     slug: 'compound-interest',
     title: 'Compound Interest Calculator',
-    description: 'Calculate the growth of your investments with compounding at different frequencies (monthly, quarterly, yearly).',
+    description: 'Maximize your wealth potential. Analyze how different compounding frequencies—monthly, quarterly, or yearly—accelerate your investment growth over time.',
     keywords: 'compound interest calculator, compounding, investment growth, monthly compounding',
     category: 'Math',
     component: 'CompoundInterest'
@@ -71,8 +71,8 @@ const calculators = [
   {
     slug: 'goal-planner',
     title: 'Goal Planner',
-    description: 'Plan financial goals (education, retirement, house) by estimating required monthly savings or lump sum to reach targets.',
-    keywords: 'goal planner, financial goals, savings plan, target planning',
+    description: 'Define your dreams—home, education, or wedding. Calculate exactly how much you need to save monthly or as a lump sum to achieve them.',
+    keywords: 'goal planner, target amount calculator, future value goal, education planning, retirement goal, house savings, financial freedom',
     category: 'Planner',
     component: 'GoalPlanner'
 
