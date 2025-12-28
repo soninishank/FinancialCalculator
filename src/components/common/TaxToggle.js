@@ -76,12 +76,7 @@ export default function TaxToggle({
     onExemptionLimitChange(Math.max(-999999999, Math.round(n)));
   };
 
-  const handleExemptionBlur = () => {
-    let v = Number(exemptionLimit) || 0;
-    if (v < 0) v = 0;
-    if (v > currencyExemptionMax) v = currencyExemptionMax;
-    onExemptionLimitChange(v);
-  };
+
 
   // Only show the currency max hint when the user has exceeded the max.
   const showCurrencyMaxHint = exemptionNum !== null && exemptionNum > currencyExemptionMax;

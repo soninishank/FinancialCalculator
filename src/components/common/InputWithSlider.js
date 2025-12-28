@@ -40,6 +40,7 @@ export default function InputWithSlider({
   currency,
   symbol,
   isDecimal = false,
+  rightElement = null,
 }) {
 
   const currencyPrefix = getDisplayPrefix(currency);
@@ -65,12 +66,16 @@ export default function InputWithSlider({
       {/* Label and Badge Container */}
       <div className="flex justify-between items-end mb-1">
         <label className="text-sm font-medium text-gray-700">{label}</label>
-        <span className="text-xs font-semibold text-teal-600 bg-teal-50 px-2 py-1 rounded">
-          {currency
-            ? moneyFormat(sliderValue, currency, true) // Use compact format (e.g., ₹5.49L)
-            : `${sliderValue.toLocaleString('en-IN')}${symbol === "%" ? "%" : ""}` // Fallback for non-currency (e.g., %)
-          }
-        </span>
+        {rightElement ? (
+          rightElement
+        ) : (
+          <span className="text-xs font-semibold text-teal-600 bg-teal-50 px-2 py-1 rounded">
+            {currency
+              ? moneyFormat(sliderValue, currency, true) // Use compact format (e.g., ₹5.49L)
+              : `${sliderValue.toLocaleString('en-IN')}${symbol === "%" ? "%" : ""}` // Fallback for non-currency (e.g., %)
+            }
+          </span>
+        )}
       </div>
 
       {/* Input Box Container */}

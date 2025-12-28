@@ -16,6 +16,7 @@ const importBySlug = (slug) => {
     case 'goal-planner': return import('../components/calculators/GoalPlanner');
     case 'loan-emi': return import('../components/calculators/LoanEMI');
     case 'cagr-calculator': return import('../components/calculators/CAGRCalculator');
+    case 'compare-loans': return import('../components/calculators/CompareLoans');
     case 'topup-loan-emi': return import('../components/calculators/TopUpLoanEMI');
     case 'swp-calculator': return import('../components/calculators/SWPCalculator');
     // FIRE Calculators

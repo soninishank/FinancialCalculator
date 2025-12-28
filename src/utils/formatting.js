@@ -8,7 +8,7 @@ export function moneyFormat(x, currency = "INR", compact = false) {
     GBP: "en-GB",
   };
 
-  const locale = localeMap[currency] || "en-US";
+  const locale = (currency === 'INR') ? 'en-IN' : (localeMap[currency] || "en-US");
   const num = Number(x);
   if (isNaN(num)) return "0";
 

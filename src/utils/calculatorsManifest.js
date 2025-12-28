@@ -46,11 +46,35 @@ const calculators = [
   },
   {
     slug: 'loan-emi',
-    title: 'Loan EMI Calculator',
-    description: 'Compute EMI, total interest and amortization schedule for loans given principal, rate and tenure.',
-    keywords: 'loan emi calculator, emi schedule, amortization, loan interest',
+    title: 'All-in-One Loan Calculator',
+    description: 'The ultimate loan tool. Calculate EMI, Maximum Loan Amount, Tenure, or Interest Rate. Features include Amortization Schedule, reverse calculations, and PDF reports.',
+    keywords: 'loan calculator, loan emi, loan tenure, interest rate calculator, loan amount',
     category: 'Loan',
     component: 'LoanEMI'
+  },
+  {
+    slug: 'compare-loans',
+    title: 'Compare Loans (Flat vs Reducing)',
+    description: 'Compare Flat Interest Rate vs Reducing Balance Rate to find the true cost of your loan.',
+    keywords: 'loan comparison, flat rate, reducing balance, effective interest rate',
+    category: 'Loan',
+    component: 'CompareLoans'
+  },
+  {
+    slug: 'advanced-home-loan',
+    title: 'Home Loan with Prepayments & Taxes',
+    description: 'The most detailed Home Loan planner. Factor in Home Value, Down Payment, Loan Insurance, Property Taxes, and multiple Prepayment strategies.',
+    keywords: 'home loan prepayment, mortgage calculator, property tax calculator, loan insurance, home loan planning',
+    category: 'Loan',
+    component: 'AdvancedHomeLoanEMI'
+  },
+  {
+    slug: 'advanced-home-loan',
+    title: 'Home Loan with Prepayments & Taxes',
+    description: 'The most detailed Home Loan planner. Factor in Home Value, Down Payment, Loan Insurance, Property Taxes, and multiple Prepayment strategies.',
+    keywords: 'home loan prepayment, mortgage calculator, property tax calculator, loan insurance, home loan planning',
+    category: 'Loan',
+    component: 'AdvancedHomeLoanEMI'
   },
   {
     slug: 'cagr-calculator',

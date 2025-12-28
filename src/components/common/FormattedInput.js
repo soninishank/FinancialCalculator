@@ -9,12 +9,34 @@ export default function FormattedInput({ value, onChange, currency, className, m
   const limit = max ? Math.floor(Number(max)) : GLOBAL_SAFE_MAX;
 
 
-  const getLocale = (curr) => { /* ... */ };
+  const getLocale = (curr) => {
+    switch (curr) {
+      case "INR": return "en-IN";
+      case "USD": return "en-US";
+      case "EUR": return "en-IE";
+      case "GBP": return "en-GB";
+      default: return "en-US";
+    }
+  };
   const locale = getLocale(currency);
 
-  const displayValue = value !== undefined && value !== null
-    ? isDecimal ? currentValue : Number(currentValue).toLocaleString(locale, { maximumFractionDigits: 0 })
-    : "";
+  // Format the value for display
+  let displayValue = "";
+  if (value !== undefined && value !== null) {
+    if (isDecimal) {
+      // Split into integer and decimal parts
+      const parts = currentValue.split('.');
+      const integerPart = parts[0];
+      const decimalPart = parts.length > 1 ? '.' + parts[1] : '';
+
+      // Format integer part ONLY if it's a valid number
+      const formattedInteger = integerPart ? Number(integerPart).toLocaleString(locale, { maximumFractionDigits: 0 }) : '';
+
+      displayValue = formattedInteger + decimalPart;
+    } else {
+      displayValue = Number(currentValue).toLocaleString(locale, { maximumFractionDigits: 0 });
+    }
+  }
 
   // 4. Handle Input (The Core Logic with Validation)
   const handleChange = (e) => {

@@ -455,3 +455,104 @@ export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, y
         </div>
     );
 };
+
+export const FinancialLoanPieChart = ({ principal, totalInterest, fees = 0, currency, years }) => {
+    const [hoveredData, setHoveredData] = React.useState(null);
+    const chartRef = React.useRef(null);
+
+    // --- COLORS (Modern "Beautiful" Palette) ---
+    const COLOR_PRINCIPAL = "#6366f1"; // Indigo-500
+    const COLOR_INTEREST = "#2dd4bf";  // Teal-400
+    const COLOR_FEES = "#fb7185";      // Rose-400
+
+    const HOVER_PRINCIPAL = "#4f46e5";
+    const HOVER_INTEREST = "#14b8a6";
+    const HOVER_FEES = "#f43f5e";
+
+    const totalAmount = principal + totalInterest + fees;
+
+    // Labels corresponding to data
+    const labels = ["Principal", "Interest", "Fees & Charges"];
+    const datasetData = [principal, totalInterest, fees];
+    const bgColors = [COLOR_PRINCIPAL, COLOR_INTEREST, COLOR_FEES];
+    const hoverColors = [HOVER_PRINCIPAL, HOVER_INTEREST, HOVER_FEES];
+
+    // Filter out zero values so they don't take up space or show in legend
+    const validIndices = datasetData.map((val, idx) => val > 0 ? idx : -1).filter(idx => idx !== -1);
+
+    const finalLabels = validIndices.map(idx => labels[idx]);
+    const finalData = validIndices.map(idx => datasetData[idx]);
+    const finalBgColors = validIndices.map(idx => bgColors[idx]);
+    const finalHoverColors = validIndices.map(idx => hoverColors[idx]);
+
+    const data = {
+        labels: finalLabels,
+        datasets: [
+            {
+                data: finalData,
+                backgroundColor: finalBgColors,
+                hoverBackgroundColor: finalHoverColors,
+                borderWidth: 2,
+                borderColor: '#ffffff',
+                hoverOffset: 10,
+                cutout: "0%", // PIE CHART in screenshot, not Doughnut
+            },
+        ],
+    };
+
+    const options = {
+        layout: { padding: 20 },
+        plugins: {
+            legend: { display: false },
+            tooltip: { enabled: false },
+        },
+        maintainAspectRatio: false,
+        animation: { animateScale: true, animateRotate: true },
+        onHover: (event, chartElement) => {
+            if (chartElement.length > 0) {
+                const index = chartElement[0].index;
+                setHoveredData({
+                    label: data.labels[index],
+                    value: data.datasets[0].data[index],
+                    color: data.datasets[0].backgroundColor[index],
+                });
+            } else {
+                setHoveredData(null);
+            }
+        },
+    };
+
+    return (
+        <div className="flex flex-col items-center justify-center h-full w-full">
+            <div className="relative h-64 w-64 mb-4">
+                {/* Switch to Pie for screenshot match, or keep Doughnut? Screenshot looks like Pie but with a slice out. 
+                   Actually screenshot shows it is a Pie Chart (full circle filled). I set cutout to 0%. */}
+                <Pie ref={chartRef} data={data} options={options} />
+
+                {/* DYNAMIC CENTER OVERLAY (For Pie, put it on top/side or just tooltip) 
+                    Since it's a full Pie, center text doesn't work well. 
+                    I'll show the hovered value as a floating label or just rely on the Legend updates below.
+                */}
+            </div>
+
+            {/* LEGEND SECTION - Match Screenshot Layout */}
+            <div className="flex flex-wrap justify-center gap-4 bg-gray-100 p-2 rounded-lg w-full">
+                {validIndices.map((originalIdx) => (
+                    <div key={originalIdx} className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: bgColors[originalIdx] }}></div>
+                        <span className="text-xs font-bold text-gray-700">{labels[originalIdx]}</span>
+                    </div>
+                ))}
+            </div>
+
+            {/* Hover Detail */}
+            <div className="h-6 mt-2 text-center">
+                {hoveredData && (
+                    <p className="text-sm font-semibold text-gray-800">
+                        {hoveredData.label}: {moneyFormat(hoveredData.value, currency)}
+                    </p>
+                )}
+            </div>
+        </div>
+    );
+};

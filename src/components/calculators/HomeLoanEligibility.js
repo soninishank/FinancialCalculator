@@ -130,7 +130,7 @@ export default function HomeLoanEligibility({ currency, setCurrency }) {
     const inputsSection = (
         <>
             <InputWithSlider
-                label="Monthly Take-Home Salary"
+                label="Monthly Salary"
                 value={salary}
                 onChange={setSalary}
                 min={10000} max={1000000} step={5000}

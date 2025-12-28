@@ -2,6 +2,7 @@
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import manifest from "../utils/calculatorsManifest";
+import CalculatorAdvisor from "../components/home/CalculatorAdvisor";
 
 export default function CalculatorsList() {
   const [q, setQ] = useState("");
@@ -55,6 +56,11 @@ export default function CalculatorsList() {
             ))}
           </div>
         )}
+      </section>
+
+      {/* Advisor Footer */}
+      <section className="mt-12 pt-8 border-t border-gray-100">
+        <CalculatorAdvisor />
       </section>
     </div>
   );

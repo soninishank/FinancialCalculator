@@ -3,10 +3,12 @@ import React, { useMemo, useState } from "react";
 
 // --- IMPORTS ---
 import InputWithSlider from "../common/InputWithSlider";
-import AmortizationTableWrapper from "../common/AmortizationTableWrapper";
-import { FinancialCompoundingBarChart } from "../common/FinancialCharts";
+import CollapsibleAmortizationTable from "../common/CollapsibleAmortizationTable";
+import { FinancialCompoundingBarChart, FinancialLoanPieChart } from "../common/FinancialCharts";
 import { moneyFormat } from "../../utils/formatting";
 import { computeDualAmortization } from "../../utils/finance";
+import { calculatorDetails } from "../../data/calculatorDetails";
+import { downloadPDF } from "../../utils/export";
 
 import {
   DEFAULT_LOAN_PRINCIPAL,
@@ -18,7 +20,9 @@ import {
   MAX_RATE,
   MAX_YEARS,
   MIN_LOAN,
-  STEP_LARGE
+  STEP_LARGE,
+  MAX_PROCESSING_FEE_PERCENT,
+  STEP_PROCESSING_FEE_PERCENT
 } from "../../utils/constants";
 
 export default function TopUpLoanEMI({ currency }) {
@@ -32,8 +36,10 @@ export default function TopUpLoanEMI({ currency }) {
   const [topUpRate, setTopUpRate] = useState(9); // 9% Top Up Rate
   const [topUpYear, setTopUpYear] = useState(5); // Top Up taken in Year 5
 
+  const [topUpFeePercent, setTopUpFeePercent] = useState(0);
+
   // --- CALCULATIONS ---
-  const { rows: yearlyRows, finalTotalInterest, finalTotalPaid, monthlyEMI } = useMemo(
+  const { rows: yearlyRows, monthlyRows, finalTotalInterest, finalTotalPaid, monthlyEMI } = useMemo(
     () =>
       computeDualAmortization({
         basePrincipal,
@@ -46,54 +52,28 @@ export default function TopUpLoanEMI({ currency }) {
     [basePrincipal, baseRate, baseYears, topUpPrincipal, topUpRate, topUpYear]
   );
 
+  const topUpFeeAmount = topUpPrincipal * (topUpFeePercent / 100);
+
   const handleExport = () => {
-    window.print();
+    // Default to monthly export
+    const isMonthly = true;
+    const dataToExport = isMonthly ? monthlyRows : yearlyRows;
+    const filename = isMonthly ? "topup_loan_amortization_monthly.pdf" : "topup_loan_amortization_yearly.pdf";
+    const periodLabel = isMonthly ? "Month" : "Year";
+
+    const headers = [periodLabel, "Opening Balance", "Principal Paid", "Interest Paid", "Closing Balance"];
+
+    const data = dataToExport.map((r) => [
+      isMonthly ? `Month ${r.month} (Yr ${r.year})` : `Year ${r.year}`,
+      Math.round(r.openingBalance),
+      Math.round(r.principalPaid),
+      Math.round(r.interestPaid),
+      Math.round(r.closingBalance),
+    ]);
+    downloadPDF(data, headers, filename);
   };
 
-  // --- RENDER FUNCTION for AmortizationTableWrapper ---
-  const renderAmortizationTableContent = () => (
-    <>
-      <thead className="bg-white sticky top-0 z-10 shadow-sm">
-        <tr>
-          <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-100">Year</th>
-          <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-100 text-right">Opening Balance</th>
-          <th className="py-3 px-4 text-xs font-semibold text-emerald-600 uppercase tracking-wider bg-emerald-50/50 border-b border-emerald-100 text-right">Principal Paid</th>
-          <th className="py-3 px-4 text-xs font-semibold text-rose-600 uppercase tracking-wider bg-rose-50/50 border-b border-rose-100 text-right">Interest Paid</th>
-          <th className="py-3 px-4 text-xs font-semibold text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-100 text-right">Closing Balance</th>
-        </tr>
-      </thead>
-      <tbody className="text-sm divide-y divide-gray-100">
-        {yearlyRows.length === 0 ? (
-          <tr className="text-center text-gray-500">
-            <td colSpan="5" className="py-4">No data available</td>
-          </tr>
-        ) : (
-          yearlyRows.map((row, idx) => (
-            <tr key={idx} className="hover:bg-gray-50 transition-colors">
-              <td className="py-3 px-4 font-medium text-gray-700">
-                Year {row.year}
-                {row.year === topUpYear && (
-                  <span className="ml-2 text-xs bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full">Top-Up</span>
-                )}
-              </td>
-              <td className="py-3 px-4 text-right text-gray-600">
-                {moneyFormat(Math.round(row.openingBalance), currency)}
-              </td>
-              <td className="py-3 px-4 text-right font-semibold text-emerald-600">
-                {moneyFormat(Math.round(row.principalPaid), currency)}
-              </td>
-              <td className="py-3 px-4 text-right font-semibold text-rose-600">
-                {moneyFormat(Math.round(row.interestPaid), currency)}
-              </td>
-              <td className="py-3 px-4 text-right font-medium text-gray-700">
-                {moneyFormat(Math.round(row.closingBalance), currency)}
-              </td>
-            </tr>
-          ))
-        )}
-      </tbody>
-    </>
-  );
+  // renderAmortizationTableContent removed
 
   // FIX: Clamp topUpYear if baseYears reduces below it
   const handleBaseYearsChange = (newVal) => {
@@ -149,6 +129,14 @@ export default function TopUpLoanEMI({ currency }) {
             value={topUpRate} onChange={setTopUpRate}
             min={MIN_RATE} max={MAX_RATE} symbol="%" isDecimal={true}
           />
+          <InputWithSlider
+            label="Top-Up Processing Fee (%)"
+            value={topUpFeePercent} onChange={setTopUpFeePercent}
+            min={0} max={MAX_PROCESSING_FEE_PERCENT} step={STEP_PROCESSING_FEE_PERCENT} symbol="%" isDecimal={true}
+          />
+          <p className="text-xs text-right text-gray-500 mt-1">
+            <span className="font-medium">Fee Amount:</span> <span className="font-bold text-gray-700">{moneyFormat(topUpFeeAmount, currency)}</span>
+          </p>
         </div>
       </div>
 
@@ -179,18 +167,47 @@ export default function TopUpLoanEMI({ currency }) {
         </div>
       </div>
 
-      {/* LOAN AMORTIZATION BAR CHART */}
-      <FinancialCompoundingBarChart data={yearlyRows} currency={currency} type="loan" />
+      {/* CHARTS SECTION */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
+        {/* PIE CHART */}
+        <div className="lg:col-span-1 h-full">
+          <FinancialLoanPieChart
+            principal={basePrincipal + topUpPrincipal}
+            totalInterest={finalTotalInterest}
+            currency={currency}
+            years={Math.max(baseYears, 0)} // Just a label
+          />
+        </div>
+
+        {/* BAR CHART */}
+        <div className="lg:col-span-2">
+          <FinancialCompoundingBarChart data={yearlyRows} currency={currency} type="loan" />
+        </div>
+      </div>
 
       {/* AMORTIZATION TABLE */}
       <div className="mt-12">
-        <AmortizationTableWrapper
-          title="Amortization Schedule (Yearly)"
-          renderTableContent={renderAmortizationTableContent}
-          onExport={handleExport}
-          rowCount={yearlyRows.length}
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-bold text-gray-800">Amortization Schedule</h3>
+          <button
+            onClick={handleExport}
+            className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors"
+          >
+            Export PDF
+          </button>
+        </div>
+        <CollapsibleAmortizationTable
+          yearlyData={yearlyRows}
+          monthlyData={monthlyRows}
+          currency={currency}
         />
       </div>
+
+      {/* EXPLANATORY DETAILS */}
+      <div className="mt-12">
+        {calculatorDetails.topUpLoan.render()}
+      </div>
+
     </div>
   );
 }

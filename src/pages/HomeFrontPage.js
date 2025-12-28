@@ -1,7 +1,9 @@
 // src/pages/HomeFrontPage.js
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+
 import HomeIpoSection from "../components/ipo/HomeIpoSection";
+
 
 export default function HomeFrontPage() {
   return (
@@ -27,6 +29,8 @@ export default function HomeFrontPage() {
           </div>
         </div>
       </section>
+
+
 
       {/* -------- FEATURE BLOCKS -------- */}
       <section className="max-w-6xl mx-auto px-4 py-12">

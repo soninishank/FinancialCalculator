@@ -53,46 +53,98 @@ export function calculateRealRate(nominalRate, inflationRate) {
 }
 
 
-export function computeLoanAmortization({ principal, annualRate, years, emi }) {
+export function computeLoanAmortization({ principal, annualRate, years, emi, startDate }) {
   const R_m = annualRate / 12 / 100;
   const N = years * 12;
 
   let balance = principal;
-  const rows = [];
-  let totalInterestPaid = 0;
-  let totalPrincipalPaid = 0;
 
-  for (let m = 1; m <= N; m++) {
+  // Start Date Logic
+  const start = startDate ? new Date(startDate) : new Date();
+  const startMonth = start.getMonth(); // 0-based
+  const startYear = start.getFullYear();
+
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  // 1. Generate ALL Monthly Rows first
+  const allMonthlyRows = [];
+
+  // SAFETY LIMIT: Cap at 100 years (1200 months) to prevent browser freeze on near-infinite loans
+  const MAX_MONTHS = 1200;
+  const loopLimit = Math.min(N, MAX_MONTHS);
+
+  for (let m = 1; m <= loopLimit; m++) {
     const interestPaidThisMonth = balance * R_m;
     const principalPaidThisMonth = emi - interestPaidThisMonth;
+
+    // CRITICAL SAFETY CHECK: Negative Amortization
+    // If interest is more than EMI, balance will grow. Stop immediately.
+    if (principalPaidThisMonth < 0) {
+      // We can't validly compute a schedule where debt increases forever.
+      // Return empty/sanitized data to prevent UI explosion.
+      return {
+        rows: [],
+        monthlyRows: [],
+        finalTotalInterest: 0,
+        finalTotalPaid: 0,
+        error: "Negative Amortization: EMI is too small to cover Interest."
+      };
+    }
+
     balance -= principalPaidThisMonth;
 
-    totalInterestPaid += interestPaidThisMonth;
-    totalPrincipalPaid += principalPaidThisMonth;
+    const currentBalance = Math.max(0, balance);
 
-    if (m % 12 === 0) {
-      rows.push({
-        year: m / 12,
-        openingBalance: principal, // Constant for summary table clarity
-        principalPaid: totalPrincipalPaid,
-        interestPaid: totalInterestPaid,
-        closingBalance: Math.max(0, balance), // Ensure balance doesn't go negative due to rounding
-      });
+    // Calculate Calendar Date
+    // Month index from start: (startMonth + m - 1)
+    const currentMonthIndex = startMonth + (m - 1);
+    const calendarYear = startYear + Math.floor(currentMonthIndex / 12);
+    const calendarMonth = currentMonthIndex % 12; // 0-11
 
-      // Reset yearly totals for next year's row creation (optional, but cleaner for a yearly summary)
-      totalInterestPaid = 0;
-      totalPrincipalPaid = 0;
-    }
+    allMonthlyRows.push({
+      id: m, // Logical month index (1, 2, 3...)
+      month: calendarMonth + 1, // Calendar month number (1-12)
+      monthName: monthNames[calendarMonth],
+      year: calendarYear,
+      openingBalance: balance + principalPaidThisMonth,
+      principalPaid: principalPaidThisMonth,
+      interestPaid: interestPaidThisMonth,
+      closingBalance: currentBalance,
+      totalPaidPercent: ((principal - currentBalance) / principal) * 100,
+    });
   }
 
-  // The last entry needs to be created even if it's not exactly month 12, but since we are computing full years, the logic above is fine.
-  // The 'total' logic below is what matters most for the summary.
+  // 2. Aggregate into Yearly Rows (Calendar Years)
+  const rows = [];
+  const yearsSet = new Set(allMonthlyRows.map(r => r.year));
+  const sortedYears = Array.from(yearsSet).sort((a, b) => a - b);
 
-  // NOTE: For the final summary, we'll need to re-run the loop for total amounts
+  sortedYears.forEach(year => {
+    const monthsInYear = allMonthlyRows.filter(r => r.year === year);
+
+    const yearPrincipalPaid = monthsInYear.reduce((sum, r) => sum + r.principalPaid, 0);
+    const yearInterestPaid = monthsInYear.reduce((sum, r) => sum + r.interestPaid, 0);
+
+    // Opening balance of the FIRST month in this year
+    const yearOpeningBalance = monthsInYear[0].openingBalance;
+    // Closing balance of the LAST month in this year
+    const yearClosingBalance = monthsInYear[monthsInYear.length - 1].closingBalance;
+    const yearTotalPaidPercent = monthsInYear[monthsInYear.length - 1].totalPaidPercent;
+
+    rows.push({
+      year: year,
+      openingBalance: yearOpeningBalance,
+      principalPaid: yearPrincipalPaid,
+      interestPaid: yearInterestPaid,
+      closingBalance: yearClosingBalance,
+      totalPaidPercent: yearTotalPaidPercent
+    });
+  });
+
   let finalTotalInterest = (emi * N) - principal;
   let finalTotalPaid = emi * N;
 
-  return { rows, finalTotalInterest: finalTotalInterest, finalTotalPaid: finalTotalPaid };
+  return { rows, monthlyRows: allMonthlyRows, finalTotalInterest, finalTotalPaid };
 }
 
 // Helper function (make sure this exists in your utils/finance.js)
@@ -100,6 +152,267 @@ export function calculateEMI(principal, monthlyRate, months) {
   if (monthlyRate === 0) return principal / months;
   return (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) /
     (Math.pow(1 + monthlyRate, months) - 1);
+}
+
+/**
+ * Advanced Amortization with Prepayments and Expenses.
+ */
+export function computeAdvancedLoanAmortization({
+  principal,
+  annualRate,
+  years,
+  startDate,
+  // Prepayments
+  monthlyExtra = 0,
+  quarterlyExtra = 0,
+  yearlyExtra = 0,
+  oneTimePrepayments = [], // Current unused but ready for extension: Array of { date: 'YYYY-MM', amount: 10000 }
+  // Expenses
+  propertyTaxYearly = 0, // Amount
+  homeInsuranceYearly = 0, // Amount
+  maintenanceMonthly = 0 // Amount
+}) {
+  const R_m = annualRate / 12 / 100;
+  let N = years * 12; // Initial tenure estimate
+
+  // We calculate the Base EMI once based on original tenure
+  const baseEMI = calculateEMI(principal, R_m, N);
+
+  let balance = principal;
+  const start = startDate ? new Date(startDate) : new Date();
+  const startMonth = start.getMonth();
+  const startYear = start.getFullYear();
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  const allMonthlyRows = [];
+
+  let totalInterest = 0;
+  let totalPrincipal = 0;
+  let totalPrepayments = 0;
+  let totalTaxes = 0;
+  let totalInsurance = 0;
+  let totalMaintenance = 0;
+
+  let processingMonth = 1;
+
+  // Loop until balance is cleared or we hit a safety limit (e.g. 50 years)
+  // We don't use fixed N loop because prepayments reduce tenure
+  while (balance > 1 && processingMonth <= 600) {
+    // 1. Calculate Interest for this month
+    const interestPaid = balance * R_m;
+
+    // 2. Base EMI Principal Part
+    let principalPaid = baseEMI - interestPaid;
+
+    // 3. Prepayments
+    let prepaymentThisMonth = 0;
+
+    // Monthly Extra
+    if (monthlyExtra > 0) prepaymentThisMonth += monthlyExtra;
+
+    // Quarterly Extra (Every 3rd month: 3, 6, 9...)
+    if (quarterlyExtra > 0 && processingMonth % 3 === 0) prepaymentThisMonth += quarterlyExtra;
+
+    // Yearly Extra (Every 12th month: 12, 24...)
+    if (yearlyExtra > 0 && processingMonth % 12 === 0) prepaymentThisMonth += yearlyExtra;
+
+    // Cap Principal Payment to Balance
+    // Total Principal to be paid = Normal Principal + Prepayment
+    if (principalPaid + prepaymentThisMonth > balance) {
+      // Retain structure: Pay off remaining balance
+      const remaining = balance;
+      // If base EMI part covers it?
+      if (remaining <= principalPaid) {
+        principalPaid = remaining;
+        prepaymentThisMonth = 0;
+      } else {
+        // principalPaid stays as is (base), extra is diff
+        prepaymentThisMonth = remaining - principalPaid;
+      }
+    }
+
+    // 4. Update Balance
+    balance -= (principalPaid + prepaymentThisMonth);
+    if (balance < 0) balance = 0; // Floating point safety
+
+    // 5. Expenses
+    const currentMaintenance = maintenanceMonthly;
+    // Apply Yearly Expenses in the 1st month of each year (or spread? User usually pays yearly)
+    // Let's apply yearly expenses at month 1 of each year (1, 13, 25...)
+    const currentTax = (processingMonth - 1) % 12 === 0 ? propertyTaxYearly : 0;
+    const currentInsurance = (processingMonth - 1) % 12 === 0 ? homeInsuranceYearly : 0;
+
+    // 6. Track Data
+    // Calculate Calendar Date
+    const currentMonthIndex = startMonth + (processingMonth - 1);
+    const calendarYear = startYear + Math.floor(currentMonthIndex / 12);
+    const calendarMonth = currentMonthIndex % 12;
+
+    allMonthlyRows.push({
+      id: processingMonth,
+      month: calendarMonth + 1,
+      monthName: monthNames[calendarMonth],
+      year: calendarYear,
+
+      openingBalance: balance + principalPaid + prepaymentThisMonth,
+      interestPaid: interestPaid,
+      principalPaid: principalPaid,
+      prepayment: prepaymentThisMonth,
+      closingBalance: balance,
+
+      // Expenses
+      tax: currentTax,
+      insurance: currentInsurance,
+      maintenance: currentMaintenance,
+      totalExpense: currentTax + currentInsurance + currentMaintenance,
+
+      // Cashflows
+      totalLoanPayment: interestPaid + principalPaid + prepaymentThisMonth,
+      totalOwnershipCost: interestPaid + principalPaid + prepaymentThisMonth + currentTax + currentInsurance + currentMaintenance
+    });
+
+    totalInterest += interestPaid;
+    totalPrincipal += principalPaid;
+    totalPrepayments += prepaymentThisMonth;
+    totalTaxes += currentTax;
+    totalInsurance += currentInsurance;
+    totalMaintenance += currentMaintenance;
+
+    processingMonth++;
+  }
+
+  // Aggregate to Yearly
+  const yearlyRows = [];
+  const yearsSet = new Set(allMonthlyRows.map(r => r.year));
+  const sortedYears = Array.from(yearsSet).sort((a, b) => a - b);
+
+  sortedYears.forEach(year => {
+    const months = allMonthlyRows.filter(r => r.year === year);
+    yearlyRows.push({
+      year,
+      principalPaid: months.reduce((s, m) => s + m.principalPaid, 0),
+      interestPaid: months.reduce((s, m) => s + m.interestPaid, 0),
+      prepayment: months.reduce((s, m) => s + m.prepayment, 0),
+      tax: months.reduce((s, m) => s + m.tax, 0),
+      insurance: months.reduce((s, m) => s + m.insurance, 0),
+      maintenance: months.reduce((s, m) => s + m.maintenance, 0),
+      totalExpense: months.reduce((s, m) => s + m.totalExpense, 0),
+      totalLoanPayment: months.reduce((s, m) => s + m.totalLoanPayment, 0),
+      totalOwnershipCost: months.reduce((s, m) => s + m.totalOwnershipCost, 0),
+      closingBalance: months[months.length - 1].closingBalance
+    });
+  });
+
+  return {
+    monthlyRows: allMonthlyRows,
+    yearlyRows,
+    summary: {
+      baseEMI,
+      totalInterest,
+      totalPrepayments,
+      totalTaxes,
+      totalInsurance,
+      totalMaintenance,
+      totalAmountPaid: totalPrincipal + totalInterest + totalPrepayments,
+      totalCostOfOwnership: totalPrincipal + totalInterest + totalPrepayments + totalTaxes + totalInsurance + totalMaintenance,
+      actualTenureYears: (processingMonth - 1) / 12,
+      savedInterest: (baseEMI * years * 12) - (principal) - totalInterest // Approx savings vs original tenure
+    }
+  };
+}
+
+export function calculateLoanAmountFromEMI(emi, monthlyRate, months) {
+  if (monthlyRate === 0) return emi * months;
+  return (emi * (Math.pow(1 + monthlyRate, months) - 1)) /
+    (monthlyRate * Math.pow(1 + monthlyRate, months));
+}
+
+export function calculateLoanTenure(principal, emi, annualRate) {
+  if (getLoanInterest(principal, emi, annualRate) >= emi) return Infinity; // Interest > EMI, never paid off
+  const r = annualRate / 12 / 100;
+  if (r === 0) return principal / emi;
+
+  // Formula: n = log(EMI / (EMI - P*r)) / log(1+r)
+  const numerator = Math.log(emi / (emi - principal * r));
+  const denominator = Math.log(1 + r);
+  return numerator / denominator / 12; // Returns Years
+}
+
+function getLoanInterest(p, emi, rate) {
+  return p * (rate / 12 / 100);
+}
+
+export function calculateLoanInterestRate(principal, emi, years) {
+  // Wrapper for the binary search solver
+  // We already have calculateEffectiveInterestRate which does exactly this (Find R given P, N, EMI)
+  return calculateEffectiveInterestRate(principal, years, emi);
+}
+
+export function calculateAPR(principal, emi, years, fees) {
+  // APR is the effective rate considering the NET loan amount received (Principal - Fees)
+  // paying back the same EMI.
+  const netPrincipal = principal - fees;
+  if (netPrincipal <= 0) return 0;
+  return calculateEffectiveInterestRate(netPrincipal, years, emi);
+}
+
+/**
+ * Calculates Flat Rate EMI.
+ * Formula: (P + (P * R * T)) / (T * 12)
+ * R is annual rate in decimal, T is years.
+ */
+export function calculateFlatRateEMI(principal, annualRate, tenureYears) {
+  if (tenureYears === 0) return 0;
+  const totalInterest = principal * (annualRate / 100) * tenureYears;
+  const totalAmount = principal + totalInterest;
+  const totalMonths = tenureYears * 12;
+  return totalAmount / totalMonths;
+}
+
+/**
+ * Estimates Effective Interest Rate for Flat Rate Loan.
+ * Returns the equivalent Reducing Balance Rate.
+ * Uses iterative method (Newton-Raphson typically, or binary search) to find Rate given P, N, EMI.
+ * But here we can use a simpler "Rate" solver since we know P, N, EMI.
+ */
+export function calculateEffectiveInterestRate(principal, tenureYears, flatEMI) {
+  if (principal <= 0 || tenureYears <= 0 || flatEMI <= 0) return 0;
+
+  const n = tenureYears * 12;
+
+  // Binary search for Rate (Monthly %)
+  let low = 0;
+  let high = 500; // Increased upper bound (500% monthly) to handle extreme inputs
+  let guessRate = 0;
+
+  for (let i = 0; i < 40; i++) { // Increased iterations for precision
+    let mid = (low + high) / 2;
+    let r = mid / 100; // monthly rate fraction
+
+    // Calculate EMI with this guess rate
+    // Formula: P * r * (1+r)^n / ((1+r)^n - 1)
+    let calcEMI;
+    if (r === 0) {
+      calcEMI = principal / n;
+    } else {
+      const pow = Math.pow(1 + r, n);
+      // Safety check for Infinity
+      if (!isFinite(pow)) {
+        calcEMI = principal * r; // Limit behavior
+      } else {
+        calcEMI = (principal * r * pow) / (pow - 1);
+      }
+    }
+
+    if (calcEMI > flatEMI) {
+      high = mid;
+    } else {
+      low = mid;
+    }
+    guessRate = mid;
+  }
+
+  return guessRate * 12; // Annual Rate % (guessRate is already monthly %)
 }
 
 export function calculateCAGR(beginningValue, endingValue, years) {
@@ -127,6 +440,7 @@ export function computeDualAmortization({
   let balance = basePrincipal;
   let totalInterest = 0;
   const rows = [];
+  const monthlyRows = [];
 
   // Calculate Base Loan EMI
   const baseEMI = calculateEMI(basePrincipal, R_base_m, totalMonths);
@@ -145,6 +459,18 @@ export function computeDualAmortization({
 
     monthlyInterestAccumulator += interest;
     monthlyPrincipalAccumulator += principalPaid;
+
+    // Track monthly data
+    monthlyRows.push({
+      month: m,
+      monthName: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][(m - 1) % 12],
+      year: Math.ceil(m / 12),
+      openingBalance: balance + principalPaid,
+      principalPaid: principalPaid,
+      interestPaid: interest,
+      closingBalance: Math.max(0, balance),
+      totalPaidPercent: ((basePrincipal - Math.max(0, balance)) / basePrincipal) * 100, // Approx percent paid on base
+    });
 
     if (m % 12 === 0) {
       rows.push({
@@ -180,6 +506,18 @@ export function computeDualAmortization({
     monthlyInterestAccumulator += interest;
     monthlyPrincipalAccumulator += principalPaid;
 
+    // Track monthly data
+    monthlyRows.push({
+      month: m,
+      monthName: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][(m - 1) % 12],
+      year: Math.ceil(m / 12),
+      openingBalance: balance + principalPaid,
+      principalPaid: principalPaid,
+      interestPaid: interest,
+      closingBalance: Math.max(0, balance),
+      totalPaidPercent: 0, // Complex to calculate true percent with Top-up, leaving 0 for now
+    });
+
     if (m % 12 === 0) {
       rows.push({
         year: m / 12,
@@ -211,7 +549,8 @@ export function computeDualAmortization({
     rows,
     finalTotalInterest: totalInterest,
     finalTotalPaid,
-    monthlyEMI: newCombinedEMI
+    monthlyEMI: newCombinedEMI,
+    monthlyRows
   };
 }
 
@@ -223,6 +562,7 @@ export function computeSWPPlan({
   annualWithdrawalIncrease
 }) {
   const rows = [];
+  const monthlyRows = [];
   let currentCorpus = initialCorpus;
   let totalWithdrawn = 0;
   let totalInterest = 0;
@@ -241,6 +581,8 @@ export function computeSWPPlan({
 
     // Process 12 months for this year
     for (let month = 1; month <= 12; month++) {
+      const openingBalanceMonth = currentCorpus; // Capture opening balance for the month
+
       // Stop if corpus is already depleted
       if (currentCorpus <= 0) {
         corpusDepleted = true;
@@ -258,6 +600,17 @@ export function computeSWPPlan({
       const actualWithdrawal = Math.min(currentMonthlyWithdrawal, currentCorpus);
       currentCorpus -= actualWithdrawal;
       yearlyWithdrawal += actualWithdrawal;
+
+      // Track monthly data
+      monthlyRows.push({
+        month: (year - 1) * 12 + month,
+        monthName: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][month - 1],
+        year: year,
+        openingBalance: openingBalanceMonth,
+        withdrawal: actualWithdrawal,
+        interestEarned: monthlyInterest,
+        closingBalance: Math.max(0, currentCorpus),
+      });
 
       // Step 3: Check if corpus depleted this month
       if (currentCorpus <= 0) {
@@ -297,6 +650,7 @@ export function computeSWPPlan({
 
   return {
     rows,
+    monthlyRows,
     finalCorpus: Math.max(0, currentCorpus),
     totalWithdrawn,
     totalInterest,

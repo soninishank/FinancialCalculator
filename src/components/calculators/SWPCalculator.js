@@ -8,6 +8,7 @@ import { FinancialLineChart } from "../common/FinancialCharts"; // <--- Import C
 
 import { moneyFormat } from "../../utils/formatting";
 import { computeSWPPlan } from "../../utils/finance";
+import { calculatorDetails } from "../../data/calculatorDetails";
 import { downloadPDF } from "../../utils/export";
 import {
   DEFAULT_RATE,
@@ -32,8 +33,10 @@ export default function SWPCalculator({ currency }) {
   const [years, setYears] = useState(15);
   const [annualRate, setAnnualRate] = useState(DEFAULT_RATE);
 
+  const [viewFrequency, setViewFrequency] = useState('yearly');
+
   // --- CALCULATION ---
-  const { rows, finalCorpus, totalWithdrawn, totalInterest, depletionYear, depletionMonth } = useMemo(
+  const { rows: yearlyRows, monthlyRows, finalCorpus, totalWithdrawn, totalInterest, depletionYear, depletionMonth } = useMemo(
     () =>
       computeSWPPlan({
         initialCorpus: Number(initialCorpus),
@@ -72,15 +75,21 @@ export default function SWPCalculator({ currency }) {
 
   // Export Handler
   const handleExport = () => {
-    const headers = ["Year", "Opening Balance", "Total Withdrawal", "Interest Earned", "Closing Balance"];
-    const data = rows.map((r) => [
-      `Year ${r.year}`,
+    const isMonthly = viewFrequency === 'monthly';
+    const dataToExport = isMonthly ? monthlyRows : yearlyRows;
+    const filename = isMonthly ? "swp_report_monthly.pdf" : "swp_report_yearly.pdf";
+    const periodLabel = isMonthly ? "Month" : "Year";
+
+    const headers = [periodLabel, "Opening Balance", "Total Withdrawal", "Interest Earned", "Closing Balance"];
+
+    const data = dataToExport.map((r) => [
+      isMonthly ? `Month ${r.month} (Yr ${r.year})` : `Year ${r.year}`,
       Math.round(r.openingBalance),
-      Math.round(r.totalWithdrawal),
+      Math.round(r.days === undefined ? r.totalWithdrawal : r.withdrawal), // Use correct withdrawal field
       Math.round(r.interestEarned),
       Math.round(r.closingBalance),
     ]);
-    downloadPDF(data, headers, "swp_report.pdf");
+    downloadPDF(data, headers, filename);
   };
 
   // Render Table Content
@@ -89,7 +98,7 @@ export default function SWPCalculator({ currency }) {
       <thead className="bg-white sticky top-0 z-10 shadow-sm">
         <tr>
           <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-100">
-            Year
+            {viewFrequency === 'monthly' ? 'Month' : 'Year'}
           </th>
           <th className="py-3 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-100 text-right">
             Opening Balance
@@ -106,17 +115,22 @@ export default function SWPCalculator({ currency }) {
         </tr>
       </thead>
       <tbody className="text-sm divide-y divide-gray-100">
-        {rows.map((r) => (
+        {(viewFrequency === 'monthly' ? monthlyRows : yearlyRows).map((r, idx) => (
           <tr
-            key={r.year}
+            key={idx}
             className={`${r.closingBalance <= 0 ? "bg-rose-50" : "hover:bg-gray-50"} transition-colors`}
           >
-            <td className="py-3 px-4 text-gray-600 font-medium whitespace-nowrap">Year {r.year}</td>
+            <td className="py-3 px-4 text-gray-600 font-medium whitespace-nowrap">
+              {viewFrequency === 'monthly' ?
+                <span className="text-xs">M{r.month} <span className="text-gray-400 font-normal">/ Yr {r.year}</span></span>
+                : `Year ${r.year}`
+              }
+            </td>
             <td className="py-3 px-4 text-gray-600 text-right tabular-nums">
               {moneyFormat(Math.round(r.openingBalance), currency, true)}
             </td>
             <td className="py-3 px-4 text-rose-600 font-bold text-right tabular-nums">
-              {moneyFormat(Math.round(r.totalWithdrawal), currency)}
+              {moneyFormat(Math.round(r.withdrawal !== undefined ? r.withdrawal : r.totalWithdrawal), currency)}
             </td>
             <td className="py-3 px-4 text-emerald-600 text-right tabular-nums">
               {moneyFormat(Math.round(r.interestEarned), currency)}
@@ -208,18 +222,17 @@ export default function SWPCalculator({ currency }) {
         </div>
       </div>
 
-      {/* AMORTIZATION TABLE */}
       <div className="mt-12">
         {/* CHART SECTION */}
         <div className="mb-12 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
           <h3 className="text-gray-800 font-bold text-lg mb-4">Balance Depletion Projection</h3>
           <FinancialLineChart
             data={{
-              labels: rows.map(r => `Year ${r.year}`),
+              labels: yearlyRows.map(r => `Year ${r.year}`),
               datasets: [
                 {
                   label: 'Remaining Balance',
-                  data: rows.map(r => r.closingBalance),
+                  data: yearlyRows.map(r => r.closingBalance),
                   borderColor: '#8B5CF6', // Violet-500
                   backgroundColor: 'rgba(139, 92, 246, 0.1)', // Violet-500 with opacity
                   fill: true,
@@ -232,8 +245,42 @@ export default function SWPCalculator({ currency }) {
           />
         </div>
 
-        <AmortizationTableWrapper title="SWP Schedule (Yearly)" renderTableContent={renderSWPTableContent} onExport={handleExport} rowCount={rows.length} />
+        <div className="flex justify-end mb-4">
+          <div className="bg-gray-100 p-1 rounded-lg inline-flex">
+            <button
+              onClick={() => setViewFrequency('yearly')}
+              className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${viewFrequency === 'yearly'
+                ? 'bg-white text-indigo-600 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+                }`}
+            >
+              Yearly
+            </button>
+            <button
+              onClick={() => setViewFrequency('monthly')}
+              className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${viewFrequency === 'monthly'
+                ? 'bg-white text-indigo-600 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+                }`}
+            >
+              Monthly
+            </button>
+          </div>
+        </div>
+
+        <AmortizationTableWrapper
+          title={`SWP Schedule (${viewFrequency === 'yearly' ? 'Yearly' : 'Monthly'})`}
+          renderTableContent={renderSWPTableContent}
+          onExport={handleExport}
+          rowCount={(viewFrequency === 'monthly' ? monthlyRows : yearlyRows).length}
+        />
       </div>
+
+      {/* EXPLANATORY DETAILS */}
+      <div className="mt-12">
+        {calculatorDetails.swp.render()}
+      </div>
+
     </div>
   );
 }

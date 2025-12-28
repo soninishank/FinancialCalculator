@@ -17,7 +17,7 @@ export const DEFAULT_LOAN_TENURE = 20;
 export const MAX_AMOUNT = 100000000; // 10 cr
 export const MAX_SIP = 5000000;        // 50 Lakhs
 export const MAX_LOAN = 100000000;     // 10 Crores
-export const MAX_YEARS = 50;
+export const MAX_YEARS = 35;
 export const MAX_RATE = 30;
 export const MAX_STEP_UP = 50;
 export const TARGET_MAX_AMOUNT_GOAL_PLANNER = 1000000000; // 100 cr
@@ -130,3 +130,8 @@ export const DEFAULT_REFINANCE_TERM = 20;
 export const DEFAULT_REFINANCE_COST = 20000;
 export const MAX_REFINANCE_COST = 500000;
 export const STEP_REFINANCE_COST = 1000;
+
+// Processing Fee Defaults
+export const MAX_PROCESSING_FEE_PERCENT = 5;
+export const STEP_PROCESSING_FEE_PERCENT = 0.1;
+export const MAX_FEE_AMOUNT = 1000000;

@@ -1,38 +1,28 @@
-// src/components/home/HomePage.js
-import React, { useMemo, useState } from 'react';
-import Fuse from 'fuse.js';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import calculators from '../../utils/calculatorsManifest';
+import { useCalculatorSearch } from '../../hooks/useCalculatorSearch';
+import CalculatorAdvisor from './CalculatorAdvisor';
 
 export default function HomePage() {
   const [q, setQ] = useState('');
-  const fuse = useMemo(() => new Fuse(calculators, {
-    keys: ['title', 'keywords', 'description'],
-    threshold: 0.4,
-    distance: 100
-  }), []);
-
-  const list = useMemo(() => {
-    const term = q.trim();
-    if (!term) return calculators;
-    return fuse.search(term).map(result => result.item);
-  }, [q, fuse]);
+  const list = useCalculatorSearch(q);
 
   return (
     <div>
-      <section className="mb-6">
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h2 className="text-xl font-semibold">Choose a calculator</h2>
-          <p className="text-sm text-gray-600 mt-1">Search or pick from the catalog below.</p>
+      <section className="mb-12">
+        <CalculatorAdvisor />
+      </section>
 
-          <div className="mt-4">
-            <input
-              value={q}
-              onChange={e => setQ(e.target.value)}
-              placeholder="Search calculators (e.g., SIP, EMI, Lump Sum)"
-              className="w-full border rounded-lg px-4 py-2"
-            />
-          </div>
+      <section className="mb-8 flex items-center justify-between">
+        <h2 className="text-xl font-bold text-gray-800">All Financial Tools</h2>
+        <div className="relative w-full max-w-xs">
+          <input
+            value={q}
+            onChange={e => setQ(e.target.value)}
+            placeholder="Filter (e.g., SIP, EMI)"
+            className="w-full pl-10 pr-4 py-2 border rounded-full text-sm focus:outline-none focus:border-teal-500"
+          />
+          <svg className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
         </div>
       </section>
 
