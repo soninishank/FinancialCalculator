@@ -61,11 +61,11 @@ const calculators = [
     component: 'CAGRCalculator'
   },
   {
-    slug: 'time-to-fire',
-    title: 'Time to FIRE',
-    description: 'Calculate exactly when you can reach Financial Independence based on your current savings and expenses. Adjusts for Inflation and Real Returns.',
-    keywords: 'fire, financial independence, retire early, retirement calculator',
-    category: 'FIRE',
+    slug: 'ultimate-fire-planner',
+    title: 'Ultimate FIRE Planner',
+    description: 'The only FIRE tool you need. Covers everything: Time to FIRE, Barista FIRE, Coast FIRE, plus Lean, Standard, Chubby & Fat FIRE analysis.',
+    keywords: ['fire', 'financial independence', 'barista fire', 'coast fire', 'lean fire', 'fat fire', 'retirement planner'],
+    category: 'Fire',
     component: 'TimeToFIRE'
   },
   {
@@ -75,14 +75,7 @@ const calculators = [
     keywords: 'goal planner, financial goals, savings plan, target planning',
     category: 'Planner',
     component: 'GoalPlanner'
-  },
-  {
-    slug: 'lean-fire',
-    title: 'Lean FIRE Calculator',
-    description: 'Calculate your path to Financial Independence with a minimalist lifestyle. Focus on essential expenses and lower target corpus.',
-    keywords: 'lean fire, minimalist fire, frugal retirement, early retirement',
-    category: 'FIRE',
-    component: 'LeanFire'
+
   },
   {
     slug: 'rent-vs-buy',
@@ -110,14 +103,7 @@ const calculators = [
     category: 'SIP',
     component: 'SWPCalculator'
   },
-  {
-    slug: 'coast-fire',
-    title: 'Coast FIRE Calculator',
-    description: 'Find out if you have saved enough already to coast to retirement without further contributions.',
-    keywords: 'coast fire, retirement planning, compound interest, f-you money',
-    category: 'FIRE',
-    component: 'CoastFIRE'
-  },
+
   {
     slug: 'swr-simulator',
     title: 'Safe Withdrawal Rate Simulator',

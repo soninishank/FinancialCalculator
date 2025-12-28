@@ -19,9 +19,7 @@ const importBySlug = (slug) => {
     case 'topup-loan-emi': return import('../components/calculators/TopUpLoanEMI');
     case 'swp-calculator': return import('../components/calculators/SWPCalculator');
     // FIRE Calculators
-    case 'time-to-fire': return import('../components/calculators/TimeToFIRE');
-    case 'lean-fire': return import('../components/calculators/LeanFire');
-    case 'coast-fire': return import('../components/calculators/CoastFIRE');
+    case 'ultimate-fire-planner': return import('../components/calculators/TimeToFIRE');
     case 'swr-simulator': return import('../components/calculators/SWRSimulator');
     // Decision Making
     case 'rent-vs-buy': return import('../components/calculators/RentVsBuy');

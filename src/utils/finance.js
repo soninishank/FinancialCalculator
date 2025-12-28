@@ -742,3 +742,21 @@ export function calculateRebalancing({
     currentEquityPercent: (equity / total) * 100
   };
 }
+
+/**
+ * Determines FIRE Level based on "Needs vs SWR" capability.
+ * LeanFIRE: Essentials > 80% of SWR capacity
+ * FIRE: Essentials 40-80%
+ * ChubbyFIRE: Essentials 20-40%
+ * FatFIRE: Essentials < 20%
+ */
+export function calculateFIRELevel(annualEssentialExpenses, annualTotalSWRIncome) {
+  if (annualTotalSWRIncome <= 0) return 'N/A';
+
+  const needsRatio = (annualEssentialExpenses / annualTotalSWRIncome) * 100;
+
+  if (needsRatio > 80) return 'LeanFIRE';
+  if (needsRatio > 40) return 'FIRE';
+  if (needsRatio > 20) return 'ChubbyFIRE';
+  return 'FatFIRE';
+}
