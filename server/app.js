@@ -2,7 +2,7 @@ require('dotenv').config({ quiet: true });
 const express = require("express");
 const cors = require("cors");
 const ipoRoutes = require('./routes/ipoRoutes');
-const db = require('./config/db');
+// const db = require('./config/db');
 const NseService = require('./services/NseService');
 const discoveryService = require('./services/DiscoveryService');
 const reconciliationService = require('./services/ReconciliationService');
@@ -34,11 +34,11 @@ const server = app.listen(PORT, () => {
     // console.log(`IPO API service running on http://localhost:${PORT}`);
 
     // Cron jobs - Automatically refresh data
-    cronJobs.startCronJobs();
-    cronJobs.enableCronJobs();
+    // cronJobs.startCronJobs();
+    // cronJobs.enableCronJobs();
 
     // Check if database is empty and fetch initial data
-    checkAndFetchInitialData();
+    // checkAndFetchInitialData();
 });
 
 // Function to check if database has data and fetch if empty
@@ -80,7 +80,7 @@ process.on('SIGTERM', () => {
     console.log('SIGTERM signal received: closing HTTP server');
     server.close(() => {
         console.log('HTTP server closed');
-        db.pool.end();
+        // db.pool.end();
     });
 });
 

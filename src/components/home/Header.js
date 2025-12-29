@@ -41,7 +41,7 @@ const Header = () => {
         <nav className="hidden md:flex items-center bg-gray-100/50 p-1 rounded-full border border-gray-200/50">
           <NavItem to="/" label="Home" />
           <NavItem to="/calculators" label="Calculators" />
-          <NavItem to="/ipo-tracker" label="IPO Tracker" />
+          {/* <NavItem to="/ipo-tracker" label="IPO Tracker" /> */}
         </nav>
 
         {/* actions */}

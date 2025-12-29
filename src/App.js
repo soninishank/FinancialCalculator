@@ -21,8 +21,8 @@ export default function App() {
           <Route element={<Layout />}>
             <Route path="/calculators" element={<CalculatorsList />} />
             <Route path="/calculators/:slug" element={<CalculatorPage />} />
-            <Route path="/ipo-tracker" element={<IPOTRackerPage />} />
-            <Route path="/ipo/:symbol" element={<IPODetailPage />} />
+            {/* <Route path="/ipo-tracker" element={<IPOTRackerPage />} /> */}
+            {/* <Route path="/ipo/:symbol" element={<IPODetailPage />} /> */}
           </Route>
           <Route path="*" element={<div>Route not found.</div>} />
         </Routes>

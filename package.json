@@ -45,7 +45,7 @@
     "dev:scraper": "NODE_NO_WARNINGS=1 nodemon -q server/app.js",
     "db:setup": "node server/db_setup/index.js",
     "start:server": "node server/app.js",
-    "dev": "npm test src/tests/smoke.test.js && concurrently \"npm start\" \"npm run dev:scraper\"",
+    "dev": "npm test src/tests/smoke.test.js && npm start",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix"
   },

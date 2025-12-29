@@ -38,28 +38,28 @@ export default function HomeFrontPage() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Mutual Funds */}
-          <Link to="/mutual-funds" className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
+          {/* <Link to="/mutual-funds" className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
             <h3 className="font-semibold text-lg mb-2">Mutual Funds</h3>
             <p className="text-sm text-gray-600">
               Compare funds, SIP returns, and top performers.
             </p>
-          </Link>
+          </Link> */}
 
           {/* IPOs */}
-          <Link to="/ipo-tracker" className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
+          {/* <Link to="/ipo-tracker" className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
             <h3 className="font-semibold text-lg mb-2">IPOs</h3>
             <p className="text-sm text-gray-600">
               Upcoming IPOs, GMP, allotment status & more.
             </p>
-          </Link>
+          </Link> */}
 
           {/* Demat Accounts */}
-          <Link to="/demat" className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
+          {/* <Link to="/demat" className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
             <h3 className="font-semibold text-lg mb-2">Demat Accounts</h3>
             <p className="text-sm text-gray-600">
               Compare brokers, charges & features.
             </p>
-          </Link>
+          </Link> */}
 
           {/* Calculators */}
           <Link to="/calculators" className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
@@ -72,7 +72,7 @@ export default function HomeFrontPage() {
       </section>
 
       {/* -------- IPOs (homepage) -------- */}
-      <HomeIpoSection />
+      {/* <HomeIpoSection /> */}
 
       {/* -------- FEATURED CALCULATORS -------- */}
       <section className="max-w-6xl mx-auto px-4 py-12">
