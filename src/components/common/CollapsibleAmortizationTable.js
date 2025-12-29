@@ -25,7 +25,7 @@ export default function CollapsibleAmortizationTable({ yearlyData, monthlyData, 
             <div className="overflow-auto max-h-[600px] w-full">
                 <div className="min-w-[900px]">
                     {/* TABLE HEADER - Inside scroll container to keep alignment */}
-                    <div className="grid grid-cols-12 bg-slate-900 border-b border-slate-300 text-[10px] sm:text-xs font-black uppercase tracking-widest text-center items-stretch">
+                    <div className="grid grid-cols-12 bg-slate-900 border-b border-slate-300 text-xs sm:text-sm font-black uppercase tracking-widest text-center items-stretch">
                         <div className="col-span-1 p-3 flex items-center justify-center bg-slate-800 text-slate-100 border-r border-slate-700">Year</div>
 
                         <div className="col-span-2 p-3 flex items-center justify-center bg-[#8DB63F] text-white border-r border-white/20 leading-tight">
@@ -48,7 +48,7 @@ export default function CollapsibleAmortizationTable({ yearlyData, monthlyData, 
                             Balance
                         </div>
 
-                        <div className="col-span-1 p-3 flex items-center justify-center bg-slate-800 text-slate-100 leading-tight text-[9px] sm:text-[10px]">
+                        <div className="col-span-1 p-3 flex items-center justify-center bg-slate-800 text-slate-100 leading-tight text-[10px] sm:text-xs">
                             Paid %
                         </div>
                     </div>
@@ -77,7 +77,7 @@ export default function CollapsibleAmortizationTable({ yearlyData, monthlyData, 
                                         <button className="mr-2 w-5 h-5 flex items-center justify-center rounded border-2 border-indigo-400 bg-white text-indigo-700 text-sm font-black group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-md">
                                             {isExpanded ? '−' : '+'}
                                         </button>
-                                        <span className="text-[10px] sm:text-xs tracking-tighter">
+                                        <span className="text-xs sm:text-sm tracking-tighter">
                                             {yearRow.label ? String(yearRow.label).replace('FY ', '') : String(yearRow.year).slice(2)}
                                         </span>
                                     </div>
@@ -102,7 +102,7 @@ export default function CollapsibleAmortizationTable({ yearlyData, monthlyData, 
                                         {moneyFormat(yearRow.closingBalance, currency)}
                                     </div>
 
-                                    <div className="col-span-1 p-4 text-center text-[10px] sm:text-xs font-black text-slate-600">
+                                    <div className="col-span-1 p-4 text-center text-xs sm:text-sm font-black text-slate-600">
                                         {(yearRow.totalPaidPercent || 0).toFixed(0)}%
                                     </div>
                                 </div>
@@ -115,9 +115,9 @@ export default function CollapsibleAmortizationTable({ yearlyData, monthlyData, 
                                     const mTotalABC = monthRow.totalOwnershipCost || (mPrinA + mIntB + mExpC);
 
                                     return (
-                                        <div key={`${yearRow.year}-${idx}`} className="grid grid-cols-12 border-b border-slate-200 bg-white text-[10px] sm:text-xs animate-fade-in-down items-center">
+                                        <div key={`${yearRow.year}-${idx}`} className="grid grid-cols-12 border-b border-slate-200 bg-white text-xs sm:text-sm animate-fade-in-down items-center">
                                             <div className="col-span-1 p-2 text-center text-slate-500 font-black border-r border-slate-100 flex items-center justify-center">
-                                                <span className="text-[9px] font-black text-indigo-600">{String(monthRow.monthName).toUpperCase()}</span>
+                                                <span className="text-[10px] font-black text-indigo-600">{String(monthRow.monthName).toUpperCase()}</span>
                                             </div>
 
                                             <div className="col-span-2 p-2 text-right text-slate-900 font-bold border-r border-slate-100">

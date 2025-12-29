@@ -31,7 +31,7 @@ export default function ResultsTable({ data, currency, onExport, columns, title 
 
       {/* Scrollable Table Container */}
       <div className="overflow-auto flex-grow max-h-[400px]">
-        <table className="w-full text-left border-collapse">
+        <table className="w-full text-left border-collapse min-w-max">
           <thead className="bg-white sticky top-0 z-10 shadow-sm">
             <tr>
               {displayColumns.map((col, idx) => {
