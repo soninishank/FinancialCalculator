@@ -1,28 +1,22 @@
 // src/pages/CalculatorsList.js
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import manifest from "../utils/calculatorsManifest";
+import { useCalculatorSearch } from "../hooks/useCalculatorSearch";
 import CalculatorAdvisor from "../components/home/CalculatorAdvisor";
+import SEO from "../components/common/SEO";
 
 export default function CalculatorsList() {
   const [q, setQ] = useState("");
-
-  // normalize and precompute searchable text for each calculator
-  const items = useMemo(() => {
-    return manifest.map(m => ({
-      ...m,
-      _search: `${m.title} ${m.description} ${m.keywords} ${m.category}`.toLowerCase()
-    }));
-  }, []);
-
-  const filtered = useMemo(() => {
-    const term = q.trim().toLowerCase();
-    if (!term) return items;
-    return items.filter(i => i._search.includes(term));
-  }, [items, q]);
+  const filtered = useCalculatorSearch(q);
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
+      <SEO
+        title="All Calculators"
+        description="Browse our complete collection of free financial calculators including SIP, Loan EMI, CAGR, FIRE and more."
+        keywords={['calculator list', 'financial tools', 'investment calculators']}
+        path="/calculators"
+      />
       <h1 className="text-3xl font-bold mb-6">All Calculators</h1>
 
       {/* Search & quick helper */}
@@ -60,7 +54,7 @@ export default function CalculatorsList() {
               }, {})
             ).map(([category, items]) => (
               <div key={category}>
-                <h3 className="text-xl font-bold text-gray-800 mb-4 border-l-4 border-indigo-500 pl-3">{category}</h3>
+                <h2 className="text-xl font-bold text-gray-800 mb-4 border-l-4 border-indigo-500 pl-3">{category}</h2>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {items.map(meta => (
                     <Card key={meta.slug} meta={meta} />

@@ -4,6 +4,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import manifest from '../utils/calculatorsManifest';
 import { useCurrency } from '../contexts/CurrencyContext';
 import RelatedCalculators from '../components/common/RelatedCalculators';
+import SEO from '../components/common/SEO';
 
 // Explicit dynamic imports so bundlers can split chunks
 const importBySlug = (slug) => {
@@ -88,8 +89,57 @@ export default function CalculatorPage() {
 
   const LazyCalc = React.lazy(() => importBySlug(slug));
 
+  // Schema.org JSON-LD (SoftwareApplication + BreadcrumbList)
+  const schema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": meta.title,
+        "description": meta.description,
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "INR"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": window.location.origin
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Calculators",
+            "item": `${window.location.origin}/calculators`
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": meta.title,
+            "item": window.location.href
+          }
+        ]
+      }
+    ]
+  };
+
   return (
     <div className="w-full h-full">
+      <SEO
+        title={meta.title}
+        description={meta.description}
+        keywords={meta.keywords}
+        schema={schema}
+        path={location.pathname}
+      />
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Main Content: 9 columns on large screens for a balanced width */}
         <main className="lg:col-span-9 order-1">

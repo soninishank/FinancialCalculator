@@ -5,14 +5,24 @@ import { CurrencyProvider } from './contexts/CurrencyContext';
 // Import Pages
 import CalculatorPage from "./pages/CalculatorPage";
 import HomeFrontPage from "./pages/HomeFrontPage";
-import IPOTRackerPage from "./pages/IPOTRackerPage";
-import IPODetailPage from "./pages/IPODetailPage";
+// import IPOTRackerPage from "./pages/IPOTRackerPage";
+// import IPODetailPage from "./pages/IPODetailPage";
 import CalculatorsList from "./pages/CalculatorsList";
 import Layout from "./components/Layout";
+import NotFoundPage from "./pages/NotFoundPage";
+
+// Hooks
+import { useGoogleAnalytics } from "./hooks/useGoogleAnalytics";
+
+function RouteTracker() {
+  useGoogleAnalytics();
+  return null;
+}
 
 export default function App() {
   return (
     <BrowserRouter>
+      <RouteTracker />
       <CurrencyProvider>
         <Routes>
           <Route element={<Layout fullWidth={true} />}>
@@ -24,7 +34,7 @@ export default function App() {
             {/* <Route path="/ipo-tracker" element={<IPOTRackerPage />} /> */}
             {/* <Route path="/ipo/:symbol" element={<IPODetailPage />} /> */}
           </Route>
-          <Route path="*" element={<div>Route not found.</div>} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </CurrencyProvider>
     </BrowserRouter>
