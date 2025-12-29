@@ -1,7 +1,14 @@
 import React, { useState, Fragment } from 'react';
 import { moneyFormat } from '../../utils/formatting';
 
-export default function CollapsibleInvestmentTable({ yearlyData, monthlyData, currency }) {
+export default function CollapsibleInvestmentTable({ yearlyData, monthlyData, currency, labels }) {
+    const defaultLabels = {
+        year: "Year",
+        invested: "Total Invested",
+        interest: "Interest Earned",
+        balance: "Maturity Value"
+    };
+    const finalLabels = { ...defaultLabels, ...labels };
     const [expandedYears, setExpandedYears] = useState({});
 
     const toggleYear = (year) => {
@@ -23,10 +30,10 @@ export default function CollapsibleInvestmentTable({ yearlyData, monthlyData, cu
                 <div className="min-w-[700px]">
                     {/* TABLE HEADER - Inside scroll container for alignment */}
                     <div className="grid grid-cols-12 bg-gray-100 border-b border-gray-200 text-xs sm:text-sm font-bold text-gray-700 items-stretch">
-                        <div className="col-span-2 p-4 flex items-center bg-indigo-100 text-indigo-900 border-r border-indigo-200 rounded-tl-xl truncate">Year</div>
-                        <div className="col-span-4 p-4 text-right bg-emerald-100 text-emerald-900 border-r border-emerald-200 truncate">Total Invested</div>
-                        <div className="col-span-3 p-4 text-right bg-amber-100 text-amber-900 border-r border-amber-200 truncate">Interest Earned</div>
-                        <div className="col-span-3 p-4 text-right bg-blue-100 text-blue-900 rounded-tr-xl truncate">Maturity Value</div>
+                        <div className="col-span-2 p-4 flex items-center bg-indigo-100 text-indigo-900 border-r border-indigo-200 rounded-tl-xl truncate">{finalLabels.year}</div>
+                        <div className="col-span-4 p-4 text-right bg-emerald-100 text-emerald-900 border-r border-emerald-200 truncate">{finalLabels.invested}</div>
+                        <div className="col-span-3 p-4 text-right bg-amber-100 text-amber-900 border-r border-amber-200 truncate">{finalLabels.interest}</div>
+                        <div className="col-span-3 p-4 text-right bg-blue-100 text-blue-900 rounded-tr-xl truncate">{finalLabels.balance}</div>
                     </div>
 
                     {yearlyData.map((yearRow) => {

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import InputWithSlider from '../common/InputWithSlider';
 import { moneyFormat } from '../../utils/formatting';
 import { computeStepUpLoanAmortization } from '../../utils/finance';
+import MonthYearPicker from '../common/MonthYearPicker';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from 'chart.js';
 import { TrendingDown, Clock, Banknote, Percent } from 'lucide-react';
@@ -13,7 +14,9 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
     const [principal, setPrincipal] = useState(5000000);
     const [rate, setRate] = useState(9);
     const [tenure, setTenure] = useState(20);
+
     const [tenureMode, setTenureMode] = useState('Years'); // 'Years' | 'Months'
+    const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 7));
 
     const handleTenureModeChange = (mode) => {
         if (mode === tenureMode) return;
@@ -67,6 +70,20 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
     const savingsInterest = regular.finalTotalInterest - smart.finalTotalInterest;
     const timeSavedMonths = regular.monthsTaken - smart.monthsTaken;
     const timeSavedYears = (timeSavedMonths / 12).toFixed(1);
+
+    // Helper to calc end date
+    const getEndDate = (months) => {
+        const d = new Date(startDate);
+        // Reset to first day to avoid overflow
+        d.setDate(1);
+        d.setMonth(d.getMonth() + months);
+        // Format
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+    };
+
+    const regularEndDate = getEndDate(regular.monthsTaken);
+    const smartEndDate = getEndDate(smart.monthsTaken);
 
     // --- CHART DATA ---
     const labels = regular.monthlyRows.filter((_, i) => i % 12 === 0).map(r => `Year ${Math.ceil(r.month / 12)}`);
@@ -161,6 +178,12 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
                                 </div>
                             }
                         />
+
+
+                        <div className="mt-4">
+                            <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block mb-2">Loan Start Date</label>
+                            <MonthYearPicker value={startDate} onChange={setStartDate} />
+                        </div>
                     </div>
 
                     {/* 2. Step Up */}
@@ -222,12 +245,19 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
                         <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
                             <p className="text-xs text-gray-500 font-bold uppercase mb-1">Regular Total Interest</p>
                             <p className="text-lg font-bold text-gray-700">{moneyFormat(regular.finalTotalInterest, currency)}</p>
-                            <p className="text-xs text-gray-400 mt-1">Tenure: {effectiveTenureYears} Years</p>
+                            <p className="text-lg font-bold text-gray-700">{moneyFormat(regular.finalTotalInterest, currency)}</p>
+                            <div className="flex justify-between items-center mt-2 border-t border-gray-200 pt-2">
+                                <p className="text-xs text-gray-400">Tenure: {effectiveTenureYears} Years</p>
+                                <p className="text-xs font-bold text-gray-500">Ends: {regularEndDate}</p>
+                            </div>
                         </div>
                         <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-200">
                             <p className="text-xs text-emerald-600 font-bold uppercase mb-1">Step-Up Total Interest</p>
                             <p className="text-lg font-bold text-emerald-700">{moneyFormat(smart.finalTotalInterest, currency)}</p>
-                            <p className="text-xs text-emerald-600 mt-1">Tenure: {(smart.monthsTaken / 12).toFixed(1)} Years</p>
+                            <div className="flex justify-between items-center mt-2 border-t border-emerald-200 pt-2">
+                                <p className="text-xs text-emerald-600">Tenure: {(smart.monthsTaken / 12).toFixed(1)} Years</p>
+                                <p className="text-xs font-bold text-emerald-700">Ends: {smartEndDate}</p>
+                            </div>
                         </div>
                     </div>
 

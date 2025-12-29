@@ -9,7 +9,7 @@ const calculators = [
     title: 'SIP Calculator',
     description: 'Calculate the future value of regular monthly SIP investments at an expected annual return rate.',
     keywords: 'sip calculator, monthly sip, mutual fund sip, investment calculator',
-    category: 'SIP',
+    category: 'SIP + LUMPSUM',
     component: 'PureSIP'
   },
   {
@@ -17,7 +17,7 @@ const calculators = [
     title: 'Lump Sum Calculator',
     description: 'Project growth of a single lump-sum investment over time using compound interest.',
     keywords: 'lump sum calculator, one-time investment, compound interest',
-    category: 'Lump Sum',
+    category: 'SIP + LUMPSUM',
     component: 'LumpSumOnly'
   },
   {
@@ -25,7 +25,7 @@ const calculators = [
     title: 'SIP + Lump Sum Calculator',
     description: 'Estimate future value by combining an initial lump sum with monthly SIP contributions and compounding returns.',
     keywords: 'sip plus lump sum, sip calculator, lump sum calculator, investment growth',
-    category: 'SIP',
+    category: 'SIP + LUMPSUM',
     component: 'SIPWithLumpSum'
   },
   {
@@ -41,7 +41,7 @@ const calculators = [
     title: 'Step-Up SIP Calculator',
     description: 'Model SIPs that increase periodically (step-up) to reflect salary hikes or increasing savings capacity.',
     keywords: 'step-up sip, increasing sip, sip escalator, sip growth',
-    category: 'SIP',
+    category: 'SIP + LUMPSUM',
     component: 'StepUpSIP'
   },
   {
@@ -106,7 +106,7 @@ const calculators = [
     title: 'Ultimate FIRE Planner',
     description: 'The only FIRE tool you need. Covers everything: Time to FIRE, Barista FIRE, Coast FIRE, plus Lean, Standard, Chubby & Fat FIRE analysis.',
     keywords: ['fire', 'financial independence', 'barista fire', 'coast fire', 'lean fire', 'fat fire', 'retirement planner'],
-    category: 'Fire',
+    category: 'FIRE',
     component: 'TimeToFIRE'
   },
   {
@@ -133,7 +133,7 @@ const calculators = [
     title: 'SIP + Lump Sum + Step Up',
     description: 'Combine a step-up SIP schedule with an initial lump sum to forecast portfolio value over time.',
     keywords: 'step-up sip lump sum, sip escalation, investment planning',
-    category: 'SIP',
+    category: 'SIP + LUMPSUM',
     component: 'StepUpSIPWithLump'
   },
   {
@@ -141,7 +141,7 @@ const calculators = [
     title: 'SWP Calculator',
     description: 'Model monthly withdrawals from your investment corpus while the remaining balance continues to grow through compounding.',
     keywords: 'swp, systematic withdrawal plan, income, retirement',
-    category: 'SIP',
+    category: 'SIP + LUMPSUM',
     component: 'SWPCalculator'
   },
 
@@ -272,6 +272,22 @@ const calculators = [
     keywords: 'loan eligibility, rm tool, ltv calculator, home loan funding, property loan',
     category: 'Loan',
     component: 'PropertyLoanEligibility'
+  },
+  {
+    slug: 'expense-ratio-calculator',
+    title: 'Expense Ratio Calculator',
+    description: 'See how much your mutual fund expense ratio is costing you over time. Analyze the impact of fees on your long-term wealth.',
+    keywords: 'expense ratio, mutual fund cost, investment fees, ter calculator, wealth comparison, direct vs regular, fund management charges, impact of fees, long term wealth',
+    category: 'SIP + LUMPSUM',
+    component: 'ExpenseRatioCalculator'
+  },
+  {
+    slug: 'xirr-calculator',
+    title: 'XIRR Calculator',
+    description: 'Calculate the Extended Internal Rate of Return (XIRR) for irregular investments and withdrawals.',
+    keywords: 'xirr calculator, sip returns, irregular cash flows, portfolio return, extended internal rate of return',
+    category: 'General',
+    component: 'XIRRCalculator'
   }
 ];
 

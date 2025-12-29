@@ -44,6 +44,8 @@ const importBySlug = (slug) => {
     case 'compound-interest': return import('../components/calculators/CompoundInterest');
     case 'home-loan-eligibility': return import('../components/calculators/HomeLoanEligibility');
     case 'property-loan-eligibility': return import('../components/calculators/PropertyLoanEligibility');
+    case 'expense-ratio-calculator': return import('../components/calculators/ExpenseRatioCalculator');
+    case 'xirr-calculator': return import('../components/calculators/XIRRCalculator');
     default: return Promise.reject(new Error('Unknown calculator'));
   }
 };

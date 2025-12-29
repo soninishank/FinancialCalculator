@@ -220,6 +220,21 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
     const { summary, monthlyRows, yearlyRows, financialYearlyRows } = results;
     const displayRows = viewMode === 'financial' ? financialYearlyRows : yearlyRows;
 
+    // Derived Closing Date
+    const closingDateDisplay = useMemo(() => {
+        if (monthlyRows && monthlyRows.length > 0) {
+            const lastRow = monthlyRows[monthlyRows.length - 1];
+            // If loan is paid off exactly, balance should be 0.
+            // Check if there are rows with 0 balance (prepaid early).
+            // Actually monthlyRows usually stops when balance is 0?
+            // Let's check computeAdvancedLoanAmortization. Typically it pushes rows until balance <= 0.
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const mName = monthNames[lastRow.month - 1] || "";
+            return `${mName} ${lastRow.year}`;
+        }
+        return "-";
+    }, [monthlyRows]);
+
     return (
         <div className="animate-fade-in space-y-8">
             <div className="flex flex-col md:flex-row items-center gap-6 mb-10">
@@ -784,20 +799,20 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
             </div>
 
             {/* SECTION 5: SUMMARY & CHARTS */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Summary Cards */}
-                <div className="md:col-span-1 space-y-6">
+                <div className="md:col-span-1 space-y-6 lg:contents">
                     {/* 1. Initial Payment (Upfront) */}
                     <div className="bg-white p-6 rounded-2xl border-l-8 border-slate-700 shadow-xl ring-1 ring-slate-100">
-                        <p className="text-sm font-black text-slate-900 uppercase tracking-tighter mb-1">Initial Payment (DP + Fees)</p>
-                        <p className="text-3xl font-black text-slate-800 leading-none">
+                        <p className="text-xs font-black text-slate-900 uppercase tracking-tighter mb-1">Initial Payment (DP + Fees)</p>
+                        <p className="text-2xl font-black text-slate-800 leading-none">
                             {moneyFormat(Math.round(downPaymentAmount + actualLoanFees + (showExpenses ? actualOneTimeExpenses : 0)), currency)}
                         </p>
                     </div>
 
                     {/* 2. Regular Monthly EMI (Recurring Base) */}
                     <div className="bg-white p-6 rounded-2xl border-l-8 border-indigo-600 shadow-xl ring-1 ring-indigo-50">
-                        <p className="text-sm font-black text-slate-900 uppercase tracking-tighter mb-1">Regular Monthly EMI</p>
+                        <p className="text-xs font-black text-slate-900 uppercase tracking-tighter mb-1">Regular Monthly EMI</p>
                         <p className="text-3xl font-black text-indigo-700 leading-none">{moneyFormat(Math.round(summary.baseEMI), currency)}</p>
                     </div>
 
@@ -867,6 +882,14 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                 Saved {moneyFormat(Math.round(summary.savedInterest), currency)}
                             </p>
                         )}
+                    </div>
+
+                    {/* 7. Loan End Date */}
+                    <div className="bg-white p-6 rounded-2xl border-l-8 border-cyan-500 shadow-xl ring-1 ring-cyan-50">
+                        <p className="text-sm font-black text-slate-900 uppercase tracking-tighter mb-1">Loan Ends In</p>
+                        <p className="text-2xl font-black text-cyan-700 leading-none">
+                            {closingDateDisplay}
+                        </p>
                     </div>
                 </div>
 

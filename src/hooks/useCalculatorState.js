@@ -11,7 +11,10 @@ export function useCalculatorState(defaults = {}) {
     // Input Values
     const [monthlySIP, setMonthlySIP] = useState(defaults.monthlySIP || 0);
     const [lumpSum, setLumpSum] = useState(defaults.lumpSum || 0);
+    const [targetAmount, setTargetAmount] = useState(defaults.targetAmount || 0); // Added for GoalPlanner
     const [initialSIP, setInitialSIP] = useState(defaults.initialSIP || 0); // For StepUp
+    const [deferDuration, setDeferDuration] = useState(defaults.deferDuration || 0); // SWP Deferment (Months)
+    const [compoundingFrequency, setCompoundingFrequency] = useState(defaults.compoundingFrequency || 'monthly'); // SWP Frequency
     const [stepUpPercent, setStepUpPercent] = useState(defaults.stepUpPercent || 0);
     const [annualRate, setAnnualRate] = useState(defaults.annualRate || 12);
     const [years, setYears] = useState(defaults.years || 10); // Standard tenure state
@@ -27,7 +30,7 @@ export function useCalculatorState(defaults = {}) {
     const [inflationRate, setInflationRate] = useState(6); // Default 6% inflation
 
     // Compounding (Experimental/New)
-    const [compoundingFrequency, setCompoundingFrequency] = useState(defaults.compoundingFrequency || 12);
+
 
     // Date Range Modes (New)
     const [calculationMode, setCalculationMode] = useState(defaults.calculationMode || 'duration');
@@ -38,7 +41,10 @@ export function useCalculatorState(defaults = {}) {
     return {
         monthlySIP, setMonthlySIP,
         lumpSum, setLumpSum,
+        targetAmount, setTargetAmount,
         initialSIP, setInitialSIP,
+        deferDuration, setDeferDuration,
+        compoundingFrequency, setCompoundingFrequency,
         stepUpPercent, setStepUpPercent,
         annualRate, setAnnualRate,
         years, setYears,
@@ -48,7 +54,7 @@ export function useCalculatorState(defaults = {}) {
         exemptionLimit, setExemptionLimit,
         isInflationAdjusted, setIsInflationAdjusted,
         inflationRate, setInflationRate,
-        compoundingFrequency, setCompoundingFrequency,
+
         calculationMode, setCalculationMode,
         startDate, setStartDate,
         endDate, setEndDate,

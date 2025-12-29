@@ -125,6 +125,22 @@ export default function LoanEMI({ currency, setCurrency, defaults }) {
     [finalAmortizationPrincipal, finalAmortizationRate, finalAmortizationYears, finalAmortizationEMI, startDate]
   );
 
+  // Calculate Closing Date
+  const closingDateDisplay = useMemo(() => {
+    if (monthlyRows && monthlyRows.length > 0) {
+      const lastRow = monthlyRows[monthlyRows.length - 1];
+      // Format: "May 2026"
+      // monthlyRows usually have monthName (e.g. "Jan") and year (e.g. 2024)
+      // Check data structure from computeLoanAmortization: it returns month: index, year: number.
+      // Wait, computeLoanAmortization usually returns numeric month. Let's verify usage in MonthYearPicker or others.
+      // finance.js: monthlyRows.push({ month: m, year: ... }) where m is 1-12.
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const mName = monthNames[lastRow.month - 1] || "";
+      return `${mName} ${lastRow.year}`;
+    }
+    return "-";
+  }, [monthlyRows]);
+
   // Check for calculation error (e.g. Negative Amortization)
   // Relaxed check: Only error if Interest exceeds EMI by a meaningful margin (e.g. 5) to allow for "Rate" mode precision
   const interestPerMonth = finalAmortizationPrincipal * (finalAmortizationRate / 1200);
@@ -390,6 +406,14 @@ export default function LoanEMI({ currency, setCurrency, defaults }) {
               <p className="text-xs text-emerald-600 mb-2 font-medium opacity-80">(Principal + Interest + Fees)</p>
               <p className="text-2xl font-bold text-emerald-700 tracking-tight">
                 {moneyFormat(Math.round(finalTotalPaid + processingFeeAmount), currency)}
+              </p>
+            </div>
+
+            {/* 5. Loan End Date */}
+            <div className="p-6 text-center bg-indigo-50/50 rounded-b-xl lg:rounded-b-none lg:rounded-bl-xl">
+              <p className="text-sm font-semibold text-indigo-900 mb-1">Loan Ends In</p>
+              <p className="text-2xl font-bold text-indigo-700 tracking-tight">
+                {closingDateDisplay}
               </p>
             </div>
           </div>

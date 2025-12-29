@@ -895,6 +895,8 @@ export function computeSWPPlan({
   totalYears = years,
   monthlyWithdrawal,
   annualWithdrawalIncrease = 0,
+  deferMonths = 0,
+  compoundingFrequency = 'monthly', // 'monthly', 'quarterly', 'half-yearly', 'yearly'
   calculationMode = 'duration',
   startDate = new Date().toISOString().slice(0, 10),
   endDate = null
@@ -906,9 +908,35 @@ export function computeSWPPlan({
   let totalInterest = 0;
   let depletionYear = 0;
   let depletionMonth = 0;
-  let currentMonthlyWithdrawal = Number(monthlyWithdrawal);
 
-  const monthlyRate = Number(annualRate) / 12 / 100;
+  const baseMonthlyWithdrawal = Number(monthlyWithdrawal);
+  let currentMonthlyWithdrawal = baseMonthlyWithdrawal;
+
+  // Rate Conversion based on Frequency
+  // Input annualRate is nominal or effective? 
+  // Standard in India/Banking: 'annualRate' usually implies nominal per annum if monthly compounding (Rate/12).
+  // But if frequency is 'Yearly', it implies the compounding happens once a year.
+  // However, SWP balances update monthly.
+  // If 'compoundingFrequency' is 'yearly', we should use (1+R)^(1/12) - 1 for monthly rate?
+  // Or does it just mean the interest is credited yearly? SWP usually credits monthly or assumes monthly growth.
+  // Let's assume 'Yearly' frequency means the given rate is the Effective Annual Rate (EAR).
+  // So monthly rate = (1 + R/100)^(1/12) - 1.
+  // If frequency is 'Monthly', monthly rate = (R/100)/12.
+
+  let monthlyRate;
+  const R = Number(annualRate) / 100;
+
+  if (compoundingFrequency === 'yearly') {
+    monthlyRate = Math.pow(1 + R, 1 / 12) - 1;
+  } else if (compoundingFrequency === 'half-yearly') {
+    monthlyRate = Math.pow(1 + R / 2, 1 / 6) - 1;
+  } else if (compoundingFrequency === 'quarterly') {
+    monthlyRate = Math.pow(1 + R / 4, 1 / 3) - 1;
+  } else {
+    // Default Monthly
+    monthlyRate = R / 12;
+  }
+
   const annualIncreaseFactor = 1 + (Number(annualWithdrawalIncrease) || 0) / 100;
 
   let effectiveYears = 0;
@@ -958,8 +986,26 @@ export function computeSWPPlan({
       yearlyInterest += monthlyInterest;
       currentCorpus += monthlyInterest;
 
-      // Step 2: Withdrawal
-      const actualWithdrawal = Math.min(currentMonthlyWithdrawal, currentCorpus);
+      // Step 2: Withdrawal (Check Deferment)
+      let actualWithdrawal = 0;
+      let inflationComponent = 0;
+      let baseComponent = 0;
+
+      if (globalMonthIdx > parseInt(deferMonths || 0)) {
+        actualWithdrawal = Math.min(currentMonthlyWithdrawal, currentCorpus);
+
+        // Calculate components for display
+        if (actualWithdrawal > 0) {
+          // We try to attribute proportional parts? 
+          // Or just: Base is min(baseInput, actual). Inflation is remainder.
+          // However, if corpus is depleting, actual might be < currentMonthlyWithdrawal.
+          // Let's keep it simple: proportion.
+          const ratio = actualWithdrawal / currentMonthlyWithdrawal;
+          baseComponent = baseMonthlyWithdrawal * ratio;
+          inflationComponent = actualWithdrawal - baseComponent;
+        }
+      }
+
       currentCorpus -= actualWithdrawal;
       yearlyWithdrawal += actualWithdrawal;
 
@@ -976,6 +1022,8 @@ export function computeSWPPlan({
         yearNumber: yearNum,
         openingBalance: openingBalanceMonth,
         withdrawal: actualWithdrawal,
+        baseWithdrawal: baseComponent,
+        inflationAdjustment: inflationComponent,
         interestEarned: monthlyInterest,
         closingBalance: Math.max(0, currentCorpus),
       });
@@ -1004,6 +1052,14 @@ export function computeSWPPlan({
     totalInterest += yearlyInterest;
 
     if (corpusDepleted) break;
+    if (corpusDepleted) break;
+
+    // Only increase withdrawal if we have started withdrawing (passed deferment) ??
+    // Standard Inflation adjustment usually happens annually regardless of payment start date?
+    // User Guide: "Defer for 5 years". Value at Y5 is adjusted for 5 years of inflation?
+    // If I want 1L today, in 5 years I need 1.2L.
+    // YES. Usually Step-Up implies keeping purchasing power constant relative to START of PLAN.
+    // So we continue to increase it every year.
     currentMonthlyWithdrawal *= annualIncreaseFactor;
   }
 

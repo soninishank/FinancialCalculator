@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 // --- IMPORTS ---
 import InputWithSlider from "../common/InputWithSlider";
 import { FinancialLineChart } from "../common/FinancialCharts";
+import InflationToggle from "../common/InflationToggle"; // Added
 import { moneyFormat } from "../../utils/formatting";
 import { computeSWPPlan } from "../../utils/finance";
 import { calculatorDetails } from "../../data/calculatorDetails";
@@ -35,11 +36,17 @@ export default function SWPCalculator({ currency = 'INR' }) {
     years, setYears,
     annualRate, setAnnualRate,
     startDate, setStartDate,
+    deferDuration, setDeferDuration, // New
+    compoundingFrequency, setCompoundingFrequency, // New
+    isInflationAdjusted, setIsInflationAdjusted, // New
+    inflationRate, setInflationRate // New
   } = useCalculatorState({
     lumpSum: 1000000,
     monthlySIP: DEFAULT_WITHDRAWAL,
     years: 15,
     annualRate: DEFAULT_RATE,
+    deferDuration: 0,
+    compoundingFrequency: 'monthly'
   });
 
   // --- CALCULATION ---
@@ -50,9 +57,12 @@ export default function SWPCalculator({ currency = 'INR' }) {
       totalYears: Number(years),
       monthlyWithdrawal: Number(monthlyWithdrawal),
       calculationMode: 'duration',
-      startDate
+      startDate,
+      deferMonths: Number(deferDuration),
+      compoundingFrequency,
+      annualWithdrawalIncrease: isInflationAdjusted ? Number(inflationRate) : 0
     });
-  }, [initialCorpus, annualRate, years, monthlyWithdrawal, startDate]);
+  }, [initialCorpus, annualRate, years, monthlyWithdrawal, startDate, deferDuration, compoundingFrequency, isInflationAdjusted, inflationRate]);
 
   const {
     rows: yearlyRows = [],
@@ -74,6 +84,14 @@ export default function SWPCalculator({ currency = 'INR' }) {
         max={MAX_CORPUS}
         step={STEP_LARGE}
         currency={currency}
+      />
+      <InputWithSlider
+        label="Hold Investment/ Defer withdrawal For (Months)"
+        value={deferDuration}
+        onChange={setDeferDuration}
+        min={0}
+        max={120} // 10 years defer max
+        step={1}
       />
       <InputWithSlider
         label="Total Withdrawal Period (Years)"
@@ -100,7 +118,33 @@ export default function SWPCalculator({ currency = 'INR' }) {
         step={0.1}
         isDecimal={true}
         symbol="%"
+        rightElement={
+          <div className="relative">
+            <select
+              value={compoundingFrequency}
+              onChange={(e) => setCompoundingFrequency(e.target.value)}
+              className="appearance-none bg-gray-50 border border-gray-200 text-gray-700 text-xs font-semibold py-1 px-3 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-teal-500"
+            >
+              <option value="monthly">Monthly</option>
+              <option value="quarterly">Quarterly</option>
+              <option value="half-yearly">Half Yearly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+            </div>
+          </div>
+        }
       />
+
+      <div className="mt-4">
+        <InflationToggle
+          isAdjusted={isInflationAdjusted}
+          setIsAdjusted={setIsInflationAdjusted}
+          rate={inflationRate}
+          setRate={setInflationRate}
+        />
+      </div>
     </div>
   );
 
@@ -177,11 +221,17 @@ export default function SWPCalculator({ currency = 'INR' }) {
             }))}
             monthlyData={monthlyRows.map(m => ({
               ...m,
-              invested: m.withdrawal,
+              invested: m.baseWithdrawal + m.inflationAdjustment, // Total Withdrawal
               interest: m.interestEarned,
-              balance: m.closingBalance
+              balance: m.closingBalance,
+              inflationAdjustment: m.inflationAdjustment // Pass custom field if table handles it? 
+              // CollapsibleInvestmentTable expects 'invested', 'interest', 'balance'. 
+              // Maybe map 'inflationAdjustment' to a custom column or just keep total in 'invested' (which is labeled 'Withdrawal' in SWP context?)
+              // Check CollapsibleInvestmentTable labels.
             }))}
+
             currency={currency}
+            labels={{ invested: "Total Withdrawn", balance: "Remaining Balance" }}
           />
         </div>
       }
