@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import CalculatorLayout from '../common/CalculatorLayout';
 import InputWithSlider from '../common/InputWithSlider';
-import { FinancialInvestmentPieChart } from '../common/FinancialCharts';
+// FinancialInvestmentPieChart removed
 import MonthYearPicker from '../common/MonthYearPicker';
 import CollapsibleInvestmentTable from '../common/CollapsibleInvestmentTable';
 import {
@@ -95,16 +95,23 @@ export default function ROICalculator({ currency = 'INR' }) {
                 interest: currentValue - result.start,
                 balance: currentValue
             });
-
-            if (calendarMonth === 11 || m === totalMonthsRequested) {
-                yearlyData.push({
-                    year: calendarYear,
-                    totalInvested: result.start,
-                    growth: currentValue - result.start,
-                    balance: currentValue
-                });
-            }
         }
+
+        // Robust Calendar Year Aggregation
+        const yearsSet = new Set(monthlyData.map(r => r.year));
+        const sortedYears = Array.from(yearsSet).sort((a, b) => a - b);
+
+        sortedYears.forEach(year => {
+            const monthsInYear = monthlyData.filter(r => r.year === year);
+            const lastMonth = monthsInYear[monthsInYear.length - 1];
+
+            yearlyData.push({
+                year: year,
+                totalInvested: lastMonth.invested,
+                growth: lastMonth.interest,
+                balance: lastMonth.balance
+            });
+        });
 
         return { yearlyData, monthlyData };
     }, [result.start, result.annualizedRoi, years, months, timeMode, startDate]);
@@ -290,9 +297,9 @@ export default function ROICalculator({ currency = 'INR' }) {
 
             table={
                 <div className="mt-8">
-                    <div className="flex justify-between items-center mb-4">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
                         <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
-                        <div className="flex items-center">
+                        <div className="flex items-center w-full md:w-auto">
                             <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
                             <div className="w-48">
                                 <MonthYearPicker

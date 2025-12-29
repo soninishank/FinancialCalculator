@@ -33,7 +33,7 @@ const getDisplayPrefix = (currencyCode) => {
 export default function InputWithSlider({
   label,
   value,
-  onChange,
+  onChange = () => { },
   min,
   max,
   step = 1,
@@ -42,6 +42,15 @@ export default function InputWithSlider({
   isDecimal = false,
   rightElement = null,
 }) {
+
+  // Defensive check: Ensure onChange is actually a function
+  const safeOnChange = (val) => {
+    if (typeof onChange === 'function') {
+      onChange(val);
+    } else {
+      console.warn(`InputWithSlider: onChange is not a function. It is ${typeof onChange}. Value attempted:`, val);
+    }
+  };
 
   const currencyPrefix = getDisplayPrefix(currency);
   const genericPrefix = symbol;
@@ -88,7 +97,7 @@ export default function InputWithSlider({
 
         <FormattedInput
           value={value}
-          onChange={onChange}
+          onChange={safeOnChange}
           currency={currency}
           isDecimal={isDecimal}
           min={min}
@@ -116,7 +125,7 @@ export default function InputWithSlider({
           max={max}
           step={effectiveStep}
           value={sliderValue > max ? max : sliderValue}
-          onChange={(e) => onChange(Number(e.target.value))}
+          onChange={(e) => safeOnChange(Number(e.target.value))}
           className="
             w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer 
             accent-indigo-600 hover:accent-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-300

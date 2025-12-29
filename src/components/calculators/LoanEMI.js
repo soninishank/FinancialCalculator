@@ -451,7 +451,7 @@ export default function LoanEMI({ currency, setCurrency, defaults }) {
       {/* AMORTIZATION TABLE (Using the Wrapper) - Only show if valid */}
       {isCalculationValid && (
         <div className="mt-12">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div>
               <h3 className="text-lg font-bold text-gray-800">Amortization Schedule</h3>
               <div className="flex items-center mt-2 w-full sm:w-auto">
@@ -466,7 +466,7 @@ export default function LoanEMI({ currency, setCurrency, defaults }) {
             </div>
             <button
               onClick={handleExport}
-              className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors self-start lg:self-center"
+              className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors w-full md:w-auto"
             >
               Export PDF
             </button>

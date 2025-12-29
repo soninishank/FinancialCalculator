@@ -1101,20 +1101,29 @@ export function computeYearlySchedule({
       balance: balance
     });
 
-    if (m % 12 === 0 || m === totalMonths) {
-      rows.push({
-        year: calendarYear,
-        yearNumber: Math.ceil(m / 12),
-        totalInvested: cumulativeInvested,
-        sipInvested: sipInvested,
-        lumpSum: Number(lumpSum),
-        stepUpAppliedPercent: Number(stepUpPercent),
-        growth: balance - cumulativeInvested,
-        overallValue: balance,
-        investment: cumulativeInvested // Alias for some charts
-      });
-    }
   }
+
+  // Aggregate into Yearly Rows (Calendar Years)
+  // We use the same robust grouping strategy as in Loan Amortization
+  const yearsSet = new Set(monthlyRows.map(r => r.year));
+  const sortedYears = Array.from(yearsSet).sort((a, b) => a - b);
+
+  sortedYears.forEach(year => {
+    const monthsInYear = monthlyRows.filter(r => r.year === year);
+    const lastMonth = monthsInYear[monthsInYear.length - 1];
+
+    rows.push({
+      year: year,
+      yearNumber: Math.ceil(lastMonth.id / 12),
+      totalInvested: lastMonth.invested,
+      sipInvested: lastMonth.sipInvested,
+      lumpSum: lastMonth.lumpSum,
+      stepUpAppliedPercent: Number(stepUpPercent),
+      growth: lastMonth.growth,
+      overallValue: lastMonth.balance,
+      investment: lastMonth.invested
+    });
+  });
 
   return { rows, monthlyRows };
 }
@@ -1852,22 +1861,29 @@ export function computePPF({ investmentAmount, frequency, interestRate, years, s
       month: monthInYear,
       monthName: actualMonthName,
       invested: cumulativeInvestment,
-      annualInvested: monthlyInvested, // Added for flexibility
+      annualInvested: monthlyInvested,
       interest: cumulativeInterest,
-      annualInterest: monthlyAccrued, // Added for flexibility
+      annualInterest: monthlyAccrued,
       balance: balance + (isYearEnd ? 0 : annualAccruedInterest)
     });
-
-    if (isYearEnd || month === N * 12) {
-      yearlyData.push({
-        year: actualYear,
-        totalInvested: cumulativeInvestment,
-        growth: cumulativeInterest,
-        balance: balance,
-        investment: cumulativeInvestment
-      });
-    }
   }
+
+  // Aggregate Yearly Data by Calendar Year
+  const yearsSet = new Set(monthlyData.map(r => r.year));
+  const sortedYears = Array.from(yearsSet).sort((a, b) => a - b);
+
+  sortedYears.forEach(year => {
+    const monthsInYear = monthlyData.filter(r => r.year === year);
+    const lastMonth = monthsInYear[monthsInYear.length - 1];
+
+    yearlyData.push({
+      year: year,
+      totalInvested: lastMonth.invested,
+      growth: lastMonth.interest,
+      balance: lastMonth.balance,
+      investment: lastMonth.invested
+    });
+  });
 
   const maturityValue = balance;
   const totalInterest = maturityValue - cumulativeInvestment;

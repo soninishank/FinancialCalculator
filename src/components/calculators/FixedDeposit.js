@@ -6,7 +6,7 @@ import MonthYearPicker from '../common/MonthYearPicker';
 import { moneyFormat } from '../../utils/formatting';
 import { computeFixedDeposit } from '../../utils/finance';
 import { getActualYearAndMonth } from '../../utils/calculatorUtils';
-import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from '../common/FinancialCharts';
+import { FinancialCompoundingBarChart } from '../common/FinancialCharts';
 import CollapsibleInvestmentTable from '../common/CollapsibleInvestmentTable';
 import { PiggyBank } from 'lucide-react';
 
@@ -37,7 +37,7 @@ export default function FixedDeposit({ currency = 'INR' }) {
         // Generate yearly and monthly data for table/chart
         const P = Number(principal);
         const R = Number(rate) / 100;
-        const [startYear] = startDate.split('-').map(Number);
+        // removed unused startYear extraction
 
         let totalMonths = 0;
         if (tenureMode === 'Years') totalMonths = tenureValue * 12;
@@ -47,7 +47,7 @@ export default function FixedDeposit({ currency = 'INR' }) {
         const yearlyData = [];
         const monthlyData = [];
 
-        const totalYears = Math.ceil(totalMonths / 12);
+        // removed unused totalYears calculation
 
         // Monthly breakdown
         for (let month = 1; month <= totalMonths; month++) {
@@ -235,20 +235,11 @@ export default function FixedDeposit({ currency = 'INR' }) {
                     </div>
                 }
                 charts={<FinancialCompoundingBarChart data={result.yearlyData} currency={currency} type="investment" />}
-                pieChart={
-                    <FinancialInvestmentPieChart
-                        invested={principal}
-                        gain={result.totalInterest}
-                        total={payoutType === 'cumulative' ? result.maturityValue : principal + result.totalInterest}
-                        currency={currency}
-                        years={tenureMode === 'Years' ? `${tenureValue} Years` : tenureMode === 'Months' ? `${tenureValue} Months` : `${tenureValue} Days`}
-                    />
-                }
                 table={
                     <div className="mt-8">
-                        <div className="flex justify-between items-center mb-4">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
                             <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
-                            <div className="flex items-center">
+                            <div className="flex items-center w-full md:w-auto">
                                 <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
                                 <div className="w-48">
                                     <MonthYearPicker

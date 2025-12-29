@@ -3,9 +3,9 @@ import {
     calcSIPFutureValue, calcLumpFutureValue, calculateSimpleInterest, calculateCompoundInterest,
     getRequiredSIP, getRequiredLumpSum, getRequiredStepUpSIP, calculateRealRate,
     computeLoanAmortization, calculateEMI, computeAdvancedLoanAmortization,
-    calculateLoanAmountFromEMI, calculateLoanTenure, calculateLoanInterestRate,
+    calculateLoanAmountFromEMI, calculateLoanTenure,
     calculateAPR, calculateFlatRateEMI, calculateEffectiveInterestRate,
-    calculateCAGR, calculateDetailedCAGR, computeDualAmortization,
+    calculateCAGR, computeDualAmortization,
     computeSWPPlan, computeYearlySchedule, computeStepUpSchedule, calculateRealValue,
     calculateTimeToFIRE, calculateCoastFIRE, calculateCostOfDelay, computeRentVsBuyLedger,
     calculateInflationImpact, calculateRebalancing, calculateFIRELevel, computeFixedDeposit,
@@ -234,7 +234,7 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
     describe('Yearly Schedule Logic', () => {
         test('Generates rows for SIP', () => {
             const res = computeYearlySchedule({
-                monthlySIP: 1000, totalYears: 1, annualRate: 10
+                monthlySIP: 1000, totalYears: 1, annualRate: 10, startDate: '2024-01-01'
             });
             expect(res.rows.length).toBe(1);
         });
@@ -364,7 +364,7 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
     describe('PPF Calculator', () => {
         test('Generates Yearly Data', () => {
             const res = computePPF({
-                investmentAmount: 100000, frequency: 'yearly', interestRate: 7.1, years: 15
+                investmentAmount: 100000, frequency: 'yearly', interestRate: 7.1, years: 15, startDate: '2024-01-01'
             });
             expect(res.yearlyData.length).toBe(15);
             expect(res.maturityValue).toBeGreaterThan(1500000);

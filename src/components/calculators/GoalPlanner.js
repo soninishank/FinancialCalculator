@@ -12,6 +12,7 @@ import {
   calculateRealRate,
   computeYearlySchedule
 } from "../../utils/finance";
+import TaxToggle from "../common/TaxToggle";
 import InflationToggle from "../common/InflationToggle";
 import { FinancialLineChart } from "../common/FinancialCharts";
 import {
@@ -41,6 +42,11 @@ export default function GoalPlanner({ currency, setCurrency }) {
     isInflationAdjusted, setIsInflationAdjusted,
     inflationRate, setInflationRate,
     startDate, setStartDate,
+    // Tax State
+    isTaxApplied, setIsTaxApplied,
+    ltcgRate, setLtcgRate,
+    isExemptionApplied, setIsExemptionApplied,
+    exemptionLimit, setExemptionLimit,
   } = useCalculatorState({
     targetAmount: DEFAULT_TARGET_AMOUNT,
     years: DEFAULT_TENURE_YEARS,
@@ -56,9 +62,81 @@ export default function GoalPlanner({ currency, setCurrency }) {
     : Number(annualRate);
 
   // Calculations
-  const requiredLump = getRequiredLumpSum(targetAmount, effectiveRate, years);
-  const requiredSIP = getRequiredSIP(targetAmount, effectiveRate, years);
-  const requiredStepUp = getRequiredStepUpSIP(targetAmount, effectiveRate, years, stepUpPercent);
+
+  // --- TAX LOGIC: Gross Up Target Amount ---
+  // If tax is applied, we need to aim for a higher corpus (Pre-Tax) so that Post-Tax = Target.
+  const getPreTaxTarget = (baseTarget, type) => {
+    if (!isTaxApplied) return baseTarget;
+
+    const rateDec = (Number(ltcgRate) || 0) / 100;
+    const exemption = isExemptionApplied ? (Number(exemptionLimit) || 0) : 0;
+    const effRate = effectiveRate;
+    const tYears = Number(years);
+
+    // If tax rate is 0, no adjustment
+    if (rateDec <= 0) return baseTarget;
+
+    // 1. Calculate K (Ratio of Invested / Maturity)
+    // We use a dummy target to find the ratio for the given parameters
+    const DUMMY_TARGET = 10000;
+    let dummyInv = 0;
+    let dummyInvestedTotal = 0;
+
+    if (type === 'lump') {
+      dummyInv = getRequiredLumpSum(DUMMY_TARGET, effRate, tYears);
+      dummyInvestedTotal = dummyInv;
+    } else if (type === 'sip') {
+      dummyInv = getRequiredSIP(DUMMY_TARGET, effRate, tYears);
+      dummyInvestedTotal = dummyInv * tYears * 12;
+    } else if (type === 'stepUp') {
+      dummyInv = getRequiredStepUpSIP(DUMMY_TARGET, effRate, tYears, stepUpPercent);
+      // For StepUp, we need total invested from the schedule
+      const { rows } = computeYearlySchedule({
+        lumpSum: 0,
+        monthlySIP: dummyInv,
+        stepUpPercent: stepUpPercent,
+        annualRate: effRate,
+        totalYears: tYears,
+      });
+      dummyInvestedTotal = rows[rows.length - 1].totalInvested;
+    }
+
+    const K = dummyInvestedTotal / DUMMY_TARGET;
+
+    // 2. Solve for Pre-Tax Maturity (M)
+    // M - Tax = Target
+    // Tax = Rate * (Gain - Exemption)
+    // Gain = M - Invested = M - K*M = M(1-K)
+    // M - Rate * (M(1-K) - Exemption) = Target
+    // M * (1 - Rate * (1 - K)) = Target - Rate * Exemption
+    // M = (Target - Rate * Exemption) / (1 - Rate + Rate * K)
+
+    const numerator = baseTarget - (rateDec * exemption);
+    const denominator = 1 - rateDec + (rateDec * K);
+
+    if (denominator === 0) return baseTarget; // Safety
+
+    let preTaxMaturity = numerator / denominator;
+
+    // 3. Verify Gain > Exemption
+    // If Gain <= Exemption, Tax is 0, so PreTax = Target
+    const impliedGain = preTaxMaturity * (1 - K);
+    if (impliedGain <= exemption) {
+      return baseTarget;
+    }
+
+    return preTaxMaturity;
+  };
+
+  // Calculate adjusted targets for each method
+  const targetLump = getPreTaxTarget(targetAmount, 'lump');
+  const targetSIP = getPreTaxTarget(targetAmount, 'sip');
+  const targetStepUp = getPreTaxTarget(targetAmount, 'stepUp');
+
+  // Calculations (Using Adjusted Targets)
+  const requiredLump = getRequiredLumpSum(targetLump, effectiveRate, years);
+  const requiredSIP = getRequiredSIP(targetSIP, effectiveRate, years);
+  const requiredStepUp = getRequiredStepUpSIP(targetStepUp, effectiveRate, years, stepUpPercent);
   const isNegativeRealRate = effectiveRate <= 0 && isInflationAdjusted;
 
   // --- Generate Table Data ---
@@ -127,6 +205,17 @@ export default function GoalPlanner({ currency, setCurrency }) {
         onChange={setStepUpPercent}
         min={LOC_MIN_STEP_UP} max={MAX_STEP_UP} symbol="%"
       />
+      <TaxToggle
+        currency={currency}
+        isTaxApplied={isTaxApplied}
+        setIsTaxApplied={setIsTaxApplied}
+        taxRate={ltcgRate}
+        onTaxRateChange={setLtcgRate}
+        isExemptionApplied={isExemptionApplied}
+        setIsExemptionApplied={setIsExemptionApplied}
+        exemptionLimit={exemptionLimit}
+        onExemptionLimitChange={setExemptionLimit}
+      />
       <InflationToggle
         isAdjusted={isInflationAdjusted}
         setIsAdjusted={setIsInflationAdjusted}
@@ -178,7 +267,7 @@ export default function GoalPlanner({ currency, setCurrency }) {
           <h3 className="text-gray-800 font-bold text-lg mb-4">Investment Path Comparison</h3>
           <FinancialLineChart
             data={{
-              labels: Array.from({ length: years + 1 }, (_, i) => `Year ${i} `),
+              labels: lumpSumData.map(r => `Year ${r.year}`),
               datasets: [
                 {
                   label: 'One-time Path',

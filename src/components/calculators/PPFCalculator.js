@@ -5,7 +5,7 @@ import UnifiedSummary from '../common/UnifiedSummary';
 import MonthYearPicker from '../common/MonthYearPicker';
 import { moneyFormat } from '../../utils/formatting';
 import { computePPF } from '../../utils/finance';
-import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from '../common/FinancialCharts';
+import { FinancialCompoundingBarChart } from '../common/FinancialCharts';
 import CollapsibleInvestmentTable from '../common/CollapsibleInvestmentTable';
 import { ShieldCheck, AlertTriangle } from 'lucide-react';
 
@@ -127,20 +127,11 @@ export default function PPFCalculator({ currency = 'INR' }) {
                     />
                 }
                 charts={<FinancialCompoundingBarChart data={result.yearlyData} currency={currency} type="investment" />}
-                pieChart={
-                    <FinancialInvestmentPieChart
-                        invested={result.totalInvestment}
-                        gain={result.totalInterest}
-                        total={result.maturityValue}
-                        currency={currency}
-                        years={`${years} Years`}
-                    />
-                }
                 table={
                     <div className="mt-8">
-                        <div className="flex justify-between items-center mb-4">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
                             <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
-                            <div className="flex items-center">
+                            <div className="flex items-center w-full md:w-auto">
                                 <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
                                 <div className="w-48">
                                     <MonthYearPicker

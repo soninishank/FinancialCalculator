@@ -2,7 +2,7 @@
 import React, { useMemo } from "react";
 
 // --- IMPORTS ---
-import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from "../common/FinancialCharts";
+import { FinancialCompoundingBarChart } from "../common/FinancialCharts";
 import InputWithSlider from "../common/InputWithSlider";
 import RateQualityGuard from "../common/RateQualityGuard";
 import TaxToggle from "../common/TaxToggle";
@@ -204,14 +204,11 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
         />
       }
       charts={<FinancialCompoundingBarChart data={yearlyRows} currency={currency} />}
-      pieChart={
-        <FinancialInvestmentPieChart invested={investedTotal} gain={gain} total={totalFuture} currency={currency} years={totalYears} />
-      }
       table={
         <div className="mt-8">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
             <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
-            <div className="flex items-center">
+            <div className="flex items-center w-full md:w-auto">
               <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
               <div className="w-48">
                 <MonthYearPicker

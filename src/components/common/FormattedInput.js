@@ -3,7 +3,7 @@
 const GLOBAL_SAFE_MAX = 2000000000;
 
 // 1. ADD 'min' prop here and set a default of 0
-export default function FormattedInput({ value, onChange, currency, className, max, min = 0, isDecimal = false }) {
+export default function FormattedInput({ value, onChange = () => { }, currency, className, max, min = 0, isDecimal = false }) {
 
   const currentValue = String(value);
   const limit = max ? Math.floor(Number(max)) : GLOBAL_SAFE_MAX;
@@ -83,7 +83,10 @@ export default function FormattedInput({ value, onChange, currency, className, m
 
     // C. Handle Empty/Partial Inputs
     if (rawValue === "" || rawValue === ".") {
-      return onChange(isDecimal ? rawValue : 0);
+      if (typeof onChange === 'function') {
+        return onChange(isDecimal ? rawValue : 0);
+      }
+      return;
     }
 
     // 5. Update State
@@ -94,7 +97,11 @@ export default function FormattedInput({ value, onChange, currency, className, m
       finalValue = Number(rawValue);
     }
 
-    onChange(finalValue);
+    if (typeof onChange === 'function') {
+      onChange(finalValue);
+    } else {
+      console.warn(`FormattedInput: onChange is not a function. It is ${typeof onChange}. Value attempted:`, finalValue);
+    }
   };
 
   return (

@@ -784,9 +784,9 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
             </div>
 
             {/* SECTION 5: SUMMARY & CHARTS */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Summary Cards */}
-                <div className="lg:col-span-1 space-y-6">
+                <div className="md:col-span-1 space-y-6">
                     {/* 1. Initial Payment (Upfront) */}
                     <div className="bg-white p-6 rounded-2xl border-l-8 border-slate-700 shadow-xl ring-1 ring-slate-100">
                         <p className="text-sm font-black text-slate-900 uppercase tracking-tighter mb-1">Initial Payment (DP + Fees)</p>
@@ -872,7 +872,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
 
                 {/* Comparison Summary (Only if enabled) */}
                 {isComparisonMode && resultsCompare && (
-                    <div className="lg:col-span-3 bg-indigo-900 text-white p-6 rounded-xl shadow-lg">
+                    <div className="md:col-span-3 bg-indigo-900 text-white p-6 rounded-xl shadow-lg">
                         <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 0 00-2-2H5a2 0 00-2 2v6a2 0 002 2h2a2 0 002-2zm0 0V9a2 2 0 012-2h2a2 0 012 2v10m-6 0a2 2 0 002 2h2a2 0 002-2m0 0V5a2 0 012-2h2a2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
                             Strategy Comparison
@@ -932,7 +932,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                 )}
 
                 {/* Doughnut Chart */}
-                <div className="lg:col-span-2 bg-white p-8 rounded-3xl border-2 border-slate-100 shadow-xl transition-all hover:shadow-2xl">
+                <div className="md:col-span-2 bg-white p-8 rounded-3xl border-2 border-slate-100 shadow-xl transition-all hover:shadow-2xl">
                     <div className="flex items-center justify-between mb-4">
                         <h4 className="text-base font-black text-slate-900 uppercase tracking-widest flex items-center gap-3">
                             <span className="w-1.5 h-6 bg-indigo-600 rounded-full"></span>

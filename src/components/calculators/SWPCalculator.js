@@ -30,14 +30,14 @@ const MIN_SWP_CORPUS = 100000;
 
 export default function SWPCalculator({ currency = 'INR' }) {
   const {
-    initialCorpus, setInitialCorpus,
-    monthlyWithdrawal, setMonthlyWithdrawal,
+    lumpSum: initialCorpus, setLumpSum: setInitialCorpus,
+    monthlySIP: monthlyWithdrawal, setMonthlySIP: setMonthlyWithdrawal,
     years, setYears,
     annualRate, setAnnualRate,
     startDate, setStartDate,
   } = useCalculatorState({
-    initialCorpus: 1000000,
-    monthlyWithdrawal: DEFAULT_WITHDRAWAL,
+    lumpSum: 1000000,
+    monthlySIP: DEFAULT_WITHDRAWAL,
     years: 15,
     annualRate: DEFAULT_RATE,
   });
@@ -156,9 +156,9 @@ export default function SWPCalculator({ currency = 'INR' }) {
       }
       table={
         <div className="mt-12">
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <h3 className="text-lg font-bold text-gray-800">Withdrawal Schedule</h3>
-            <div className="flex items-center">
+            <div className="flex items-center w-full md:w-auto">
               <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
               <div className="w-48">
                 <MonthYearPicker

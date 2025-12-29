@@ -130,7 +130,7 @@ const calculators = [
   // --- Specialized / Advanced ---
   {
     slug: 'step-up-plus-lump',
-    title: 'Step-Up SIP + Lump Sum',
+    title: 'SIP + Lump Sum + Step Up',
     description: 'Combine a step-up SIP schedule with an initial lump sum to forecast portfolio value over time.',
     keywords: 'step-up sip lump sum, sip escalation, investment planning',
     category: 'SIP',
