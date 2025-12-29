@@ -91,7 +91,7 @@ export default function CalculatorPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Main Content: 9 columns on large screens for a balanced width */}
         <main className="lg:col-span-9 order-1">
-          <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100">
+          <div className="bg-white rounded-2xl p-3 sm:p-8 shadow-sm border border-gray-100">
             {/* Back button */}
             <button
               onClick={handleBack}

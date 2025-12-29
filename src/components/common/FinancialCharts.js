@@ -311,7 +311,6 @@ export const FinancialCompoundingBarChart = ({ data, currency, type = 'investmen
 };
 
 export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, years }) => {
-    const [hoveredData, setHoveredData] = React.useState(null);
     const chartRef = React.useRef(null);
 
     // --- COLORS ---
@@ -375,27 +374,20 @@ export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, y
                 borderColor: '#e5e7eb',
                 borderWidth: 1,
                 cornerRadius: 8,
+                displayColors: true,
                 callbacks: {
                     label: (context) => {
                         return ` ${context.label}: ${moneyFormat(context.raw, currency)}`;
                     }
+                },
+                // Improve performance
+                animation: {
+                    duration: 0
                 }
             },
         },
         maintainAspectRatio: false,
         animation: { animateScale: true, animateRotate: true },
-        onHover: (event, chartElement) => {
-            if (chartElement.length > 0) {
-                const index = chartElement[0].index;
-                setHoveredData({
-                    label: data.labels[index],
-                    value: data.datasets[0].data[index],
-                    color: data.datasets[0].backgroundColor[index],
-                });
-            } else {
-                setHoveredData(null);
-            }
-        },
     };
 
 
@@ -414,21 +406,11 @@ export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, y
                     </div>
                 ))}
             </div>
-
-            {/* Hover Detail */}
-            <div className="h-6 mt-2 text-center">
-                {hoveredData && (
-                    <p className="text-sm font-semibold text-gray-800">
-                        {hoveredData.label}: {moneyFormat(hoveredData.value, currency)}
-                    </p>
-                )}
-            </div>
         </div>
     );
 };
 
 export const FinancialLoanPieChart = ({ principal, totalInterest, fees = 0, currency, years }) => {
-    const [hoveredData, setHoveredData] = React.useState(null);
     const chartRef = React.useRef(null);
 
     // --- COLORS (Modern "Beautiful" Palette) ---
@@ -474,22 +456,26 @@ export const FinancialLoanPieChart = ({ principal, totalInterest, fees = 0, curr
         layout: { padding: 20 },
         plugins: {
             legend: { display: false },
-            tooltip: { enabled: false },
+            tooltip: {
+                enabled: true,
+                padding: 12,
+                backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                titleColor: '#1E293B',
+                bodyColor: '#334155',
+                borderColor: '#e5e7eb',
+                borderWidth: 1,
+                cornerRadius: 8,
+                callbacks: {
+                    label: (context) => ` ${context.label}: ${moneyFormat(context.raw, currency)}`
+                },
+                // Improve performance
+                animation: {
+                    duration: 0
+                }
+            },
         },
         maintainAspectRatio: false,
         animation: { animateScale: true, animateRotate: true },
-        onHover: (event, chartElement) => {
-            if (chartElement.length > 0) {
-                const index = chartElement[0].index;
-                setHoveredData({
-                    label: data.labels[index],
-                    value: data.datasets[0].data[index],
-                    color: data.datasets[0].backgroundColor[index],
-                });
-            } else {
-                setHoveredData(null);
-            }
-        },
     };
 
     return (
@@ -498,11 +484,6 @@ export const FinancialLoanPieChart = ({ principal, totalInterest, fees = 0, curr
                 {/* Switch to Pie for screenshot match, or keep Doughnut? Screenshot looks like Pie but with a slice out. 
                    Actually screenshot shows it is a Pie Chart (full circle filled). I set cutout to 0%. */}
                 <Pie ref={chartRef} data={data} options={options} />
-
-                {/* DYNAMIC CENTER OVERLAY (For Pie, put it on top/side or just tooltip) 
-                    Since it's a full Pie, center text doesn't work well. 
-                    I'll show the hovered value as a floating label or just rely on the Legend updates below.
-                */}
             </div>
 
             {/* LEGEND SECTION - Match Screenshot Layout */}
@@ -513,15 +494,6 @@ export const FinancialLoanPieChart = ({ principal, totalInterest, fees = 0, curr
                         <span className="text-xs font-bold text-gray-700">{labels[originalIdx]}</span>
                     </div>
                 ))}
-            </div>
-
-            {/* Hover Detail */}
-            <div className="h-6 mt-2 text-center">
-                {hoveredData && (
-                    <p className="text-sm font-semibold text-gray-800">
-                        {hoveredData.label}: {moneyFormat(hoveredData.value, currency)}
-                    </p>
-                )}
             </div>
         </div>
     );
