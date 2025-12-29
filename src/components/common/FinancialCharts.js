@@ -303,7 +303,7 @@ export const FinancialCompoundingBarChart = ({ data, currency, type = 'investmen
                 {chartConfig.subtitle}
             </p>
 
-            <div className="h-[300px] sm:h-[350px] w-full">
+            <div className="h-[400px] sm:h-[350px] w-full">
                 <Bar data={chartData} options={options} />
             </div>
         </div>
@@ -366,7 +366,21 @@ export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, y
         layout: { padding: 20 },
         plugins: {
             legend: { display: false },
-            tooltip: { enabled: false },
+            tooltip: {
+                enabled: true,
+                padding: 12,
+                backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                titleColor: '#1E293B',
+                bodyColor: '#334155',
+                borderColor: '#e5e7eb',
+                borderWidth: 1,
+                cornerRadius: 8,
+                callbacks: {
+                    label: (context) => {
+                        return ` ${context.label}: ${moneyFormat(context.raw, currency)}`;
+                    }
+                }
+            },
         },
         maintainAspectRatio: false,
         animation: { animateScale: true, animateRotate: true },
@@ -605,7 +619,7 @@ export const FinancialLoanDoughnutChart = ({
     };
 
     return (
-        <div className="relative h-[350px] sm:h-[400px] w-full mt-4">
+        <div className="relative h-[450px] sm:h-[400px] w-full mt-4">
             <Doughnut data={data} options={options} plugins={[centerTextPlugin]} />
         </div>
     );

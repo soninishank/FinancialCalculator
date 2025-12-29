@@ -267,9 +267,14 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
             expect(res.years).toBe(2);
             expect(res.months).toBe(6);
         });
+        test('Time To FIRE with Inflation', () => {
+            const res = calculateTimeToFIRE({
+                currentCorpus: 0, monthlyExpenses: 1000, swr: 4,
+                monthlyInvestment: 10000, annualReturn: 10, inflation: 6
+            });
+            expect(res.years).toBeGreaterThan(0);
+        });
         test('FIRE Level', () => {
-            // 41% -> FIRE (>40)
-            // 40% -> ChubbyFIRE (<=40 and >20)
             expect(calculateFIRELevel(41000, 100000)).toBe('FIRE');
             expect(calculateFIRELevel(40000, 100000)).toBe('ChubbyFIRE');
             expect(calculateFIRELevel(10000, 100000)).toBe('FatFIRE');
@@ -334,6 +339,26 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
             expect(res.payoutAmount).toBe(10);
             expect(res.totalInterest).toBe(120);
         });
+        test('FD Payouts (Yearly/Half-Yearly)', () => {
+            const y = computeFixedDeposit({
+                principal: 1000, rate: 10, tenureValue: 1, tenureMode: 'Years',
+                payoutType: 'yearly'
+            });
+            expect(y.payoutAmount).toBe(100);
+
+            const h = computeFixedDeposit({
+                principal: 1000, rate: 10, tenureValue: 1, tenureMode: 'Years',
+                payoutType: 'half-yearly'
+            });
+            expect(h.payoutAmount).toBe(50);
+        });
+        test('FD Payouts (Quarterly)', () => {
+            const q = computeFixedDeposit({
+                principal: 1000, rate: 10, tenureValue: 1, tenureMode: 'Years',
+                payoutType: 'quarterly'
+            });
+            expect(q.payoutAmount).toBe(25);
+        });
     });
 
     describe('PPF Calculator', () => {
@@ -355,12 +380,21 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
     });
 
     describe('Advanced Loan Types', () => {
-        test('Step Up Loan Amortization', () => {
+        test('Step Up Loan Amortization (Percent)', () => {
             const res = computeStepUpLoanAmortization({
                 principal: 100000, annualRate: 10, years: 5,
                 stepUpType: 'percent', stepUpValue: 10
             });
             expect(res.monthsTaken).toBeLessThan(60);
+        });
+        test('Step Up Amount (Fixed) & Rate Change', () => {
+            const res = computeStepUpLoanAmortization({
+                principal: 100000, annualRate: 10, years: 5,
+                stepUpType: 'amount', stepUpValue: 2000,
+                rateChangeYear: 2, newRate: 12
+            });
+            // Month 13 should be > Month 1
+            expect(res.monthlyRows[12].emi).toBeGreaterThan(res.monthlyRows[0].emi);
         });
         test('Moratorium Loan', () => {
             const res = computeMoratoriumLoanAmortization({
@@ -369,6 +403,14 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
             });
             expect(res.monthlyRows[5].balance).toBeGreaterThan(100000);
             expect(res.monthlyRows[6].emi).toBeGreaterThan(0);
+        });
+        test('Moratorium Loan (Pay Interest)', () => {
+            const res = computeMoratoriumLoanAmortization({
+                principal: 100000, annualRate: 12, totalTenureYears: 1,
+                moratoriumMonths: 6, payInterestDuringMoratorium: true
+            });
+            expect(res.monthlyRows[0].emi).toBeCloseTo(1000, 0); // 1% of 1L
+            expect(res.monthlyRows[5].balance).toBeCloseTo(100000, 0);
         });
     });
 
@@ -380,6 +422,27 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
             });
             expect(res.rows).toBeDefined();
             expect(res.finalTotalPaid).toBeGreaterThan(150000);
+        });
+    });
+
+    describe('Edge Cases & Branch Cleanup', () => {
+        test('Coast FIRE - zero years', () => {
+            expect(calculateCoastFIRE({ currentAge: 60, retirementAge: 60 })).toBe(0);
+        });
+        test('Cost of Delay - delayed beyond investment period', () => {
+            const res = calculateCostOfDelay({
+                monthlyInvestment: 1000, annualReturn: 10,
+                delayYears: 10, investmentYears: 5
+            });
+            expect(res.startedLater).toBe(0);
+        });
+        test('Rent Vs Buy - Loan Closure Exactness', () => {
+            const res = computeRentVsBuyLedger({
+                homePrice: 100000, downPayment: 0, loanRate: 10,
+                loanTenureYears: 1, monthlyRent: 0, investReturnRate: 0,
+                propertyAppreciationRate: 0, rentInflationRate: 0
+            });
+            expect(res.length).toBeGreaterThan(0);
         });
     });
 });

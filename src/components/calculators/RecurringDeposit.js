@@ -165,14 +165,14 @@ export default function RecurringDeposit({ currency }) {
                         <div className="p-6 text-center">
                             <p className="text-sm font-semibold text-gray-500 mb-1">Total Investment</p>
                             <p className="text-3xl font-extrabold text-gray-800">
-                                {moneyFormat(result.totalInvestment, currency)}
+                                {moneyFormat(result.totalInvestment, currency, "word")}
                             </p>
                         </div>
 
                         <div className="p-6 text-center bg-teal-50/30">
                             <p className="text-sm font-semibold text-teal-900 mb-1">Interest Earned</p>
                             <p className="text-2xl font-bold text-teal-700 tracking-tight">
-                                {moneyFormat(result.interestEarned, currency)}
+                                {moneyFormat(result.interestEarned, currency, "word")}
                             </p>
                         </div>
 
@@ -182,7 +182,7 @@ export default function RecurringDeposit({ currency }) {
                                 After {tenureMode === 'Months' ? `${years} Months` : `${years} Years`}
                             </p>
                             <p className="text-2xl font-bold text-indigo-700 tracking-tight">
-                                {moneyFormat(result.maturityValue, currency)}
+                                {moneyFormat(result.maturityValue, currency, "word")}
                             </p>
                         </div>
                     </div>

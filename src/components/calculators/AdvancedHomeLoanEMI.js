@@ -787,16 +787,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Summary Cards */}
                 <div className="lg:col-span-1 space-y-6">
-                    <div className="bg-white p-6 rounded-2xl border-l-8 border-indigo-600 shadow-xl ring-1 ring-indigo-50">
-                        <p className="text-sm font-black text-slate-900 uppercase tracking-tighter mb-1">Regular Monthly EMI</p>
-                        <p className="text-3xl font-black text-indigo-700 leading-none">{moneyFormat(Math.round(summary.baseEMI), currency)}</p>
-                    </div>
-
-                    <div className="bg-white p-6 rounded-2xl border-l-8 border-emerald-600 shadow-xl ring-1 ring-emerald-50">
-                        <p className="text-sm font-black text-slate-900 uppercase tracking-tighter mb-1">Extra Part-Payments</p>
-                        <p className="text-3xl font-black text-emerald-700 leading-none">{moneyFormat(Math.round(summary.totalPrepayments), currency)}</p>
-                    </div>
-
+                    {/* 1. Initial Payment (Upfront) */}
                     <div className="bg-white p-6 rounded-2xl border-l-8 border-slate-700 shadow-xl ring-1 ring-slate-100">
                         <p className="text-sm font-black text-slate-900 uppercase tracking-tighter mb-1">Initial Payment (DP + Fees)</p>
                         <p className="text-3xl font-black text-slate-800 leading-none">
@@ -804,6 +795,13 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                         </p>
                     </div>
 
+                    {/* 2. Regular Monthly EMI (Recurring Base) */}
+                    <div className="bg-white p-6 rounded-2xl border-l-8 border-indigo-600 shadow-xl ring-1 ring-indigo-50">
+                        <p className="text-sm font-black text-slate-900 uppercase tracking-tighter mb-1">Regular Monthly EMI</p>
+                        <p className="text-3xl font-black text-indigo-700 leading-none">{moneyFormat(Math.round(summary.baseEMI), currency)}</p>
+                    </div>
+
+                    {/* 3. Monthly Breakdown (Recurring Detail) */}
                     <div className="bg-white p-6 rounded-xl border-l-4 border-emerald-500 shadow-sm relative overflow-hidden">
                         <div className="flex justify-between items-start">
                             <div>
@@ -815,7 +813,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                             <div className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-1 rounded font-bold border border-emerald-100 uppercase tracking-wider">Total Monthly Payment</div>
                         </div>
 
-                        {/* Detailed Breakdown - Showing even if 0 */}
+                        {/* Detailed Breakdown */}
                         <div className="mt-4 pt-4 border-t border-emerald-50 space-y-2">
                             <div className="flex justify-between items-center text-[11px]">
                                 <span className="text-gray-500 font-medium">Principal & Interest (EMI)</span>
@@ -840,16 +838,13 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                         </div>
                     </div>
 
-                    <div className="bg-white p-6 rounded-2xl border-l-8 border-amber-500 shadow-xl ring-1 ring-amber-50">
-                        <p className="text-sm font-black text-slate-900 uppercase tracking-tighter mb-1">Total Interest Paid</p>
-                        <p className="text-2xl font-bold text-amber-700 mt-1">{moneyFormat(Math.round(summary.totalInterest), currency)}</p>
-                        {summary.savedInterest > 0 && (
-                            <p className="text-xs font-bold text-green-600 mt-2 bg-green-50 inline-block px-2 py-1 rounded">
-                                Saved {moneyFormat(Math.round(summary.savedInterest), currency)}
-                            </p>
-                        )}
+                    {/* 4. Extra Part-Payments (Strategy) */}
+                    <div className="bg-white p-6 rounded-2xl border-l-8 border-emerald-600 shadow-xl ring-1 ring-emerald-50">
+                        <p className="text-sm font-black text-slate-900 uppercase tracking-tighter mb-1">Extra Part-Payments</p>
+                        <p className="text-3xl font-black text-emerald-700 leading-none">{moneyFormat(Math.round(summary.totalPrepayments), currency)}</p>
                     </div>
 
+                    {/* 5. Effective Tenure (Outcome Time) */}
                     <div className="bg-white p-6 rounded-2xl border-l-8 border-indigo-600 shadow-xl ring-1 ring-indigo-50 flex justify-between items-center">
                         <div>
                             <p className="text-sm font-black text-slate-900 uppercase tracking-tighter mb-1">Effective Tenure</p>
@@ -861,6 +856,17 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Original Plan</p>
                             <p className="text-base font-black text-slate-900 leading-none">{tenureYears} <span className="text-[10px]">Years</span></p>
                         </div>
+                    </div>
+
+                    {/* 6. Total Interest (Outcome Cost) */}
+                    <div className="bg-white p-6 rounded-2xl border-l-8 border-amber-500 shadow-xl ring-1 ring-amber-50">
+                        <p className="text-sm font-black text-slate-900 uppercase tracking-tighter mb-1">Total Interest Paid</p>
+                        <p className="text-2xl font-bold text-amber-700 mt-1">{moneyFormat(Math.round(summary.totalInterest), currency)}</p>
+                        {summary.savedInterest > 0 && (
+                            <p className="text-xs font-bold text-green-600 mt-2 bg-green-50 inline-block px-2 py-1 rounded">
+                                Saved {moneyFormat(Math.round(summary.savedInterest), currency)}
+                            </p>
+                        )}
                     </div>
                 </div>
 

@@ -33,7 +33,8 @@ export default function CreditCardPayoff({ currency }) {
                 months: 0,
                 totalInterest: 0,
                 totalPaid: 0,
-                yearlyData: []
+                yearlyData: [],
+                monthlyData: []
             };
         }
 

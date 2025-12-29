@@ -15,23 +15,17 @@ import { useCalculatorState } from '../../hooks/useCalculatorState';
 import UnifiedSummary from '../common/UnifiedSummary';
 
 export default function ROICalculator({ currency = 'INR' }) {
-    const {
-        initialInvestment, setInitialInvestment,
-        finalValue, setFinalValue,
-        absoluteProfit, setAbsoluteProfit,
-        years, setYears,
-        months, setMonths,
-        inputMode, setInputMode,
-        timeMode, setTimeMode,
-    } = useCalculatorState({
-        initialInvestment: DEFAULT_ROI_INITIAL,
-        finalValue: DEFAULT_ROI_FINAL,
-        absoluteProfit: DEFAULT_ROI_FINAL - DEFAULT_ROI_INITIAL,
-        years: DEFAULT_ROI_YEARS,
-        months: DEFAULT_ROI_YEARS * 12,
-        inputMode: 'value',
-        timeMode: 'years'
-    });
+    const [initialInvestment, setInitialInvestment] = React.useState(DEFAULT_ROI_INITIAL);
+    const [finalValue, setFinalValue] = React.useState(DEFAULT_ROI_FINAL);
+    const [absoluteProfit, setAbsoluteProfit] = React.useState(DEFAULT_ROI_FINAL - DEFAULT_ROI_INITIAL);
+
+    // Duration State
+    const [years, setYears] = React.useState(DEFAULT_ROI_YEARS);
+    const [months, setMonths] = React.useState(DEFAULT_ROI_YEARS * 12);
+
+    // Modes
+    const [inputMode, setInputMode] = React.useState('value'); // 'value' | 'profit'
+    const [timeMode, setTimeMode] = React.useState('years');   // 'years' | 'months'
 
     const {
         startDate, setStartDate,
@@ -172,7 +166,7 @@ export default function ROICalculator({ currency = 'INR' }) {
                     label="Amount Returned (Final Value)"
                     value={finalValue}
                     onChange={setFinalValue}
-                    min={100}
+                    min={initialInvestment} // Result can't be less than investment (No loss allowed)
                     max={MAX_AMOUNT * 2}
                     step={100}
                     currency={currency}
@@ -182,7 +176,7 @@ export default function ROICalculator({ currency = 'INR' }) {
                     label="Total Profit / Gain"
                     value={absoluteProfit}
                     onChange={setAbsoluteProfit}
-                    min={-MAX_AMOUNT} // Allow losses
+                    min={0} // No negative profit allowed per user request
                     max={MAX_AMOUNT}
                     step={100}
                     currency={currency}
@@ -293,17 +287,7 @@ export default function ROICalculator({ currency = 'INR' }) {
         <CalculatorLayout
             inputs={inputs}
             summary={summarySection}
-            pieChart={
-                <div className="h-full">
-                    <FinancialInvestmentPieChart
-                        invested={initialInvestment}
-                        gain={result.gain}
-                        total={result.computedFinalValue}
-                        currency={currency}
-                        years={timeMode === 'years' ? `${years} years` : `${months} months`}
-                    />
-                </div>
-            }
+
             table={
                 <div className="mt-8">
                     <div className="flex justify-between items-center mb-4">

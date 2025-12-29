@@ -12,8 +12,9 @@ export function moneyFormat(x, currency = "INR", compact = false) {
   const num = Number(x);
   if (isNaN(num)) return "0";
 
-  // 1. Compact Mode with proper Indian formatting
-  if (compact && Math.abs(num) >= 10000) {
+  // 1. Word/Human Readable Mode (e.g. "1.5 Lakh", "5.2 Cr")
+  // Use compact="word" to trigger this specific verbose style
+  if (compact === true || compact === "word") {
     // For INR, use Indian conventions (Lakh, Crore)
     if (currency === "INR") {
       const absNum = Math.abs(num);
@@ -23,19 +24,25 @@ export function moneyFormat(x, currency = "INR", compact = false) {
       if (absNum >= 10000000) {
         // Crores (1 Cr = 1,00,00,000)
         const cr = absNum / 10000000;
-        // Always show 2 decimals for precision: ₹10,602.65 cr
         return `${sign}${symbol}${cr.toLocaleString('en-IN', {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2
-        })} cr`;
+        })} Cr`;
       } else if (absNum >= 100000) {
         // Lakhs (1L = 1,00,000)
         const lakh = absNum / 100000;
-        return `${sign}${symbol}${lakh.toFixed(2)} L`;
+        return `${sign}${symbol}${lakh.toLocaleString('en-IN', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })} Lakh`;
       } else {
-        // Thousands
-        const k = absNum / 1000;
-        return `${sign}${symbol}${k.toFixed(2)}K`;
+        // Thousands or less - fallback to standard numeric with 0 decimals for cleanliness if > 1000
+        // unless it's very small
+        return num.toLocaleString(locale, {
+          style: "currency",
+          currency: currency,
+          maximumFractionDigits: 0
+        });
       }
     }
 

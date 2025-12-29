@@ -52,7 +52,7 @@ export default function UnifiedSummary({
                                 <p className="text-xs text-gray-400 mb-2 font-medium opacity-80">{m.subtext}</p>
                             )}
                             <p className={`text-2xl sm:text-3xl font-extrabold ${m.color} tracking-tight`}>
-                                {moneyFormat(m.value, currency)}
+                                {moneyFormat(m.value, currency, "word")}
                             </p>
                         </div>
                     ))}
