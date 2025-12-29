@@ -87,8 +87,8 @@ export default function CalculatorPage() {
   const LazyCalc = React.lazy(() => importBySlug(slug));
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
+    <div className="w-full h-full">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Main Content: 9 columns on large screens for a balanced width */}
         <main className="lg:col-span-9 order-1">
           <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100">

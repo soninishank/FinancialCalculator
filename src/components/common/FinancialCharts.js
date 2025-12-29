@@ -387,7 +387,7 @@ export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, y
 
     return (
         <div className="flex flex-col items-center justify-center h-full w-full">
-            <div className="relative h-64 w-64 mb-4">
+            <div className="relative w-full max-w-[280px] sm:max-w-[320px] aspect-square mb-6">
                 <Pie ref={chartRef} data={data} options={options} />
             </div>
 
@@ -480,7 +480,7 @@ export const FinancialLoanPieChart = ({ principal, totalInterest, fees = 0, curr
 
     return (
         <div className="flex flex-col items-center justify-center h-full w-full">
-            <div className="relative h-64 w-64 mb-4">
+            <div className="relative w-full max-w-[280px] sm:max-w-[320px] aspect-square mb-6">
                 {/* Switch to Pie for screenshot match, or keep Doughnut? Screenshot looks like Pie but with a slice out. 
                    Actually screenshot shows it is a Pie Chart (full circle filled). I set cutout to 0%. */}
                 <Pie ref={chartRef} data={data} options={options} />
@@ -509,6 +509,104 @@ export const FinancialLoanPieChart = ({ principal, totalInterest, fees = 0, curr
                     </p>
                 )}
             </div>
+        </div>
+    );
+};
+export const FinancialLoanDoughnutChart = ({
+    upfront,
+    principal,
+    prepayments,
+    interest,
+    taxes,
+    insurance,
+    currency,
+    total
+}) => {
+    // Labels and data mapping
+    const labels = [
+        "Initial Payment (DP + Fees)",
+        "Principal Amount",
+        "Extra Part-Payments",
+        "Total Interest Paid",
+        "Property Taxes",
+        "Home Insurance & Maintenance"
+    ];
+    const datasetData = [upfront, principal, prepayments, interest, taxes, insurance];
+    const bgColors = ["#f43f5e", "#84cc16", "#14b8a6", "#f59e0b", "#8b5cf6", "#6366f1"];
+    const hoverColors = ["#e11d48", "#65a30d", "#0d9488", "#d97706", "#7c3aed", "#4f46e5"];
+
+    const data = {
+        labels,
+        datasets: [{
+            data: datasetData,
+            backgroundColor: bgColors,
+            hoverBackgroundColor: hoverColors,
+            borderWidth: 2,
+            borderColor: '#ffffff',
+            hoverOffset: 4,
+            cutout: "85%"
+        }]
+    };
+
+    const centerTextPlugin = {
+        id: 'centerText',
+        beforeDraw: (chart) => {
+            const { ctx, chartArea } = chart;
+            if (!chartArea) return;
+
+            ctx.restore();
+
+            const height = chartArea.bottom - chartArea.top;
+            const fontSize = (height / 16).toFixed(2); // Slightly larger relative to chart area
+            ctx.font = `bold ${fontSize}px 'Inter', sans-serif`;
+            ctx.textBaseline = 'middle';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#1e293b';
+
+            const centerX = (chartArea.left + chartArea.right) / 2;
+            const centerY = (chartArea.top + chartArea.bottom) / 2;
+            const lineHeight = parseInt(fontSize) * 1.1;
+
+            // Draw 3 lines
+            ctx.fillText('Total', centerX, centerY - lineHeight);
+            ctx.fillText('of all', centerX, centerY);
+            ctx.fillText('Payments', centerX, centerY + lineHeight);
+
+            ctx.save();
+        }
+    };
+
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: 25 },
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    usePointStyle: true,
+                    padding: 20,
+                    font: { size: 11, weight: '600', family: "'Inter', sans-serif" }
+                }
+            },
+            tooltip: {
+                enabled: true,
+                padding: 12,
+                borderRadius: 8,
+                callbacks: {
+                    label: (context) => ` ${context.label}: ${moneyFormat(context.raw, currency)}`
+                }
+            }
+        },
+        animation: {
+            animateScale: true,
+            animateRotate: true
+        }
+    };
+
+    return (
+        <div className="relative h-[350px] sm:h-[400px] w-full mt-4">
+            <Doughnut data={data} options={options} plugins={[centerTextPlugin]} />
         </div>
     );
 };

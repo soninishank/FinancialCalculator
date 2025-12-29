@@ -297,13 +297,21 @@ export function computeAdvancedLoanAmortization({
   // Expenses
   propertyTaxYearly = 0, // Amount
   homeInsuranceYearly = 0, // Amount
-  maintenanceMonthly = 0 // Amount
+  maintenanceMonthly = 0, // Amount
+  // Advanced Features
+  emiStepUpYearly = 0, // %
+  prepaymentStepUpYearly = 0, // %
+  prepaymentStrategy = 'reduce_tenure', // 'reduce_tenure' | 'reduce_emi'
+  interestRateChanges = [], // Array of { date: 'YYYY-MM', rate: 9.5 }
+  loanFees = 0
 }) {
-  const R_m = annualRate / 12 / 100;
+  let R_m = annualRate / 12 / 100; // Mutable Rate
   let N = years * 12; // Initial tenure estimate
 
   // We calculate the Base EMI once based on original tenure
-  const baseEMI = calculateEMI(principal, R_m, N);
+  let baseEMI = calculateEMI(principal, R_m, N);
+  let currentBaseEMI = baseEMI;
+  let currentMonthlyExtra = monthlyExtra;
 
   let balance = principal;
   const start = startDate ? new Date(startDate) : new Date();
@@ -325,23 +333,71 @@ export function computeAdvancedLoanAmortization({
   // Loop until balance is cleared or we hit a safety limit (e.g. 50 years)
   // We don't use fixed N loop because prepayments reduce tenure
   while (balance > 1 && processingMonth <= 600) {
+    // 0. Step-Up Logic (Annually - Month 13, 25, 37...)
+    if (processingMonth > 1 && (processingMonth - 1) % 12 === 0) {
+      if (emiStepUpYearly > 0) {
+        currentBaseEMI = currentBaseEMI * (1 + emiStepUpYearly / 100);
+      }
+      if (prepaymentStepUpYearly > 0) {
+        currentMonthlyExtra = currentMonthlyExtra * (1 + prepaymentStepUpYearly / 100);
+      }
+    }
+
+
+
+    // 0.5. Variable Rate Check
+    if (interestRateChanges && interestRateChanges.length > 0) {
+      // Current Date Check (Same as prepayments)
+      const currentAbsMonth = startMonth + (processingMonth - 1);
+      const curYear = startYear + Math.floor(currentAbsMonth / 12);
+      const curMonth = (currentAbsMonth % 12) + 1;
+      const dateStr = `${curYear}-${String(curMonth).padStart(2, '0')}`;
+
+      const change = interestRateChanges.find(c => c.date === dateStr);
+      if (change) {
+        // Update Monthly Rate
+        R_m = Number(change.rate) / 12 / 100;
+      }
+    }
+
     // 1. Calculate Interest for this month
     const interestPaid = balance * R_m;
 
     // 2. Base EMI Principal Part
-    let principalPaid = baseEMI - interestPaid;
+    // If EMI is less than interest (negative amortization support check?), we cap or handle.
+    // For now, assume standard.
+    let principalPaid = currentBaseEMI - interestPaid;
 
     // 3. Prepayments
     let prepaymentThisMonth = 0;
 
     // Monthly Extra
-    if (monthlyExtra > 0) prepaymentThisMonth += monthlyExtra;
+    if (currentMonthlyExtra > 0) prepaymentThisMonth += currentMonthlyExtra;
 
     // Quarterly Extra (Every 3rd month: 3, 6, 9...)
     if (quarterlyExtra > 0 && processingMonth % 3 === 0) prepaymentThisMonth += quarterlyExtra;
 
     // Yearly Extra (Every 12th month: 12, 24...)
     if (yearlyExtra > 0 && processingMonth % 12 === 0) prepaymentThisMonth += yearlyExtra;
+
+    // Custom One-Time Prepayments
+    if (oneTimePrepayments && oneTimePrepayments.length > 0) {
+      // Calculate current date based on processingMonth
+      // currentMonthIndex = startMonth + (processingMonth - 1)
+      const currentAbsMonth = startMonth + (processingMonth - 1);
+      const curYear = startYear + Math.floor(currentAbsMonth / 12);
+      const curMonth = (currentAbsMonth % 12) + 1; // 1-12
+
+      // Check for matches
+      // Date format is likely 'YYYY-MM'
+      const dateStr = `${curYear}-${String(curMonth).padStart(2, '0')}`;
+
+      oneTimePrepayments.forEach(p => {
+        if (p.date === dateStr) {
+          prepaymentThisMonth += Number(p.amount);
+        }
+      });
+    }
 
     // Cap Principal Payment to Balance
     // Total Principal to be paid = Normal Principal + Prepayment
@@ -361,6 +417,17 @@ export function computeAdvancedLoanAmortization({
     // 4. Update Balance
     balance -= (principalPaid + prepaymentThisMonth);
     if (balance < 0) balance = 0; // Floating point safety
+
+    // STRATEGY: Reduce EMI (Recalculate EMI to keep original tenure)
+    // Only if we made a prepayment this month and option is selected and we still have balance.
+    if (prepaymentStrategy === 'reduce_emi' && prepaymentThisMonth > 0 && balance > 0) {
+      const remainingMonths = N - processingMonth;
+      // If we are past original tenure? unlikely with prepayments.
+      if (remainingMonths > 0) {
+        // Recalculate EMI required to clear 'balance' in 'remainingMonths'
+        currentBaseEMI = calculateEMI(balance, R_m, remainingMonths);
+      }
+    }
 
     // 5. Expenses
     const currentMaintenance = maintenanceMonthly;
@@ -395,7 +462,11 @@ export function computeAdvancedLoanAmortization({
 
       // Cashflows
       totalLoanPayment: interestPaid + principalPaid + prepaymentThisMonth,
-      totalOwnershipCost: interestPaid + principalPaid + prepaymentThisMonth + currentTax + currentInsurance + currentMaintenance
+      totalOwnershipCost: interestPaid + principalPaid + prepaymentThisMonth + currentTax + currentInsurance + currentMaintenance,
+
+      // FY marker
+      fyYear: calendarMonth + 1 >= 4 ? calendarYear : calendarYear - 1,
+      totalPaidPercent: ((principal - balance) / principal) * 100
     });
 
     totalInterest += interestPaid;
@@ -426,13 +497,64 @@ export function computeAdvancedLoanAmortization({
       totalExpense: months.reduce((s, m) => s + m.totalExpense, 0),
       totalLoanPayment: months.reduce((s, m) => s + m.totalLoanPayment, 0),
       totalOwnershipCost: months.reduce((s, m) => s + m.totalOwnershipCost, 0),
-      closingBalance: months[months.length - 1].closingBalance
+      closingBalance: months[months.length - 1].closingBalance,
+      totalPaidPercent: months[months.length - 1].totalPaidPercent
     });
   });
+
+  // 3. Aggregate to Financial Year (April - March)
+  // FY 2023-24 starts April 2023, ends March 2024.
+  const financialYearlyRows = [];
+  const fyMap = new Map(); // Key: "2023", Value: { ...data } representing FY 2023-24
+
+  allMonthlyRows.forEach(m => {
+    // Determine Financial Year Start
+    // If Month is Jan(1)-Mar(3), it belongs to Previous Year's FY cycle (e.g., Mar 2024 is in FY 23-24)
+    // If Month is Apr(4)-Dec(12), it belongs to Current Year's FY cycle (e.g., Apr 2023 is in FY 23-24)
+
+    // m.month is 1-12
+    const fyStartYear = m.month >= 4 ? m.year : m.year - 1;
+    const fyLabel = `FY ${fyStartYear}-${String(fyStartYear + 1).slice(-2)}`;
+
+    if (!fyMap.has(fyStartYear)) {
+      fyMap.set(fyStartYear, {
+        year: fyStartYear, // We use start year as the 'id'
+        label: fyLabel,
+        principalPaid: 0,
+        interestPaid: 0,
+        prepayment: 0,
+        tax: 0,
+        insurance: 0,
+        maintenance: 0,
+        totalExpense: 0,
+        totalLoanPayment: 0,
+        totalOwnershipCost: 0,
+        openingBalance: m.openingBalance, // First month of FY
+        closingBalance: 0
+      });
+    }
+
+    const fyData = fyMap.get(fyStartYear);
+    fyData.principalPaid += m.principalPaid;
+    fyData.interestPaid += m.interestPaid;
+    fyData.prepayment += m.prepayment;
+    fyData.tax += m.tax;
+    fyData.insurance += m.insurance;
+    fyData.maintenance += m.maintenance;
+    fyData.totalExpense += m.totalExpense;
+    fyData.totalLoanPayment += m.totalLoanPayment;
+    fyData.totalOwnershipCost += m.totalOwnershipCost;
+    fyData.closingBalance = m.closingBalance; // Always update to latest
+    fyData.totalPaidPercent = m.totalPaidPercent;
+  });
+
+  fyMap.forEach(value => financialYearlyRows.push(value));
+  financialYearlyRows.sort((a, b) => a.year - b.year);
 
   return {
     monthlyRows: allMonthlyRows,
     yearlyRows,
+    financialYearlyRows,
     summary: {
       baseEMI,
       totalInterest,
@@ -440,8 +562,9 @@ export function computeAdvancedLoanAmortization({
       totalTaxes,
       totalInsurance,
       totalMaintenance,
-      totalAmountPaid: totalPrincipal + totalInterest + totalPrepayments,
-      totalCostOfOwnership: totalPrincipal + totalInterest + totalPrepayments + totalTaxes + totalInsurance + totalMaintenance,
+      loanFees,
+      totalAmountPaid: totalPrincipal + totalInterest + totalPrepayments + loanFees,
+      totalCostOfOwnership: totalPrincipal + totalInterest + totalPrepayments + totalTaxes + totalInsurance + totalMaintenance + loanFees,
       actualTenureYears: (processingMonth - 1) / 12,
       savedInterest: (baseEMI * years * 12) - (principal) - totalInterest // Approx savings vs original tenure
     }

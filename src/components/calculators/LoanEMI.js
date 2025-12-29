@@ -189,7 +189,7 @@ export default function LoanEMI({ currency, setCurrency, defaults }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">
+      <div className="flex flex-col gap-10 mt-8">
         {/* Principal Input - Show unless calculating Loan Amount */}
         {calculationMode !== 'LOAN' && (
           <InputWithSlider
@@ -245,7 +245,7 @@ export default function LoanEMI({ currency, setCurrency, defaults }) {
 
         {/* Rate Input - Show unless calculating Rate */}
         {calculationMode !== 'RATE' && (
-          <div className={calculationMode === 'EMI' || calculationMode === 'LOAN' ? "md:col-span-2" : ""}>
+          <div className="">
             <InputWithSlider
               label="Annual Interest Rate (%)"
               value={annualRate}
@@ -256,7 +256,7 @@ export default function LoanEMI({ currency, setCurrency, defaults }) {
         )}
 
         {/* Processing Fee Input with Toggle */}
-        <div className="md:col-span-2">
+        <div className="">
           {feeMode === 'percent' ? (
             <>
               <InputWithSlider

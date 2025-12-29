@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-export default function MonthYearPicker({ value, onChange }) {
+export default function MonthYearPicker({ value, onChange, minDate }) {
     const [isOpen, setIsOpen] = useState(false);
     const wrapperRef = useRef(null);
 
@@ -38,7 +38,9 @@ export default function MonthYearPicker({ value, onChange }) {
 
     const handleMonthClick = (monthIndex) => {
         const monthStr = String(monthIndex + 1).padStart(2, '0');
-        onChange(`${selectedYear}-${monthStr}`);
+        const newDateStr = `${selectedYear}-${monthStr}`;
+        if (minDate && newDateStr < minDate) return; // Prevent selection below minDate
+        onChange(newDateStr);
         setIsOpen(false);
     };
 
@@ -67,7 +69,7 @@ export default function MonthYearPicker({ value, onChange }) {
 
             {/* POPOVER */}
             {isOpen && (
-                <div className="absolute z-50 mt-2 w-72 bg-white rounded-xl shadow-xl border border-gray-100 p-4 animate-fade-in-down transform origin-top left-0 ring-1 ring-black ring-opacity-5">
+                <div className="absolute z-[100] mt-2 w-72 bg-white rounded-xl shadow-xl border border-gray-100 p-4 animate-fade-in-down transform origin-top left-0 ring-1 ring-black ring-opacity-5">
                     {/* TRIANGLE ARROW (Optional CSS trick, omitted for simplicity) */}
 
                     {/* HEADER: YEAR SLIDER */}
@@ -76,7 +78,8 @@ export default function MonthYearPicker({ value, onChange }) {
                         <div className="flex items-center justify-between gap-2 mb-2">
                             <button
                                 onClick={() => setSelectedYear(y => y - 1)}
-                                className="p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-indigo-600 transition-colors"
+                                disabled={minDate && (selectedYear - 1) < Number(minDate.split('-')[0])}
+                                className="p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-indigo-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                             >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
                             </button>
@@ -102,15 +105,21 @@ export default function MonthYearPicker({ value, onChange }) {
                     {/* BODY: MONTH GRID */}
                     <div className="grid grid-cols-3 gap-2">
                         {months.map((m, idx) => {
-                            const isSelected = (value === `${selectedYear}-${String(idx + 1).padStart(2, '0')}`);
+                            const currentMonthStr = `${selectedYear}-${String(idx + 1).padStart(2, '0')}`;
+                            const isSelected = (value === currentMonthStr);
+                            const isDisabled = minDate && currentMonthStr < minDate;
+
                             return (
                                 <button
                                     key={m}
-                                    onClick={() => handleMonthClick(idx)}
+                                    onClick={() => !isDisabled && handleMonthClick(idx)}
+                                    disabled={isDisabled}
                                     className={`py-2 rounded-lg text-sm font-semibold transition-all duration-200
                                 ${isSelected
                                             ? 'bg-indigo-600 text-white shadow-md transform scale-105'
-                                            : 'bg-gray-50 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700'
+                                            : isDisabled
+                                                ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
+                                                : 'bg-gray-50 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700'
                                         }
                             `}
                                 >

@@ -1,7 +1,7 @@
 import React, { useState, Fragment } from 'react';
 import { moneyFormat } from '../../utils/formatting';
 
-export default function CollapsibleAmortizationTable({ yearlyData, monthlyData, currency }) {
+export default function CollapsibleAmortizationTable({ yearlyData, monthlyData, currency, isFinancial = false }) {
     const [expandedYears, setExpandedYears] = useState({});
 
     const toggleYear = (year) => {
@@ -13,90 +13,149 @@ export default function CollapsibleAmortizationTable({ yearlyData, monthlyData, 
 
     // Helper to group monthly data by year
     const getMonthsForYear = (year) => {
+        if (isFinancial) {
+            return monthlyData.filter(m => m.fyYear === year);
+        }
         return monthlyData.filter(m => m.year === year);
     };
 
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             {/* TABLE HEADER */}
-            <div className="grid grid-cols-12 bg-gray-100 border-b border-gray-200 text-sm font-bold text-gray-700">
-                <div className="col-span-2 p-4 flex items-center bg-indigo-100 text-indigo-900 border-r border-indigo-200 rounded-tl-xl">Year</div>
-                <div className="col-span-2 p-4 text-right bg-emerald-100 text-emerald-900 border-r border-emerald-200">Principal (A)</div>
-                <div className="col-span-2 p-4 text-right bg-amber-100 text-amber-900 border-r border-amber-200">Interest (B)</div>
-                <div className="col-span-2 p-4 text-right bg-blue-100 text-blue-900 border-r border-blue-200">Total (A+B)</div>
-                <div className="col-span-3 p-4 text-right bg-rose-100 text-rose-900 border-r border-rose-200">Balance</div>
-                <div className="col-span-1 p-4 text-right text-xs flex items-center justify-end bg-teal-100 text-teal-900 rounded-tr-xl">% Paid</div>
+            <div className="grid grid-cols-12 bg-slate-900 border-b border-slate-300 text-[10px] sm:text-xs font-black uppercase tracking-widest text-center items-stretch overflow-hidden">
+                <div className="col-span-1 p-3 flex items-center justify-center bg-slate-800 text-slate-100 border-r border-slate-700">Year</div>
+
+                <div className="col-span-2 p-3 flex items-center justify-center bg-[#8DB63F] text-white border-r border-white/20 leading-tight">
+                    Principal<br />(A)
+                </div>
+
+                <div className="col-span-2 p-3 flex items-center justify-center bg-[#F39237] text-white border-r border-white/20 leading-tight">
+                    Interest<br />(B)
+                </div>
+
+                <div className="col-span-2 p-3 flex items-center justify-center bg-[#5E3C5E] text-white border-r border-white/20 leading-tight">
+                    Expenses<br />(C)
+                </div>
+
+                <div className="col-span-2 p-3 flex items-center justify-center bg-slate-100 text-slate-900 border-r border-slate-300 leading-tight">
+                    Total Payment<br />(A + B + C)
+                </div>
+
+                <div className="col-span-2 p-3 flex items-center justify-center bg-[#9B4A11] text-white border-r border-white/20">
+                    Balance
+                </div>
+
+                <div className="col-span-1 p-3 flex items-center justify-center bg-slate-800 text-slate-100 leading-tight text-[9px] sm:text-[10px]">
+                    Paid %
+                </div>
             </div>
 
             {/* TABLE BODY */}
-            <div className="overflow-auto max-h-[500px]">
+            <div className="overflow-auto max-h-[600px]">
                 {yearlyData.map((yearRow) => {
                     const isExpanded = expandedYears[yearRow.year];
                     const months = getMonthsForYear(yearRow.year);
+
+                    // A = Principal + Prepayment
+                    const prinA = yearRow.principalPaid + (yearRow.prepayment || 0);
+                    // B = InterestPaid
+                    const intB = yearRow.interestPaid;
+                    // C = totalExpense (Tax + Insurance + Maintenance)
+                    const expC = yearRow.totalExpense || 0;
+                    // Total = A + B + C (totalOwnershipCost in finance.js)
+                    const totalABC = yearRow.totalOwnershipCost || (prinA + intB + expC);
 
                     return (
                         <Fragment key={yearRow.year}>
                             {/* YEAR ROW */}
                             <div
-                                className={`grid grid-cols-12 border-b border-gray-300 hover:bg-indigo-50/30 transition-colors cursor-pointer group ${isExpanded ? 'bg-indigo-50/50' : ''}`}
+                                className={`grid grid-cols-12 border-b-2 border-slate-200 hover:bg-slate-100 transition-colors cursor-pointer group items-center ${isExpanded ? 'bg-indigo-50/50' : ''}`}
                                 onClick={() => toggleYear(yearRow.year)}
                             >
-                                <div className="col-span-2 p-3 sm:p-4 flex items-center font-bold text-indigo-900 border-r border-gray-300">
-                                    <button className="mr-2 w-5 h-5 flex items-center justify-center rounded border border-indigo-200 bg-white text-indigo-500 text-xs font-mono group-hover:border-indigo-400 group-hover:text-indigo-700 transition-colors shadow-sm">
+                                <div className="col-span-1 p-4 flex items-center font-black text-slate-900 border-r border-slate-200 justify-center">
+                                    <button className="mr-2 w-5 h-5 flex items-center justify-center rounded border-2 border-indigo-400 bg-white text-indigo-700 text-sm font-black group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-md">
                                         {isExpanded ? '−' : '+'}
                                     </button>
-                                    {yearRow.year}
+                                    <span className="text-[10px] sm:text-xs tracking-tighter">
+                                        {yearRow.label ? String(yearRow.label).replace('FY ', '') : String(yearRow.year).slice(2)}
+                                    </span>
                                 </div>
-                                <div className="col-span-2 p-3 sm:p-4 text-right font-bold text-gray-800 border-r border-gray-300">
-                                    {moneyFormat(yearRow.principalPaid, currency)}
+
+                                <div className="col-span-2 p-4 text-right font-black text-slate-950 border-r border-slate-200 text-xs sm:text-base">
+                                    {moneyFormat(prinA, currency)}
                                 </div>
-                                <div className="col-span-2 p-3 sm:p-4 text-right font-bold text-gray-800 border-r border-gray-300">
-                                    {moneyFormat(yearRow.interestPaid, currency)}
+
+                                <div className="col-span-2 p-4 text-right font-black text-slate-950 border-r border-slate-200 text-xs sm:text-base">
+                                    {moneyFormat(intB, currency)}
                                 </div>
-                                <div className="col-span-2 p-3 sm:p-4 text-right font-bold text-gray-800 border-r border-gray-300">
-                                    {moneyFormat(yearRow.principalPaid + yearRow.interestPaid, currency)}
+
+                                <div className="col-span-2 p-4 text-right font-black text-[#5E3C5E] border-r border-slate-200 text-xs sm:text-base bg-purple-50/30">
+                                    {expC > 0 ? moneyFormat(expC, currency) : '₹0'}
                                 </div>
-                                <div className="col-span-3 p-3 sm:p-4 text-right font-bold text-gray-800 bg-rose-50/40 border-r border-gray-300">
+
+                                <div className="col-span-2 p-4 text-right font-black text-slate-950 border-r border-slate-200 text-xs sm:text-base bg-slate-100/80 shadow-inner">
+                                    {moneyFormat(totalABC, currency)}
+                                </div>
+
+                                <div className="col-span-2 p-4 text-right font-black text-[#9B4A11] border-r border-slate-200 text-xs sm:text-base">
                                     {moneyFormat(yearRow.closingBalance, currency)}
                                 </div>
-                                <div className="col-span-1 p-3 sm:p-4 text-right text-xs font-semibold text-teal-700 flex items-center justify-end">
-                                    {(yearRow.totalPaidPercent || 0).toFixed(2)}%
+
+                                <div className="col-span-1 p-4 text-center text-[10px] sm:text-xs font-black text-slate-600">
+                                    {(yearRow.totalPaidPercent || 0).toFixed(0)}%
                                 </div>
                             </div>
 
                             {/* MONTHLY ROWS (Expanded) */}
-                            {isExpanded && months.map((monthRow, idx) => (
-                                <div key={`${yearRow.year}-${idx}`} className="grid grid-cols-12 border-b border-gray-50 bg-white text-sm animate-fade-in-down">
-                                    <div className="col-span-2 p-2 pl-12 text-gray-700 font-medium border-r border-gray-300 flex items-center gap-2">
-                                        <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100">M{monthRow.month}</span>
-                                        <span>{monthRow.monthName}</span>
+                            {isExpanded && months.map((monthRow, idx) => {
+                                const mPrinA = monthRow.principalPaid + (monthRow.prepayment || 0);
+                                const mIntB = monthRow.interestPaid;
+                                const mExpC = monthRow.totalExpense || 0;
+                                const mTotalABC = monthRow.totalOwnershipCost || (mPrinA + mIntB + mExpC);
+
+                                return (
+                                    <div key={`${yearRow.year}-${idx}`} className="grid grid-cols-12 border-b border-slate-200 bg-white text-[10px] sm:text-xs animate-fade-in-down items-center">
+                                        <div className="col-span-1 p-2 text-center text-slate-500 font-black border-r border-slate-100 flex items-center justify-center">
+                                            <span className="text-[9px] font-black text-indigo-600">{String(monthRow.monthName).toUpperCase()}</span>
+                                        </div>
+
+                                        <div className="col-span-2 p-2 text-right text-slate-900 font-bold border-r border-slate-100">
+                                            {moneyFormat(mPrinA, currency)}
+                                        </div>
+
+                                        <div className="col-span-2 p-2 text-right text-slate-900 font-bold border-r border-slate-100">
+                                            {moneyFormat(mIntB, currency)}
+                                        </div>
+
+                                        <div className="col-span-2 p-2 text-right text-purple-700 font-bold border-r border-slate-100">
+                                            {mExpC > 0 ? moneyFormat(mExpC, currency) : '₹0'}
+                                        </div>
+
+                                        <div className="col-span-2 p-2 text-right text-black font-black border-r border-slate-100 bg-slate-50">
+                                            {moneyFormat(mTotalABC, currency)}
+                                        </div>
+
+                                        <div className="col-span-2 p-2 text-right text-[#9B4A11] font-bold border-r border-slate-100">
+                                            {moneyFormat(monthRow.closingBalance, currency)}
+                                        </div>
+
+                                        <div className="col-span-1 p-2 text-center text-[9px] text-slate-400 font-bold">
+                                            -
+                                        </div>
                                     </div>
-                                    <div className="col-span-2 p-2 text-right text-gray-700 border-r border-gray-300">
-                                        {moneyFormat(monthRow.principalPaid, currency)}
-                                    </div>
-                                    <div className="col-span-2 p-2 text-right text-gray-700 border-r border-gray-300">
-                                        {moneyFormat(monthRow.interestPaid, currency)}
-                                    </div>
-                                    <div className="col-span-2 p-2 text-right text-gray-700 border-r border-gray-300">
-                                        {moneyFormat(monthRow.principalPaid + monthRow.interestPaid, currency)}
-                                    </div>
-                                    <div className="col-span-3 p-2 text-right text-gray-700 bg-rose-50/20 border-r border-gray-300">
-                                        {moneyFormat(monthRow.closingBalance, currency)}
-                                    </div>
-                                    <div className="col-span-1 p-2 text-right text-[10px] text-gray-400">
-                                        -
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </Fragment>
                     );
                 })}
             </div>
 
-            {/* FOOTER / LEGEND if needed */}
-            <div className="bg-gray-50 p-3 text-xs text-gray-500 border-t border-gray-200 flex flex-col">
-                <span>Click on <strong>[+]</strong> to view monthly breakdown.</span>
-                <span>* Values are rounded for display.</span>
+            {/* FOOTER / LEGEND */}
+            <div className="bg-slate-900 p-4 text-[10px] text-slate-300 border-t-2 border-slate-300 flex flex-col sm:flex-row justify-between shadow-2xl">
+                <span className="font-black tracking-wide"><span className="text-white bg-indigo-600 px-1.5 py-0.5 rounded mr-1">TIP</span> Click on <strong>[+]</strong> to view monthly breakdown. Principal (A) includes monthly EMIs and any prepayments made.</span>
+                <div className="flex gap-4 font-black">
+                    <span className="text-white">* Values rounded</span>
+                </div>
             </div>
         </div>
     );
