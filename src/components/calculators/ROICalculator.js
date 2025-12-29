@@ -96,7 +96,7 @@ export default function ROICalculator({ currency = 'INR' }) {
                 balance: currentValue
             });
 
-            if (m % 12 === 0 || m === totalMonthsRequested) {
+            if (calendarMonth === 11 || m === totalMonthsRequested) {
                 yearlyData.push({
                     year: calendarYear,
                     totalInvested: result.start,

@@ -79,32 +79,21 @@ export default function FixedDeposit({ currency = 'INR' }) {
             });
         }
 
-        // Yearly summary
-        for (let year = 1; year <= totalYears; year++) {
-            const monthsInYear = Math.min(year * 12, totalMonths);
-            const yearsElapsed = year - 1;
-            const actualYear = startYear + yearsElapsed;
-            let balance = P;
-            let interest = 0;
+        // Yearly summary (derived from monthly data for calendar accuracy)
+        monthlyData.forEach((m, index) => {
+            const isDec = m.monthName === 'Dec';
+            const isLast = index === monthlyData.length - 1;
 
-            if (payoutType === 'cumulative') {
-                const quarters = monthsInYear / 3;
-                balance = P * Math.pow(1 + R / 4, quarters);
-                interest = balance - P;
-            } else {
-                const monthlyRate = R / 12;
-                interest = P * monthlyRate * monthsInYear;
-                balance = P;
+            if (isDec || isLast) {
+                yearlyData.push({
+                    year: m.year,
+                    totalInvested: m.invested,
+                    growth: m.interest,
+                    balance: m.balance,
+                    investment: m.invested
+                });
             }
-
-            yearlyData.push({
-                year: actualYear,
-                totalInvested: P,
-                growth: interest,
-                balance,
-                investment: P
-            });
-        }
+        });
 
         return {
             ...basic,

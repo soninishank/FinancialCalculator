@@ -69,7 +69,7 @@ export default function RecurringDeposit({ currency }) {
             });
 
             // Add to yearly data at the end of each year or at the last month
-            if (month % 12 === 0 || month === N) {
+            if (actualMonthName === 'Dec' || month === N) {
                 yearlyData.push({
                     year: actualYear,
                     totalInvested: totalInvestedAtMonth,
