@@ -8,7 +8,7 @@ const calculators = [
     slug: 'pure-sip',
     title: 'SIP Calculator',
     description: 'Calculate the future value of regular monthly SIP investments at an expected annual return rate.',
-    keywords: 'sip calculator, monthly sip, mutual fund sip, investment calculator',
+    keywords: 'sip calculator, monthly sip, mutual fund sip, investment calculator, sip calculator sbi, sip calculator groww, sip calculator yearly, daily sip calculator, sip calculator hdfc, monthly sip calculator, sip, sip calculator icici, sip calculator axis bank, sip calculator kotak, sip calculator bandhan bank, sip calculator au finance',
     category: 'SIP + LUMPSUM',
     component: 'PureSIP'
   },
@@ -40,7 +40,7 @@ const calculators = [
     slug: 'step-up-sip',
     title: 'Step-Up SIP Calculator',
     description: 'Model SIPs that increase periodically (step-up) to reflect salary hikes or increasing savings capacity.',
-    keywords: 'step-up sip, increasing sip, sip escalator, sip growth',
+    keywords: 'step-up sip, increasing sip, sip escalator, sip growth, step up sip calculator',
     category: 'SIP + LUMPSUM',
     component: 'StepUpSIP'
   },
@@ -48,7 +48,7 @@ const calculators = [
     slug: 'loan-emi',
     title: 'All-in-One Loan Calculator',
     description: 'The ultimate loan tool. Calculate EMI, Maximum Loan Amount, Tenure, or Interest Rate. Features include Amortization Schedule, reverse calculations, and PDF reports.',
-    keywords: 'loan calculator, loan emi, loan tenure, interest rate calculator, loan amount',
+    keywords: 'loan calculator, loan emi, loan tenure, interest rate calculator, loan amount, emi calculator, personal loan emi calculator sbi, personal loan emi calculator google, personal loan emi calculator icici, personal loan emi calculator app, personal loan emi calculator axis bank, personal loan emi calculator in months, personal loan emi calculator hdfc, personal loan emi calculator for 6 months, home loan emi calculator, car loan emi calculator, loan emi calculator app, business loan emi calculator, consumer loan emi calculator, sbi personal loan emi calculator, education loan emi calculator, bandhan bank personal loan emi calculator, au finance personal loan emi calculator, kotak personal loan emi calculator, indusind loan emi calculator, idfc first bank loan calculator, personal loan emi calculator yes bank, personal loan emi calculator pnb, personal loan emi calculator bank of baroda',
     category: 'Loan',
     component: 'LoanEMI'
   },
@@ -88,7 +88,7 @@ const calculators = [
     slug: 'advanced-home-loan',
     title: 'Home Loan with Prepayments & Taxes',
     description: 'The most detailed Home Loan planner. Factor in Home Value, Down Payment, Loan Insurance, Property Taxes, and multiple Prepayment strategies.',
-    keywords: 'home loan prepayment, mortgage calculator, property tax calculator, loan insurance, home loan planning',
+    keywords: 'home loan prepayment, mortgage calculator, property tax calculator, loan insurance, home loan planning, home loan emi calculator, mortgage calculator chase, mortgage calculator bank of america, mortgage calculator wells fargo, mortgage calculator citibank, mortgage calculator us bank, mortgage calculator pnc, sbi home loan emi calculator, hdfc home loan calculator, icici home loan emi calculator, axis bank home loan calculator',
     category: 'Loan',
     component: 'AdvancedHomeLoanEMI'
   },
@@ -140,7 +140,7 @@ const calculators = [
     slug: 'swp-calculator',
     title: 'SWP Calculator',
     description: 'Model monthly withdrawals from your investment corpus while the remaining balance continues to grow through compounding.',
-    keywords: 'swp, systematic withdrawal plan, income, retirement',
+    keywords: 'swp, systematic withdrawal plan, income, retirement, swp calculator, swp calculator sbi, swp calculator hdfc, swp calculator icici, swp calculator axis bank, swp calculator kotak, swp calculator bandhan bank, swp calculator au finance',
     category: 'SIP + LUMPSUM',
     component: 'SWPCalculator'
   },
@@ -197,7 +197,7 @@ const calculators = [
     slug: 'fixed-deposit',
     title: 'Fixed Deposit (FD) Calculator',
     description: 'Calculate returns on FDs with Cumulative (Reinvestment), Monthly, Quarterly Payouts, or Short-Term schemes.',
-    keywords: 'fd calculator, fixed deposit, term deposit, bank fd, interest payout',
+    keywords: 'fd calculator, fixed deposit, term deposit, bank fd, interest payout, fd calculator sbi, fd calculator hdfc, fd calculator chase, fd calculator wells fargo, fd calculator icici, fd calculator axis bank, fd calculator bandhan bank, fd calculator au finance, fd calculator kotak mahindra, fd calculator citibank, fd calculator capital one, fd calculator pnc bank',
     category: 'Bank Scheme',
     component: 'FixedDeposit'
   },
