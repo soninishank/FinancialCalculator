@@ -23,6 +23,7 @@ const importBySlug = (slug) => {
     case 'compare-loans': return import('../components/calculators/CompareLoans');
     case 'advanced-home-loan': return import('../components/calculators/AdvancedHomeLoanEMI');
     case 'topup-loan-emi': return import('../components/calculators/TopUpLoanEMI');
+    case 'emi-comparison': return import('../components/calculators/EMIComparison');
     case 'swp-calculator': return import('../components/calculators/SWPCalculator');
     // FIRE Calculators
     case 'ultimate-fire-planner': return import('../components/calculators/TimeToFIRE');

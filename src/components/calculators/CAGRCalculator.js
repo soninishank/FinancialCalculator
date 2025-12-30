@@ -6,6 +6,7 @@ import CollapsibleInvestmentTable from '../common/CollapsibleInvestmentTable';
 import MonthYearPicker from '../common/MonthYearPicker';
 import { FinancialCompoundingBarChart } from '../common/FinancialCharts';
 import { calculateDetailedCAGR } from '../../utils/finance';
+import { downloadPDF } from '../../utils/export';
 import { calculatorDetails } from '../../data/calculatorDetails';
 import { useCalculatorState } from '../../hooks/useCalculatorState';
 import { MAX_AMOUNT } from '../../utils/constants';
@@ -162,19 +163,35 @@ const CAGRCalculator = ({ currency }) => {
         <div className="mt-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
             <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
-            <div className="flex items-center w-full md:w-auto">
-              <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
-              <div className="w-48 relative">
-                <MonthYearPicker
-                  value={effectiveScheduleStartDate}
-                  onChange={setScheduleStartDate}
-                />
-                {calculationMode === 'dates' && (
-                  <div
-                    className="absolute inset-0 bg-gray-50/50 cursor-not-allowed rounded-lg"
-                    title="Starts from selected Start Date"
+            <div className="flex items-center gap-4 w-full md:w-auto">
+              <button
+                onClick={() => {
+                  const data = result.yearlyData.map(r => [
+                    `Year ${r.year}`,
+                    Math.round(r.totalInvested),
+                    Math.round(r.growth),
+                    Math.round(r.balance)
+                  ]);
+                  downloadPDF(data, ['Year', 'Invested', 'Growth', 'Value'], 'cagr_schedule.pdf');
+                }}
+                className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap"
+              >
+                Export PDF
+              </button>
+              <div className="flex items-center">
+                <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
+                <div className="w-48 relative">
+                  <MonthYearPicker
+                    value={effectiveScheduleStartDate}
+                    onChange={setScheduleStartDate}
                   />
-                )}
+                  {calculationMode === 'dates' && (
+                    <div
+                      className="absolute inset-0 bg-gray-50/50 cursor-not-allowed rounded-lg"
+                      title="Starts from selected Start Date"
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>

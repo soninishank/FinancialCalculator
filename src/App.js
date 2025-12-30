@@ -1,10 +1,10 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { CurrencyProvider } from './contexts/CurrencyContext';
 
 // Import Pages
 import CalculatorPage from "./pages/CalculatorPage";
-import HomeFrontPage from "./pages/HomeFrontPage";
+// import HomeFrontPage from "./pages/HomeFrontPage";
 // import IPOTRackerPage from "./pages/IPOTRackerPage";
 // import IPODetailPage from "./pages/IPODetailPage";
 import CalculatorsList from "./pages/CalculatorsList";
@@ -26,7 +26,7 @@ export default function App() {
       <CurrencyProvider>
         <Routes>
           <Route element={<Layout fullWidth={true} />}>
-            <Route path="/" element={<HomeFrontPage />} />
+            <Route path="/" element={<Navigate to="/calculators" replace />} />
           </Route>
           <Route element={<Layout />}>
             <Route path="/calculators" element={<CalculatorsList />} />

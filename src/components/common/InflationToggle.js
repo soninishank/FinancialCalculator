@@ -1,6 +1,7 @@
 // src/components/common/InflationToggle.js
 import React from 'react';
 import InputWithSlider from './InputWithSlider';
+import ToggleSwitch from './ToggleSwitch';
 import { MAX_INFLATION } from '../../utils/constants';
 
 
@@ -15,22 +16,10 @@ export default function InflationToggle({
     <div className="flex items-start gap-3 bg-gray-50 rounded-xl p-4 border border-gray-100 transition-all duration-300">
 
       <div className="flex items-center h-6">
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsAdjusted(prev => !prev);
-          }}
-          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 ${isAdjusted ? 'bg-teal-600' : 'bg-gray-300'
-            }`}
-          role="switch"
-          aria-checked={isAdjusted}
-        >
-          <span
-            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isAdjusted ? 'translate-x-6' : 'translate-x-1'
-              }`}
-          />
-        </button>
+        <ToggleSwitch
+          checked={isAdjusted}
+          onChange={setIsAdjusted}
+        />
       </div>
 
       <div className="flex-1 w-full min-w-0">

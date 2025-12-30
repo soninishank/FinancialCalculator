@@ -3,6 +3,7 @@ import InputWithSlider from '../common/InputWithSlider';
 import { moneyFormat } from '../../utils/formatting';
 import { computeStepUpLoanAmortization } from '../../utils/finance';
 import MonthYearPicker from '../common/MonthYearPicker';
+import { downloadPDF } from '../../utils/export';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from 'chart.js';
 import { TrendingDown, Clock, Banknote, Percent } from 'lucide-react';
@@ -271,7 +272,24 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
                     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                         <div className="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
                             <h4 className="text-sm font-bold text-gray-700">Detailed Schedule (Smart Strategy)</h4>
-                            <span className="text-xs font-medium text-emerald-600 bg-emerald-100 px-2 py-1 rounded-full">Reduced Tenure</span>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => {
+                                        const data = smart.monthlyRows.map(r => [
+                                            `Month ${r.month}`,
+                                            Math.round(r.principal),
+                                            Math.round(r.interest),
+                                            Math.round(r.balance)
+                                        ]);
+                                        const headers = ['Month', 'Principal', 'Interest', 'Balance'];
+                                        downloadPDF(data, headers, 'step_up_loan_schedule.pdf');
+                                    }}
+                                    className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1 rounded-lg transition-colors"
+                                >
+                                    Export PDF
+                                </button>
+                                <span className="text-xs font-medium text-emerald-600 bg-emerald-100 px-2 py-1 rounded-full flex items-center">Reduced Tenure</span>
+                            </div>
                         </div>
                         <div className="overflow-x-auto max-h-96 overflow-y-auto">
                             <table className="min-w-full text-xs text-right">

@@ -45,8 +45,12 @@ export function useLimitedPay(initialYears = 10) {
   };
 
   // Logic: When Checkbox changes
-  const handleLimitedPayToggle = (e) => {
-    const checked = e.target.checked;
+  const handleLimitedPayToggle = (inputValue) => {
+    // Support both event object (e.target.checked) and direct boolean value (from ToggleSwitch)
+    const checked = (inputValue && typeof inputValue === 'object' && inputValue.target)
+      ? inputValue.target.checked
+      : inputValue;
+
     setIsLimitedPay(checked);
     // If turning OFF, reset SIP years to match Total years immediately
     if (!checked) setSipYears(totalYears);

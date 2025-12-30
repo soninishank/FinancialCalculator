@@ -63,7 +63,7 @@ export default function CollapsibleInvestmentTable({ yearlyData, monthlyData, cu
                                         +{moneyFormat(yearRow.growth, currency)}
                                     </div>
                                     <div className="col-span-3 p-3 sm:p-4 text-right font-bold text-blue-700 bg-blue-50/20">
-                                        {moneyFormat(yearRow.balance, currency)}
+                                        {moneyFormat(yearRow.balance ?? yearRow.overallValue, currency)}
                                     </div>
                                 </div>
 
@@ -78,7 +78,7 @@ export default function CollapsibleInvestmentTable({ yearlyData, monthlyData, cu
                                             {moneyFormat(monthRow.invested, currency)}
                                         </div>
                                         <div className="col-span-3 p-2 text-right text-green-600 border-r border-gray-300">
-                                            +{moneyFormat(monthRow.interest, currency)}
+                                            +{moneyFormat(monthRow.interest ?? monthRow.growth, currency)}
                                         </div>
                                         <div className="col-span-3 p-2 text-right text-gray-700 bg-blue-50/10">
                                             {moneyFormat(monthRow.balance, currency)}

@@ -12,6 +12,7 @@ import {
   calculateRealRate,
   computeYearlySchedule
 } from "../../utils/finance";
+import { downloadPDF } from "../../utils/export";
 import TaxToggle from "../common/TaxToggle";
 import InflationToggle from "../common/InflationToggle";
 import { FinancialLineChart } from "../common/FinancialCharts";
@@ -314,7 +315,18 @@ export default function GoalPlanner({ currency, setCurrency }) {
           </div>
 
           <div>
-            <h4 className="text-md font-bold text-indigo-700 mb-2">Option 1: Lump Sum Schedule</h4>
+            <div className="flex justify-between items-center mb-2">
+              <h4 className="text-md font-bold text-indigo-700">Option 1: Lump Sum Schedule</h4>
+              <button
+                onClick={() => {
+                  const data = lumpSumData.map(r => [`Year ${r.year}`, Math.round(r.invested), Math.round(r.interestEarned), Math.round(r.balance)]);
+                  downloadPDF(data, ['Year', 'Invested', 'Interest', 'Balance'], 'goal_lumpsum_schedule.pdf');
+                }}
+                className="text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-1 rounded-lg transition-colors"
+              >
+                Export PDF
+              </button>
+            </div>
             <CollapsibleInvestmentTable
               yearlyData={lumpSumData}
               monthlyData={lumpSumMonthly}
@@ -323,7 +335,18 @@ export default function GoalPlanner({ currency, setCurrency }) {
           </div>
 
           <div>
-            <h4 className="text-md font-bold text-emerald-700 mb-2">Option 2: SIP Schedule</h4>
+            <div className="flex justify-between items-center mb-2">
+              <h4 className="text-md font-bold text-emerald-700">Option 2: SIP Schedule</h4>
+              <button
+                onClick={() => {
+                  const data = sipData.map(r => [`Year ${r.year}`, Math.round(r.invested), Math.round(r.interestEarned), Math.round(r.balance)]);
+                  downloadPDF(data, ['Year', 'Invested', 'Interest', 'Balance'], 'goal_sip_schedule.pdf');
+                }}
+                className="text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 py-1 rounded-lg transition-colors"
+              >
+                Export PDF
+              </button>
+            </div>
             <CollapsibleInvestmentTable
               yearlyData={sipData}
               monthlyData={sipMonthly}
@@ -332,7 +355,18 @@ export default function GoalPlanner({ currency, setCurrency }) {
           </div>
 
           <div>
-            <h4 className="text-md font-bold text-rose-700 mb-2">Option 3: Step-Up SIP</h4>
+            <div className="flex justify-between items-center mb-2">
+              <h4 className="text-md font-bold text-rose-700">Option 3: Step-Up SIP</h4>
+              <button
+                onClick={() => {
+                  const data = stepUpData.map(r => [`Year ${r.year}`, Math.round(r.invested), Math.round(r.interestEarned), Math.round(r.balance)]);
+                  downloadPDF(data, ['Year', 'Invested', 'Interest', 'Balance'], 'goal_stepup_schedule.pdf');
+                }}
+                className="text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-3 py-1 rounded-lg transition-colors"
+              >
+                Export PDF
+              </button>
+            </div>
             <CollapsibleInvestmentTable
               yearlyData={stepUpData}
               monthlyData={stepUpMonthly}

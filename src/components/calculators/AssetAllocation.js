@@ -4,6 +4,7 @@ import InputWithSlider from '../common/InputWithSlider';
 import { calculateRebalancing } from '../../utils/finance';
 import { moneyFormat } from '../../utils/formatting';
 import { FinancialDoughnutChart } from '../common/FinancialCharts';
+import { downloadPDF } from '../../utils/export';
 import { CHART_COLORS, LABELS, MAX_AMOUNT } from '../../utils/constants';
 
 export default function AssetAllocation({ currency }) {
@@ -95,12 +96,27 @@ export default function AssetAllocation({ currency }) {
             inputs={inputs}
             summary={
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm mt-8">
-                    <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
-                        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-teal-100 text-teal-600">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                        </span>
-                        Rebalancing Action Plan
-                    </h3>
+                    <div className="flex justify-between items-center mb-6">
+                        <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-teal-100 text-teal-600">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                            </span>
+                            Rebalancing Action Plan
+                        </h3>
+                        <button
+                            onClick={() => {
+                                const headers = ['Category', 'Current Value', 'Target %', 'Action', 'Amount'];
+                                const rows = [
+                                    [LABELS.EQUITY, Math.round(equity), `${targetEquityPercent}%`, result.equityAction > 0 ? 'BUY' : 'SELL', Math.round(Math.abs(result.equityAction))],
+                                    [LABELS.DEBT, Math.round(debt), `${100 - targetEquityPercent}%`, result.debtAction > 0 ? 'BUY' : 'SELL', Math.round(Math.abs(result.debtAction))]
+                                ];
+                                downloadPDF(rows, headers, 'asset_allocation_rebalancing.pdf');
+                            }}
+                            className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors"
+                        >
+                            Export PDF
+                        </button>
+                    </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Equity Action Card */}

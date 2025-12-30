@@ -257,6 +257,38 @@ export const calculatorDetails = {
             </div>
         )
     },
+    emiComparison: {
+        title: "Compare Multiple Loan Estimates",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Why Compare Loans?</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Even a small difference in <strong>Interest Rate</strong> or <strong>Tenure</strong> can make a huge difference in the total amount you pay back.
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                            <h4 className="font-bold text-indigo-800 mb-2">Interest Rate Impact</h4>
+                            <p className="text-sm text-indigo-700">
+                                A 0.5% difference on a ₹50 Lakh loan for 20 years can save you over <strong>₹3.5 Lakhs</strong> in interest payments!
+                            </p>
+                        </div>
+                        <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                            <h4 className="font-bold text-emerald-800 mb-2">Tenure Impact</h4>
+                            <p className="text-sm text-emerald-700">
+                                Shorter tenure increases your EMI but drastically reduces total interest. Use this tool to find your sweet spot.
+                            </p>
+                        </div>
+                    </div>
+
+                    <p>
+                        Add up to 3 loan scenarios to see them side-by-side. We'll highlight the cheapest option for you.
+                    </p>
+                </div>
+            </div>
+        )
+    },
     advancedHomeLoan: {
         title: "Deep Dive: Home Loan Planning",
         render: () => (

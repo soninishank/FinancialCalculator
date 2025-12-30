@@ -1,5 +1,6 @@
 // src/components/calculators/SWPCalculator.js
 import React, { useMemo } from "react";
+import { downloadPDF } from "../../utils/export";
 
 // --- IMPORTS ---
 import InputWithSlider from "../common/InputWithSlider";
@@ -202,13 +203,29 @@ export default function SWPCalculator({ currency = 'INR' }) {
         <div className="mt-12">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <h3 className="text-lg font-bold text-gray-800">Withdrawal Schedule</h3>
-            <div className="flex items-center w-full md:w-auto">
-              <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
-              <div className="w-48">
-                <MonthYearPicker
-                  value={startDate}
-                  onChange={setStartDate}
-                />
+            <div className="flex items-center gap-4 w-full md:w-auto">
+              <button
+                onClick={() => {
+                  const data = yearlyRows.map(r => [
+                    `Year ${r.year}`,
+                    Math.round(r.withdrawal),
+                    Math.round(r.interestEarned),
+                    Math.round(r.closingBalance)
+                  ]);
+                  downloadPDF(data, ['Year', 'Withdrawn', 'Interest', 'Balance'], 'swp_schedule.pdf');
+                }}
+                className="text-xs font-medium text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap"
+              >
+                Export PDF
+              </button>
+              <div className="flex items-center">
+                <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
+                <div className="w-48">
+                  <MonthYearPicker
+                    value={startDate}
+                    onChange={setStartDate}
+                  />
+                </div>
               </div>
             </div>
           </div>

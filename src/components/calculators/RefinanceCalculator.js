@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import CalculatorLayout from '../common/CalculatorLayout';
 import InputWithSlider from '../common/InputWithSlider';
 import { moneyFormat } from '../../utils/formatting';
+import { downloadPDF } from '../../utils/export';
 import { FinancialLineChart } from '../common/FinancialCharts';
 import {
     CHART_COLORS,
@@ -217,7 +218,51 @@ export default function RefinanceCalculator({ currency }) {
                 </div>
             }
             pieChart={null}
-            table={null}
+            table={
+                <div className="mt-8">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-bold text-gray-800">Cumulative Cost Comparison</h3>
+                        <button
+                            onClick={() => {
+                                const data = result.yearlyData.map(r => [
+                                    `Year ${r.year}`,
+                                    Math.round(r.oldCumulative),
+                                    Math.round(r.newCumulative),
+                                    Math.round(r.oldCumulative - r.newCumulative)
+                                ]);
+                                downloadPDF(data, ['Year', 'Old Loan Cost', 'Refinance Cost', 'Savings'], 'refinance_comparison.pdf');
+                            }}
+                            className="text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3 py-1.5 rounded-lg transition-colors"
+                        >
+                            Export PDF
+                        </button>
+                    </div>
+                    <div className="overflow-x-auto border border-gray-200 rounded-xl">
+                        <table className="w-full text-sm text-left">
+                            <thead className="bg-gray-50 text-gray-600 font-bold border-b border-gray-200">
+                                <tr>
+                                    <th className="p-3">Year</th>
+                                    <th className="p-3 text-right">Old Loan Cost</th>
+                                    <th className="p-3 text-right">New Loan Cost</th>
+                                    <th className="p-3 text-right">Net Savings</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                                {result.yearlyData.map((row) => (
+                                    <tr key={row.year} className="hover:bg-gray-50/50">
+                                        <td className="p-3 font-medium text-gray-700">{row.year}</td>
+                                        <td className="p-3 text-right text-gray-600">{moneyFormat(row.oldCumulative, currency)}</td>
+                                        <td className="p-3 text-right text-gray-600">{moneyFormat(row.newCumulative, currency)}</td>
+                                        <td className={`p-3 text-right font-bold ${row.oldCumulative - row.newCumulative >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                            {moneyFormat(row.oldCumulative - row.newCumulative, currency)}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
         />
     );
 }

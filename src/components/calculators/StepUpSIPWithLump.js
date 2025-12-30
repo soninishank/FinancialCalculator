@@ -1,8 +1,10 @@
 // src/components/calculators/StepUpSIPWithLump.js
 import React, { useMemo } from "react";
+import { downloadPDF } from "../../utils/export";
 
 // --- IMPORTS ---
 import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from "../common/FinancialCharts";
+import ToggleSwitch from "../common/ToggleSwitch";
 import InputWithSlider from "../common/InputWithSlider";
 import RateQualityGuard from "../common/RateQualityGuard";
 import TaxToggle from "../common/TaxToggle";
@@ -127,18 +129,15 @@ export default function StepUpSIPWithLump({ currency = 'INR' }) {
         onChange={handleTotalYearsChange}
         min={MIN_YEARS} max={MAX_YEARS}
       />
-      <div className="mt-4 flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
-        <div className="flex items-center h-5">
-          <input
-            id="limitedPay"
-            type="checkbox"
+      <div className="mt-4 flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100 transition-all duration-300">
+        <div className="flex items-center h-6">
+          <ToggleSwitch
             checked={isLimitedPay}
             onChange={handleLimitedPayToggle}
-            className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 cursor-pointer"
           />
         </div>
-        <div className="text-sm">
-          <label htmlFor="limitedPay" className="font-medium text-gray-700 cursor-pointer">
+        <div className="flex-1 w-full min-w-0">
+          <label className="font-bold text-gray-700 text-sm block mb-1 cursor-pointer" onClick={handleLimitedPayToggle}>
             Stop SIP early? (Limited Pay)
           </label>
           <p className="text-gray-500 text-xs mt-1">
@@ -218,13 +217,29 @@ export default function StepUpSIPWithLump({ currency = 'INR' }) {
         <div className="mt-8">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
-            <div className="flex items-center">
-              <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
-              <div className="w-48">
-                <MonthYearPicker
-                  value={startDate}
-                  onChange={setStartDate}
-                />
+            <div className="flex items-center gap-4 w-full md:w-auto">
+              <button
+                onClick={() => {
+                  const data = yearlyRows.map(r => [
+                    `Year ${r.year}`,
+                    Math.round(r.totalInvested),
+                    Math.round(r.interestEarned),
+                    Math.round(r.maturityValue)
+                  ]);
+                  downloadPDF(data, ['Year', 'Invested', 'Interest', 'Balance'], 'step_up_lumpsum_schedule.pdf');
+                }}
+                className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap"
+              >
+                Export PDF
+              </button>
+              <div className="flex items-center">
+                <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
+                <div className="w-48">
+                  <MonthYearPicker
+                    value={startDate}
+                    onChange={setStartDate}
+                  />
+                </div>
               </div>
             </div>
           </div>

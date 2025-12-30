@@ -4,6 +4,7 @@ import InputWithSlider from '../common/InputWithSlider';
 import MonthYearPicker from '../common/MonthYearPicker';
 import FormattedInput from '../common/FormattedInput';
 import CollapsibleAmortizationTable from '../common/CollapsibleAmortizationTable';
+import { downloadPDF } from '../../utils/export';
 import { moneyFormat } from '../../utils/formatting';
 import { computeAdvancedLoanAmortization } from '../../utils/finance';
 import { FinancialCompoundingBarChart, FinancialLoanDoughnutChart } from '../common/FinancialCharts';
@@ -788,6 +789,36 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                             <p className="text-sm text-slate-900 leading-relaxed font-black">Don't forget <strong>Taxes, Insurance, and Maintenance</strong>. These are ongoing monthly/yearly expenses that contribute to the "True Cost" of ownership.</p>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            {/* AMORTIZATION TABLE */}
+            <div className="mt-8 bg-white rounded-xl border border-gray-200 shadow-sm p-6 overflow-hidden">
+                <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-xl font-black text-slate-900">Detailed Amortization Schedule</h3>
+                    <button
+                        onClick={() => {
+                            const data = yearlyRows.map(r => [
+                                `Year ${r.year}`,
+                                Math.round(r.principalPaid),
+                                Math.round(r.interestPaid),
+                                Math.round(r.totalOwnershipCost || 0),
+                                Math.round(r.closingBalance)
+                            ]);
+                            const headers = ['Year', 'Principal Paid', 'Interest Paid', 'Expenses', 'Balance'];
+                            downloadPDF(data, headers, 'advanced_home_loan_amortization.pdf');
+                        }}
+                        className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-4 py-2 rounded-lg transition-colors"
+                    >
+                        Export PDF
+                    </button>
+                </div>
+                <div className="mt-4">
+                    <CollapsibleAmortizationTable
+                        yearlyData={yearlyRows}
+                        monthlyData={monthlyRows}
+                        currency={currency}
+                    />
                 </div>
             </div>
 

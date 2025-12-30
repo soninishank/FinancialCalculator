@@ -4,6 +4,7 @@ import { Plus, Trash2, Calendar, List, TrendingUp, TrendingDown, ArrowRight } fr
 import CalculatorLayout from '../common/CalculatorLayout';
 import { FinancialBarChart } from '../common/FinancialCharts';
 import { calculateXIRR, generateSimpleFlows } from '../../utils/xirr';
+import { downloadPDF } from '../../utils/export';
 
 const DEFAULT_FLOWS = [
     { date: new Date().getFullYear() + '-01-01', amount: 10000, type: 'investment' }, // Note: stored as positive, type determines sign
@@ -352,7 +353,35 @@ export default function XIRRCalculator({ currency = '₹' }) {
 
                     {/* Waterfall / Bar Chart */}
                     <div className="bg-white p-1 rounded-xl border border-gray-100 shadow-sm mt-4">
-                        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider p-4 border-b border-gray-50 mb-2">Cash Flow Timeline</p>
+                        <div className="p-4 border-b border-gray-50 flex justify-between items-center">
+                            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Cash Flow Timeline</p>
+                            <button
+                                onClick={() => {
+                                    let activeFlows = [];
+                                    if (mode === 'simple') {
+                                        const { flows } = generateSimpleFlows(startDate, maturityDate, frequency, recurringAmount, maturityAmount);
+                                        activeFlows = flows || [];
+                                    } else {
+                                        activeFlows = cashFlows.map(f => ({
+                                            ...f,
+                                            date: new Date(f.date),
+                                            amount: f.type === 'investment' ? -Math.abs(Number(f.amount)) : Math.abs(Number(f.amount))
+                                        }));
+                                    }
+                                    const sortedFlows = [...activeFlows].sort((a, b) => a.date - b.date);
+
+                                    const rows = sortedFlows.map(f => [
+                                        !isNaN(f.date.getTime()) ? f.date.toLocaleDateString('en-US') : 'Invalid',
+                                        f.amount < 0 ? 'Investment' : 'Return',
+                                        Math.abs(f.amount)
+                                    ]);
+                                    downloadPDF(rows, ['Date', 'Type', 'Amount'], 'xirr_schedule.pdf');
+                                }}
+                                className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors"
+                            >
+                                Export PDF
+                            </button>
+                        </div>
                         <div className="h-48 w-full p-2">
                             {/* Simple Re-use of FinancialBarChart with stacked false */}
                             <FinancialBarChart

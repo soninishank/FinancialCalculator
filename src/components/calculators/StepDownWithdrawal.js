@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import CalculatorLayout from '../common/CalculatorLayout';
 import InputWithSlider from '../common/InputWithSlider';
 import { moneyFormat } from '../../utils/formatting';
+import { downloadPDF } from '../../utils/export';
 import { FinancialBarChart } from '../common/FinancialCharts';
 import {
     DEFAULT_RATE,
@@ -352,13 +353,61 @@ export default function StepDownWithdrawal({ currency }) {
                 </div>
             }
             charts={
-                <div className="h-[400px] bg-white p-4 rounded-xl border">
-                    <FinancialBarChart
-                        data={chartData}
-                        options={chartOptions}
-                        currency={currency}
-                        height={400}
-                    />
+                <div className="space-y-8">
+                    <div className="h-[400px] bg-white p-4 rounded-xl border">
+                        <FinancialBarChart
+                            data={chartData}
+                            options={chartOptions}
+                            currency={currency}
+                            height={400}
+                        />
+                    </div>
+
+                    {/* TABLE */}
+                    <div className="mt-8 bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                        <div className="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                            <h3 className="text-lg font-bold text-gray-800">Withdrawal Schedule</h3>
+                            <button
+                                onClick={() => {
+                                    const data = result.yearlyData.slice(1).map(r => [
+                                        `Year ${r.year}`,
+                                        Math.round(r.openingBalance),
+                                        Math.round(r.interestEarned),
+                                        Math.round(r.annualWithdrawal),
+                                        Math.round(r.corpus)
+                                    ]);
+                                    downloadPDF(data, ['Year', 'Opening Balance', 'Interest', 'Withdrawn', 'Closing Balance'], 'step_down_withdrawal.pdf');
+                                }}
+                                className="text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 py-1.5 rounded-lg transition-colors"
+                            >
+                                Export PDF
+                            </button>
+                        </div>
+                        <div className="overflow-x-auto max-h-96">
+                            <table className="w-full text-sm text-left">
+                                <thead className="bg-gray-50 text-gray-600 font-bold border-b border-gray-200 sticky top-0">
+                                    <tr>
+                                        <th className="p-3">Year</th>
+                                        <th className="p-3 text-right">Opening Balance</th>
+                                        <th className="p-3 text-right">Interest Earned</th>
+                                        <th className="p-3 text-right">Withdrawal</th>
+                                        <th className="p-3 text-right">Closing Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                    {result.yearlyData.slice(1).map((row) => (
+                                        <tr key={row.year} className="hover:bg-gray-50/50">
+                                            <td className="p-3 font-medium text-gray-700">{row.year}</td>
+                                            <td className="p-3 text-right text-gray-500">{moneyFormat(row.openingBalance, currency)}</td>
+                                            <td className="p-3 text-right text-emerald-600">+{moneyFormat(row.interestEarned, currency)}</td>
+                                            <td className="p-3 text-right text-rose-600">-{moneyFormat(row.annualWithdrawal, currency)}</td>
+                                            <td className="p-3 text-right font-bold text-gray-800">{moneyFormat(row.corpus, currency)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             }
         />

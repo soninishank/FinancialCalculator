@@ -199,6 +199,22 @@ export const FinancialCompoundingBarChart = ({ data, currency, type = 'investmen
         labels: data.map((row) => `Year ${row.year}`),
         datasets: [
             {
+                type: 'line',
+                label: chartConfig.labels[0], // Same label as first bar
+                data: data.map((row) => row[chartConfig.data1Key]),
+                borderColor: '#92400e', // Amber-800: Strong visible trend line (Brown)
+                borderWidth: 2,
+                pointRadius: 4, // Visible points (dotted look)
+                pointHoverRadius: 6,
+                pointBackgroundColor: '#92400e', // Match line color
+                pointBorderColor: '#ffffff', // White border for contrast
+                pointBorderWidth: 2,
+                fill: false,
+                tension: 0.1,
+                order: 0,
+            },
+            {
+                type: 'bar',
                 label: chartConfig.labels[0],
                 data: data.map((row) => row[chartConfig.data1Key]),
                 backgroundColor: chartConfig.color1,
@@ -208,8 +224,10 @@ export const FinancialCompoundingBarChart = ({ data, currency, type = 'investmen
                 categoryPercentage: 0.8,
                 borderRadius: 4,
                 stack: "Stack 0",
+                order: 1,
             },
             {
+                type: 'bar',
                 label: chartConfig.labels[1],
                 data: data.map((row) => row[chartConfig.data2Key]),
                 backgroundColor: chartConfig.color2,
@@ -220,6 +238,7 @@ export const FinancialCompoundingBarChart = ({ data, currency, type = 'investmen
                 barPercentage: 0.6,
                 categoryPercentage: 0.8,
                 stack: "Stack 0",
+                order: 1,
             },
         ],
     };
@@ -265,7 +284,7 @@ export const FinancialCompoundingBarChart = ({ data, currency, type = 'investmen
                     boxWidth: 8,
                     padding: 20,
                     font: { size: 12, weight: "500", family: "'Inter', sans-serif" },
-                    color: "#475569" // Slate-600
+                    color: "#475569", // Slate-600
                 },
             },
             tooltip: {

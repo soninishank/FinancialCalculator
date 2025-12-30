@@ -3,7 +3,9 @@ import CalculatorLayout from '../common/CalculatorLayout';
 import InputWithSlider from '../common/InputWithSlider';
 import { computeRentVsBuyLedger } from '../../utils/finance';
 import { moneyFormat } from '../../utils/formatting';
+import { downloadPDF } from '../../utils/export';
 import { FinancialLineChart } from '../common/FinancialCharts';
+import ResultsTable from '../common/ResultsTable';
 import {
     DEFAULT_LOAN_RATE,
     DEFAULT_INFLATION,
@@ -43,7 +45,10 @@ export default function RentVsBuy({ currency }) {
         investReturnRate: investmentReturn,
         propertyAppreciationRate: appreciation,
         rentInflationRate: rentInflation
-    }), [homePrice, downPayment, loanRate, loanTenure, appreciation, monthlyRent, rentInflation, investmentReturn]);
+    }).map(r => ({
+        ...r,
+        diff: Math.abs(r.netWorthBuy - r.netWorthRent)
+    })), [homePrice, downPayment, loanRate, loanTenure, appreciation, monthlyRent, rentInflation, investmentReturn]);
 
     const finalYear = ledger[ledger.length - 1];
     const isBuyBetter = finalYear.netWorthBuy > finalYear.netWorthRent;
@@ -177,6 +182,29 @@ export default function RentVsBuy({ currency }) {
             charts={
                 <div className="h-[350px] w-full bg-white p-4 rounded-xl border border-gray-100 shadow-sm mt-8">
                     <FinancialLineChart data={chartData} options={options} currency={currency} height={350} />
+                </div>
+            }
+            table={
+                <div className="mt-8">
+                    <ResultsTable
+                        data={ledger}
+                        columns={[
+                            { key: 'year', label: 'Year', align: 'left' },
+                            { key: 'netWorthBuy', label: 'Buy Net Worth', align: 'right', format: 'money', color: 'emerald' },
+                            { key: 'netWorthRent', label: 'Rent Net Worth', align: 'right', format: 'money', color: 'indigo' },
+                            { key: 'diff', label: 'Difference', align: 'right', format: 'money' }
+                        ]}
+                        onExport={() => {
+                            const rows = ledger.map(r => [
+                                `Year ${r.year}`,
+                                Math.round(r.netWorthBuy),
+                                Math.round(r.netWorthRent),
+                                Math.round(Math.abs(r.netWorthBuy - r.netWorthRent))
+                            ]);
+                            downloadPDF(rows, ['Year', 'Buy Net Worth', 'Rent Net Worth', 'Difference'], 'rent_vs_buy_comparison.pdf');
+                        }}
+                        currency={currency}
+                    />
                 </div>
             }
         />

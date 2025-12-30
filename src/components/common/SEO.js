@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 export default function SEO({ title, description, keywords, schema, path, image }) {
     const fullTitle = title ? `${title} - Hashmatic` : 'Hashmatic - Financial Tools';

@@ -6,6 +6,7 @@ import {
 } from "../../utils/tax";
 import { moneyFormat } from "../../utils/formatting";
 import FormattedInput from "./FormattedInput";
+import ToggleSwitch from "./ToggleSwitch";
 
 // Convert decimal max (0.30) to percent for UI (30)
 const MAX_LTCG_PERCENT = Math.round(MAX_LTCG_TAX_RATE_DECIMAL * 100);
@@ -116,20 +117,17 @@ export default function TaxToggle({
   const togglePopover = () => setOpen((v) => !v);
 
   return (
-    <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100 h-full">
-      <div className="flex items-center h-5">
-        <input
-          id="applyLTCG"
-          type="checkbox"
+    <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100 h-full transition-all duration-300">
+      <div className="flex items-center h-6">
+        <ToggleSwitch
           checked={isTaxApplied}
-          onChange={(e) => setIsTaxApplied(e.target.checked)}
-          className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 cursor-pointer"
+          onChange={setIsTaxApplied}
         />
       </div>
 
-      <div className="flex-1 text-sm">
-        <div className="flex items-center gap-2">
-          <label htmlFor="applyLTCG" className="font-medium text-gray-700 cursor-pointer">
+      <div className="flex-1 w-full min-w-0">
+        <div className="flex items-center gap-2 mb-1">
+          <label className="font-bold text-gray-700 text-sm cursor-pointer" onClick={() => setIsTaxApplied(!isTaxApplied)}>
             Apply Long-Term Capital Gains (LTCG) Tax
           </label>
 
@@ -221,7 +219,7 @@ export default function TaxToggle({
               />
 
               <label htmlFor="applyExemption" className="text-xs text-gray-700 cursor-pointer">
-                Apply Exemption Limit
+                Apply Exemption Limit <span className="text-gray-500 font-normal">(Max: {moneyFormat(currencyExemptionMax, currency)})</span>
               </label>
             </div>
 

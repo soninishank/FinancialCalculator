@@ -1,8 +1,6 @@
 // src/pages/HomeFrontPage.js
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
-
-import HomeIpoSection from "../components/ipo/HomeIpoSection";
+import { Link } from "react-router-dom";
 
 import SEO from "../components/common/SEO";
 
@@ -66,27 +64,4 @@ export default function HomeFrontPage() {
 }
 
 
-function CalcCard({ title, slug }) {
-  const location = useLocation(); // captures current path (e.g., /calculators)
 
-  return (
-    <Link
-      to={`/calculators/${slug}`}
-      state={{ from: location.pathname }}  // <-- send the origin page
-      className="p-6 bg-white rounded-xl shadow hover:shadow-md transition"
-    >
-      <h3 className="font-semibold text-lg">{title}</h3>
-      <p className="text-sm text-gray-600 mt-1">Open calculator →</p>
-    </Link>
-  );
-}
-
-
-function ArticleCard({ title }) {
-  return (
-    <div className="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
-      <h3 className="font-semibold text-lg">{title}</h3>
-      <p className="text-sm text-gray-600 mt-1">Read more →</p>
-    </div>
-  );
-}

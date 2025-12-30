@@ -3,7 +3,7 @@
 const GLOBAL_SAFE_MAX = 2000000000;
 
 // 1. ADD 'min' prop here and set a default of 0
-export default function FormattedInput({ value, onChange = () => { }, currency, className, max, min = 0, isDecimal = false }) {
+export default function FormattedInput({ value, onChange = () => { }, currency, className, max, min = 0, isDecimal = false, id, ...props }) {
 
   const currentValue = String(value);
   const limit = max ? Math.floor(Number(max)) : GLOBAL_SAFE_MAX;
@@ -108,9 +108,11 @@ export default function FormattedInput({ value, onChange = () => { }, currency, 
     <input
       type="text"
       // Use the calculated displayValue which respects the current state
-      value={displayValue === "0" ? "" : displayValue}
+      value={displayValue}
       placeholder="0"
       onChange={handleChange}
+      id={id}
+      {...props}
       className={className}
     />
   );

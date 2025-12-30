@@ -3,7 +3,9 @@ import CalculatorLayout from '../common/CalculatorLayout';
 import InputWithSlider from '../common/InputWithSlider';
 import { calculateRealValue } from '../../utils/finance';
 import { moneyFormat } from '../../utils/formatting';
+import { downloadPDF } from '../../utils/export';
 import { FinancialLineChart } from '../common/FinancialCharts';
+import ResultsTable from '../common/ResultsTable';
 import {
     DEFAULT_INFLATION,
     DEFAULT_TARGET_AMOUNT,
@@ -109,6 +111,31 @@ export default function InflationImpact({ currency }) {
                 <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm mt-8">
                     <h3 className="text-gray-700 font-bold text-lg mb-2">Purchasing Power Erosion</h3>
                     <FinancialLineChart data={chartData} options={chartOptions} currency={currency} height={300} />
+                </div>
+            }
+            table={
+                <div className="mt-8">
+                    <ResultsTable
+                        data={chartData.labels.map((yearLabel, i) => ({
+                            year: i,
+                            amount: amount,
+                            realValue: chartData.datasets[0].data[i]
+                        }))}
+                        columns={[
+                            { key: 'year', label: 'Year', align: 'left' },
+                            { key: 'amount', label: 'Nominal Amount', align: 'right', format: 'money' },
+                            { key: 'realValue', label: 'Purchasing Power', align: 'right', format: 'money', highlight: true }
+                        ]}
+                        onExport={() => {
+                            const rows = chartData.labels.map((yearLabel, i) => [
+                                `Year ${i}`,
+                                Math.round(amount),
+                                Math.round(chartData.datasets[0].data[i])
+                            ]);
+                            downloadPDF(rows, ['Year', 'Nominal Amount', 'Purchasing Power'], 'inflation_impact.pdf');
+                        }}
+                        currency={currency}
+                    />
                 </div>
             }
         />

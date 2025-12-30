@@ -4,6 +4,7 @@ import InputWithSlider from '../common/InputWithSlider';
 import MonthYearPicker from '../common/MonthYearPicker';
 // moneyFormat import removed
 import { getActualYearAndMonth } from '../../utils/calculatorUtils';
+import { downloadPDF } from '../../utils/export';
 import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from '../common/FinancialCharts';
 import CollapsibleInvestmentTable from '../common/CollapsibleInvestmentTable';
 import UnifiedSummary from '../common/UnifiedSummary';
@@ -190,13 +191,29 @@ export default function RecurringDeposit({ currency }) {
                 <div className="mt-8">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
                         <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
-                        <div className="flex items-center w-full md:w-auto">
-                            <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
-                            <div className="w-48">
-                                <MonthYearPicker
-                                    value={startDate}
-                                    onChange={setStartDate}
-                                />
+                        <div className="flex items-center gap-4 w-full md:w-auto">
+                            <button
+                                onClick={() => {
+                                    const data = result.yearlyData.map(r => [
+                                        `Year ${r.year}`,
+                                        Math.round(r.totalInvested),
+                                        Math.round(r.growth),
+                                        Math.round(r.balance)
+                                    ]);
+                                    downloadPDF(data, ['Year', 'Invested', 'Interest', 'Balance'], 'rd_schedule.pdf');
+                                }}
+                                className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap"
+                            >
+                                Export PDF
+                            </button>
+                            <div className="flex items-center">
+                                <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
+                                <div className="w-48">
+                                    <MonthYearPicker
+                                        value={startDate}
+                                        onChange={setStartDate}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>

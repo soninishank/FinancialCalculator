@@ -1846,8 +1846,39 @@ export function computeMoratoriumLoanAmortization({
   const realTotalPaid = monthlyRows.reduce((sum, row) => sum + row.emi, 0);
   const realTotalInterest = realTotalPaid - principal; // Only deduct original principal
 
+  // Generate Year-wise Data
+  const yearlyData = [];
+  const totalMonths = monthlyRows.length;
+  // Determine start year (assuming relative year 1 if no date provided, but other calcs use current year)
+  // Here we just use relative years 1, 2, 3...
+
+  if (totalMonths > 0) {
+    const totalYears = Math.ceil(totalMonths / 12);
+    for (let y = 1; y <= totalYears; y++) {
+      const startIdx = (y - 1) * 12;
+      const endIdx = Math.min(startIdx + 12, totalMonths);
+      const yearMonths = monthlyRows.slice(startIdx, endIdx);
+
+      if (yearMonths.length === 0) continue;
+
+      const yearPrincipal = yearMonths.reduce((sum, m) => sum + (m.principal || 0), 0);
+      const yearInterest = yearMonths.reduce((sum, m) => sum + (m.interest || 0), 0);
+      const yearPayment = yearMonths.reduce((sum, m) => sum + (m.emi || 0), 0);
+      const closingBalance = yearMonths[yearMonths.length - 1].balance;
+
+      yearlyData.push({
+        year: y,
+        principalPaid: yearPrincipal,
+        interestPaid: yearInterest,
+        totalPaid: yearPayment,
+        balance: closingBalance
+      });
+    }
+  }
+
   return {
     monthlyRows,
+    yearlyData,
     finalTotalInterest: realTotalInterest,
     finalTotalPaid: realTotalPaid,
     emiBefore: calculateEMI(principal, R_m, totalTenureYears * 12),

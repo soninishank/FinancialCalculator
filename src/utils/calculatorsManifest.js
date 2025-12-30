@@ -250,6 +250,14 @@ const calculators = [
     component: 'TopUpLoanEMI'
   },
   {
+    slug: 'emi-comparison',
+    title: 'EMI Comparison Calculator',
+    description: 'Compare multiple loan offers side-by-side. Analyze EMI differences, total interest payable, and repayment schedules to choose the best loan.',
+    keywords: 'emi comparison, compare loans, loan comparison, multiple loans, loan offers',
+    category: 'Loan',
+    component: 'EMIComparison'
+  },
+  {
     slug: 'simple-interest',
     title: 'Simple Interest Calculator',
     description: 'Calculate interest earned on a principal amount over time without compounding.',

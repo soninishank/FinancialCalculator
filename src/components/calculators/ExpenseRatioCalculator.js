@@ -12,20 +12,19 @@ import {
     Legend,
     Filler
 } from 'chart.js';
-import { Line, Bar, Doughnut } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 
 import InputWithSlider from '../common/InputWithSlider';
 import CalculatorLayout from '../common/CalculatorLayout';
 import UnifiedSummary from '../common/UnifiedSummary';
 import { moneyFormat } from '../../utils/formatting';
+import { downloadPDF } from '../../utils/export';
 import {
-    MIN_AMOUNT,
+    MAX_YEARS,
     MAX_AMOUNT,
     STEP_AMOUNT,
     MIN_RATE,
-    MAX_RATE,
-    MIN_YEARS,
-    MAX_YEARS
+    MAX_RATE
 } from '../../utils/constants';
 
 // Register ChartJS components
@@ -388,8 +387,23 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
 
             table={
                 <div className="mt-8 bg-white rounded-2xl border border-slate-200 overflow-hidden">
-                    <div className="p-4 bg-slate-50 border-b border-slate-200">
+                    <div className="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
                         <h3 className="text-lg font-bold text-slate-800">Growth Schedule</h3>
+                        <button
+                            onClick={() => {
+                                const data = results.yearlyData.map(r => [
+                                    `Year ${r.year}`,
+                                    Math.round(r.invested),
+                                    Math.round(r.gross),
+                                    Math.round(r.net),
+                                    Math.round(r.impact)
+                                ]);
+                                downloadPDF(data, ['Year', 'Invested', 'Without Expense', 'With Expense', 'Cost'], 'expense_ratio_impact.pdf');
+                            }}
+                            className="text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 px-3 py-1.5 rounded-lg transition-colors shadow-sm"
+                        >
+                            Export PDF
+                        </button>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm text-left">

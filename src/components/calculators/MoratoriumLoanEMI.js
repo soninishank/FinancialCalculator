@@ -1,7 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import InputWithSlider from '../common/InputWithSlider';
 import { moneyFormat } from '../../utils/formatting';
+import { downloadPDF } from '../../utils/export';
 import { computeMoratoriumLoanAmortization } from '../../utils/finance';
+import CollapsibleAmortizationTable from '../common/CollapsibleAmortizationTable';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from 'chart.js';
 import { AlertTriangle } from 'lucide-react';
@@ -118,6 +120,32 @@ export default function MoratoriumLoanEMI({ currency = 'INR' }) {
                     <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm h-64">
                         <Line data={chartData} options={options} />
                     </div>
+                </div>
+
+                {/* TABLE */}
+                <div className="md:col-span-2 mt-8">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-bold text-gray-800">Amortization Schedule</h3>
+                        <button
+                            onClick={() => {
+                                const data = results.monthlyRows.map(r => [
+                                    `Month ${r.month}`,
+                                    Math.round(r.principalPaid),
+                                    Math.round(r.interestPaid),
+                                    Math.round(r.balance)
+                                ]);
+                                downloadPDF(data, ['Month', 'Principal', 'Interest', 'Balance'], 'moratorium_schedule.pdf');
+                            }}
+                            className="text-xs font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 px-3 py-1.5 rounded-lg transition-colors"
+                        >
+                            Export PDF
+                        </button>
+                    </div>
+                    <CollapsibleAmortizationTable
+                        yearlyData={results.yearlyData}
+                        monthlyData={results.monthlyRows}
+                        currency={currency}
+                    />
                 </div>
             </div>
         </div>

@@ -41,6 +41,7 @@ export default function InputWithSlider({
   symbol,
   isDecimal = false,
   rightElement = null,
+  id,
 }) {
 
   // Defensive check: Ensure onChange is actually a function
@@ -74,7 +75,7 @@ export default function InputWithSlider({
     <div className="mb-4">
       {/* Label and Badge Container */}
       <div className="flex justify-between items-end mb-2">
-        <label className="text-sm font-black text-slate-900 uppercase tracking-tight">{label}</label>
+        <label htmlFor={id} className="text-sm font-black text-slate-900 uppercase tracking-tight cursor-pointer">{label}</label>
         {rightElement ? (
           rightElement
         ) : (
@@ -96,6 +97,7 @@ export default function InputWithSlider({
         )}
 
         <FormattedInput
+          id={id}
           value={value}
           onChange={safeOnChange}
           currency={currency}
