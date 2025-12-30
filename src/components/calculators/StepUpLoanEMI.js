@@ -4,11 +4,10 @@ import { moneyFormat } from '../../utils/formatting';
 import { computeStepUpLoanAmortization } from '../../utils/finance';
 import MonthYearPicker from '../common/MonthYearPicker';
 import { downloadPDF } from '../../utils/export';
-import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from 'chart.js';
+import CollapsibleAmortizationTable from '../common/CollapsibleAmortizationTable';
+import { FinancialLineChart } from '../common/FinancialCharts';
 import { TrendingDown, Clock, Banknote, Percent } from 'lucide-react';
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
+// removed direct ChartJS registration
 
 export default function StepUpLoanEMI({ currency = 'INR' }) {
     // 1. Basic Loan
@@ -87,9 +86,9 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
     const smartEndDate = getEndDate(smart.monthsTaken);
 
     // --- CHART DATA ---
+    // --- CHART DATA ---
+    // Normalized for FinancialLineChart
     const labels = regular.monthlyRows.filter((_, i) => i % 12 === 0).map(r => `Year ${Math.ceil(r.month / 12)}`);
-
-    // Normalize data lengths
     const regularBalance = regular.monthlyRows.filter((_, i) => i % 12 === 0).map(r => r.balance);
     const smartBalance = smart.monthlyRows.filter((_, i) => i % 12 === 0).map(r => r.balance);
 
@@ -101,10 +100,8 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
                 data: regularBalance,
                 borderColor: '#94a3b8', // Gray
                 backgroundColor: 'rgba(148, 163, 184, 0.0)',
-                borderDash: [5, 5], // Dashed line for reference
+                borderDash: [5, 5],
                 fill: false,
-                pointRadius: 0,
-                borderWidth: 2,
                 tension: 0.4
             },
             {
@@ -116,25 +113,6 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
                 tension: 0.4
             }
         ]
-    };
-
-    const options = {
-        responsive: true,
-        plugins: {
-            legend: { position: 'top' },
-            tooltip: {
-                callbacks: {
-                    label: (ctx) => `${ctx.dataset.label}: ${moneyFormat(ctx.raw, currency)}`
-                }
-            }
-        },
-        scales: {
-            y: {
-                ticks: {
-                    callback: (val) => moneyFormat(val, currency, true)
-                }
-            }
-        }
     };
 
     return (
@@ -212,8 +190,13 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
                                 <Percent className="w-5 h-5 text-indigo-600" /> Interest Rate Drop?
                             </h3>
                             <label className="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" className="sr-only peer" checked={enableRateChange} onChange={(e) => setEnableRateChange(e.target.checked)} />
-                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                <span className="sr-only">Enable Rate Change</span>
+                                <div
+                                    onClick={() => setEnableRateChange(!enableRateChange)}
+                                    className={`w-11 h-6 rounded-full transition-colors duration-200 ease-in-out ${enableRateChange ? 'bg-indigo-600' : 'bg-gray-200'}`}
+                                >
+                                    <div className={`absolute top-[2px] left-[2px] bg-white rounded-full h-5 w-5 transition-transform duration-200 ease-in-out shadow-sm ${enableRateChange ? 'translate-x-5' : 'translate-x-0'}`}></div>
+                                </div>
                             </label>
                         </div>
 
@@ -246,7 +229,7 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
                         <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
                             <p className="text-xs text-gray-500 font-bold uppercase mb-1">Regular Total Interest</p>
                             <p className="text-lg font-bold text-gray-700">{moneyFormat(regular.finalTotalInterest, currency)}</p>
-                            <p className="text-lg font-bold text-gray-700">{moneyFormat(regular.finalTotalInterest, currency)}</p>
+
                             <div className="flex justify-between items-center mt-2 border-t border-gray-200 pt-2">
                                 <p className="text-xs text-gray-400">Tenure: {effectiveTenureYears} Years</p>
                                 <p className="text-xs font-bold text-gray-500">Ends: {regularEndDate}</p>
@@ -265,7 +248,7 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
                     {/* CHART */}
                     <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm h-80">
                         <h4 className="text-sm font-bold text-gray-700 mb-4">Loan Balance Projection</h4>
-                        <Line data={chartData} options={options} />
+                        <FinancialLineChart data={chartData} currency={currency} height={280} />
                     </div>
 
                     {/* AMORTIZATION TABLE (Smart Strategy) */}
@@ -291,30 +274,11 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
                                 <span className="text-xs font-medium text-emerald-600 bg-emerald-100 px-2 py-1 rounded-full flex items-center">Reduced Tenure</span>
                             </div>
                         </div>
-                        <div className="overflow-x-auto max-h-96 overflow-y-auto">
-                            <table className="min-w-full text-xs text-right">
-                                <thead className="bg-gray-50 text-gray-500 font-medium sticky top-0 z-10">
-                                    <tr>
-                                        <th className="px-4 py-2 text-left">Year</th>
-                                        <th className="px-4 py-2">EMI</th>
-                                        <th className="px-4 py-2">Principal</th>
-                                        <th className="px-4 py-2">Interest</th>
-                                        <th className="px-4 py-2">Balance</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-100 text-gray-600">
-                                    {smart.monthlyRows.filter(r => (r.month - 1) % 12 === 0 || r.balance === 0).map((row) => (
-                                        <tr key={row.month} className="hover:bg-gray-50">
-                                            <td className="px-4 py-2 text-left font-medium">Year {Math.ceil(row.month / 12)}</td>
-                                            <td className="px-4 py-2 text-emerald-700 font-bold">{moneyFormat(row.emi, currency)}</td>
-                                            <td className="px-4 py-2">{moneyFormat(row.principal, currency)}</td>
-                                            <td className="px-4 py-2">{moneyFormat(row.interest, currency)}</td>
-                                            <td className="px-4 py-2 text-gray-400">{moneyFormat(row.balance, currency)}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                        <CollapsibleAmortizationTable
+                            yearlyData={smart.yearlyRows}
+                            monthlyData={smart.monthlyRows}
+                            currency={currency}
+                        />
                     </div>
                 </div>
             </div>

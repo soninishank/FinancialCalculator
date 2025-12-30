@@ -1,30 +1,37 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { Plus, Trash2, Calendar, List, TrendingUp, TrendingDown, ArrowRight } from 'lucide-react';
+import { Plus, Trash2, Calendar, List, TrendingUp, TrendingDown } from 'lucide-react';
 import CalculatorLayout from '../common/CalculatorLayout';
-import { FinancialBarChart } from '../common/FinancialCharts';
+import { FinancialCompoundingBarChart } from '../common/FinancialCharts';
+import CollapsibleInvestmentTable from '../common/CollapsibleInvestmentTable';
 import { calculateXIRR, generateSimpleFlows } from '../../utils/xirr';
 import { downloadPDF } from '../../utils/export';
+import { calculatorDetails } from '../../data/calculatorDetails';
+import InputWithSlider from '../common/InputWithSlider';
+import FormattedInput from '../common/FormattedInput';
+import MetricCard from '../common/MetricCard';
+import BenchmarkComparison from '../common/BenchmarkComparison';
+import DateInput from '../common/DateInput';
+import { getCurrencySymbol } from '../../utils/formatting';
 
 const DEFAULT_FLOWS = [
-    { date: new Date().getFullYear() + '-01-01', amount: 10000, type: 'investment' }, // Note: stored as positive, type determines sign
+    { date: new Date().getFullYear() + '-01-01', amount: 10000, type: 'investment' },
     { date: new Date().getFullYear() + '-06-01', amount: 5000, type: 'investment' },
-    { date: (new Date().getFullYear() + 1) + '-01-01', amount: 18000, type: 'return' }, // return/redemption
+    { date: (new Date().getFullYear() + 1) + '-01-01', amount: 18000, type: 'return' },
 ];
 
-const ResultCard = ({ label, value, subtext, color = 'teal', icon }) => (
-    <div className={`p-4 bg-${color}-50 rounded-xl border border-${color}-100 flex items-start gap-4 transition-all hover:shadow-md`}>
-        {icon && <div className={`p-3 bg-${color}-100 rounded-lg text-${color}-600`}>{icon}</div>}
-        <div>
-            <p className={`text-${color}-900 text-sm font-medium mb-1`}>{label}</p>
-            <p className={`text-2xl font-bold text-${color}-700`}>{value}</p>
-            {subtext && <p className={`text-${color}-600 text-xs mt-1`}>{subtext}</p>}
-        </div>
-    </div>
-);
+
+const getPerformanceBadge = (xirr) => {
+    const percent = xirr * 100;
+    if (percent >= 15) return { label: 'Excellent', color: 'emerald', emoji: '🎉' };
+    if (percent >= 10) return { label: 'Good', color: 'green', emoji: '👍' };
+    if (percent >= 7) return { label: 'Average', color: 'amber', emoji: '📊' };
+    return { label: 'Below Average', color: 'red', emoji: '⚠️' };
+};
 
 export default function XIRRCalculator({ currency = '₹' }) {
-    const [mode, setMode] = useState('simple'); // 'simple' | 'advanced'
+    const [mode, setMode] = useState('simple');
+
 
     // --- Advanced Mode State ---
     const [cashFlows, setCashFlows] = useState(DEFAULT_FLOWS);
@@ -73,43 +80,82 @@ export default function XIRRCalculator({ currency = '₹' }) {
     };
 
     // --- Calculation Logic ---
-    const calculate = () => {
-        let flowsToCalculate = [];
+    // Auto-calculate on input change with robust error handling
+    useEffect(() => {
+        calculate();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [mode, cashFlows, frequency, startDate, maturityDate, recurringAmount, maturityAmount]);
 
-        if (mode === 'simple') {
-            const { flows, error: genError } = generateSimpleFlows(startDate, maturityDate, frequency, recurringAmount, maturityAmount);
-            if (genError) {
-                setError(genError);
+    const calculate = () => {
+        try {
+            let flowsToCalculate = [];
+
+            if (mode === 'simple') {
+                const { flows, error: genError } = generateSimpleFlows(startDate, maturityDate, frequency, recurringAmount, maturityAmount);
+                if (genError) {
+                    setError(genError);
+                    setResult(null);
+                    return;
+                }
+
+                // Pre-validation for Simple Mode: Check for unrealistic losses
+                const totalInvested = flows.reduce((acc, curr) => curr.amount < 0 ? acc + Math.abs(curr.amount) : acc, 0);
+                if (maturityAmount < totalInvested * 0.1 && maturityAmount > 0) {
+                    setError("Maturity amount is too low compared to investment ( >90% loss). XIRR calculation may diverge.");
+                    setResult(null);
+                    return;
+                }
+
+                flowsToCalculate = flows;
+            } else {
+                // Map advanced flows: Apply sign based on type
+                flowsToCalculate = cashFlows.map(f => ({
+                    date: new Date(f.date),
+                    amount: f.type === 'investment' ? -Math.abs(Number(f.amount)) : Math.abs(Number(f.amount))
+                }));
+            }
+
+            // Validation
+            if (flowsToCalculate.some(f => isNaN(f.date.getTime()) || isNaN(f.amount))) {
+                setError('Please enter valid dates and amounts.');
+                setResult(null);
                 return;
             }
-            flowsToCalculate = flows;
-        } else {
-            // Map advanced flows: Apply sign based on type
-            flowsToCalculate = cashFlows.map(f => ({
-                date: new Date(f.date),
-                amount: f.type === 'investment' ? -Math.abs(Number(f.amount)) : Math.abs(Number(f.amount))
-            }));
-        }
 
-        // Validation
-        if (flowsToCalculate.some(f => isNaN(f.date.getTime()) || isNaN(f.amount))) {
-            setError('Please enter valid dates and amounts.');
-            return;
-        }
+            // Ensure mixed positive/negative flows
+            const hasInvest = flowsToCalculate.some(f => f.amount < 0);
+            const hasReturn = flowsToCalculate.some(f => f.amount > 0);
 
-        const xirr = calculateXIRR(flowsToCalculate);
+            if (!hasInvest || !hasReturn) {
+                // Not an error, just incomplete inputs
+                setResult(null);
+                setError(null);
+                return;
+            }
 
-        if (typeof xirr === 'string') {
-            setError(xirr);
+            const xirr = calculateXIRR(flowsToCalculate);
+
+            if (typeof xirr === 'string' || xirr === null || isNaN(xirr) || !isFinite(xirr)) {
+                // Handle various error returns from utils
+                if (typeof xirr === 'string' && xirr.includes("Diverged")) {
+                    setError("Calculation diverged. Please check if your inputs are realistic.");
+                } else {
+                    setError("Unable to calculate XIRR. Ensure inputs are valid.");
+                }
+                setResult(null);
+            } else {
+                setResult(xirr);
+                setError('');
+            }
+        } catch (err) {
+            console.error(err);
+            setError("An error occurred during calculation.");
             setResult(null);
-        } else {
-            setResult(xirr);
-            setError('');
         }
     };
 
     // Stats & Chart Data
-    const { stats, chartData } = useMemo(() => {
+    const { stats, yearlyData, monthlyData } = useMemo(() => {
         let activeFlows = [];
         if (mode === 'simple') {
             const { flows } = generateSimpleFlows(startDate, maturityDate, frequency, recurringAmount, maturityAmount);
@@ -126,38 +172,79 @@ export default function XIRRCalculator({ currency = '₹' }) {
         const totalReturned = activeFlows.reduce((acc, curr) => curr.amount > 0 ? acc + curr.amount : acc, 0);
         const profit = totalReturned - totalInvested;
 
-        // Chart Data Preparation (Limit bars if too many)
+
+
+        // --- Prepare Table Data (Yearly/Monthly Breakdown) ---
+        // 1. Sort Flows
         const sortedFlows = [...activeFlows].sort((a, b) => a.date - b.date);
 
-        // If yearly/monthly simple mode, usually fine. If daily advanced, might be too many.
-        // Let's aggregate by month for chart if too many points? For now raw flows.
+        // 2. Group flows by year and month
+        const yearsMap = {};
 
-        const data = {
-            labels: sortedFlows.map(f => {
-                // Check if date is valid before calling methods
-                return !isNaN(f.date.getTime())
-                    ? f.date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })
-                    : 'Invalid Date';
-            }),
-            datasets: [
-                {
-                    label: 'Investments',
-                    data: sortedFlows.map(f => f.amount < 0 ? Math.abs(f.amount) : 0),
-                    backgroundColor: '#ef4444', // Red for outflows
-                    borderRadius: 4,
-                },
-                {
-                    label: 'Returns',
-                    data: sortedFlows.map(f => f.amount > 0 ? f.amount : 0),
-                    backgroundColor: '#10b981', // Green for inflows
-                    borderRadius: 4,
-                }
-            ]
-        };
+        sortedFlows.forEach(flow => {
+            const date = flow.date;
+            if (isNaN(date.getTime())) return;
+
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const monthName = date.toLocaleString('default', { month: 'short' });
+
+            if (!yearsMap[year]) {
+                yearsMap[year] = {
+                    year,
+                    totalInvested: 0,
+                    growth: 0, // interpreting withdrawals as 'growth/returns' column
+                    balance: 0,
+                    months: {}
+                };
+            }
+
+            const isInvestment = flow.amount < 0;
+            const absAmount = Math.abs(flow.amount);
+
+            if (isInvestment) {
+                yearsMap[year].totalInvested += absAmount;
+                yearsMap[year].balance -= absAmount; // Net Flow: Decrease by investment
+            } else {
+                yearsMap[year].growth += absAmount;
+                yearsMap[year].balance += absAmount; // Net Flow: Increase by return
+            }
+
+            // Monthly Aggregation
+            if (!yearsMap[year].months[month]) {
+                yearsMap[year].months[month] = {
+                    month,
+                    monthName,
+                    invested: 0,
+                    growth: 0,
+                    balance: 0
+                };
+            }
+            if (isInvestment) {
+                yearsMap[year].months[month].invested += absAmount;
+                yearsMap[year].months[month].balance -= absAmount;
+            } else {
+                yearsMap[year].months[month].growth += absAmount;
+                yearsMap[year].months[month].balance += absAmount;
+            }
+        });
+
+        // Flatten to arrays for Table and Chart
+        const yData = Object.values(yearsMap).sort((a, b) => a.year - b.year);
+        const mData = [];
+
+        yData.forEach(y => {
+            const sortedMonths = Object.values(y.months).sort((a, b) => a.month - b.month);
+            sortedMonths.forEach(m => {
+                // Add year property to monthly data for linking
+                mData.push({ ...m, year: y.year });
+            });
+        });
 
         return {
             stats: { totalInvested, totalReturned, profit },
-            chartData: data
+            yearlyData: yData,
+            monthlyData: mData
         };
     }, [mode, cashFlows, frequency, startDate, maturityDate, recurringAmount, maturityAmount]);
 
@@ -184,62 +271,73 @@ export default function XIRRCalculator({ currency = '₹' }) {
             </div>
 
             {mode === 'simple' ? (
-                // --- Simple Mode Inputs (Unchanged) ---
                 <div className="space-y-4 animate-fade-in">
+                    {/* Instructions Banner */}
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                        <p className="text-xs text-blue-700 leading-relaxed">
+                            💡 <strong>Simple Mode:</strong> Perfect for regular investments like SIPs. Enter your investment frequency, dates, and amounts to calculate your annualized return.
+                        </p>
+                    </div>
+
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Investment Frequency</label>
+                        <label className="block text-sm font-black text-slate-900 uppercase tracking-tight mb-1">Investment Frequency</label>
+                        <p className="text-xs text-gray-500 mb-2">How often do you invest?</p>
                         <select
                             value={frequency}
                             onChange={(e) => setFrequency(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none"
+                            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all font-bold text-slate-900"
                         >
                             <option value="monthly">Monthly</option>
                             <option value="quarterly">Quarterly</option>
                             <option value="yearly">Yearly</option>
                         </select>
                     </div>
-                    {/* ... other simple inputs same as before ... */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                        <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500" />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Maturity Date</label>
-                        <input type="date" value={maturityDate} onChange={(e) => setMaturityDate(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500" />
-                    </div>
-                    <div className="relative">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Recurring Investment Amount</label>
-                        <div className="relative rounded-md shadow-sm">
-                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 bg-gray-50 border border-r-0 border-gray-300 rounded-l-lg">
-                                <span className="text-gray-500 sm:text-sm font-medium">{currency}</span>
-                            </div>
-                            <input
-                                type="number"
-                                value={recurringAmount}
-                                onChange={(e) => setRecurringAmount(e.target.value)}
-                                className="block w-full pl-16 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none font-semibold text-gray-900"
-                            />
-                        </div>
-                    </div>
 
-                    <div className="relative">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Total Maturity Amount</label>
-                        <div className="relative rounded-md shadow-sm">
-                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 bg-gray-50 border border-r-0 border-gray-300 rounded-l-lg">
-                                <span className="text-gray-500 sm:text-sm font-medium">{currency}</span>
-                            </div>
-                            <input
-                                type="number"
-                                value={maturityAmount}
-                                onChange={(e) => setMaturityAmount(e.target.value)}
-                                className="block w-full pl-16 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none font-semibold text-gray-900"
-                            />
-                        </div>
+                    <div>
+                        <label className="block text-sm font-black text-slate-900 uppercase tracking-tight mb-1">Start Date</label>
+                        <p className="text-xs text-gray-500 mb-2">When did you start investing?</p>
+                        <DateInput
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                        />
                     </div>
+                    <div>
+                        <label className="block text-sm font-black text-slate-900 uppercase tracking-tight mb-1">Maturity Date</label>
+                        <p className="text-xs text-gray-500 mb-2">Current date or redemption date</p>
+                        <DateInput
+                            value={maturityDate}
+                            onChange={(e) => setMaturityDate(e.target.value)}
+                        />
+                    </div>
+                    <InputWithSlider
+                        label="Recurring Investment Amount"
+                        value={recurringAmount}
+                        onChange={setRecurringAmount}
+                        min={500}
+                        max={1000000}
+                        step={500}
+                        currency={currency}
+                    />
+
+                    <InputWithSlider
+                        label="Total Maturity Amount"
+                        value={maturityAmount}
+                        onChange={setMaturityAmount}
+                        min={1000}
+                        max={50000000}
+                        step={1000}
+                        currency={currency}
+                    />
                 </div>
             ) : (
-                // --- Advanced Mode Inputs (UX Improved) ---
                 <div className="space-y-3 animate-fade-in">
+                    {/* Instructions Banner */}
+                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                        <p className="text-xs text-purple-700 leading-relaxed">
+                            💡 <strong>Advanced Mode:</strong> Add all your deposits (investments) and withdrawals (returns) with exact dates. Click the type button to toggle between Deposit and Return.
+                        </p>
+                    </div>
+
                     <div className="flex gap-2 text-xs font-semibold text-gray-500 uppercase tracking-wider px-2">
                         <div className="w-32 sm:w-40">Date</div>
                         <div className="w-24 sm:w-32">Type</div>
@@ -250,11 +348,10 @@ export default function XIRRCalculator({ currency = '₹' }) {
                     {cashFlows.map((flow, index) => (
                         <div key={index} className="flex gap-2 items-center animate-slide-in-right" style={{ animationDelay: `${index * 30}ms` }}>
                             <div className="w-32 sm:w-40">
-                                <input
-                                    type="date"
+                                <DateInput
                                     value={flow.date}
                                     onChange={(e) => handleChange(index, 'date', e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                    className="px-3 py-2 text-sm"
                                 />
                             </div>
                             <div className="w-24 sm:w-32">
@@ -269,13 +366,18 @@ export default function XIRRCalculator({ currency = '₹' }) {
                                 </button>
                             </div>
                             <div className="flex-1">
-                                <input
-                                    type="number"
-                                    value={flow.amount}
-                                    onChange={(e) => handleChange(index, 'amount', e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-teal-500"
-                                    placeholder="Amount"
-                                />
+                                <div className="relative">
+                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 bg-gray-50 border border-r-0 border-gray-300 rounded-l-lg z-10">
+                                        <span className="text-gray-500 sm:text-sm font-bold">{getCurrencySymbol(currency)}</span>
+                                    </div>
+                                    <FormattedInput
+                                        value={flow.amount}
+                                        onChange={(val) => handleChange(index, 'amount', val)}
+                                        currency={currency}
+                                        className="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-gray-900"
+                                        placeholder="Amount"
+                                    />
+                                </div>
                             </div>
                             <div className="w-8 flex justify-center">
                                 <button onClick={() => handleRemoveRow(index)} className="text-gray-400 hover:text-red-500">
@@ -296,14 +398,8 @@ export default function XIRRCalculator({ currency = '₹' }) {
             )}
 
             <div className="pt-4 border-t border-gray-100">
-                <button
-                    onClick={calculate}
-                    className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-[0.98] flex justify-center items-center gap-2"
-                >
-                    Calculate XIRR <ArrowRight className="w-4 h-4" />
-                </button>
                 {error && (
-                    <div className="mt-3 text-red-600 text-sm flex items-center gap-2 bg-red-50 p-3 rounded-lg border border-red-100">
+                    <div className="mt-3 text-red-600 text-sm flex items-center gap-2 bg-red-50 p-3 rounded-lg border border-red-100 animate-pulse">
                         <span className="font-bold">Error:</span> {error}
                     </div>
                 )}
@@ -326,16 +422,29 @@ export default function XIRRCalculator({ currency = '₹' }) {
         <div className="space-y-6">
             {result !== null ? (
                 <>
-                    <ResultCard
+                    {/* Performance Badge */}
+                    {(() => {
+                        const badge = getPerformanceBadge(result);
+                        return (
+                            <div className={`bg-${badge.color}-50 border-2 border-${badge.color}-200 rounded-xl p-4 text-center`}>
+                                <div className="text-3xl mb-2">{badge.emoji}</div>
+                                <div className={`text-sm font-bold text-${badge.color}-800 uppercase tracking-wider`}>{badge.label} Performance</div>
+                            </div>
+                        );
+                    })()}
+
+                    <MetricCard
                         label="XIRR (Annualized Return)"
                         value={`${(result * 100).toFixed(2)}%`}
                         subtext="Compounded Annual Rate"
                         color="teal"
                         icon={<TrendingUp className="w-6 h-6" />}
                     />
-                    <ResultCard
+                    <MetricCard
                         label="Absolute Profit"
-                        value={`${currency} ${(stats.profit).toLocaleString()}`}
+                        value={stats.profit}
+                        currency={currency}
+                        isCurrency={true}
                         color={stats.profit >= 0 ? 'green' : 'red'}
                         icon={stats.profit >= 0 ? <TrendingUp className="w-6 h-6" /> : <TrendingDown className="w-6 h-6" />}
                     />
@@ -343,20 +452,35 @@ export default function XIRRCalculator({ currency = '₹' }) {
                     {/* Analysis Block */}
                     <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
                         <h4 className="text-md font-bold text-gray-900 mb-3 flex items-center gap-2">
-                            💡 Insight
+                            💡 What This Means
                         </h4>
-                        <p className="text-sm text-gray-600 leading-relaxed">
+                        <p className="text-sm text-gray-600 leading-relaxed mb-3">
                             Your strategy acts like a bank account giving you <strong className="text-teal-700 bg-teal-50 px-1 rounded">{(result * 100).toFixed(2)}% interest per year</strong>.
                             You invested a total of <strong>{currency}{stats.totalInvested.toLocaleString()}</strong> and your current value is <strong>{currency}{stats.totalReturned.toLocaleString()}</strong>.
                         </p>
+                        <div className="bg-gray-50 p-3 rounded-lg text-xs text-gray-600">
+                            <p className="font-semibold mb-1">💰 Future Value Example:</p>
+                            <p>If you invest {currency}10,000 today at this rate, it would grow to <strong className="text-teal-700">{currency}{(10000 * Math.pow(1 + result, 10)).toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong> in 10 years.</p>
+                        </div>
                     </div>
 
+                    {/* Benchmark Comparison */}
+                    <BenchmarkComparison userReturn={result} userLabel="Your XIRR" />
+
                     {/* Waterfall / Bar Chart */}
-                    <div className="bg-white p-1 rounded-xl border border-gray-100 shadow-sm mt-4">
-                        <div className="p-4 border-b border-gray-50 flex justify-between items-center">
-                            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Cash Flow Timeline</p>
+                    <FinancialCompoundingBarChart
+                        data={yearlyData}
+                        currency={currency}
+                    />
+
+                    {/* Breakdown Table with PDF Export */}
+                    <div className="mt-8">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+                            <h3 className="text-lg font-bold text-gray-800">Transaction Breakdown</h3>
                             <button
                                 onClick={() => {
+                                    // Use standardized yearlyData/monthlyData for PDF if possible, or raw flows
+                                    // Let's stick to raw flows logic for PDF as it's more detailed
                                     let activeFlows = [];
                                     if (mode === 'simple') {
                                         const { flows } = generateSimpleFlows(startDate, maturityDate, frequency, recurringAmount, maturityAmount);
@@ -377,27 +501,25 @@ export default function XIRRCalculator({ currency = '₹' }) {
                                     ]);
                                     downloadPDF(rows, ['Date', 'Type', 'Amount'], 'xirr_schedule.pdf');
                                 }}
-                                className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors"
+                                className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-2"
                             >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                 Export PDF
                             </button>
                         </div>
-                        <div className="h-48 w-full p-2">
-                            {/* Simple Re-use of FinancialBarChart with stacked false */}
-                            <FinancialBarChart
-                                data={chartData}
-                                currency={currency}
-                                height={200}
-                                options={{
-                                    scales: { x: { stacked: true }, y: { stacked: true } },
-                                    plugins: { legend: { display: false } }
-                                }}
-                            />
-                        </div>
-                        <div className="flex justify-center gap-4 pb-4 text-xs font-medium text-gray-500">
-                            <div className="flex items-center gap-1"><div className="w-3 h-3 bg-red-500 rounded-sm"></div> Investment</div>
-                            <div className="flex items-center gap-1"><div className="w-3 h-3 bg-green-500 rounded-sm"></div> Return</div>
-                        </div>
+
+                        <CollapsibleInvestmentTable
+                            yearlyData={yearlyData}
+                            monthlyData={monthlyData}
+                            currency={currency}
+                            labels={{
+                                year: "Year",
+                                invested: "Deposits",
+                                interest: "Withdrawals", // Re-purposing column
+                                balance: "Net Flow" // Since we don't track running balance easily in XIRR
+                            }}
+                        />
+                        <p className="text-[10px] text-gray-400 mt-2 italic">* "Net Flow" column indicates net cash movement, not portfolio balance.</p>
                     </div>
                 </>
             ) : (
@@ -417,6 +539,7 @@ export default function XIRRCalculator({ currency = '₹' }) {
         <CalculatorLayout
             inputs={inputsSection}
             summary={summarySection}
+            details={calculatorDetails.xirr_calculator.render()}
         />
     );
 }

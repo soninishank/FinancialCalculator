@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CalculatorLayout from '../common/CalculatorLayout';
 import InputWithSlider from '../common/InputWithSlider';
+import FormattedInput from '../common/FormattedInput';
 import { moneyFormat } from '../../utils/formatting';
 import { calculateEMI, computeLoanAmortization } from '../../utils/finance';
 import { calculatorDetails } from '../../data/calculatorDetails';
@@ -142,11 +143,11 @@ export default function EMIComparison({ currency }) {
                         </div>
 
                         <div className="flex justify-between items-center mb-4 pl-6">
-                            <input
+                            <FormattedInput
                                 type="text"
                                 placeholder={`LOAN PROFILE ${index + 1}`}
                                 value={profile.name}
-                                onChange={(e) => updateProfile(profile.id, 'name', e.target.value.toUpperCase())}
+                                onChange={(val) => updateProfile(profile.id, 'name', val.toUpperCase())}
                                 className="font-semibold text-gray-700 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-teal-500 focus:outline-none w-full mr-2 transition-colors placeholder-gray-400 uppercase"
                             />
                             {profiles.length > 2 && (
@@ -189,12 +190,13 @@ export default function EMIComparison({ currency }) {
                                         Tenure
                                     </label>
                                     <div className="flex items-center gap-2">
-                                        <input
+                                        <InputWithSlider
                                             id={`emi-comp-tenure-${profile.id}`}
-                                            type="number"
                                             value={profile.tenure}
-                                            onChange={(e) => updateProfile(profile.id, 'tenure', Number(e.target.value))}
-                                            className="w-full border-2 border-slate-200 rounded-xl p-3 text-lg font-black text-slate-950 outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all"
+                                            onChange={(v) => updateProfile(profile.id, 'tenure', Number(v))}
+                                            min={1}
+                                            max={30}
+                                            hideLabel
                                         />
                                         <div className="flex bg-gray-100 rounded-lg p-1 shrink-0 h-full">
                                             <button
@@ -230,36 +232,11 @@ export default function EMIComparison({ currency }) {
                                                 return <option key={m} value={m}>{date.toLocaleString('default', { month: 'long' })}</option>;
                                             })}
                                         </select>
-                                        <input
-                                            type="number"
+                                        <FormattedInput
                                             value={profile.startDate.split('-')[0]}
-                                            onChange={(e) => {
-                                                // Allow empty string for typing, otherwise clamp/validate
-                                                if (e.target.value === '') {
-                                                    // Keep old year momentarily or handle empty?
-                                                }
-
-                                                // Only allow updating if it's a number and within reasonable "typing" range or final range
-                                                // Simple approach: Update state, but add min/max to input and maybe clamp on blur?
-                                                // User interactions are tricky with onChange.
-                                                // Let's use simple logic: Update if length <= 4.
-
-                                                if (e.target.value.length <= 4) {
-                                                    const [, mStr] = profile.startDate.split('-');
-                                                    updateProfile(profile.id, 'startDate', `${e.target.value}-${mStr}`);
-                                                }
-                                            }}
-                                            onBlur={(e) => {
-                                                let val = parseInt(e.target.value);
-                                                const currentYear = new Date().getFullYear();
-                                                const minYear = currentYear - 50;
-                                                const maxYear = currentYear + 50;
-
-                                                if (isNaN(val) || val < minYear) val = minYear;
-                                                if (val > maxYear) val = maxYear;
-
-                                                const [, m] = profile.startDate.split('-');
-                                                updateProfile(profile.id, 'startDate', `${val}-${m}`);
+                                            onChange={(val) => {
+                                                const [, mStr] = profile.startDate.split('-');
+                                                updateProfile(profile.id, 'startDate', `${val}-${mStr}`);
                                             }}
                                             className="w-1/3 border-2 border-slate-200 rounded-xl p-3 text-lg font-medium text-slate-950 outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all bg-white text-center"
                                             placeholder="Year"

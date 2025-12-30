@@ -1,19 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    BarElement,
-    ArcElement,
-    Title,
-    Tooltip,
-    Legend,
-    Filler
-} from 'chart.js';
-import { Bar } from 'react-chartjs-2';
-
+import { FinancialBarChart } from '../common/FinancialCharts';
+import CollapsibleInvestmentTable from '../common/CollapsibleInvestmentTable';
 import InputWithSlider from '../common/InputWithSlider';
 import CalculatorLayout from '../common/CalculatorLayout';
 import UnifiedSummary from '../common/UnifiedSummary';
@@ -26,20 +13,6 @@ import {
     MIN_RATE,
     MAX_RATE
 } from '../../utils/constants';
-
-// Register ChartJS components
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    BarElement,
-    ArcElement,
-    Title,
-    Tooltip,
-    Legend,
-    Filler
-);
 
 export default function ExpenseRatioCalculator({ currency, setCurrency }) {
     // --- STATE ---
@@ -181,60 +154,6 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
 
     }, [initialCapital, recurringInvestment, isYearlyContribution, duration, isDurationInMonths, growthRate, expenseRatio]);
 
-    // --- CHART OPTIONS ---
-
-    // 1. Grouped Bar Chart for Comparison
-    const barChartData = {
-        labels: results.chartData.labels,
-        datasets: [
-            {
-                label: `Without Expense (${growthRate}%)`,
-                data: results.chartData.points.map(p => p.gross),
-                backgroundColor: '#10b981', // Emerald-500
-                borderRadius: 4,
-            },
-            {
-                label: `With Expense (${(growthRate - expenseRatio).toFixed(1)}%)`,
-                data: results.chartData.points.map(p => p.net),
-                backgroundColor: '#3b82f6', // Blue-500
-                borderRadius: 4,
-            }
-        ]
-    };
-
-    const barChartOptions = {
-        responsive: true,
-        plugins: {
-            legend: { position: 'top' },
-            tooltip: {
-                callbacks: {
-                    label: (context) => {
-                        let label = context.dataset.label || '';
-                        if (label) label += ': ';
-                        if (context.parsed.y !== null) {
-                            label += moneyFormat(context.parsed.y, currency);
-                        }
-                        return label;
-                    }
-                }
-            }
-        },
-        scales: {
-            y: {
-                ticks: {
-                    callback: (value) => moneyFormat(value, currency, true)
-                },
-                grid: { return: false }
-            },
-            x: {
-                grid: { display: false }
-            }
-        }
-    };
-
-
-
-
     // --- RENDER ---
     return (
         <CalculatorLayout
@@ -328,16 +247,11 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
                             }
                         />
                     </div>
-
-
-
                 </div>
             }
 
             summary={
                 <div className="space-y-4">
-
-
                     {/* Cards */}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4">
@@ -381,13 +295,25 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
             charts={
                 <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm mt-6">
                     <h3 className="text-lg font-bold text-slate-800 mb-6">Growth Over Time</h3>
-                    <Bar data={barChartData} options={barChartOptions} />
+                    <FinancialBarChart
+                        data={results.yearlyData.map(d => ({
+                            year: d.year,
+                            gross: d.gross,
+                            net: d.net
+                        }))}
+                        currency={currency}
+                        options={{
+                            plugins: {
+                                legend: { position: 'top' },
+                            }
+                        }}
+                    />
                 </div>
             }
 
             table={
-                <div className="mt-8 bg-white rounded-2xl border border-slate-200 overflow-hidden">
-                    <div className="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                <div className="mt-8">
+                    <div className="flex justify-between items-center mb-4">
                         <h3 className="text-lg font-bold text-slate-800">Growth Schedule</h3>
                         <button
                             onClick={() => {
@@ -405,32 +331,21 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
                             Export PDF
                         </button>
                     </div>
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm text-left">
-                            <thead className="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200">
-                                <tr>
-                                    <th className="px-6 py-3 font-bold">Time (Years)</th>
-                                    <th className="px-6 py-3 font-bold">Invested</th>
-                                    <th className="px-6 py-3 font-bold text-emerald-600">Without Expense</th>
-                                    <th className="px-6 py-3 font-bold text-orange-600">With Expense</th>
-                                    <th className="px-6 py-3 font-bold text-red-600">Opportunity Cost</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                                {results.yearlyData.map((row) => (
-                                    <tr key={row.year} className="hover:bg-slate-50 transition-colors">
-                                        <td className="px-6 py-4 font-bold text-slate-900">{row.year}</td>
-                                        <td className="px-6 py-4 text-slate-600">{moneyFormat(row.invested, currency)}</td>
-                                        <td className="px-6 py-4 font-bold text-emerald-600">{moneyFormat(row.gross, currency)}</td>
-                                        <td className="px-6 py-4 font-bold text-orange-600">{moneyFormat(row.net, currency)}</td>
-                                        <td className="px-6 py-4 font-black text-red-600 bg-red-50/50">
-                                            {moneyFormat(row.impact, currency)}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                    <CollapsibleInvestmentTable
+                        yearlyData={results.yearlyData.map(d => ({
+                            ...d,
+                            totalInvested: d.invested,
+                            growth: d.gross - d.invested, // heuristic
+                            balance: d.net
+                        }))}
+                        monthlyData={[]} // No monthly data for now in this calculator structure
+                        currency={currency}
+                        labels={{
+                            invested: "Total Invested",
+                            interest: "Without Expense",
+                            balance: "With Expense"
+                        }}
+                    />
                 </div>
             }
 
@@ -469,26 +384,28 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
                         </div>
 
                         {/* Row 2 */}
-                        <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1">
-                            <div className="bg-blue-600 w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-xl mb-6 shadow-lg shadow-blue-100 italic">04</div>
-                            <h4 className="font-black text-slate-900 mb-3 text-lg">Active vs Passive</h4>
-                            <p className="text-sm text-slate-900 leading-relaxed font-medium text-justify">
-                                <strong>Index Funds (Passive)</strong> typically have very low charges (0.1% - 0.5%). <strong>Active Funds</strong> charge higher (1.5% - 2.5%) to cover fund management expertise and research.
-                            </p>
-                        </div>
-                        <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1">
-                            <div className="bg-purple-600 w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-xl mb-6 shadow-lg shadow-purple-100 italic">05</div>
-                            <h4 className="font-black text-slate-900 mb-3 text-lg">Checking Your Ratio</h4>
-                            <p className="text-sm text-slate-900 leading-relaxed font-medium text-justify">
-                                You can find the <strong>Total Expense Ratio (TER)</strong> in your mutual fund's monthly fact sheet or on the AMC website. It is updated periodically based on AUM size.
-                            </p>
-                        </div>
-                        <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1">
-                            <div className="bg-teal-600 w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-xl mb-6 shadow-lg shadow-teal-100 italic">06</div>
-                            <h4 className="font-black text-slate-900 mb-3 text-lg">Smart Move</h4>
-                            <p className="text-sm text-slate-900 leading-relaxed font-medium text-justify">
-                                Switching from a <strong>Regular Plan to a Direct Plan</strong> is often the easiest, risk-free way to boost your long-term portfolio returns by 1-1.5% annually.
-                            </p>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-10">
+                            <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1">
+                                <div className="bg-blue-600 w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-xl mb-6 shadow-lg shadow-blue-100 italic">04</div>
+                                <h4 className="font-black text-slate-900 mb-3 text-lg">Active vs Passive</h4>
+                                <p className="text-sm text-slate-900 leading-relaxed font-medium text-justify">
+                                    <strong>Index Funds (Passive)</strong> typically have very low charges (0.1% - 0.5%). <strong>Active Funds</strong> charge higher (1.5% - 2.5%) to cover fund management expertise and research.
+                                </p>
+                            </div>
+                            <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1">
+                                <div className="bg-purple-600 w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-xl mb-6 shadow-lg shadow-purple-100 italic">05</div>
+                                <h4 className="font-black text-slate-900 mb-3 text-lg">Checking Your Ratio</h4>
+                                <p className="text-sm text-slate-900 leading-relaxed font-medium text-justify">
+                                    You can find the <strong>Total Expense Ratio (TER)</strong> in your mutual fund's monthly fact sheet or on the AMC website. It is updated periodically based on AUM size.
+                                </p>
+                            </div>
+                            <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1">
+                                <div className="bg-teal-600 w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-xl mb-6 shadow-lg shadow-teal-100 italic">06</div>
+                                <h4 className="font-black text-slate-900 mb-3 text-lg">Smart Move</h4>
+                                <p className="text-sm text-slate-900 leading-relaxed font-medium text-justify">
+                                    Switching from a <strong>Regular Plan to a Direct Plan</strong> is often the easiest, risk-free way to boost your long-term portfolio returns by 1-1.5% annually.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>

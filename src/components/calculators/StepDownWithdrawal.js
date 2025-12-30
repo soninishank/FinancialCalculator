@@ -4,6 +4,7 @@ import InputWithSlider from '../common/InputWithSlider';
 import { moneyFormat } from '../../utils/formatting';
 import { downloadPDF } from '../../utils/export';
 import { FinancialBarChart } from '../common/FinancialCharts';
+import CollapsibleInvestmentTable from '../common/CollapsibleInvestmentTable';
 import {
     DEFAULT_RATE,
     DEFAULT_TARGET_AMOUNT,
@@ -256,15 +257,13 @@ export default function StepDownWithdrawal({ currency }) {
                         {safePlanningHorizon} Years
                     </span>
                 </div>
-                <input
-                    type="range"
+                <InputWithSlider
+                    label="How long should this last? (Years)"
+                    value={safePlanningHorizon}
+                    onChange={setPlanningHorizon}
                     min={10}
                     max={MAX_YEARS}
-                    value={safePlanningHorizon}
-                    onChange={e =>
-                        setPlanningHorizon(Number(e.target.value))
-                    }
-                    className="w-full"
+                    step={1}
                 />
             </div>
 
@@ -279,15 +278,11 @@ export default function StepDownWithdrawal({ currency }) {
                     currency={currency}
                 />
 
-                <div className="flex items-center mt-4">
-                    <input
-                        type="checkbox"
-                        checked={isStepDownEnabled}
-                        onChange={e =>
-                            setIsStepDownEnabled(e.target.checked)
-                        }
-                    />
-                    <label className="ml-2 text-sm">
+                <div className="flex items-center mt-4 cursor-pointer" onClick={() => setIsStepDownEnabled(!isStepDownEnabled)}>
+                    <div className={`w-5 h-5 rounded border flex items-center justify-center mr-2 transition-colors ${isStepDownEnabled ? 'bg-indigo-600 border-indigo-600' : 'bg-white border-gray-300'}`}>
+                        {isStepDownEnabled && <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                    </div>
+                    <label className="text-sm cursor-pointer select-none">
                         I anticipate expenses dropping later
                     </label>
                 </div>
@@ -383,30 +378,17 @@ export default function StepDownWithdrawal({ currency }) {
                                 Export PDF
                             </button>
                         </div>
-                        <div className="overflow-x-auto max-h-96">
-                            <table className="w-full text-sm text-left">
-                                <thead className="bg-gray-50 text-gray-600 font-bold border-b border-gray-200 sticky top-0">
-                                    <tr>
-                                        <th className="p-3">Year</th>
-                                        <th className="p-3 text-right">Opening Balance</th>
-                                        <th className="p-3 text-right">Interest Earned</th>
-                                        <th className="p-3 text-right">Withdrawal</th>
-                                        <th className="p-3 text-right">Closing Balance</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-100">
-                                    {result.yearlyData.slice(1).map((row) => (
-                                        <tr key={row.year} className="hover:bg-gray-50/50">
-                                            <td className="p-3 font-medium text-gray-700">{row.year}</td>
-                                            <td className="p-3 text-right text-gray-500">{moneyFormat(row.openingBalance, currency)}</td>
-                                            <td className="p-3 text-right text-emerald-600">+{moneyFormat(row.interestEarned, currency)}</td>
-                                            <td className="p-3 text-right text-rose-600">-{moneyFormat(row.annualWithdrawal, currency)}</td>
-                                            <td className="p-3 text-right font-bold text-gray-800">{moneyFormat(row.corpus, currency)}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                        <CollapsibleInvestmentTable
+                            yearlyData={result.yearlyData.slice(1)}
+                            monthlyData={[]}
+                            currency={currency}
+                            labels={{
+                                invested: "Opening Balance",
+                                interest: "Interest Earned",
+                                growth: "Withdrawal",
+                                balance: "Closing Balance"
+                            }}
+                        />
                     </div>
                 </div>
             }

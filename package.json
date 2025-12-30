@@ -48,7 +48,8 @@
     "start:server": "node server/app.js",
     "dev": "npm test src/tests/smoke.test.js && npm start",
     "lint": "eslint src",
-    "lint:fix": "eslint src --fix"
+    "lint:fix": "eslint src --fix",
+    "verify:calculators": "node scripts/verify_calculators.js"
   },
   "eslintConfig": {
     "extends": [

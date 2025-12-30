@@ -422,18 +422,17 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                         <MonthYearPicker value={newRateDate} onChange={setNewRateDate} />
                                     </div>
                                     <div className="md:col-span-4">
-                                        <label className="block text-[10px] font-black text-slate-950 uppercase mb-2 tracking-widest">New Rate (%)</label>
-                                        <div className="relative">
-                                            <input
-                                                type="number"
-                                                value={newRate}
-                                                onChange={(e) => setNewRate(e.target.value)}
-                                                className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-600 outline-none font-black text-slate-900 text-lg"
-                                                placeholder="e.g. 9.5"
-                                                step="0.1"
-                                            />
-                                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-black text-lg">%</span>
-                                        </div>
+                                        <InputWithSlider
+                                            label="New Rate"
+                                            value={newRate}
+                                            onChange={setNewRate}
+                                            min={0}
+                                            max={20}
+                                            step={0.1}
+                                            symbol="%"
+                                            isDecimal
+                                            placeholder="e.g. 9.5"
+                                        />
                                     </div>
                                     <div className="md:col-span-4">
                                         <button
@@ -665,9 +664,20 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                 {/* Quick Settings */}
                                 <div className="flex flex-col gap-4">
                                     <label className="inline-flex items-center cursor-pointer group">
-                                        <input type="checkbox" checked={isComparisonMode} onChange={(e) => setIsComparisonMode(e.target.checked)} className="sr-only peer" />
-                                        <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600 shadow-inner"></div>
-                                        <span className="ms-3 text-sm font-bold text-gray-700 group-hover:text-teal-700 transition-colors">Compare with {prepaymentStrategy === 'reduce_tenure' ? 'Reduce EMI' : 'Reduce Tenure'}</span>
+                                        <div
+                                            onClick={() => setIsComparisonMode(!isComparisonMode)}
+                                            className={`relative inline-block w-12 h-6 rounded-full border border-gray-300 transition-colors duration-200 ease-in-out cursor-pointer ${isComparisonMode ? 'bg-teal-600 border-teal-600' : 'bg-gray-200'}`}
+                                        >
+                                            <span
+                                                className={`absolute left-0 top-0 bottom-0 w-6 h-6 rounded-full bg-white shadow transform transition-transform duration-200 ease-in-out ${isComparisonMode ? 'translate-x-6' : 'translate-x-0'}`}
+                                            />
+                                        </div>
+                                        <span
+                                            onClick={() => setIsComparisonMode(!isComparisonMode)}
+                                            className="ms-3 text-sm font-bold text-gray-700 group-hover:text-teal-700 transition-colors cursor-pointer"
+                                        >
+                                            Compare with {prepaymentStrategy === 'reduce_tenure' ? 'Reduce EMI' : 'Reduce Tenure'}
+                                        </span>
                                     </label>
 
                                     {monthlyPrepayment > 0 && (

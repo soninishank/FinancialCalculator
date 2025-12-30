@@ -1754,11 +1754,41 @@ export function computeStepUpLoanAmortization({
       balance: Math.max(0, balance)
     });
 
+
     processingMonth++;
+  }
+
+  // Aggregate Yearly Data
+  const yearlyData = [];
+  if (monthlyRows.length > 0) {
+    const distinctYears = Math.ceil(monthlyRows.length / 12);
+    for (let y = 1; y <= distinctYears; y++) {
+      const startIdx = (y - 1) * 12;
+      const endIdx = Math.min(startIdx + 12, monthlyRows.length);
+      const yearChunk = monthlyRows.slice(startIdx, endIdx);
+
+      if (yearChunk.length === 0) continue;
+
+      const yearPrincipal = yearChunk.reduce((acc, r) => acc + r.principal, 0);
+      const yearInterest = yearChunk.reduce((acc, r) => acc + r.interest, 0);
+      const yearTotalPaid = yearChunk.reduce((acc, r) => acc + r.emi, 0);
+      const closingBalance = yearChunk[yearChunk.length - 1].balance;
+
+      yearlyData.push({
+        year: y,
+        principalPaid: yearPrincipal,
+        interestPaid: yearInterest,
+        totalPaid: yearTotalPaid,
+        balance: closingBalance,
+        closingBalance: closingBalance,
+        label: `Year ${y}`
+      });
+    }
   }
 
   return {
     monthlyRows,
+    yearlyRows: yearlyData,
     finalTotalInterest: totalInterest,
     finalTotalPaid: totalPaid,
     monthsTaken: processingMonth - 1,

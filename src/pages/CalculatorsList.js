@@ -1,13 +1,25 @@
 // src/pages/CalculatorsList.js
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useCalculatorSearch } from "../hooks/useCalculatorSearch";
 import CalculatorAdvisor from "../components/home/CalculatorAdvisor";
 import SEO from "../components/common/SEO";
 
 export default function CalculatorsList() {
-  const [q, setQ] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialQ = searchParams.get("q") || "";
+  const [q, setQ] = useState(initialQ);
   const filtered = useCalculatorSearch(q);
+
+  // Update URL when q changes
+  const handleSearchChange = (val) => {
+    setQ(val);
+    if (val) {
+      setSearchParams({ q: val }, { replace: true });
+    } else {
+      setSearchParams({}, { replace: true });
+    }
+  };
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -28,7 +40,7 @@ export default function CalculatorsList() {
           <div className="mt-4">
             <input
               value={q}
-              onChange={e => setQ(e.target.value)}
+              onChange={e => handleSearchChange(e.target.value)}
               placeholder="Search calculators (e.g., SIP, EMI, Lump Sum)"
               className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-200"
               aria-label="Search calculators"

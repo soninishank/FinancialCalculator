@@ -1,14 +1,11 @@
 import React, { useState, useMemo } from 'react';
+import { AlertTriangle } from 'lucide-react';
 import InputWithSlider from '../common/InputWithSlider';
 import { moneyFormat } from '../../utils/formatting';
 import { downloadPDF } from '../../utils/export';
 import { computeMoratoriumLoanAmortization } from '../../utils/finance';
 import CollapsibleAmortizationTable from '../common/CollapsibleAmortizationTable';
-import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from 'chart.js';
-import { AlertTriangle } from 'lucide-react';
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
+import { FinancialLineChart } from '../common/FinancialCharts';
 
 export default function MoratoriumLoanEMI({ currency = 'INR' }) {
     const [principal, setPrincipal] = useState(1000000); // 10 Lakhs
@@ -45,7 +42,7 @@ export default function MoratoriumLoanEMI({ currency = 'INR' }) {
         ]
     };
 
-    const options = { responsive: true, scales: { y: { ticks: { callback: val => moneyFormat(val, currency, true) } } } };
+
 
     const emiIncrease = results.emiAfter - results.emiBefore;
     // If negative (impossible usually unless prepaying), handle gracefully
@@ -75,8 +72,13 @@ export default function MoratoriumLoanEMI({ currency = 'INR' }) {
                         <div className="flex items-center justify-between mt-4 bg-gray-50 p-3 rounded-lg">
                             <span className="text-sm font-semibold text-gray-700">Pay Interest during Moratorium?</span>
                             <label className="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" className="sr-only peer" checked={payInterest} onChange={(e) => setPayInterest(e.target.checked)} />
-                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:bg-teal-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                                <span className="sr-only">Pay Interest</span>
+                                <div
+                                    onClick={() => setPayInterest(!payInterest)}
+                                    className={`w-11 h-6 rounded-full transition-colors duration-200 ease-in-out ${payInterest ? 'bg-teal-600' : 'bg-gray-200'}`}
+                                >
+                                    <div className={`absolute top-[2px] left-[2px] bg-white rounded-full h-5 w-5 transition-transform duration-200 ease-in-out ${payInterest ? 'translate-x-full' : 'translate-x-0'}`}></div>
+                                </div>
                             </label>
                         </div>
                         <p className="text-xs text-gray-500 mt-2">
@@ -117,8 +119,12 @@ export default function MoratoriumLoanEMI({ currency = 'INR' }) {
                     </div>
 
                     {/* CHART */}
-                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm h-64">
-                        <Line data={chartData} options={options} />
+                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm h-72">
+                        <FinancialLineChart
+                            data={chartData}
+                            currency={currency}
+                            height={250}
+                        />
                     </div>
                 </div>
 

@@ -357,5 +357,157 @@ export const calculatorDetails = {
                 </div>
             </div>
         )
+    },
+    xirr_calculator: {
+        title: "Mastering XIRR",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding XIRR</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        <strong>XIRR (Extended Internal Rate of Return)</strong> is the most accurate way to measure returns when you have irregular cash flows—like SIPs, lump sum investments, partial withdrawals, or any combination of deposits and redemptions at different times.
+                    </p>
+
+                    <div className="bg-teal-50 p-4 rounded-xl border border-teal-100 my-6">
+                        <h4 className="font-bold text-teal-800 mb-2">Why XIRR is Powerful</h4>
+                        <p className="text-sm text-teal-700 mb-2">
+                            Unlike CAGR (which only works for a single investment and redemption), XIRR handles:
+                        </p>
+                        <ul className="list-disc pl-5 space-y-1 text-sm text-teal-700">
+                            <li><strong>Multiple deposits</strong> at different dates (like monthly SIPs)</li>
+                            <li><strong>Partial withdrawals</strong> during the investment period</li>
+                            <li><strong>Irregular investments</strong> (different amounts at different times)</li>
+                            <li><strong>Exact date precision</strong> for accurate annualized returns</li>
+                        </ul>
+                    </div>
+
+                    <h4 className="font-semibold text-gray-800 mb-2 mt-6">XIRR vs CAGR: When to Use What?</h4>
+                    <div className="overflow-x-auto my-4">
+                        <table className="min-w-full border border-gray-200 text-sm">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="border border-gray-200 px-4 py-2 text-left font-bold text-gray-700">Scenario</th>
+                                    <th className="border border-gray-200 px-4 py-2 text-left font-bold text-teal-700">Use XIRR</th>
+                                    <th className="border border-gray-200 px-4 py-2 text-left font-bold text-indigo-700">Use CAGR</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td className="border border-gray-200 px-4 py-2">Single lump sum investment</td>
+                                    <td className="border border-gray-200 px-4 py-2 text-center">-</td>
+                                    <td className="border border-gray-200 px-4 py-2 text-center">✅</td>
+                                </tr>
+                                <tr className="bg-gray-50">
+                                    <td className="border border-gray-200 px-4 py-2">Monthly SIP</td>
+                                    <td className="border border-gray-200 px-4 py-2 text-center">✅</td>
+                                    <td className="border border-gray-200 px-4 py-2 text-center">-</td>
+                                </tr>
+                                <tr>
+                                    <td className="border border-gray-200 px-4 py-2">Irregular investments</td>
+                                    <td className="border border-gray-200 px-4 py-2 text-center">✅</td>
+                                    <td className="border border-gray-200 px-4 py-2 text-center">-</td>
+                                </tr>
+                                <tr className="bg-gray-50">
+                                    <td className="border border-gray-200 px-4 py-2">Investment with withdrawals</td>
+                                    <td className="border border-gray-200 px-4 py-2 text-center">✅</td>
+                                    <td className="border border-gray-200 px-4 py-2 text-center">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h4 className="font-semibold text-gray-800 mb-2 mt-6">Real-World Use Cases</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                            <h5 className="font-bold text-indigo-800 mb-2">📊 Mutual Fund SIPs</h5>
+                            <p className="text-sm text-indigo-700">
+                                Calculate the true annualized return of your monthly SIP investments. XIRR accounts for each installment's timing and amount.
+                            </p>
+                        </div>
+                        <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                            <h5 className="font-bold text-emerald-800 mb-2">🏠 Real Estate</h5>
+                            <p className="text-sm text-emerald-700">
+                                Track property investment with down payment, EMIs, maintenance costs, rental income, and final sale value.
+                            </p>
+                        </div>
+                        <div className="bg-purple-50 p-4 rounded-xl border border-purple-100">
+                            <h5 className="font-bold text-purple-800 mb-2">💼 Business Investments</h5>
+                            <p className="text-sm text-purple-700">
+                                Measure ROI for businesses with multiple capital injections and profit withdrawals over time.
+                            </p>
+                        </div>
+                        <div className="bg-rose-50 p-4 rounded-xl border border-rose-100">
+                            <h5 className="font-bold text-rose-800 mb-2">📈 Stock Portfolios</h5>
+                            <p className="text-sm text-rose-700">
+                                Track returns when you buy stocks at different times, receive dividends, and sell partially.
+                            </p>
+                        </div>
+                    </div>
+
+                    <h4 className="font-semibold text-gray-800 mb-2 mt-6">How to Interpret Your XIRR</h4>
+                    <div className="bg-gradient-to-r from-red-50 via-yellow-50 via-green-50 to-emerald-50 p-4 rounded-xl border border-gray-200 my-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center text-xs font-bold">
+                            <div>
+                                <div className="text-red-700 text-lg mb-1">&lt; 7%</div>
+                                <div className="text-red-600">Below Average</div>
+                                <div className="text-gray-500 text-[10px] mt-1">Consider FDs</div>
+                            </div>
+                            <div>
+                                <div className="text-amber-700 text-lg mb-1">7-10%</div>
+                                <div className="text-amber-600">Average</div>
+                                <div className="text-gray-500 text-[10px] mt-1">Beating FDs</div>
+                            </div>
+                            <div>
+                                <div className="text-green-700 text-lg mb-1">10-15%</div>
+                                <div className="text-green-600">Good</div>
+                                <div className="text-gray-500 text-[10px] mt-1">Market returns</div>
+                            </div>
+                            <div>
+                                <div className="text-emerald-700 text-lg mb-1">&gt; 15%</div>
+                                <div className="text-emerald-600">Excellent</div>
+                                <div className="text-gray-500 text-[10px] mt-1">Outperforming</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 my-4">
+                        <h4 className="font-bold text-blue-800 mb-2">📌 Benchmark Comparisons</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-sm text-blue-700">
+                            <li><strong>Bank FD:</strong> ~6-7% per year (safe, guaranteed)</li>
+                            <li><strong>Inflation:</strong> ~5-6% per year (your minimum target)</li>
+                            <li><strong>Nifty 50 (20Y CAGR):</strong> ~12% per year (equity benchmark)</li>
+                            <li><strong>Gold (20Y CAGR):</strong> ~9% per year (alternative asset)</li>
+                        </ul>
+                    </div>
+
+                    <h4 className="font-semibold text-gray-800 mb-2 mt-6">Pro Tips for Accurate XIRR</h4>
+                    <ul className="list-disc pl-5 space-y-2 mb-4">
+                        <li><strong>Use Exact Dates:</strong> XIRR is date-sensitive. Use the actual transaction dates from your statements for precision.</li>
+                        <li><strong>Negative for Investments:</strong> Money going OUT (deposits) should be negative. Money coming IN (redemptions/current value) should be positive.</li>
+                        <li><strong>Include Current Value:</strong> Add today's portfolio value as a positive "return" with today's date to see your current XIRR.</li>
+                        <li><strong>Don't Mix Investments:</strong> Calculate XIRR separately for each fund/stock to identify top performers.</li>
+                        <li><strong>Minimum 2 Transactions:</strong> You need at least one investment and one return/current value to calculate XIRR.</li>
+                    </ul>
+
+                    <div className="bg-amber-50 p-4 rounded-xl border border-amber-100">
+                        <h4 className="font-bold text-amber-800 mb-2">⚠️ Important Notes</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-sm text-amber-700">
+                            <li>XIRR assumes returns are reinvested at the same rate (which may not be realistic)</li>
+                            <li>Very short investment periods (less than 1 year) can show misleading annualized rates</li>
+                            <li>XIRR doesn't account for risk or volatility—only returns</li>
+                            <li>Tax implications vary by investment type and holding period</li>
+                        </ul>
+                    </div>
+
+                    <h4 className="font-semibold text-gray-800 mb-2 mt-6">Example: Monthly SIP</h4>
+                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 text-sm">
+                        <p className="mb-2 font-medium text-gray-700">Invested ₹10,000/month for 24 months = ₹2,40,000 total</p>
+                        <p className="mb-2 text-gray-600">Current value after 2 years = ₹2,90,000</p>
+                        <p className="font-bold text-teal-700">XIRR = ~18.5% per year 🎉</p>
+                        <p className="text-xs text-gray-500 mt-2">This means your investments grew at an annualized rate of 18.5%, accounting for the timing of each monthly deposit.</p>
+                    </div>
+                </div>
+            </div>
+        )
     }
 };

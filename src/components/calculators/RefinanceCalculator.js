@@ -4,6 +4,7 @@ import InputWithSlider from '../common/InputWithSlider';
 import { moneyFormat } from '../../utils/formatting';
 import { downloadPDF } from '../../utils/export';
 import { FinancialLineChart } from '../common/FinancialCharts';
+import CollapsibleInvestmentTable from '../common/CollapsibleInvestmentTable';
 import {
     CHART_COLORS,
     DEFAULT_REFINANCE_LOAN,
@@ -237,30 +238,21 @@ export default function RefinanceCalculator({ currency }) {
                             Export PDF
                         </button>
                     </div>
-                    <div className="overflow-x-auto border border-gray-200 rounded-xl">
-                        <table className="w-full text-sm text-left">
-                            <thead className="bg-gray-50 text-gray-600 font-bold border-b border-gray-200">
-                                <tr>
-                                    <th className="p-3">Year</th>
-                                    <th className="p-3 text-right">Old Loan Cost</th>
-                                    <th className="p-3 text-right">New Loan Cost</th>
-                                    <th className="p-3 text-right">Net Savings</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100">
-                                {result.yearlyData.map((row) => (
-                                    <tr key={row.year} className="hover:bg-gray-50/50">
-                                        <td className="p-3 font-medium text-gray-700">{row.year}</td>
-                                        <td className="p-3 text-right text-gray-600">{moneyFormat(row.oldCumulative, currency)}</td>
-                                        <td className="p-3 text-right text-gray-600">{moneyFormat(row.newCumulative, currency)}</td>
-                                        <td className={`p-3 text-right font-bold ${row.oldCumulative - row.newCumulative >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-                                            {moneyFormat(row.oldCumulative - row.newCumulative, currency)}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                    <CollapsibleInvestmentTable
+                        yearlyData={result.yearlyData.map(d => ({
+                            year: d.year,
+                            totalInvested: d.oldCumulative,
+                            interest: d.newCumulative,
+                            balance: d.oldCumulative - d.newCumulative // Savings
+                        }))}
+                        monthlyData={[]}
+                        currency={currency}
+                        labels={{
+                            invested: "Old Loan Cost",
+                            interest: "New Loan Cost",
+                            balance: "Net Savings"
+                        }}
+                    />
                 </div>
             }
         />

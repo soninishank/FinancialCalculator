@@ -117,34 +117,36 @@ export default function StepUpSIP({ currency, setCurrency }) {
         onChange={handleTotalYearsChange}
         min={MIN_YEARS} max={MAX_YEARS}
       />
-      <div className="mt-4 flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100 transition-all duration-300">
-        <div className="flex items-center h-6">
-          <ToggleSwitch
-            checked={isLimitedPay}
-            onChange={handleLimitedPayToggle}
-          />
-        </div>
-        <div className="flex-1 w-full min-w-0">
-          <label className="font-bold text-gray-700 text-sm block mb-1 cursor-pointer" onClick={handleLimitedPayToggle}>
-            Stop SIP early? (Limited Pay)
-          </label>
-          <p className="text-gray-500 text-xs mt-1">
-            Stop contributing after a few years but let the money grow.
-          </p>
-          <LimitedPayTip show={isLimitedPay} />
+      <div className="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-100 transition-all duration-300">
+        <div className="flex items-start gap-3">
+          <div className="flex items-center h-6">
+            <ToggleSwitch
+              checked={isLimitedPay}
+              onChange={handleLimitedPayToggle}
+            />
+          </div>
+          <div className="flex-1 w-full min-w-0">
+            <label className="font-bold text-gray-700 text-sm block mb-1 cursor-pointer" onClick={handleLimitedPayToggle}>
+              Stop SIP early? (Limited Pay)
+            </label>
+            <p className="text-gray-500 text-xs mt-1">
+              Stop contributing after a few years but let the money grow.
+            </p>
+            <LimitedPayTip show={isLimitedPay} />
+            {isLimitedPay && (
+              <div className="mt-6 pt-6 border-t border-gray-100 animate-slide-down">
+                <InputWithSlider
+                  label="SIP Contribution Period (Years)"
+                  value={sipYears}
+                  onChange={setSipYears}
+                  min={MIN_YEARS}
+                  max={totalYears}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
-      {isLimitedPay && (
-        <div className="mt-4 pl-4 border-l-2 border-teal-100 animate-slide-down">
-          <InputWithSlider
-            label="SIP Contribution Period (Years)"
-            value={sipYears}
-            onChange={setSipYears}
-            min={MIN_YEARS}
-            max={totalYears}
-          />
-        </div>
-      )}
       <InputWithSlider
         label="Expected Annual Return (%)"
         value={annualRate}
