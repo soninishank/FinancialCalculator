@@ -15,14 +15,16 @@ export default function HomePage() {
 
       <section className="mb-8 flex items-center justify-between">
         <h2 className="text-xl font-bold text-gray-800">All Financial Tools</h2>
-        <div className="relative w-full max-w-xs">
+        <div className="relative w-full max-w-xs group">
           <input
             value={q}
             onChange={e => setQ(e.target.value)}
             placeholder="Filter (e.g., SIP, EMI)"
-            className="w-full pl-10 pr-4 py-2 border rounded-full text-sm focus:outline-none focus:border-teal-500"
+            className="w-full pl-11 pr-4 py-2.5 bg-white border border-gray-200 rounded-full text-sm font-medium text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all shadow-sm"
           />
-          <svg className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          <svg className="w-4 h-4 text-gray-500 absolute left-4 top-1/2 -translate-y-1/2 group-focus-within:text-teal-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
         </div>
       </section>
 

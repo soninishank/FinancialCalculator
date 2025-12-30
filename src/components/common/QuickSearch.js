@@ -43,8 +43,8 @@ const QuickSearch = () => {
     return (
         <div className="relative mb-6" ref={containerRef}>
             <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search className="h-4 w-4 text-gray-400" />
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Search className="h-5 w-5 text-gray-600" />
                 </div>
                 <input
                     ref={inputRef}
@@ -56,7 +56,7 @@ const QuickSearch = () => {
                     }}
                     onFocus={() => setIsOpen(true)}
                     placeholder="Search all calculators..."
-                    className="block w-full pl-10 pr-10 py-2.5 border border-gray-100 rounded-xl leading-5 bg-gray-50/50 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-teal-500/10 focus:border-teal-500 sm:text-sm transition-all shadow-inner"
+                    className="block w-full pl-12 pr-10 py-4 border-2 border-gray-200 rounded-2xl leading-5 bg-white text-gray-900 placeholder-gray-600 font-medium focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 text-lg transition-all shadow-sm"
                 />
                 {query && (
                     <button

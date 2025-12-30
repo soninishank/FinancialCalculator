@@ -4,6 +4,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useCalculatorSearch } from "../hooks/useCalculatorSearch";
 import CalculatorAdvisor from "../components/home/CalculatorAdvisor";
 import SEO from "../components/common/SEO";
+import { Search } from "lucide-react";
 
 export default function CalculatorsList() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -37,12 +38,15 @@ export default function CalculatorsList() {
           <h2 className="text-lg font-semibold">Choose a calculator</h2>
           <p className="text-sm text-gray-600 mt-1">Search or pick from the catalog below.</p>
 
-          <div className="mt-4">
+          <div className="mt-6 relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-gray-500" />
+            </div>
             <input
               value={q}
               onChange={e => handleSearchChange(e.target.value)}
-              placeholder="Search calculators (e.g., SIP, EMI, Lump Sum)"
-              className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-200"
+              placeholder="Search calculators (e.g., SIP, EMI, Lump Sum...)"
+              className="w-full pl-12 pr-4 py-4 border-2 border-gray-100 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 text-lg transition-all"
               aria-label="Search calculators"
             />
           </div>

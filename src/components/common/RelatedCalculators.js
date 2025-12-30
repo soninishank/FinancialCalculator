@@ -77,13 +77,21 @@ const RelatedCalculators = ({ currentSlug, category }) => {
             )}
 
             {/* DISCOVER MORE (Randomized) */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="px-5 py-4 border-b border-gray-50 bg-gray-50/30 flex justify-between items-center">
-                    <h3 className="text-[12px] font-bold text-gray-900 uppercase tracking-widest leading-none">
-                        Discover More
-                    </h3>
-                    <span className="text-[10px] text-gray-400 font-bold px-2 py-1 bg-gray-100 rounded-lg">Surprise Me!</span>
-                </div>
+            <div className="bg-white rounded-2xl shadow-sm border border-indigo-100 overflow-hidden ring-1 ring-indigo-50/50">
+                <Link
+                    to="/calculators"
+                    className="px-5 py-4 border-b border-indigo-50 bg-indigo-50/40 flex justify-between items-center group/header hover:bg-indigo-100/40 transition-colors"
+                >
+                    <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+                        <h3 className="text-[12px] font-extrabold text-indigo-700 uppercase tracking-widest leading-none transition-colors">
+                            Discover More
+                        </h3>
+                    </div>
+                    <span className="text-[10px] text-indigo-600 font-black px-2.5 py-1 bg-indigo-100/50 rounded-full group-hover/header:bg-indigo-600 group-hover/header:text-white transition-all shadow-sm">
+                        Surprise Me!
+                    </span>
+                </Link>
                 <div className="divide-y divide-gray-50">
                     {discovery.map((calc) => (
                         <Link

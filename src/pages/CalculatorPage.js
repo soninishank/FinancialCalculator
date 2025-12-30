@@ -5,6 +5,7 @@ import manifest from '../utils/calculatorsManifest';
 import { useCurrency } from '../contexts/CurrencyContext';
 import RelatedCalculators from '../components/common/RelatedCalculators';
 import SEO from '../components/common/SEO';
+import SocialShare from '../components/common/SocialShare';
 
 // Explicit dynamic imports so bundlers can split chunks
 // Explicit dynamic imports wrapped with retry logic
@@ -21,7 +22,8 @@ const importBySlug = (slug) => {
       case 'step-up-plus-lump': return import('../components/calculators/StepUpSIPWithLump');
       case 'goal-planner': return import('../components/calculators/GoalPlanner');
       case 'loan-emi': return import('../components/calculators/LoanEMI');
-      case 'vehicle-loan-emi': return import('../components/calculators/VehicleLoanEMI');
+      case 'car-loan-emi': return import('../components/calculators/CarLoanEMI');
+      case 'advanced-car-loan-emi': return import('../components/calculators/AdvancedCarLoanEMI');
       case 'step-up-loan-emi': return import('../components/calculators/StepUpLoanEMI');
       case 'moratorium-loan-emi': return import('../components/calculators/MoratoriumLoanEMI');
       case 'cagr-calculator': return import('../components/calculators/CAGRCalculator');
@@ -180,6 +182,8 @@ export default function CalculatorPage() {
                 <LazyCalc currency={currency} setCurrency={setCurrency} />
               </Suspense>
             </ErrorBoundary>
+
+            <SocialShare title={meta.title} />
           </div>
         </main>
 

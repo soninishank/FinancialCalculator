@@ -509,5 +509,103 @@ export const calculatorDetails = {
                 </div>
             </div>
         )
+    },
+    carLoanEMI: {
+        title: "Car Loan EMI Calculator Guide",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-6">Drive Your Dreams with Clarity</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-6">
+                        India is now one of the world's largest car markets, with steady growth year after year. As the demand for vehicles rises, the need for a reliable <strong>Car Loan EMI Calculator</strong> has become essential for informed financial planning.
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+                        <div className="bg-blue-50 p-5 rounded-2xl border border-blue-100">
+                            <h4 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
+                                <span className="p-1.5 bg-blue-500 text-white rounded-lg text-xs">01</span>
+                                Why Use This Calculator?
+                            </h4>
+                            <ul className="space-y-3">
+                                <li className="flex items-start gap-2 text-sm text-blue-800">
+                                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                                    <strong>Instant Clarity:</strong> See your monthly commitment in seconds.
+                                </li>
+                                <li className="flex items-start gap-2 text-sm text-blue-800">
+                                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                                    <strong>Plan Better:</strong> Adjust tenure and interest to see what fits your budget.
+                                </li>
+                                <li className="flex items-start gap-2 text-sm text-blue-800">
+                                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                                    <strong>Error-Free:</strong> Skip the complex manual math and get 100% accuracy.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div className="bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
+                            <h4 className="font-bold text-emerald-900 mb-3 flex items-center gap-2">
+                                <span className="p-1.5 bg-emerald-500 text-white rounded-lg text-xs">02</span>
+                                Financial Breakdown
+                            </h4>
+                            <p className="text-sm text-emerald-800 leading-relaxed">
+                                Our tool provides a comprehensive breakdown of your loan, including the <strong>Total Interest Payable</strong> and the <strong>Total Cost of Ownership</strong>. This ensures no surprises when you visit the dealership.
+                            </p>
+                        </div>
+                    </div>
+
+                    <h4 className="font-bold text-gray-800 mb-4">The Standard Calculation Formula</h4>
+                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 mb-8 font-mono text-center">
+                        <p className="text-lg font-bold text-slate-800">E = P × R × (1+R)ⁿ / ((1+R)ⁿ - 1)</p>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 text-xs text-slate-600 font-sans">
+                            <div><strong>E:</strong> Monthly EMI</div>
+                            <div><strong>P:</strong> Principal Amount</div>
+                            <div><strong>R:</strong> Monthly Interest Rate</div>
+                            <div><strong>n:</strong> Tenure in Months</div>
+                        </div>
+                    </div>
+
+                    <div className="bg-teal-50 p-6 rounded-2xl border border-teal-100 mb-8">
+                        <h4 className="font-bold text-teal-900 mb-3">Understanding Amortization</h4>
+                        <p className="text-sm text-teal-800 leading-relaxed">
+                            An amortization schedule is your roadmap to being debt-free. It shows how each payment is split between the Interest (cost of borrowing) and the Principal (loan repayment). In the early years, interest dominates; as the balance drops, more of your money goes toward the principal.
+                        </p>
+                    </div>
+
+                    {/* FAQ SECTION */}
+                    <div className="mt-12 space-y-6">
+                        <h3 className="text-xl font-bold text-gray-800 mb-6">Frequently Asked Questions</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {[
+                                {
+                                    q: "How much time does it take to calculate?",
+                                    a: "Our calculator works instantly. Just input your loan amount, interest rate, and tenure to see your EMI immediately."
+                                },
+                                {
+                                    q: "Can I get a loan for a used vehicle?",
+                                    a: "Yes! Most lenders offer pre-owned car loans, though interest rates might be slightly higher compared to new cars."
+                                },
+                                {
+                                    q: "What is the typical tenure for car loans?",
+                                    a: "Car loans in India usually range from 1 to 7 years. A longer tenure reduces EMI but increases total interest cost."
+                                },
+                                {
+                                    q: "Do I need a co-guarantor?",
+                                    a: "Usually not, if you have a stable income and a good credit score (750+). A co-applicant may be needed if your income is below the lender's threshold."
+                                },
+                                {
+                                    q: "Why would a car loan application be rejected?",
+                                    a: "Rejections typically happen due to a low credit score, unstable income history, or high existing debt-to-income ratio."
+                                }
+                            ].map((faq, i) => (
+                                <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-gray-200 transition-colors">
+                                    <h5 className="font-bold text-gray-800 text-sm mb-2">Q: {faq.q}</h5>
+                                    <p className="text-gray-600 text-xs leading-relaxed">{faq.a}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
     }
 };

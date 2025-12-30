@@ -296,11 +296,21 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
                 <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm mt-6">
                     <h3 className="text-lg font-bold text-slate-800 mb-6">Growth Over Time</h3>
                     <FinancialBarChart
-                        data={results.yearlyData.map(d => ({
-                            year: d.year,
-                            gross: d.gross,
-                            net: d.net
-                        }))}
+                        data={{
+                            labels: results.yearlyData.map(d => `Year ${d.year}`),
+                            datasets: [
+                                {
+                                    label: 'Without Expense',
+                                    data: results.yearlyData.map(d => d.gross),
+                                    backgroundColor: '#10b981', // emerald-500
+                                },
+                                {
+                                    label: 'With Expense',
+                                    data: results.yearlyData.map(d => d.net),
+                                    backgroundColor: '#f97316', // orange-500
+                                }
+                            ]
+                        }}
                         currency={currency}
                         options={{
                             plugins: {

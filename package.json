@@ -39,7 +39,7 @@
   },
   "scripts": {
     "start": "NODE_NO_WARNINGS=1 react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && node scripts/post-build.js",
     "test": "react-scripts test --watchAll=false",
     "eject": "react-scripts eject",
     "scraper": "node server/app.js",

@@ -274,6 +274,112 @@ export function computeLoanAmortization({ principal, annualRate, years, emi, sta
   return { rows, monthlyRows: allMonthlyRows, finalTotalInterest, finalTotalPaid };
 }
 
+/**
+ * Car Loan Amortization with Fees, Depreciation and Inflation.
+ */
+export function computeCarLoanAmortization({
+  purchasePrice,
+  downPayment,
+  tradeInValue = 0,
+  annualRate,
+  months,
+  startDate,
+  // Fees (Capitalized into loan)
+  processingFee = 0,
+  docFee = 0,
+  salesTax = 0,
+  registrationCharges = 0,
+  addOnProducts = 0,
+  // Advanced
+  inflationRate = 0,
+  depreciationRate = 15,
+  gapInsurance = 0,
+  otherInsurance = 0,
+}) {
+  const totalFees = processingFee + docFee + salesTax + registrationCharges + addOnProducts + gapInsurance + otherInsurance;
+  const capitalizedLoanAmount = (purchasePrice - downPayment - tradeInValue) + totalFees;
+
+  const R_m = annualRate / 12 / 100;
+  const N = months;
+
+  const emi = calculateEMI(capitalizedLoanAmount, R_m, N);
+
+  let balance = capitalizedLoanAmount;
+  let carValue = purchasePrice;
+  const start = startDate ? new Date(startDate) : new Date();
+  const startMonth = start.getMonth();
+  const startYear = start.getFullYear();
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  const allMonthlyRows = [];
+  let totalInterest = 0;
+
+  for (let m = 1; m <= N; m++) {
+    const interestPaid = balance * R_m;
+    const principalPaid = emi - interestPaid;
+
+    // Depreciation (Applied monthly for smoother chart, though usually annual)
+    // Monthly depreciation factor: (1 - annualRate)^(1/12)
+    const monthlyDepreFactor = Math.pow(1 - (depreciationRate / 100), 1 / 12);
+    carValue *= monthlyDepreFactor;
+
+    // Inflation adjustment for payment value
+    const monthlyInflationFactor = Math.pow(1 + (inflationRate / 100), 1 / 12);
+    const inflationAdjustedEMI = emi / Math.pow(monthlyInflationFactor, m);
+
+    balance -= principalPaid;
+    const currentBalance = Math.max(0, balance);
+
+    const currentAbsMonth = startMonth + (m - 1);
+    const calendarYear = startYear + Math.floor(currentAbsMonth / 12);
+    const calendarMonth = currentAbsMonth % 12;
+
+    allMonthlyRows.push({
+      id: m,
+      month: calendarMonth + 1,
+      monthName: monthNames[calendarMonth],
+      year: calendarYear,
+      openingBalance: currentBalance + principalPaid,
+      principalPaid,
+      interestPaid,
+      closingBalance: currentBalance,
+      carValue: carValue,
+      inflationAdjustedEMI,
+      totalPaidPercent: ((capitalizedLoanAmount - currentBalance) / capitalizedLoanAmount) * 100,
+    });
+
+    totalInterest += interestPaid;
+  }
+
+  // Aggregate to Yearly
+  const yearlyRows = [];
+  const yearsSet = new Set(allMonthlyRows.map(r => r.year));
+  const sortedYears = Array.from(yearsSet).sort((a, b) => a - b);
+
+  sortedYears.forEach(year => {
+    const monthsInYear = allMonthlyRows.filter(r => r.year === year);
+    yearlyRows.push({
+      year,
+      principalPaid: monthsInYear.reduce((s, m) => s + m.principalPaid, 0),
+      interestPaid: monthsInYear.reduce((s, m) => s + m.interestPaid, 0),
+      closingBalance: monthsInYear[monthsInYear.length - 1].closingBalance,
+      carValue: monthsInYear[monthsInYear.length - 1].carValue,
+      totalPaidPercent: monthsInYear[monthsInYear.length - 1].totalPaidPercent
+    });
+  });
+
+  return {
+    monthlyRows: allMonthlyRows,
+    yearlyRows,
+    emi,
+    loanAmount: capitalizedLoanAmount,
+    totalInterest,
+    totalPaid: emi * N,
+    totalCostOfOwnership: (emi * N) + downPayment + tradeInValue,
+    totalFees
+  };
+}
+
 // Helper function (make sure this exists in your utils/finance.js)
 export function calculateEMI(principal, monthlyRate, months) {
   if (monthlyRate === 0) return principal / months;

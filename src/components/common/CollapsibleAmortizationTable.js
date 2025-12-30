@@ -1,7 +1,22 @@
 import React, { useState, Fragment } from 'react';
 import { moneyFormat } from '../../utils/formatting';
 
-export default function CollapsibleAmortizationTable({ yearlyData, monthlyData, currency, isFinancial = false }) {
+/**
+ * CollapsibleAmortizationTable
+ * 
+ * @param {Array} yearlyData - Array of year-wise summary objects
+ * @param {Array} monthlyData - Array of month-wise detailed objects
+ * @param {String} currency - Currency symbol (e.g., 'INR', 'USD')
+ * @param {Boolean} isFinancial - Whether to use Financial Year labels (Apr-Mar)
+ * @param {Object} customColumn - Optional custom column to display { header: string, key: string, bgColor: string, textColor: string }
+ */
+export default function CollapsibleAmortizationTable({
+    yearlyData,
+    monthlyData,
+    currency,
+    isFinancial = false,
+    customColumn = null // { header: "Car Value", key: "carValue", bgColor: "bg-indigo-600", textColor: "text-white" }
+}) {
     const [expandedYears, setExpandedYears] = useState({});
 
     const toggleYear = (year) => {
@@ -23,9 +38,9 @@ export default function CollapsibleAmortizationTable({ yearlyData, monthlyData, 
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             {/* TABLE BODY CONTAINER WITH HORIZONTAL SCROLL */}
             <div className="overflow-auto max-h-[600px] w-full">
-                <div className="min-w-[900px]">
-                    {/* TABLE HEADER - Inside scroll container to keep alignment */}
-                    <div className="grid grid-cols-12 bg-slate-900 border-b border-slate-300 text-xs sm:text-sm font-black uppercase tracking-widest text-center items-stretch">
+                <div className={`min-w-[900px] ${customColumn ? 'min-w-[1000px]' : ''}`}>
+                    {/* TABLE HEADER */}
+                    <div className="grid grid-cols-12 bg-slate-900 border-b border-slate-300 text-xs sm:text-[11px] font-black uppercase tracking-widest text-center items-stretch">
                         <div className="col-span-1 p-3 flex items-center justify-center bg-slate-800 text-slate-100 border-r border-slate-700">Year</div>
 
                         <div className="col-span-2 p-3 flex items-center justify-center bg-[#8DB63F] text-white border-r border-white/20 leading-tight">
@@ -36,12 +51,18 @@ export default function CollapsibleAmortizationTable({ yearlyData, monthlyData, 
                             Interest<br />(B)
                         </div>
 
-                        <div className="col-span-2 p-3 flex items-center justify-center bg-[#5E3C5E] text-white border-r border-white/20 leading-tight">
-                            Expenses<br />(C)
-                        </div>
+                        {customColumn ? (
+                            <div className={`col-span-2 p-3 flex items-center justify-center ${customColumn.bgColor || 'bg-indigo-600'} ${customColumn.textColor || 'text-white'} border-r border-white/20 leading-tight`}>
+                                {customColumn.header}
+                            </div>
+                        ) : (
+                            <div className="col-span-2 p-3 flex items-center justify-center bg-[#5E3C5E] text-white border-r border-white/20 leading-tight">
+                                Expenses<br />(C)
+                            </div>
+                        )}
 
                         <div className="col-span-2 p-3 flex items-center justify-center bg-slate-100 text-slate-900 border-r border-slate-300 leading-tight">
-                            Total Payment<br />(A + B + C)
+                            Total Payment<br />{customColumn ? '(A + B)' : '(A + B + C)'}
                         </div>
 
                         <div className="col-span-2 p-3 flex items-center justify-center bg-[#9B4A11] text-white border-r border-white/20">
@@ -57,13 +78,9 @@ export default function CollapsibleAmortizationTable({ yearlyData, monthlyData, 
                         const isExpanded = expandedYears[yearRow.year];
                         const months = getMonthsForYear(yearRow.year);
 
-                        // A = Principal + Prepayment
                         const prinA = yearRow.principalPaid + (yearRow.prepayment || 0);
-                        // B = InterestPaid
                         const intB = yearRow.interestPaid;
-                        // C = totalExpense (Tax + Insurance + Maintenance)
                         const expC = yearRow.totalExpense || 0;
-                        // Total = A + B + C (totalOwnershipCost in finance.js)
                         const totalABC = yearRow.totalOwnershipCost || (prinA + intB + expC);
 
                         return (
@@ -90,9 +107,15 @@ export default function CollapsibleAmortizationTable({ yearlyData, monthlyData, 
                                         {moneyFormat(intB, currency)}
                                     </div>
 
-                                    <div className="col-span-2 p-4 text-right font-black text-[#5E3C5E] border-r border-slate-200 text-xs sm:text-base bg-purple-50/30">
-                                        {expC > 0 ? moneyFormat(expC, currency) : '₹0'}
-                                    </div>
+                                    {customColumn ? (
+                                        <div className="col-span-2 p-4 text-right font-black text-slate-950 border-r border-slate-200 text-xs sm:text-base bg-indigo-50/30">
+                                            {moneyFormat(yearRow[customColumn.key] || 0, currency)}
+                                        </div>
+                                    ) : (
+                                        <div className="col-span-2 p-4 text-right font-black text-[#5E3C5E] border-r border-slate-200 text-xs sm:text-base bg-purple-50/30">
+                                            {expC > 0 ? moneyFormat(expC, currency) : '₹0'}
+                                        </div>
+                                    )}
 
                                     <div className="col-span-2 p-4 text-right font-black text-slate-950 border-r border-slate-200 text-xs sm:text-base bg-slate-100/80 shadow-inner">
                                         {moneyFormat(totalABC, currency)}
@@ -128,9 +151,15 @@ export default function CollapsibleAmortizationTable({ yearlyData, monthlyData, 
                                                 {moneyFormat(mIntB, currency)}
                                             </div>
 
-                                            <div className="col-span-2 p-2 text-right text-purple-700 font-bold border-r border-slate-100">
-                                                {mExpC > 0 ? moneyFormat(mExpC, currency) : '₹0'}
-                                            </div>
+                                            {customColumn ? (
+                                                <div className="col-span-2 p-2 text-right text-indigo-700 font-bold border-r border-slate-100">
+                                                    {moneyFormat(monthRow[customColumn.key] || 0, currency)}
+                                                </div>
+                                            ) : (
+                                                <div className="col-span-2 p-2 text-right text-purple-700 font-bold border-r border-slate-100">
+                                                    {mExpC > 0 ? moneyFormat(mExpC, currency) : '₹0'}
+                                                </div>
+                                            )}
 
                                             <div className="col-span-2 p-2 text-right text-black font-black border-r border-slate-100 bg-slate-50">
                                                 {moneyFormat(mTotalABC, currency)}

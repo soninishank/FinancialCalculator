@@ -35,7 +35,7 @@ export default function CalculatorAdvisor() {
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="Describe your goal..."
-                        className="w-full py-4 pl-6 pr-12 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-indigo-400/50 shadow-lg text-lg"
+                        className="w-full py-4 pl-6 pr-12 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-indigo-400/50 shadow-lg text-lg"
                     />
                     {query && (
                         <button

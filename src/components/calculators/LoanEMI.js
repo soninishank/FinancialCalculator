@@ -28,7 +28,7 @@ import {
 } from "../../utils/constants";
 import { calculateAPR } from "../../utils/finance"; // Import APR helper
 
-export default function LoanEMI({ currency, setCurrency, defaults }) {
+export default function LoanEMI({ currency, setCurrency, defaults, detailsKey }) {
   // Inputs: Use Default Constants or Props
   const [principal, setPrincipal] = useState(defaults?.principal || DEFAULT_LOAN_PRINCIPAL);
   const [annualRate, setAnnualRate] = useState(defaults?.rate || DEFAULT_LOAN_RATE);
@@ -506,7 +506,7 @@ export default function LoanEMI({ currency, setCurrency, defaults }) {
 
       {/* EXPLANATORY DETAILS */}
       <div className="mt-12">
-        {calculatorDetails.loanEmi.render()}
+        {calculatorDetails[detailsKey || 'loanEmi'].render()}
       </div>
 
     </div>

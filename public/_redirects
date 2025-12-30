@@ -1,0 +1,5 @@
+# Redirect www to non-www
+https://www.hashmatic.in/* https://hashmatic.in/:splat 301!
+
+# SPA Fallback for client-side routing
+/* /index.html 200

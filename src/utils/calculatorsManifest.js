@@ -53,12 +53,20 @@ const calculators = [
     component: 'LoanEMI'
   },
   {
-    slug: 'vehicle-loan-emi',
-    title: 'Vehicle Loan EMI Calculator',
-    description: 'Plan your dream car or bike purchase. Calculate monthly EMIs with accurate interest rates and processing fees.',
-    keywords: 'car loan emi, bike loan calculator, vehicle loan interest, auto loan planner',
+    slug: 'car-loan-emi',
+    title: 'Car Loan EMI Calculator',
+    description: 'Calculate monthly EMIs for your dream car with ease.',
+    keywords: 'car loan emi calculator, auto loan calculator, car emi, vehicle loan calculator, new car loan emi, used car loan sbi, car loan emi calculator groww, car loan emi calculator hdfc, car loan emi calculator icici, car loan interest rate',
     category: 'Loan',
-    component: 'VehicleLoanEMI'
+    component: 'CarLoanEMI'
+  },
+  {
+    slug: 'advanced-car-loan-emi',
+    title: 'Advanced Car Loan EMI',
+    description: 'Plan your dream car with detailed fee analysis, depreciation tracking, and affordability checks.',
+    keywords: 'advanced car loan calculator, car depreciation calculator, vehicle cost of ownership, car loan with fees, auto loan analysis',
+    category: 'Loan',
+    component: 'AdvancedCarLoanEMI'
   },
   {
     slug: 'step-up-loan-emi',

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -42,23 +43,33 @@ import CarLoanEMI from '../components/calculators/CarLoanEMI';
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
-// Mock standard utils that use heavy libs
+// Mock standard utils
 jest.mock('../utils/export', () => ({
     downloadPDF: jest.fn(),
     downloadCSV: jest.fn(),
 }));
 
-// Mock Chart.js components if used
+// VALIDATION MOCK
+// This mock intercepts the 'data' prop passed to any Chart component.
+// It throws an error if 'data' is an Array, which causes the test to fail.
+const validateDataProp = (componentName, props) => {
+    if (Array.isArray(props.data)) {
+        throw new Error(
+            `[${componentName}] Invalid 'data' prop detected! You passed an Array, but Chart.js expects a Data Object ({ labels, datasets }).`
+        );
+    }
+    return <div data-testid={`mock-${componentName}`} />;
+};
+
 jest.mock('react-chartjs-2', () => {
     const React = require('react');
     return {
-        Line: React.forwardRef((props, ref) => <div data-testid="mock-chart-line" ref={ref} />),
-        Bar: React.forwardRef((props, ref) => <div data-testid="mock-chart-bar" ref={ref} />),
-        Pie: React.forwardRef((props, ref) => <div data-testid="mock-chart-pie" ref={ref} />),
-        Doughnut: React.forwardRef((props, ref) => <div data-testid="mock-chart-doughnut" ref={ref} />),
+        Bar: React.forwardRef((props, ref) => validateDataProp('Bar', props)),
+        Line: React.forwardRef((props, ref) => validateDataProp('Line', props)),
+        Pie: React.forwardRef((props, ref) => validateDataProp('Pie', props)),
+        Doughnut: React.forwardRef((props, ref) => validateDataProp('Doughnut', props)),
     };
 });
-// Also mock chart.js registration to prevent errors
 jest.mock('chart.js', () => ({
     Chart: { register: jest.fn() },
     registerables: [],
@@ -74,7 +85,7 @@ jest.mock('chart.js', () => ({
     Filler: jest.fn(),
 }));
 
-describe('Calculator Smoke Tests', () => {
+describe('Chart Integration & Data Validation', () => {
     const calculators = [
         { name: 'AdvancedHomeLoanEMI', Component: AdvancedHomeLoanEMI },
         { name: 'AssetAllocation', Component: AssetAllocation },
@@ -113,7 +124,8 @@ describe('Calculator Smoke Tests', () => {
     ];
 
     calculators.forEach(({ name, Component }) => {
-        test(`${name} renders without crashing`, () => {
+        test(`${name} passes valid data to charts`, () => {
+            // If this throws, the test fails automatically.
             render(<Component />);
         });
     });
