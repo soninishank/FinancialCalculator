@@ -1,14 +1,14 @@
-// src/pages/CalculatorPage.js
+'use client';
+
 import React, { Suspense, useCallback } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useRouter, usePathname } from 'next/navigation';
 import manifest from '../utils/calculatorsManifest';
 import { useCurrency } from '../contexts/CurrencyContext';
 import RelatedCalculators from '../components/common/RelatedCalculators';
-import SEO from '../components/common/SEO';
+// import SEO from '../components/common/SEO'; // Metadata in page.js
 import SocialShare from '../components/common/SocialShare';
 
 // Explicit dynamic imports so bundlers can split chunks
-// Explicit dynamic imports wrapped with retry logic
 import { lazyLoad } from '../utils/lazyLoad';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 
@@ -65,93 +65,47 @@ const importBySlug = (slug) => {
 
 
 export default function CalculatorPage() {
-  const { slug } = useParams();
+  const params = useParams();
+  const slug = params?.slug; // Handle undefined initially on server
   const meta = manifest.find(m => m.slug === slug);
 
   // call hooks unconditionally
   const { currency, setCurrency } = useCurrency();
 
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // location.state.from is an optional explicit origin the catalog can set.
-  // e.g. on the catalog page: <Link to={`/calculators/${slug}`} state={{ from: location.pathname }} />
-  const fallbackPath = location.state && location.state.from ? location.state.from : '/';
+  // Next.js doesn't have location.state in the same way. We can use search params or just default to /
+  // For simplicity, defaulting to / or history back.
 
   const handleBack = useCallback(() => {
-    try {
-      if (window.history.length > 1) {
-        navigate(-1);
-      } else {
-        navigate(fallbackPath);
-      }
-    } catch (err) {
-      navigate(fallbackPath);
+    // If we want checking history length, window.history is available in client component
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push('/');
     }
-  }, [navigate, fallbackPath]);
+  }, [router]);
 
   if (!meta) {
+    // If slug is missing or invalid, we can show not found or just loading
+    if (!slug) return null; // Hydration gap if params not ready?
     return (
       <div className="p-6">
         <p>Calculator not found.</p>
-        <button onClick={() => navigate('/')} className="text-teal-600">Back to catalog</button>
+        <button onClick={() => router.push('/')} className="text-teal-600">Back to catalog</button>
       </div>
     );
   }
 
   const LazyCalc = importBySlug(slug);
 
-  // Schema.org JSON-LD (SoftwareApplication + BreadcrumbList)
-  const schema = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "SoftwareApplication",
-        "name": meta.title,
-        "description": meta.description,
-        "applicationCategory": "FinanceApplication",
-        "operatingSystem": "Web",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "INR"
-        }
-      },
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": window.location.origin
-          },
-          {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Calculators",
-            "item": `${window.location.origin}/calculators`
-          },
-          {
-            "@type": "ListItem",
-            "position": 3,
-            "name": meta.title,
-            "item": window.location.href
-          }
-        ]
-      }
-    ]
-  };
+  // JSON-LD is injected via metadata in page.js, or can be separate Script here.
+  // Since we removed SEO component, we rely on page.js for Schema.
 
   return (
     <div className="w-full h-full">
-      <SEO
-        title={meta.title}
-        description={meta.description}
-        keywords={meta.keywords}
-        schema={schema}
-        path={location.pathname}
-      />
+      {/* SEO removed, handled by server component wrapper */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Main Content: 9 columns on large screens for a balanced width */}
         <main className="lg:col-span-9 order-1">

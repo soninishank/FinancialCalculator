@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { useCalculatorSearch } from '../../hooks/useCalculatorSearch';
 import { Search, X } from 'lucide-react';
 
@@ -79,7 +81,7 @@ const QuickSearch = () => {
                             {results.slice(0, 8).map((calc) => (
                                 <Link
                                     key={calc.slug}
-                                    to={`/calculators/${calc.slug}`}
+                                    href={`/calculators/${calc.slug}`}
                                     onClick={handleSelect}
                                     className="block px-4 py-3 hover:bg-teal-50 transition-colors"
                                 >
@@ -96,7 +98,7 @@ const QuickSearch = () => {
                             {results.length > 8 && (
                                 <div className="px-4 py-2 bg-gray-50 border-t border-gray-100">
                                     <Link
-                                        to="/calculators"
+                                        href="/calculators"
                                         onClick={handleSelect}
                                         className="text-[11px] font-bold text-teal-600 hover:text-teal-700 uppercase"
                                     >

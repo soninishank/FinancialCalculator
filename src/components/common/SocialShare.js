@@ -1,9 +1,22 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import { Share2, Twitter, Linkedin, MessageCircle, Link as LinkIcon } from 'lucide-react';
 
 const SocialShare = ({ title, url }) => {
-    const shareUrl = url || window.location.href;
-    const shareTitle = title || document.title;
+    const [shareUrl, setShareUrl] = useState(url || '');
+    const [shareTitle, setShareTitle] = useState(title || '');
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            if (!url) setShareUrl(window.location.href);
+            if (!title) setShareTitle(document.title);
+        }
+    }, [url, title]);
+
+    // If we are on server and don't have URL, we might render buttons with empty links or placeholder
+    // Ideally we want links to work if possible.
+    // But for "current page" behavior, we need client side.
 
     const shareLinks = [
         {
@@ -27,9 +40,18 @@ const SocialShare = ({ title, url }) => {
     ];
 
     const copyToClipboard = () => {
+        if (!shareUrl) return;
         navigator.clipboard.writeText(shareUrl);
         alert('Link copied to clipboard!');
     };
+
+    if (!shareUrl && !url) {
+        // Render nothing or shell until mounted? 
+        // Better to render with empty links than crash.
+        // Or return null to avoid hydration mismatch if possible?
+        // Let's render but with '#' or similar if empty.
+        // Actually, preventing rendering until we have URL is cleaner for UI.
+    }
 
     return (
         <div className="flex flex-col space-y-4 mt-8 pt-8 border-t border-gray-100">
@@ -41,18 +63,21 @@ const SocialShare = ({ title, url }) => {
                 {shareLinks.map((link) => (
                     <a
                         key={link.name}
-                        href={link.href}
+                        href={shareUrl ? link.href : '#'}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`p-2.5 rounded-xl transition-all ${link.color} hover:shadow-sm`}
+                        className={`p-2.5 rounded-xl transition-all ${link.color} hover:shadow-sm ${!shareUrl ? 'pointer-events-none opacity-50' : ''}`}
                         title={`Share on ${link.name}`}
+                        onClick={(e) => {
+                            if (!shareUrl) e.preventDefault();
+                        }}
                     >
                         <link.icon size={20} />
                     </a>
                 ))}
                 <button
                     onClick={copyToClipboard}
-                    className="p-2.5 rounded-xl transition-all text-indigo-600 bg-indigo-50 hover:bg-indigo-100 hover:shadow-sm"
+                    className={`p-2.5 rounded-xl transition-all text-indigo-600 bg-indigo-50 hover:bg-indigo-100 hover:shadow-sm ${!shareUrl ? 'pointer-events-none opacity-50' : ''}`}
                     title="Copy Link"
                 >
                     <LinkIcon size={20} />

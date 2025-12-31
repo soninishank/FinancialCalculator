@@ -1,79 +1,67 @@
-# Getting Started with Create React App
+# Hashmatic Financial Calculators
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A comprehensive suite of financial calculators (SIP, EMI, Loan, FIRE, etc.) built with **Next.js** for optimal performance and SEO.
 
-## Available Scripts
+## Tech Stack
+- **Framework:** [Next.js](https://nextjs.org/) (App Router)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **State Management:** React Context (Currency, etc.)
+- **Icons:** [Lucide React](https://lucide.dev/)
 
-In the project directory, you can run:
+## Getting Started
 
-### `npm run dev`
+First, install the dependencies:
 
-Runs both the React app and the Backend Scraper service concurrently.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-The IPO data API will be available at [http://localhost:8081](http://localhost:8081).
+```bash
+npm install
+```
 
-### `npm start`
+### Development Server
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Run the development server:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+npm run dev
+```
 
-### `npm test`
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The page auto-updates as you edit the file.
 
-### `npm run build`
+### Production Build
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+To create an optimized production build:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+npm run build
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The output will be in the `.next` folder.
 
-### `npm run eject`
+To start the production server locally:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+npm start
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Verification Scripts
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- `npm run verify:calculators`: Checks for inconsistencies in calculator configurations.
+- `npm run lint`: Runs ESLint to check for code quality issues.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Project Structure
+
+- `app/`: Next.js App Router pages and layouts.
+    - `layout.js`: Root layout with global styles and providers.
+    - `page.js`: Homepage (redirects to calculators).
+    - `calculators/`: Logic for calculator listing and detail pages.
+- `src/components/`: Reusable UI components and Calculator logic components.
+- `src/utils/`: Helper functions and `calculatorsManifest.js`.
+- `public/`: Static assets (images, icons).
 
 ## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+To learn more about Next.js, take a look at the following resources:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
-
-npm run verify:calculators : to check any incosistency 
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.

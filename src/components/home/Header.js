@@ -1,5 +1,8 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useCurrency } from '../../contexts/CurrencyContext';
 
 const Header = () => {
@@ -23,7 +26,7 @@ const Header = () => {
     >
       <div className="container mx-auto px-4 md:px-6 flex justify-between items-center">
         {/* logo */}
-        <NavLink to="/" className="flex items-center gap-2 group outline-none">
+        <Link href="/" className="flex items-center gap-2 group outline-none">
           <div className="relative">
             <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/20 group-hover:scale-110 transition-transform duration-300">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -35,13 +38,12 @@ const Header = () => {
           <span className="text-xl font-extrabold tracking-tight text-gray-900 group-hover:text-teal-600 transition-colors">
             Hash<span className="text-indigo-600">matic</span>
           </span>
-        </NavLink>
+        </Link>
 
         {/* nav */}
         <nav className="hidden md:flex items-center bg-gray-100/50 p-1 rounded-full border border-gray-200/50">
           <NavItem to="/" label="Home" />
           <NavItem to="/calculators" label="Calculators" />
-          {/* <NavItem to="/ipo-tracker" label="IPO Tracker" /> */}
         </nav>
 
         {/* actions */}
@@ -75,10 +77,14 @@ const Header = () => {
 };
 
 const NavItem = ({ to, label }) => {
+  const pathname = usePathname();
+  // Simple check for active state. Logic can be improved if needed (e.g. startsWith)
+  const isActive = pathname === to || (to !== '/' && pathname?.startsWith(to));
+
   return (
-    <NavLink
-      to={to}
-      className={({ isActive }) => `
+    <Link
+      href={to}
+      className={`
         px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300
         ${isActive
           ? 'bg-white text-indigo-600 shadow-sm border border-gray-100'
@@ -87,7 +93,7 @@ const NavItem = ({ to, label }) => {
       `}
     >
       {label}
-    </NavLink>
+    </Link>
   );
 };
 

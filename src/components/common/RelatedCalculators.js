@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import manifest from '../../utils/calculatorsManifest';
 import QuickSearch from './QuickSearch';
 
@@ -57,7 +57,7 @@ const RelatedCalculators = ({ currentSlug, category }) => {
                         {recommendations.map((calc) => (
                             <Link
                                 key={calc.slug}
-                                to={`/calculators/${calc.slug}`}
+                                href={`/calculators/${calc.slug}`}
                                 className="block px-5 py-4 hover:bg-teal-50/30 transition-all group"
                             >
                                 <div className="flex justify-between items-start gap-2">
@@ -79,7 +79,7 @@ const RelatedCalculators = ({ currentSlug, category }) => {
             {/* DISCOVER MORE (Randomized) */}
             <div className="bg-white rounded-2xl shadow-sm border border-indigo-100 overflow-hidden ring-1 ring-indigo-50/50">
                 <Link
-                    to="/calculators"
+                    href="/calculators"
                     className="px-5 py-4 border-b border-indigo-50 bg-indigo-50/40 flex justify-between items-center group/header hover:bg-indigo-100/40 transition-colors"
                 >
                     <div className="flex items-center gap-2">
@@ -96,7 +96,7 @@ const RelatedCalculators = ({ currentSlug, category }) => {
                     {discovery.map((calc) => (
                         <Link
                             key={calc.slug}
-                            to={`/calculators/${calc.slug}`}
+                            href={`/calculators/${calc.slug}`}
                             className="block px-5 py-3.5 hover:bg-indigo-50/30 transition-all group"
                         >
                             <div className="flex flex-col gap-0.5">
@@ -112,7 +112,7 @@ const RelatedCalculators = ({ currentSlug, category }) => {
                 </div>
                 <div className="bg-gray-50/50 px-5 py-3 border-t border-gray-50">
                     <Link
-                        to="/calculators"
+                        href="/calculators"
                         className="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center justify-between group"
                     >
                         Browser Catalog

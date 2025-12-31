@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import manifest from '../../utils/calculatorsManifest';
 
 const Footer = () => {
@@ -17,7 +17,7 @@ const Footer = () => {
                 <div className="columns-2 md:columns-3 lg:columns-5 gap-8">
                     {/* Brand Section */}
                     <div className="break-inside-avoid mb-8 space-y-3">
-                        <Link to="/" className="text-xl font-black text-teal-600 tracking-tighter">
+                        <Link href="/" className="text-xl font-black text-teal-600 tracking-tighter">
                             HASHMATIC
                         </Link>
                         <p className="text-gray-500 text-xs leading-relaxed max-w-xs">
@@ -33,7 +33,7 @@ const Footer = () => {
                                 {items.map(calc => (
                                     <li key={calc.slug}>
                                         <Link
-                                            to={`/calculators/${calc.slug}`}
+                                            href={`/calculators/${calc.slug}`}
                                             className="text-gray-500 hover:text-teal-600 text-xs transition-colors block"
                                         >
                                             {calc.title}
@@ -49,7 +49,7 @@ const Footer = () => {
                 <div className="pt-6 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-400">
                     <p>© {new Date().getFullYear()} Hashmatic. All rights reserved.</p>
                     <div className="flex gap-6">
-                        <Link to="/calculators" className="hover:text-teal-600 transition-colors">All Calculators</Link>
+                        <Link href="/calculators" className="hover:text-teal-600 transition-colors">All Calculators</Link>
                         <a href="https://github.com/soninishank" target="_blank" rel="noopener noreferrer" className="hover:text-teal-600 transition-colors">Github</a>
                     </div>
                 </div>

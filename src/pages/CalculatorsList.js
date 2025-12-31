@@ -1,35 +1,36 @@
-// src/pages/CalculatorsList.js
+'use client';
+
 import React, { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useCalculatorSearch } from "../hooks/useCalculatorSearch";
 import CalculatorAdvisor from "../components/home/CalculatorAdvisor";
-import SEO from "../components/common/SEO";
+// import SEO from "../components/common/SEO"; // Handled by metadata
 import { Search } from "lucide-react";
 
 export default function CalculatorsList() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const initialQ = searchParams.get("q") || "";
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const initialQ = searchParams?.get("q") || "";
   const [q, setQ] = useState(initialQ);
   const filtered = useCalculatorSearch(q);
 
   // Update URL when q changes
   const handleSearchChange = (val) => {
     setQ(val);
+    // In Next.js we use router.replace or router.push
+    const params = new URLSearchParams(searchParams);
     if (val) {
-      setSearchParams({ q: val }, { replace: true });
+      params.set('q', val);
     } else {
-      setSearchParams({}, { replace: true });
+      params.delete('q');
     }
+    router.replace(`/calculators?${params.toString()}`);
   };
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <SEO
-        title="Free Financial Calculators (SIP, EMI, Loan)"
-        description="Take control of your finances with Hashmatic's free, accurate online calculators. Instantly calculate SIP returns, Loan EMIs, and Retirement goals. Start planning your future today!"
-        keywords={['calculator list', 'financial tools', 'investment calculators']}
-        path="/calculators"
-      />
+      {/* SEO handled by page.js */}
       <h1 className="text-3xl font-bold mb-6">All Calculators</h1>
 
       {/* Search & quick helper */}
@@ -40,7 +41,7 @@ export default function CalculatorsList() {
 
           <div className="mt-6 relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-500" />
+              <Search className="h-5 w-5 text-gray-600" />
             </div>
             <input
               value={q}
@@ -93,7 +94,7 @@ export default function CalculatorsList() {
 function Card({ meta }) {
   return (
     <Link
-      to={`/calculators/${meta.slug}`}
+      href={`/calculators/${meta.slug}`}
       className="relative p-6 pt-12 bg-white rounded-xl shadow hover:shadow-md transition block"
     >
       <div className="absolute top-3 right-3 bg-gray-50 text-xs text-gray-600 px-2 py-1 rounded-full border">
