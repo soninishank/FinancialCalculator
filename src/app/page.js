@@ -4,15 +4,63 @@ export const metadata = {
     title: "Financial Calculators & Planning Tools - Hashmatic",
     description: "Take control of your finances with Hashmatic's free, accurate online calculators. Instantly calculate SIP returns, Loan EMIs, and Retirement goals. Start planning your future today!",
     keywords: ['financial calculator', 'sip calculator', 'loan emi calculator', 'cagr calculator', 'hashmatic'],
+    openGraph: {
+        title: "Smart Financial Planning Tools | Hashmatic",
+        description: "Free, accurate calculators for SIP, EMI, Retirement, and more. Plan your financial journey today.",
+        url: 'https://www.hashmatic.in',
+        siteName: 'Hashmatic',
+        images: [
+            {
+                url: 'https://www.hashmatic.in/logo192.png',
+                width: 192,
+                height: 192,
+            },
+        ],
+        locale: 'en_IN',
+        type: 'website',
+    },
+    twitter: {
+        card: 'summary',
+        title: "Financial Planning Tools | Hashmatic",
+        description: "Master your investments with professional-grade calculators.",
+        images: ['https://www.hashmatic.in/logo192.png'],
+    },
 };
 
 export default function Home() {
     const schema = {
         "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Hashmatic",
-        "url": "https://www.hashmatic.in",
-        "applicationCategory": "FinanceApplication"
+        "@graph": [
+            {
+                "@type": "WebApplication",
+                "name": "Hashmatic Financial Tools",
+                "url": "https://www.hashmatic.in",
+                "applicationCategory": "FinanceApplication",
+                "operatingSystem": "Web",
+                "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "INR"
+                }
+            },
+            {
+                "@type": "Organization",
+                "name": "Hashmatic",
+                "url": "https://www.hashmatic.in",
+                "logo": "https://www.hashmatic.in/logo192.png",
+                "description": "Professional-grade financial planning tools for smart investors."
+            },
+            {
+                "@type": "WebSite",
+                "name": "Hashmatic",
+                "url": "https://www.hashmatic.in",
+                "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": "https://www.hashmatic.in/calculators?q={search_term_string}",
+                    "query-input": "required name=search_term_string"
+                }
+            }
+        ]
     };
 
     return (
@@ -58,7 +106,7 @@ export default function Home() {
                     <CalculatorCard
                         title="EMI Calculator"
                         desc="Plan your loans with detailed monthly breakdown."
-                        slug="pure-emi"
+                        slug="loan-emi"
                     />
                     <CalculatorCard
                         title="Lumpsum Calculator"

@@ -12,7 +12,11 @@ import SocialShare from '../components/common/SocialShare';
 import { lazyLoad } from '../utils/lazyLoad';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 
+const calculatorCache = {};
+
 const importBySlug = (slug) => {
+  if (calculatorCache[slug]) return calculatorCache[slug];
+
   const importer = () => {
     switch (slug) {
       case 'sip-plus-lump': return import('../components/calculators/SIPWithLumpSum');
@@ -59,8 +63,9 @@ const importBySlug = (slug) => {
     }
   };
 
-  // We return a Lazy component directly
-  return lazyLoad(importer);
+  const LazyComponent = lazyLoad(importer);
+  calculatorCache[slug] = LazyComponent;
+  return LazyComponent;
 };
 
 

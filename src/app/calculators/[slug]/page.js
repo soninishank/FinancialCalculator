@@ -10,40 +10,43 @@ export async function generateMetadata({ params }) {
     const meta = manifest.find((m) => m.slug === slug);
     if (!meta) return {};
 
-    const schema = {
-        "@context": "https://schema.org",
-        "@graph": [
-            {
-                "@type": "SoftwareApplication",
-                "name": meta.title,
-                "description": meta.description,
-                "applicationCategory": "FinanceApplication",
-                "operatingSystem": "Web",
-                "offers": {
-                    "@type": "Offer",
-                    "price": "0",
-                    "priceCurrency": "INR"
-                }
-            },
-            // BreadcrumbList requires absolute URL, for now simplified or omitted if complex relative URL calculation is needed on server without request object in generateMetadata (though we can construct it if we know base URL)
-        ]
-    };
+    const baseUrl = 'https://www.hashmatic.in';
+    const pageUrl = `${baseUrl}/calculators/${slug}`;
+    const defaultImage = `${baseUrl}/logo192.png`; // Fallback image
 
     return {
         title: `${meta.title} - Hashmatic`,
         description: meta.description,
         keywords: meta.keywords,
         alternates: {
-            canonical: `https://www.hashmatic.in/calculators/${slug}`,
+            canonical: pageUrl,
         },
         openGraph: {
-            title: meta.title,
+            title: `${meta.title} | Hashmatic Financial Tools`,
             description: meta.description,
+            url: pageUrl,
+            siteName: 'Hashmatic',
+            images: [
+                {
+                    url: defaultImage,
+                    width: 192,
+                    height: 192,
+                    alt: meta.title,
+                },
+            ],
+            locale: 'en_IN',
             type: 'website',
-            url: `https://www.hashmatic.in/calculators/${slug}`,
+        },
+        twitter: {
+            card: 'summary',
+            title: `${meta.title} | Hashmatic`,
+            description: meta.description,
+            images: [defaultImage],
         },
     };
 }
+
+import { calculatorFaqs } from '../../../data/seoMetadata';
 
 export default async function Page({ params }) {
     const { slug } = await params;
@@ -51,6 +54,8 @@ export default async function Page({ params }) {
 
     if (!meta) return <CalculatorPage />;
 
+    const faqs = calculatorFaqs[slug] || [];
+
     const schema = {
         "@context": "https://schema.org",
         "@graph": [
@@ -64,6 +69,11 @@ export default async function Page({ params }) {
                     "@type": "Offer",
                     "price": "0",
                     "priceCurrency": "INR"
+                },
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "Hashmatic",
+                    "url": "https://www.hashmatic.in"
                 }
             },
             {
@@ -91,6 +101,20 @@ export default async function Page({ params }) {
             }
         ]
     };
+
+    if (faqs.length > 0) {
+        schema["@graph"].push({
+            "@type": "FAQPage",
+            "mainEntity": faqs.map(faq => ({
+                "@type": "Question",
+                "name": faq.q,
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": faq.a
+                }
+            }))
+        });
+    }
 
     return (
         <>
