@@ -342,6 +342,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                         <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
                             {loanFeesMode === 'amount' ? (
                                 <InputWithSlider
+                                    label="Loan Fees Amount"
                                     value={loanFeesAmount}
                                     onChange={setLoanFeesAmount}
                                     min={0}
@@ -352,6 +353,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                 />
                             ) : (
                                 <InputWithSlider
+                                    label="Loan Fees Percent"
                                     value={loanFeesPercent}
                                     onChange={setLoanFeesPercent}
                                     min={0}

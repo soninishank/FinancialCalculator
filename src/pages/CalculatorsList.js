@@ -20,6 +20,27 @@ export default function CalculatorsList({ initialFiltered = [], initialQ = "" })
   // Use initialFiltered until mounted to avoid hydration mismatch
   const displayList = mounted ? (filtered || []) : (initialFiltered || []);
 
+  const grouped = React.useMemo(() => {
+    return displayList.reduce((acc, item) => {
+      const cat = item.category || 'Other';
+      if (!acc[cat]) acc[cat] = [];
+      acc[cat].push(item);
+      return acc;
+    }, {});
+  }, [displayList]);
+
+  const categories = Object.keys(grouped);
+
+  const scrollToCategory = (cat) => {
+    const element = document.getElementById(`cat-${cat}`);
+    if (element) {
+      // Offset for sticky header (approx 80px) plus padding
+      const yOffset = -100;
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="p-6 pt-0 max-w-6xl mx-auto">
 
@@ -31,6 +52,21 @@ export default function CalculatorsList({ initialFiltered = [], initialQ = "" })
           <Suspense fallback={<div className="mt-6 h-14 bg-gray-50 animate-pulse rounded-2xl"></div>}>
             <SearchInput q={q} setQ={setQ} />
           </Suspense>
+
+          {/* Category Pills */}
+          {categories.length > 0 && (
+            <div className="mt-6 flex flex-wrap gap-2">
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => scrollToCategory(cat)}
+                  className="px-3 py-1.5 text-xs font-medium bg-gray-100/50 hover:bg-gray-100 text-gray-700 rounded-lg transition-colors border border-gray-200"
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -41,23 +77,18 @@ export default function CalculatorsList({ initialFiltered = [], initialQ = "" })
           </div>
         ) : (
           <div className="space-y-12">
-            {Object.entries(
-              displayList.reduce((acc, item) => {
-                const cat = item.category || 'Other';
-                if (!acc[cat]) acc[cat] = [];
-                acc[cat].push(item);
-                return acc;
-              }, {})
-            ).map(([category, items]) => (
-              <div key={category}>
-                <h2 className="text-xl font-bold text-gray-800 mb-4 border-l-4 border-indigo-500 pl-3">{category}</h2>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {items.map(meta => (
-                    <Card key={meta.slug} meta={meta} />
-                  ))}
+            <div className="space-y-12">
+              {Object.entries(grouped).map(([category, items]) => (
+                <div key={category} id={`cat-${category}`} className="scroll-mt-6">
+                  <h2 className="text-xl font-bold text-gray-800 mb-4 border-l-4 border-indigo-500 pl-3">{category}</h2>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {items.map(meta => (
+                      <Card key={meta.slug} meta={meta} />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
       </section>

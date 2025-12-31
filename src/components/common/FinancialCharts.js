@@ -330,8 +330,6 @@ export const FinancialCompoundingBarChart = ({ data, currency, type = 'investmen
 };
 
 export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, years }) => {
-    const chartRef = React.useRef(null);
-
     // --- COLORS ---
     const COLOR_INVESTED = CHART_COLORS.SECONDARY; // Blue/Indigo
     const COLOR_RETURNS = CHART_COLORS.PRIMARY;  // Teal
@@ -413,7 +411,7 @@ export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, y
     return (
         <div className="flex flex-col items-center justify-center h-full w-full">
             <div className="relative w-full max-w-[280px] sm:max-w-[320px] aspect-square mb-6">
-                <Pie ref={chartRef} data={data} options={options} />
+                <Pie data={data} options={options} />
             </div>
 
             {/* LEGEND SECTION - Match LoanEMI Style */}
@@ -430,8 +428,6 @@ export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, y
 };
 
 export const FinancialLoanPieChart = ({ principal, totalInterest, fees = 0, currency, years }) => {
-    const chartRef = React.useRef(null);
-
     // --- COLORS (Modern "Beautiful" Palette) ---
     const COLOR_PRINCIPAL = "#6366f1"; // Indigo-500
     const COLOR_INTEREST = "#2dd4bf";  // Teal-400
@@ -502,7 +498,7 @@ export const FinancialLoanPieChart = ({ principal, totalInterest, fees = 0, curr
             <div className="relative w-full max-w-[280px] sm:max-w-[320px] aspect-square mb-6">
                 {/* Switch to Pie for screenshot match, or keep Doughnut? Screenshot looks like Pie but with a slice out. 
                    Actually screenshot shows it is a Pie Chart (full circle filled). I set cutout to 0%. */}
-                <Pie ref={chartRef} data={data} options={options} />
+                <Pie data={data} options={options} />
             </div>
 
             {/* LEGEND SECTION - Match Screenshot Layout */}

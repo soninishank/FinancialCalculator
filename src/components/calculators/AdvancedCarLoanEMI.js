@@ -200,8 +200,8 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                                     </div>
                                 </div>
                                 {processingFeeMode === 'flat' ?
-                                    <InputWithSlider value={processingFeeFlat} onChange={setProcessingFeeFlat} min={0} max={50000} step={500} currency={currency} hideLabel /> :
-                                    <InputWithSlider value={processingFeePercent} onChange={setProcessingFeePercent} min={0} max={5} step={0.1} symbol="%" hideLabel />
+                                    <InputWithSlider label="Processing Fee (Flat)" value={processingFeeFlat} onChange={setProcessingFeeFlat} min={0} max={50000} step={500} currency={currency} hideLabel /> :
+                                    <InputWithSlider label="Processing Fee (%)" value={processingFeePercent} onChange={setProcessingFeePercent} min={0} max={5} step={0.1} symbol="%" hideLabel />
                                 }
                             </div>
                             <InputWithSlider label="Documentation Fee" value={docFee} onChange={setDocFee} min={0} max={10000} step={500} currency={currency} />

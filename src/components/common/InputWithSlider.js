@@ -1,5 +1,6 @@
 // src/components/common/InputWithSlider.js
 import React from "react";
+import PropTypes from 'prop-types';
 import FormattedInput from "./FormattedInput";
 import { getCurrencySymbol, moneyFormat } from "../../utils/formatting";
 
@@ -53,6 +54,25 @@ export default function InputWithSlider({
     }
   };
 
+  // Safe Fallback Logic
+  let effectiveMin = Number(min);
+  let effectiveMax = Number(max);
+
+  if (process.env.NODE_ENV !== 'production') {
+    if (Number.isNaN(effectiveMin)) {
+      console.warn(`InputWithSlider Fix: 'min' is NaN for "${label}". Defaulting to 0.`);
+      effectiveMin = 0;
+    }
+    if (Number.isNaN(effectiveMax)) {
+      console.warn(`InputWithSlider Fix: 'max' is NaN for "${label}". Defaulting to 100.`);
+      effectiveMax = 100;
+    }
+  }
+
+  // Ensure production safety regardless of env
+  if (Number.isNaN(effectiveMin)) effectiveMin = 0;
+  if (Number.isNaN(effectiveMax)) effectiveMax = 100;
+
   const currencyPrefix = getDisplayPrefix(currency);
   const genericPrefix = symbol;
 
@@ -102,8 +122,8 @@ export default function InputWithSlider({
           onChange={safeOnChange}
           currency={currency}
           isDecimal={isDecimal}
-          min={min}
-          max={max}
+          min={effectiveMin}
+          max={effectiveMax}
           className={`
             w-full py-3 pr-4 border-2 border-slate-200 rounded-xl outline-none 
             focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all
@@ -118,15 +138,15 @@ export default function InputWithSlider({
       <div className="mt-4 flex items-center gap-4">
         {/* Min Label */}
         <span className="text-[10px] text-slate-900 font-black min-w-[30px]">
-          {formatRangeLabel(min)}
+          {formatRangeLabel(effectiveMin)}
         </span>
 
         <input
           type="range"
-          min={min}
-          max={max}
+          min={effectiveMin}
+          max={effectiveMax}
           step={effectiveStep}
-          value={sliderValue > max ? max : sliderValue}
+          value={sliderValue > effectiveMax ? effectiveMax : sliderValue}
           onChange={(e) => safeOnChange(Number(e.target.value))}
           className="
             w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer 
@@ -135,9 +155,23 @@ export default function InputWithSlider({
         />
         {/* Max Label */}
         <span className="text-[10px] text-slate-900 font-black min-w-[30px] text-right">
-          {formatRangeLabel(max)}
+          {formatRangeLabel(effectiveMax)}
         </span>
       </div>
     </div>
   );
 }
+
+InputWithSlider.propTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  onChange: PropTypes.func,
+  min: PropTypes.number.isRequired,
+  max: PropTypes.number.isRequired,
+  step: PropTypes.number,
+  currency: PropTypes.string,
+  symbol: PropTypes.string,
+  isDecimal: PropTypes.bool,
+  rightElement: PropTypes.node,
+  id: PropTypes.string,
+};

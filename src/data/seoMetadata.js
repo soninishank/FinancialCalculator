@@ -36,6 +36,20 @@ export const calculatorFaqs = {
             a: "The choice depends on your cash flow. If you receive a large windfall (like a bonus, inheritance, or sale of an asset), a lumpsum investment lets that entire capital start growing immediately. However, most people find SIP better as it aligns with their monthly salary. For many, a hybrid approach works best: maintain a regular monthly SIP to build discipline, and supplement it with occasional lumpsum 'top-ups' whenever the market sees a significant dip of 5% or more."
         }
     ],
+    'time-duration-calculator': [
+        {
+            q: "Does this calculator account for inflation?",
+            a: "This specific calculator focuses on the nominal growth of your money—i.e., the actual number on your bank statement. It does not adjust for inflation. If you want to know how long it takes to reach a target in 'today's purchasing power', you should subtract the inflation rate from your expected return rate (e.g., use 6% instead of 12% if inflation is 6%)."
+        },
+        {
+            q: "Why is the time duration result sometimes in decimals?",
+            a: "Mathematical compounding is continuous. A result of '5.5 Years' means exactly 5 years and 6 months. Our calculator converts the decimal portion into months for easier reading."
+        },
+        {
+            q: "What if I add monthly contributions (SIP) as well?",
+            a: "This calculator is designed strictly for a one-time Lump Sum investment. If you are adding monthly contributions, the math becomes more complex. Please use our 'SIP + Lump Sum Calculator' or 'Goal Planner' to handle scenarios with regular ongoing investments."
+        }
+    ],
     'loan-emi': [
         {
             q: "How is the interest portion of my EMI calculated every month?",

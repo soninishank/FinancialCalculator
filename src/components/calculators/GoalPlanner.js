@@ -5,6 +5,7 @@ import CollapsibleInvestmentTable from "../common/CollapsibleInvestmentTable";
 import { useCalculatorState } from "../../hooks/useCalculatorState";
 import InputWithSlider from "../common/InputWithSlider";
 import { moneyFormat } from "../../utils/formatting";
+import { calculatorDetails } from "../../data/calculatorDetails";
 import {
   getRequiredLumpSum,
   getRequiredSIP,

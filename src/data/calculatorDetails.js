@@ -108,6 +108,58 @@ export const calculatorDetails = {
             </div>
         )
     },
+    'target-amount-calculator': {
+        title: "Planning for a Target Amount",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">How to Reach Your Target Amount?</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Most calculators tell you "If you invest X, you get Y". But in real life, we usually start with the goal: <strong>"I need ₹50 Lakhs for my child's education in 15 years."</strong>
+                    </p>
+                    <p className="mb-4">
+                        This <strong>Target Amount Calculator</strong> works backwards. You simply enter your Goal Amount and Time Horizon, and it calculates the precise monthly SIP or Lump Sum investment required.
+                    </p>
+
+                    <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100 my-6">
+                        <h4 className="font-bold text-indigo-800 mb-2">The Math Behind It</h4>
+                        <p className="text-sm text-indigo-700 font-mono mb-2">
+                            t = ln(Target / Principal) / ln(1 + Rate)
+                        </p>
+                        <p className="text-sm text-indigo-700">
+                            Where <strong>ln</strong> is the natural logarithm. It essentially calculates the number of compounding periods required for the growth factor to bridge the gap between where you are and where you want to be.
+                        </p>
+                    </div>
+
+                    <h4 className="font-semibold text-gray-800 mb-2 mt-6">Factors That Reduce Time</h4>
+                    <ul className="list-disc pl-5 space-y-2 mb-4">
+                        <li><strong>Higher Interest Rate:</strong> Obviously, earning 15% gets you there faster than 10%.</li>
+                        <li><strong>Compounding Frequency:</strong> This calculator assumes annual compounding. If your investment compounds quarterly or monthly, you might reach your goal slightly faster.</li>
+                        <li><strong>Starting Bigger:</strong> The closer your principal is to the target, the less time it takes (diminishing returns on time).</li>
+                    </ul>
+
+                    <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 my-6">
+                        <h4 className="font-bold text-blue-800 mb-2">Time to Goal vs. Target Amount Calculator</h4>
+                        <p className="text-sm text-blue-700 mb-2">
+                            It's easy to confuse the two, but they answer different questions:
+                        </p>
+                        <ul className="list-disc pl-5 space-y-1 text-sm text-blue-700">
+                            <li><strong>Time to Goal Calculator:</strong> I have ₹5 Lakhs. How long until it becomes ₹10 Lakhs? (Solves for Time)</li>
+                            <li><strong>Target Amount Calculator:</strong> I want ₹10 Lakhs in 5 years. How much should I invest now? (Solves for Investment Amount)</li>
+                        </ul>
+                    </div>
+
+                    <div className="bg-amber-50 p-4 rounded-xl border border-amber-100">
+                        <h4 className="font-bold text-amber-800 mb-2">Rule of 72 Approximation</h4>
+                        <p className="text-sm text-amber-700">
+                            For a quick mental check, use the Rule of 72. Divide 72 by your interest rate to see how many years it takes to <strong>double</strong> your money.
+                            <br />Example: At 12%, money doubles in ~6 years (72/12). If your target is 4x your principal, it will take ~12 years (two doublings).
+                        </p>
+                    </div>
+                </div>
+            </div >
+        )
+    },
     loanEmi: {
         title: "Understanding Loans",
         render: () => (
@@ -136,7 +188,7 @@ export const calculatorDetails = {
                         Usually, people ask "What is the EMI for a ₹50 Lakh loan?".
                     </p>
                     <p className="mb-4">
-                        But the smarter question is: <strong>"How much loan can I get if I can afford ₹30,000 per month?"</strong>
+                        But the smarter question is: <strong>How much loan can I get if I can afford ₹30,000 per month?</strong>
                     </p>
                     <p className="mb-4">
                         Our <strong>Calculate Loan Amount</strong> mode does exactly this. It calculates your <strong>Maximum Budget</strong> based on your monthly savings capacity.

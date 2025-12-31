@@ -192,6 +192,7 @@ export default function EMIComparison({ currency }) {
                                     <div className="flex items-center gap-2">
                                         <InputWithSlider
                                             id={`emi-comp-tenure-${profile.id}`}
+                                            label="Tenure (Years)"
                                             value={profile.tenure}
                                             onChange={(v) => updateProfile(profile.id, 'tenure', Number(v))}
                                             min={1}

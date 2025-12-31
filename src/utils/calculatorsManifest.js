@@ -13,6 +13,14 @@ const calculators = [
     component: 'PureSIP'
   },
   {
+    slug: 'time-to-goal',
+    title: 'Time to Goal Calculator',
+    description: 'Calculate exactly how long it will take to reach your financial goal. Determine the years required to grow your lump sum investment to your target amount.',
+    keywords: 'time to goal calculator, investment duration, how long to double money, goal tenure, target date calculator',
+    category: 'Planner',
+    component: 'TimeDurationCalculator'
+  },
+  {
     slug: 'lump-sum',
     title: 'Lump Sum Calculator',
     description: 'Estimate the future value of your one-time mutual fund investment. See how a lump-sum investment grows over time with the power of compounding.',
@@ -118,10 +126,10 @@ const calculators = [
     component: 'TimeToFIRE'
   },
   {
-    slug: 'goal-planner',
-    title: 'Goal Planner',
-    description: 'Define your dreams—home, education, or wedding. Calculate exactly how much you need to save monthly or as a lump sum to achieve them.',
-    keywords: 'goal planner, target amount calculator, future value goal, education planning, retirement goal, house savings, financial freedom',
+    slug: 'target-amount-calculator',
+    title: 'Target Amount Calculator',
+    description: 'Planning for a specific financial goal? Calculate exactly how much you need to save monthly (SIP) or as a one-time lump sum to reach your target amount by a specific date.',
+    keywords: 'target amount calculator, goal planner, sip for goal, investment for target, financial goal calculator, education planning, retirement goal',
     category: 'Planner',
     component: 'GoalPlanner'
 

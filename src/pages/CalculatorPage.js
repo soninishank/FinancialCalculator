@@ -8,64 +8,13 @@ import RelatedCalculators from '../components/common/RelatedCalculators';
 // import SEO from '../components/common/SEO'; // Metadata in page.js
 import SocialShare from '../components/common/SocialShare';
 import { lazyLoad } from '../utils/lazyLoad';
+import { getLazyCalculator } from '../utils/calculatorImports';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import Breadcrumbs from '../components/common/Breadcrumbs';
 
 const calculatorCache = {};
 
-const importBySlug = (slug) => {
-  if (calculatorCache[slug]) return calculatorCache[slug];
-
-  const importer = () => {
-    switch (slug) {
-      case 'sip-plus-lump': return import('../components/calculators/SIPWithLumpSum');
-      case 'pure-sip': return import('../components/calculators/PureSIP');
-      case 'lump-sum': return import('../components/calculators/LumpSumOnly');
-      case 'step-up-sip': return import('../components/calculators/StepUpSIP');
-      case 'step-up-plus-lump': return import('../components/calculators/StepUpSIPWithLump');
-      case 'goal-planner': return import('../components/calculators/GoalPlanner');
-      case 'loan-emi': return import('../components/calculators/LoanEMI');
-      case 'car-loan-emi': return import('../components/calculators/CarLoanEMI');
-      case 'advanced-car-loan-emi': return import('../components/calculators/AdvancedCarLoanEMI');
-      case 'step-up-loan-emi': return import('../components/calculators/StepUpLoanEMI');
-      case 'moratorium-loan-emi': return import('../components/calculators/MoratoriumLoanEMI');
-      case 'cagr-calculator': return import('../components/calculators/CAGRCalculator');
-      case 'compare-loans': return import('../components/calculators/CompareLoans');
-      case 'advanced-home-loan': return import('../components/calculators/AdvancedHomeLoanEMI');
-      case 'topup-loan-emi': return import('../components/calculators/TopUpLoanEMI');
-      case 'emi-comparison': return import('../components/calculators/EMIComparison');
-      case 'swp-calculator': return import('../components/calculators/SWPCalculator');
-      // FIRE Calculators
-      case 'ultimate-fire-planner': return import('../components/calculators/TimeToFIRE');
-      case 'swr-simulator': return import('../components/calculators/SWRSimulator');
-      // Decision Making
-      case 'rent-vs-buy': return import('../components/calculators/RentVsBuy');
-      case 'cost-of-delay': return import('../components/calculators/CostOfDelay');
-      case 'step-down-withdrawal': return import('../components/calculators/StepDownWithdrawal');
-      // General / Hygiene
-      case 'inflation-impact': return import('../components/calculators/InflationImpact');
-      case 'asset-allocation': return import('../components/calculators/AssetAllocation');
-      case 'simple-interest': return import('../components/calculators/SimpleInterest');
-      case 'recurring-deposit': return import('../components/calculators/RecurringDeposit');
-      case 'fixed-deposit': return import('../components/calculators/FixedDeposit');
-      case 'ppf-calculator': return import('../components/calculators/PPFCalculator');
-      case 'credit-card-payoff': return import('../components/calculators/CreditCardPayoff');
-      case 'roi-calculator': return import('../components/calculators/ROICalculator');
-      case 'rule-of-72': return import('../components/calculators/RuleOf72');
-      case 'refinance-calculator': return import('../components/calculators/RefinanceCalculator');
-      case 'compound-interest': return import('../components/calculators/CompoundInterest');
-      case 'home-loan-eligibility': return import('../components/calculators/HomeLoanEligibility');
-      case 'property-loan-eligibility': return import('../components/calculators/PropertyLoanEligibility');
-      case 'expense-ratio-calculator': return import('../components/calculators/ExpenseRatioCalculator');
-      case 'xirr-calculator': return import('../components/calculators/XIRRCalculator');
-      default: return Promise.reject(new Error('Unknown calculator'));
-    }
-  };
-
-  const LazyComponent = lazyLoad(importer);
-  calculatorCache[slug] = LazyComponent;
-  return LazyComponent;
-};
+const importBySlug = (slug) => getLazyCalculator(slug, calculatorCache);
 
 
 export default function CalculatorPage() {
