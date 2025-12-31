@@ -7,9 +7,6 @@ import { useCurrency } from '../contexts/CurrencyContext';
 import RelatedCalculators from '../components/common/RelatedCalculators';
 // import SEO from '../components/common/SEO'; // Metadata in page.js
 import SocialShare from '../components/common/SocialShare';
-import AuthorBio from '../components/common/AuthorBio';
-
-// Explicit dynamic imports so bundlers can split chunks
 import { lazyLoad } from '../utils/lazyLoad';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import Breadcrumbs from '../components/common/Breadcrumbs';
@@ -151,7 +148,7 @@ export default function CalculatorPage() {
               </Suspense>
             </ErrorBoundary>
 
-            <AuthorBio />
+            {/* AuthorBio removed as per user request */}
             <SocialShare title={meta.title} />
           </div>
         </main>

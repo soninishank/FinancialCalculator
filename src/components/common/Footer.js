@@ -59,7 +59,6 @@ const Footer = () => {
                     </div>
                     <div className="flex gap-6">
                         <Link href="/calculators" className="hover:text-teal-600 transition-colors">All Calculators</Link>
-                        <a href="https://github.com/soninishank" target="_blank" rel="noopener noreferrer" className="hover:text-teal-600 transition-colors">Github</a>
                     </div>
                 </div>
 

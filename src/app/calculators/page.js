@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import CalculatorsList from '../../pages/CalculatorsList';
 import manifest from '../../utils/calculatorsManifest';
-import Breadcrumbs from '../../components/common/Breadcrumbs';
+
 
 export const metadata = {
     title: 'Financial Calculators Catalog',
@@ -80,7 +80,6 @@ export default async function Page({ searchParams }) {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
             />
             <div className="max-w-6xl mx-auto px-6 py-4">
-                <Breadcrumbs items={[{ label: 'Calculators' }]} />
                 <h1 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight mb-2">
                     Financial <span className="text-teal-600">Calculators</span>
                 </h1>
