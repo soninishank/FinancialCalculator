@@ -219,6 +219,7 @@ export default function EMIComparison({ currency }) {
                                     </label>
                                     <div className="flex gap-2">
                                         <select
+                                            aria-label="Start Month"
                                             value={profile.startDate.split('-')[1]}
                                             onChange={(e) => {
                                                 const [y] = profile.startDate.split('-');
@@ -411,7 +412,7 @@ export default function EMIComparison({ currency }) {
                             const headers = ['Year', 'Principal Paid', 'Interest Paid', 'Balance'];
                             downloadPDF(data, headers, `amortization_schedule_${results[activeTab].name || 'loan'}.pdf`);
                         }}
-                        className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors"
+                        className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-4 py-2.5 rounded-lg transition-colors"
                     >
                         Export PDF
                     </button>

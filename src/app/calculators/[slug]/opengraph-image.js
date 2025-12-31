@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 import manifest from '../../../utils/calculatorsManifest';
 
-export const runtime = 'edge';
+
 
 export const size = {
     width: 1200,

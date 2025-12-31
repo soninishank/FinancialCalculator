@@ -280,9 +280,10 @@ export default function XIRRCalculator({ currency = '₹' }) {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-black text-slate-900 uppercase tracking-tight mb-1">Investment Frequency</label>
+                        <label htmlFor="investment-frequency" className="block text-sm font-black text-slate-900 uppercase tracking-tight mb-1">Investment Frequency</label>
                         <p className="text-xs text-gray-500 mb-2">How often do you invest?</p>
                         <select
+                            id="investment-frequency"
                             value={frequency}
                             onChange={(e) => setFrequency(e.target.value)}
                             className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all font-bold text-slate-900"

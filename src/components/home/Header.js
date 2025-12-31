@@ -51,6 +51,7 @@ const Header = () => {
           <div className="relative group">
             <select
               id="currency-select"
+              aria-label="Select Currency"
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
               className="appearance-none bg-gray-50 border border-gray-200 text-gray-700 text-xs font-bold rounded-full pl-4 pr-10 py-2 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none transition-all cursor-pointer hover:bg-white hover:shadow-sm"

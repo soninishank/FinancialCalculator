@@ -122,6 +122,7 @@ export default function SWPCalculator({ currency = 'INR' }) {
         rightElement={
           <div className="relative">
             <select
+              aria-label="Compounding Frequency"
               value={compoundingFrequency}
               onChange={(e) => setCompoundingFrequency(e.target.value)}
               className="appearance-none bg-gray-50 border border-gray-200 text-gray-700 text-xs font-semibold py-1 px-3 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-teal-500"
@@ -214,7 +215,7 @@ export default function SWPCalculator({ currency = 'INR' }) {
                   ]);
                   downloadPDF(data, ['Year', 'Withdrawn', 'Interest', 'Balance'], 'swp_schedule.pdf');
                 }}
-                className="text-xs font-medium text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap"
+                className="text-xs font-medium text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 px-4 py-2.5 rounded-lg transition-colors whitespace-nowrap"
               >
                 Export PDF
               </button>

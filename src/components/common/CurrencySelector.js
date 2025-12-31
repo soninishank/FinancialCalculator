@@ -13,7 +13,7 @@ export default function CurrencySelector({ currency: propCurrency, setCurrency: 
   // call the context hook unconditionally (safe fallback provided by the hook)
   const ctx = useCurrencyContext();
   const ctxCurrency = ctx?.currency ?? "INR";
-  const ctxSetCurrency = ctx?.setCurrency ?? (() => {});
+  const ctxSetCurrency = ctx?.setCurrency ?? (() => { });
 
   const currency = propCurrency ?? ctxCurrency;
   const setCurrency = propSetCurrency ?? ctxSetCurrency;
@@ -48,13 +48,14 @@ export default function CurrencySelector({ currency: propCurrency, setCurrency: 
   return (
     <div className={compactHeader ? "m-0 p-0" : "mb-6"}>
       {!compactHeader && (
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="currency-selector" className="block text-sm font-medium text-gray-700 mb-2">
           Select Currency
         </label>
       )}
 
       <div className="relative">
         <select
+          id="currency-selector"
           value={currency}
           onChange={(e) => setCurrency(e.target.value)}
           className={finalClasses}

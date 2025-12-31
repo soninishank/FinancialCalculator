@@ -195,8 +195,8 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                                 <div className="flex items-center justify-between">
                                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Processing Fee</label>
                                     <div className="flex bg-gray-100 p-1 rounded-lg">
-                                        <button onClick={() => setProcessingFeeMode('flat')} className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${processingFeeMode === 'flat' ? 'bg-white shadow-sm text-indigo-700' : 'text-gray-400'}`}>FIXED</button>
-                                        <button onClick={() => setProcessingFeeMode('percent')} className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${processingFeeMode === 'percent' ? 'bg-white shadow-sm text-indigo-700' : 'text-gray-400'}`}>%</button>
+                                        <button onClick={() => setProcessingFeeMode('flat')} className={`px-4 py-2 text-xs font-bold rounded-md transition-all ${processingFeeMode === 'flat' ? 'bg-white shadow-sm text-indigo-700' : 'text-gray-400'}`}>FIXED</button>
+                                        <button onClick={() => setProcessingFeeMode('percent')} className={`px-4 py-2 text-xs font-bold rounded-md transition-all ${processingFeeMode === 'percent' ? 'bg-white shadow-sm text-indigo-700' : 'text-gray-400'}`}>%</button>
                                     </div>
                                 </div>
                                 {processingFeeMode === 'flat' ?
@@ -220,8 +220,9 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                     >
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Credit Score Range</label>
+                                <label htmlFor="credit-score-select" className="text-xs font-bold text-gray-500 uppercase tracking-wider">Credit Score Range</label>
                                 <select
+                                    id="credit-score-select"
                                     value={creditScoreRange}
                                     onChange={(e) => {
                                         const range = e.target.value;

@@ -32,13 +32,14 @@ export default function RootLayout({ children }) {
         <html lang="en">
             <head>
                 {/* Icons are handled automatically by file convention (src/app/icon.png) */}
+                <link rel="preconnect" href="https://www.googletagmanager.com" />
             </head>
             <body>
                 <Script
                     src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-                    strategy="afterInteractive"
+                    strategy="lazyOnload"
                 />
-                <Script id="google-analytics" strategy="afterInteractive">
+                <Script id="google-analytics" strategy="lazyOnload">
                     {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}

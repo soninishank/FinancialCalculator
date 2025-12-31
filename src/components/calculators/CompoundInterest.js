@@ -114,9 +114,10 @@ const CompoundInterest = ({ currency }) => {
                     isDecimal={true}
                 />
                 <div className="flex flex-col">
-                    <label className="text-sm font-bold text-gray-700 mb-1">Compounding Frequency</label>
+                    <label htmlFor="compounding-frequency" className="text-sm font-bold text-gray-700 mb-1">Compounding Frequency</label>
                     <div className="relative">
                         <select
+                            id="compounding-frequency"
                             value={compoundingFrequency}
                             onChange={(e) => setCompoundingFrequency(Number(e.target.value))}
                             className="w-full p-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 bg-white font-semibold text-gray-900 appearance-none cursor-pointer"
@@ -141,7 +142,7 @@ const CompoundInterest = ({ currency }) => {
                                 <button
                                     key={u}
                                     onClick={() => setTimeUnit(u)}
-                                    className={`px-3 py-1 text-xs font-semibold rounded-md transition-all capitalize ${timeUnit === u ? 'bg-white text-teal-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                                    className={`px-4 py-2.5 text-xs font-semibold rounded-md transition-all capitalize ${timeUnit === u ? 'bg-white text-teal-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'
                                         }`}
                                 >
                                     {u}
@@ -221,7 +222,7 @@ const CompoundInterest = ({ currency }) => {
                                     ]);
                                     downloadPDF(data, ['Year', 'Principal', 'Interest', 'Balance'], 'compound_interest_schedule.pdf');
                                 }}
-                                className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap"
+                                className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-4 py-2.5 rounded-lg transition-colors whitespace-nowrap"
                             >
                                 Export PDF
                             </button>
