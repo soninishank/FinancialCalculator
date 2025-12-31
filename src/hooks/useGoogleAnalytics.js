@@ -1,14 +1,16 @@
+'use client';
 
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const GA_MEASUREMENT_ID = 'G-N9ZGWK9DNG';
 
 export const useGoogleAnalytics = () => {
-    const location = useLocation();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
 
     useEffect(() => {
-        if (!GA_MEASUREMENT_ID) return;
+        if (!GA_MEASUREMENT_ID || typeof window === 'undefined') return;
 
         // 1. Load the script if not already loaded
         const scriptId = "ga-script";
@@ -31,11 +33,11 @@ export const useGoogleAnalytics = () => {
     }, []);
 
     useEffect(() => {
-        if (!GA_MEASUREMENT_ID || !window.gtag) return;
+        if (!GA_MEASUREMENT_ID || !window.gtag || typeof window === 'undefined') return;
 
         // 2. Send pageview on route change
         window.gtag("config", GA_MEASUREMENT_ID, {
-            page_path: location.pathname + location.search,
+            page_path: pathname + searchParams.toString(),
         });
-    }, [location]);
+    }, [pathname, searchParams]);
 };

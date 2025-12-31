@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import CalculatorsList from '../../src/pages/CalculatorsList';
+import CalculatorsList from '../../pages/CalculatorsList';
 
 export const metadata = {
     title: 'Free Financial Calculators (SIP, EMI, Loan) - Hashmatic',

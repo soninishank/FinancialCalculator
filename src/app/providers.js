@@ -1,6 +1,6 @@
 'use client';
 
-import { CurrencyProvider } from '../src/contexts/CurrencyContext';
+import { CurrencyProvider } from '../contexts/CurrencyContext';
 // import { useGoogleAnalytics } from '../src/hooks/useGoogleAnalytics'; // We will adapt this later or use Script
 
 export function Providers({ children }) {

@@ -1,6 +1,6 @@
-import '../src/index.css';
-import Header from '../src/components/home/Header';
-import Footer from '../src/components/common/Footer';
+import '../index.css';
+import Header from '../components/home/Header';
+import Footer from '../components/common/Footer';
 import { Providers } from './providers';
 import Script from 'next/script';
 

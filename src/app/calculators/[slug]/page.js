@@ -1,5 +1,5 @@
-import CalculatorPage from '../../../src/pages/CalculatorPage';
-import manifest from '../../../src/utils/calculatorsManifest';
+import CalculatorPage from '../../../pages/CalculatorPage';
+import manifest from '../../../utils/calculatorsManifest';
 
 export async function generateStaticParams() {
     return manifest.map((m) => ({ slug: m.slug }));

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { useCalculatorSearch } from '../../hooks/useCalculatorSearch';
 import CalculatorAdvisor from './CalculatorAdvisor';
 
@@ -31,7 +31,7 @@ export default function HomePage() {
       <section>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {list.map(c => (
-            <Link key={c.slug} to={`/calculator/${c.slug}`} className="block">
+            <Link key={c.slug} href={`/calculator/${c.slug}`} className="block">
               <div className="bg-white rounded-2xl p-5 shadow hover:shadow-md transition">
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold">{c.title}</h3>

@@ -3,7 +3,7 @@ import React from "react";
 import IpoStatusTabs from "./IPOStatusTabs";
 import IpoListTable from "./IPOListTable";
 import { useIpoData } from "../../hooks/useIpoData";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 export default function HomeIpoSection() {
   // use live data from your local scraper
@@ -42,7 +42,7 @@ export default function HomeIpoSection() {
           <IpoListTable data={displayData || []} status={activeTab} />
           {startLink && (
             <div className="mt-4 text-center">
-              <Link to="/ipo-tracker" className="text-indigo-600 font-medium hover:text-indigo-800 transition-colors">
+              <Link href="/ipo-tracker" className="text-indigo-600 font-medium hover:text-indigo-800 transition-colors">
                 View all {fullData.length} IPOs →
               </Link>
             </div>

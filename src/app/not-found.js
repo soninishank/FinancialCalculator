@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import Header from '../src/components/home/Header';
-import Footer from '../src/components/common/Footer';
+import Header from '../components/home/Header';
+import Footer from '../components/common/Footer';
 
 export default function NotFound() {
     return (

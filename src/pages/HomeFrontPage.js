@@ -1,8 +1,8 @@
 // src/pages/HomeFrontPage.js
 import React from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
-import SEO from "../components/common/SEO";
+// import SEO from "../components/common/SEO";
 
 // ... imports
 
@@ -18,13 +18,7 @@ export default function HomeFrontPage() {
 
   return (
     <>
-      <SEO
-        title="Financial Calculators & Planning Tools"
-        description="Take control of your finances with Hashmatic's free, accurate online calculators. Instantly calculate SIP returns, Loan EMIs, and Retirement goals. Start planning your future today!"
-        keywords={['financial calculator', 'sip calculator', 'loan emi calculator', 'cagr calculator', 'hashmatic']}
-        schema={schema}
-        path="/"
-      />
+      {/* SEO handled in page.js metadata */}
 
       {/* -------- HERO SECTION -------- */}
       <section className="bg-indigo-600 text-white py-14">
@@ -38,7 +32,7 @@ export default function HomeFrontPage() {
 
           <div className="mt-6">
             <Link
-              to="/calculators"
+              href="/calculators"
               className="px-6 py-3 bg-white text-indigo-600 font-semibold rounded-xl shadow hover:bg-gray-100 transition focus:outline-none focus:ring-2 focus:ring-indigo-200"
             >
               Explore Calculators
