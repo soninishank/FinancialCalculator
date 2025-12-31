@@ -47,10 +47,18 @@ const Footer = () => {
 
                 {/* Bottom Bar */}
                 <div className="pt-6 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-400">
-                    <p>© {new Date().getFullYear()} Hashmatic. All rights reserved.</p>
+                    <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+                        <p>© {new Date().getFullYear()} Hashmatic. All rights reserved.</p>
+                        <span className="hidden md:block text-gray-200">|</span>
+                        <p className="flex items-center text-teal-600/70 font-medium">
+                            <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Financial logic verified for {new Date().getFullYear()}
+                        </p>
+                    </div>
                     <div className="flex gap-6">
                         <Link href="/calculators" className="hover:text-teal-600 transition-colors">All Calculators</Link>
-                        <Link href="/ipo" className="hover:text-teal-600 transition-colors">Live IPO Tracker</Link>
                         <a href="https://github.com/soninishank" target="_blank" rel="noopener noreferrer" className="hover:text-teal-600 transition-colors">Github</a>
                     </div>
                 </div>

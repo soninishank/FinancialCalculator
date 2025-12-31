@@ -7,7 +7,6 @@ export default function sitemap() {
     const staticRoutes = [
         '',
         '/calculators',
-        '/ipo',
     ].map((route) => ({
         url: `${baseUrl}${route}`,
         lastModified: new Date(),

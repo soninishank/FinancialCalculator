@@ -9,11 +9,16 @@ import CalculatorAdvisor from "../components/home/CalculatorAdvisor";
 import { Search } from "lucide-react";
 
 export default function CalculatorsList({ initialFiltered, initialQ }) {
-  const [q, setQ] = useState(initialQ || "");
+  const [q, setQ] = React.useState(initialQ || "");
+  const [mounted, setMounted] = React.useState(false);
   const filtered = useCalculatorSearch(q);
 
-  // If we are on the server or first render, we use the initialFiltered to ensure SEO content is there
-  // However, useCalculatorSearch(q) where q is initialQ should already return the same list.
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Use initialFiltered until mounted to avoid hydration mismatch
+  const displayList = mounted ? filtered : initialFiltered;
 
   return (
     <div className="p-6 pt-0 max-w-6xl mx-auto">
@@ -30,14 +35,14 @@ export default function CalculatorsList({ initialFiltered, initialQ }) {
       </section>
 
       <section>
-        {(filtered || initialFiltered).length === 0 ? (
+        {displayList.length === 0 ? (
           <div className="p-8 bg-white rounded-xl shadow-sm text-center text-gray-600">
             No calculators match <strong>{q}</strong>.
           </div>
         ) : (
           <div className="space-y-12">
             {Object.entries(
-              filtered.reduce((acc, item) => {
+              displayList.reduce((acc, item) => {
                 const cat = item.category || 'Other';
                 if (!acc[cat]) acc[cat] = [];
                 acc[cat].push(item);

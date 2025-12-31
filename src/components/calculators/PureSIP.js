@@ -14,6 +14,7 @@ import MonthYearPicker from "../common/MonthYearPicker";
 import CollapsibleInvestmentTable from "../common/CollapsibleInvestmentTable";
 import UnifiedSummary from "../common/UnifiedSummary";
 import CalculatorLayout from "../common/CalculatorLayout";
+import { calculatorDetails } from "../../data/calculatorDetails";
 
 import { useLimitedPay } from "../../hooks/useLimitedPay";
 import { useCalculatorState } from "../../hooks/useCalculatorState";
@@ -228,6 +229,7 @@ export default function PureSIP({ currency, setCurrency }) {
           />
         </div>
       }
+      details={calculatorDetails['pure-sip'].render()}
     />
   );
 }

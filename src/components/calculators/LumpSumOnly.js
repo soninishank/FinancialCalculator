@@ -12,6 +12,7 @@ import CollapsibleInvestmentTable from "../common/CollapsibleInvestmentTable";
 import UnifiedSummary from "../common/UnifiedSummary";
 
 import CalculatorLayout from "../common/CalculatorLayout"; // <--- NEW LAYOUT
+import { calculatorDetails } from "../../data/calculatorDetails";
 
 import { useCalculatorState } from "../../hooks/useCalculatorState"; // <--- NEW HOOK
 import { computeYearlySchedule, calculateRealValue } from "../../utils/finance"; // <--- SHARED LOGIC
@@ -211,6 +212,7 @@ export default function LumpSumOnly({ currency, setCurrency }) {
           />
         </div>
       }
+      details={calculatorDetails['lump-sum'].render()}
     />
   );
 }

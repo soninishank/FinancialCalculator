@@ -179,41 +179,7 @@ export const calculatorDetails = {
             </div>
         )
     },
-    swp: {
-        title: "Understanding SWP (Systematic Withdrawal Plan)",
-        render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding SWP</h3>
-                <div className="prose prose-teal max-w-none text-gray-600">
-                    <p className="mb-4">
-                        <strong>Systematic Withdrawal Plan (SWP)</strong> allows you to withdraw a fixed amount of money from your investment (like Mutual Funds) every month.
-                    </p>
-
-                    <div className="bg-teal-50 p-4 rounded-xl border border-teal-100 my-4">
-                        <p className="font-medium text-teal-800 mb-2">
-                            How is it different from a Bank FD?
-                        </p>
-                        <ul className="list-disc pl-5 space-y-1 text-teal-700">
-                            <li><strong>Growth on Balance:</strong> While you withdraw money, the remaining money <em>continues to grow</em>.</li>
-                            <li><strong>Inflation Protection:</strong> If your returns (e.g., 10%) are higher than withdrawals, your money lasts longer.</li>
-                        </ul>
-                    </div>
-
-                    <h4 className="font-semibold text-gray-800 mb-2 mt-6">How to use this calculator?</h4>
-                    <p className="mb-4">
-                        Enter your <strong>Initial Corpus</strong> (Total Investment) and how much you want to <strong>Withdraw Monthly</strong>.
-                    </p>
-                    <p className="mb-4">
-                        The calculator will show you:
-                    </p>
-                    <ul className="list-disc pl-5 space-y-2">
-                        <li><strong>Final Corpus:</strong> How much money is left at the end.</li>
-                        <li><strong>Depletion Date:</strong> If you withdraw too much, when will your money run out?</li>
-                    </ul>
-                </div>
-            </div>
-        )
-    },
+    // old swp entry removed
     compareLoans: {
         title: "Flat Rate vs Reducing Balance",
         render: () => (
@@ -324,7 +290,7 @@ export const calculatorDetails = {
             </div>
         )
     },
-    cagr_calculator: {
+    'cagr-calculator': {
         title: "Mastering CAGR",
         render: () => (
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -603,6 +569,424 @@ export const calculatorDetails = {
                                 </div>
                             ))}
                         </div>
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'pure-sip': {
+        title: "Mastering Your Wealth with SIP",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">Why Systematic Investment Plan (SIP) is Your Best Friend</h2>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-6">
+                        A Systematic Investment Plan (SIP) is a disciplined approach to wealth creation that allows you to invest a fixed sum of money at regular intervals—usually monthly—into mutual fund schemes. Instead of trying to "time the market," which often leads to emotional stress and poor financial decisions, SIP leverages the twin powers of <strong>Rupee Cost Averaging</strong> and <strong>Compounding</strong>.
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+                        <div className="bg-teal-50 p-5 rounded-2xl border border-teal-100">
+                            <h3 className="text-lg font-bold text-teal-900 mb-3">Rupee Cost Averaging</h3>
+                            <p className="text-sm text-teal-800 leading-relaxed">
+                                When you invest a fixed amount regularly, you automatically buy more units when the market is low and fewer units when it is high. Over time, this lowers your average cost per unit, making your portfolio resilient to volatility.
+                            </p>
+                        </div>
+                        <div className="bg-indigo-50 p-5 rounded-2xl border border-indigo-100">
+                            <h3 className="text-lg font-bold text-indigo-900 mb-3">The Power of Choice</h3>
+                            <p className="text-sm text-indigo-800 leading-relaxed">
+                                SIPs are incredibly flexible. You can start with as little as ₹500 per month and increase (Step-up) or pause your contributions as your financial situation changes.
+                            </p>
+                        </div>
+                    </div>
+
+                    <h2 className="text-2xl font-bold text-gray-800 mt-12 mb-6">How to Use the SIP Calculator Efficiently</h2>
+                    <p className="mb-4">
+                        Our advanced SIP calculator is designed to provide you with a holistic view of your financial future. Follow these steps to get the most out of it:
+                    </p>
+                    <ul className="list-decimal pl-5 space-y-4 mb-8">
+                        <li><strong>Set Your Monthly Goal:</strong> Decide on a budget you can comfortably commit to every month without failing.</li>
+                        <li><strong>Choose Your Tenure:</strong> Wealth is built over decades. Use the slider to see how increasing your tenure by just 5 years can often double your final corpus.</li>
+                        <li><strong>Adjust Expected Returns:</strong> While stock markets have historically given 12-15% over long periods, it's safer to model with 10-12% for a conservative estimate.</li>
+                        <li><strong>Factor in Taxes & Inflation:</strong> Use our unique toggles to see the "Real Value" of your money. Remember, ₹1 Crore today will buy much less 20 years from now.</li>
+                    </ul>
+
+                    <div className="bg-amber-50 p-6 rounded-2xl border border-amber-100 mb-12">
+                        <h3 className="text-lg font-bold text-amber-900 mb-2">💡 Pro Tip: The 15-15-15 Rule</h3>
+                        <p className="text-sm text-amber-800">
+                            If you invest <strong>₹15,000</strong> per month for <strong>15 years</strong> at an annual return of <strong>15%</strong>, your corpus will grow to approximately <strong>₹1 Crore</strong>. This is the magic of long-term compounding!
+                        </p>
+                    </div>
+
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6">Calculated SIP FAQs</h2>
+                    <div className="space-y-4">
+                        {[
+                            {
+                                q: "What is a SIP (Systematic Investment Plan) and how does it actually work?",
+                                a: "A Systematic Investment Plan (SIP) is a disciplined investment approach that allows you to invest a fixed sum of money at regular intervals. It automates your savings and benefits from Rupee Cost Averaging, helping you build wealth without needing to time the market."
+                            },
+                            {
+                                q: "How does Rupee Cost Averaging benefit a long-term SIP investor?",
+                                a: "By investing a fixed amount monthly, you buy more units when prices are low and fewer when prices are high. This averages out the cost of your units over time, often resulting in better returns than trying to pick the 'perfect' time to invest."
+                            },
+                            {
+                                q: "What is the difference between a Growth SIP and a Dividend (IDCW) SIP?",
+                                a: "The Growth option reinvests all profits back into the fund, maximizing compounding. The IDCW option may payout dividends periodically, which reduces the final corpus and may have different tax implications."
+                            },
+                            {
+                                q: "Can I increase or decrease my SIP amount after the investment has started?",
+                                a: "Yes, SIPs are flexible. You can start a new SIP with a higher amount or use 'Step-up' SIP features. Most platforms also allow you to pause or stop a SIP at any time without penalties."
+                            }
+                        ].map((faq, i) => (
+                            <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
+                                <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
+                                <p className="text-gray-600 text-sm">{faq.a}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'lump-sum': {
+        title: "Wealth Growth via Lump Sum Investment",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">The Power of One-Time Investment</h2>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-6">
+                        A Lump Sum investment is the act of investing a large chunk of money at once into a specific financial instrument, typically mutual funds or stocks. This strategy is ideal when you receive a windfall—such as a yearly bonus, inheritance, or profits from the sale of an asset—and want that capital to start working for you immediately.
+                    </p>
+
+                    <h2 className="text-2xl font-bold text-gray-800 mt-12 mb-6">SIP vs. Lump Sum: Which is Better?</h2>
+                    <div className="overflow-x-auto my-6">
+                        <table className="min-w-full border-collapse border border-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="border border-gray-300 px-4 py-2 text-left">Feature</th>
+                                    <th className="border border-gray-300 px-4 py-2 text-left">Lump Sum</th>
+                                    <th className="border border-gray-300 px-4 py-2 text-left">SIP</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td className="border border-gray-300 px-4 py-2 font-medium">Entry Point</td>
+                                    <td className="border border-gray-300 px-4 py-2 text-rose-600 font-semibold">Critical</td>
+                                    <td className="border border-gray-300 px-4 py-2 text-teal-600 font-semibold">Irrelevant</td>
+                                </tr>
+                                <tr>
+                                    <td className="border border-gray-300 px-4 py-2 font-medium">Risk</td>
+                                    <td className="border border-gray-300 px-4 py-2">High (Market Volatility)</td>
+                                    <td className="border border-gray-300 px-4 py-2">Low (Averaged)</td>
+                                </tr>
+                                <tr>
+                                    <td className="border border-gray-300 px-4 py-2 font-medium">Ideal For</td>
+                                    <td className="border border-gray-300 px-4 py-2">Windfalls/Bonuses</td>
+                                    <td className="border border-gray-300 px-4 py-2">Regular Salary</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h2 className="text-2xl font-bold text-gray-800 mt-12 mb-6">Strategic Use of Lump Sum Calculator</h2>
+                    <p className="mb-4">
+                        Our calculator helps you visualize the trajectory of your wealth. By providing an initial amount and an expected return rate, you can see how the "interest on interest" effect takes over.
+                    </p>
+                    <ul className="list-disc pl-5 space-y-3 mb-8">
+                        <li><strong>Longer Horizons:</strong> Even if you invest during a market peak, a long-term horizon (7-10+ years) usually smooths out the entry-point risk.</li>
+                        <li><strong>Tax Planning:</strong> Lump sum equity investments held for over a year qualify for Long Term Capital Gains (LTCG) tax, which is often more efficient than short-term trading.</li>
+                        <li><strong>The 'Rule of 72':</strong> Quickly estimate how long it will take for your lump sum to double. If you expect a 12% return, your money doubles in about 6 years (72/12).</li>
+                    </ul>
+
+                    <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100 mb-12">
+                        <h3 className="text-lg font-bold text-blue-900 mb-2">🛡️ Mitigating Risk: The STP Strategy</h3>
+                        <p className="text-sm text-blue-800">
+                            If you are afraid of investing a large amount during market highs, consider a <strong>Systematic Transfer Plan (STP)</strong>. Invest the lump sum in a low-risk liquid fund and transfer it into an equity fund in small portions every month.
+                        </p>
+                    </div>
+
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6">Lump Sum FAQs</h2>
+                    <div className="space-y-4">
+                        {[
+                            {
+                                q: "When is the most opportunistic time to make a lumpsum investment?",
+                                a: "The best time is often during a market correction or when valuations are attractive. However, for long-term goals, 'time in the market' is more valuable than 'timing the market'."
+                            },
+                            {
+                                q: "How should I manage the risk of investing a large lumpsum amount?",
+                                a: "Using an STP (Systematic Transfer Plan) is the best way. It spreads your entry over many months while keeping your core capital in a safe liquid fund earning some interest."
+                            },
+                            {
+                                q: "What are the tax implications for lumpsum equity mutual fund withdrawals?",
+                                a: "Gains over ₹1.25 Lakh per year for equity funds held for more than 1 year are taxed as LTCG. Short-term gains (under 1 year) are taxed at higher rates."
+                            }
+                        ].map((faq, i) => (
+                            <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
+                                <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
+                                <p className="text-gray-600 text-sm">{faq.a}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'step-up-sip': {
+        title: "The Exponential Power of Step-Up SIP",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">Why You Should 'Step-Up' Your Investments</h2>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-6">
+                        A <strong>Step-Up SIP</strong> (also known as a Top-up SIP) is a strategy where you increase your SIP amount periodically—usually once a year. This increase is typically aligned with your annual salary hikes or business profit growth. While a normal SIP is great for consistency, a Step-Up SIP is the "secret weapon" for achieving massive financial goals much faster.
+                    </p>
+
+                    <div className="bg-indigo-50 p-6 rounded-2xl border border-indigo-100 my-8">
+                        <h3 className="text-lg font-bold text-indigo-900 mb-2">The Difference is Staggering</h3>
+                        <p className="text-sm text-indigo-800 leading-relaxed">
+                            Consider two investors, A and B, both starting with ₹10,000/month for 20 years at 12%.
+                            <br />- <strong>Investor A (Normal SIP):</strong> Final corpus ~₹1 Crore.
+                            <br />- <strong>Investor B (10% Annual Step-Up):</strong> Final corpus ~₹2.2 Crores!
+                            <br />By just increasing the investment as their income grows, Investor B more than <strong>doubled</strong> their wealth compared to Investor A.
+                        </p>
+                    </div>
+
+                    <h2 className="text-2xl font-bold text-gray-800 mt-12 mb-6">How to Optimize Your Step-Up SIP</h2>
+                    <p className="mb-4">
+                        To get the most out of your increasing contributions, keep these strategies in mind:
+                    </p>
+                    <ul className="list-disc pl-5 space-y-3 mb-8">
+                        <li><strong>Match Your Hike:</strong> If you get a 10% salary hike, aim to increase your SIP by 10% too. This prevents "lifestyle creep" from eating into your potential savings.</li>
+                        <li><strong>Start Small:</strong> You don't need a huge starting amount. Even a ₹2,000 SIP with a 10% yearly increase grows significantly over time.</li>
+                        <li><strong>Inflation Neutralizer:</strong> Inflation reduces the value of your money. A Step-Up SIP helps your savings keep pace with rising costs by ensuring you invest more as time goes by.</li>
+                    </ul>
+
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6">Step-Up SIP FAQs</h2>
+                    <div className="space-y-4">
+                        {[
+                            {
+                                q: "What is the ideal percentage for a Step-up SIP?",
+                                a: "Most financial advisors recommend a 5% to 10% annual increase, as it usually aligns with average salary hikes and inflation."
+                            },
+                            {
+                                q: "Can I cap my Step-up SIP after a few years?",
+                                a: "Yes, you can specify a 'Maximum Amount' for your SIP. Once reached, the SIP continues at that fixed amount until the end of the tenure."
+                            },
+                            {
+                                q: "Is Step-up better than a One-time Lumpsum?",
+                                a: "Step-up SIP is generally better for salaried individuals as it builds discipline and reduces the risk of investing a large sum at a market peak."
+                            }
+                        ].map((faq, i) => (
+                            <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
+                                <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
+                                <p className="text-gray-600 text-sm">{faq.a}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'recurring-deposit': {
+        title: "Building Habits with Recurring Deposits (RD)",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">The Safety and Discipline of an RD</h2>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-6">
+                        A <strong>Recurring Deposit (RD)</strong> is one of the most popular risk-free investment options in India. It is offered by almost all banks and post offices. It allows you to deposit a fixed amount every month for a pre-determined period, earning a fixed interest rate.
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+                        <div className="bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
+                            <h3 className="text-lg font-bold text-emerald-900 mb-3">Guaranteed Returns</h3>
+                            <p className="text-sm text-emerald-800 leading-relaxed">
+                                Unlike SIPs in mutual funds, an RD guarantees your maturity amount. The interest rate is fixed at the time of opening and does not change regardless of market conditions.
+                            </p>
+                        </div>
+                        <div className="bg-amber-50 p-5 rounded-2xl border border-amber-100">
+                            <h3 className="text-lg font-bold text-amber-900 mb-3">Goal-Based Savings</h3>
+                            <p className="text-sm text-amber-800 leading-relaxed">
+                                RD is perfect for short-to-medium term goals like buying a gadget, a vacation, or building an emergency fund.
+                            </p>
+                        </div>
+                    </div>
+
+                    <h2 className="text-2xl font-bold text-gray-800 mt-12 mb-6">RD Interest Calculation & Compounding</h2>
+                    <p className="mb-4">
+                        Most Indian banks compound RD interest <strong>quarterly</strong>. This means you earn interest on your interest every three months. Our calculator uses this standard formula to give you the exact maturity value.
+                    </p>
+
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6">Recurring Deposit FAQs</h2>
+                    <div className="space-y-4">
+                        {[
+                            {
+                                q: "What is the minimum tenure for a Recurring Deposit?",
+                                a: "Most banks offer RDs starting from 6 months up to 10 years."
+                            },
+                            {
+                                q: "Is the interest earned on RD taxable?",
+                                a: "Yes, interest earned on RD is fully taxable as per your income tax slab. Banks also deduct TDS (Tax Deducted at Source) if the interest exceeds ₹40,000 (₹50,000 for senior citizens) in a financial year."
+                            },
+                            {
+                                q: "Can I withdraw money from RD before maturity?",
+                                a: "Yes, premature withdrawal is possible, but banks usually charge a penalty of 0.5% to 1% on the applicable interest rate."
+                            }
+                        ].map((faq, i) => (
+                            <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
+                                <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
+                                <p className="text-gray-600 text-sm">{faq.a}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'fixed-deposit': {
+        title: "Security and Growth with Fixed Deposits (FD)",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">Why Fixed Deposits are an Institutional Favorite</h2>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-6">
+                        A <strong>Fixed Deposit (FD)</strong> is the bedrock of conservative financial planning in India. It offers a higher rate of interest than a regular savings account and provides absolute certainty regarding the maturity amount. Whether you are a senior citizen seeking monthly income or a young professional building a safety net, FDs offer unmatched peace of mind.
+                    </p>
+
+                    <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100 my-8">
+                        <h3 className="text-lg font-bold text-blue-900 mb-2">The Comfort of Predictability</h3>
+                        <p className="text-sm text-blue-800 leading-relaxed">
+                            With an FD, your interest rate is locked in for the entire tenure. Even if market interest rates fall, your bank is contractually obligated to pay you the agreed-upon rate. This makes it an ideal tool for goals where capital preservation is more important than aggressive growth.
+                        </p>
+                    </div>
+
+                    <h2 className="text-2xl font-bold text-gray-800 mt-12 mb-6">Maximizing Your FD Returns</h2>
+                    <ul className="list-disc pl-5 space-y-3 mb-8">
+                        <li><strong>Laddering Strategy:</strong> Instead of putting all your money in one FD, split it into multiple deposits with different tenures (1yr, 2yr, 3yr). This ensures regular liquidity and allows you to reinvest at potentially higher rates.</li>
+                        <li><strong>Cumulative vs. Non-Cumulative:</strong> Choose 'Cumulative' if you want to maximize wealth through compounding. Choose 'Non-Cumulative' if you need monthly or quarterly payouts to cover expenses.</li>
+                        <li><strong>Senior Citizen Benefits:</strong> Most banks offer an additional 0.50% to 0.75% interest rate to senior citizens, significantly boosting the final maturity value.</li>
+                    </ul>
+
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6">Fixed Deposit FAQs</h2>
+                    <div className="space-y-4">
+                        {[
+                            {
+                                q: "What is the difference between Cumulative and Non-cumulative FD?",
+                                a: "In a Cumulative FD, interest is reinvested and paid at maturity, benefiting from compounding. In a Non-cumulative FD, interest is paid out periodically (monthly/quarterly) to provide regular income."
+                            },
+                            {
+                                q: "Is FD interest taxable?",
+                                a: "Yes, interest earned on FD is added to your total income and taxed as per your tax slab. Banks also deduct TDS (typically 10%) if interest exceeds ₹40,000 in a year."
+                            },
+                            {
+                                q: "What is a Tax-Saving FD?",
+                                a: "It is a special type of FD with a mandatory 5-year lock-in period that offers tax deductions under Section 80C of the Income Tax Act."
+                            }
+                        ].map((faq, i) => (
+                            <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
+                                <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
+                                <p className="text-gray-600 text-sm">{faq.a}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'ppf-calculator': {
+        title: "PPF: The Gold Standard of Long-Term Savings",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">The Power of EEE (Exempt-Exempt-Exempt)</h2>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-6">
+                        The <strong>Public Provident Fund (PPF)</strong> is arguably the best long-term savings tool for Indian citizens. It is backed by the Government of India, making it completely risk-free. Its primary attraction is the EEE status: your investment is tax-deductible, the interest earned is tax-free, and the final maturity amount is also tax-free.
+                    </p>
+
+                    <div className="bg-teal-50 p-6 rounded-2xl border border-teal-100 my-8">
+                        <h3 className="text-lg font-bold text-teal-900 mb-2">Compounding at its Best</h3>
+                        <p className="text-sm text-teal-800 leading-relaxed">
+                            PPF has a 15-year lock-in period, which is its greatest strength. It forces long-term discipline. By compounding interest annually, a small contribution can grow into a significant retirement corpus over 15 to 25 years (with 5-year extensions).
+                        </p>
+                    </div>
+
+                    <h2 className="text-2xl font-bold text-gray-800 mt-12 mb-6">The 'April 5th' Rule</h2>
+                    <p className="mb-4">
+                        To maximize your PPF returns, always try to deposit your annual contribution between <strong>April 1st and April 5th</strong>. This ensures you earn interest for the entire financial year on your new deposit, as the interest is calculated on the minimum balance between the 5th and the end of the month.
+                    </p>
+
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6">PPF FAQs</h2>
+                    <div className="space-y-4">
+                        {[
+                            {
+                                q: "What is the maximum amount I can deposit in PPF yearly?",
+                                a: "The current limit is ₹1,50,000 per financial year. You must also deposit a minimum of ₹500 to keep the account active."
+                            },
+                            {
+                                q: "Can I withdraw money from PPF before 15 years?",
+                                a: "Partial withdrawals are allowed from the 7th year onwards under specific conditions. You can also take loans against your PPF balance between the 3rd and 6th year."
+                            },
+                            {
+                                q: "How many times can I extend my PPF account?",
+                                a: "After the initial 15 years, you can extend your account indefinitely in blocks of 5 years each, with or without fresh contributions."
+                            }
+                        ].map((faq, i) => (
+                            <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
+                                <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
+                                <p className="text-gray-600 text-sm">{faq.a}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'swp-calculator': {
+        title: "Creating Monthly Income with SWP",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">Systematic Withdrawal Plan (SWP) Explained</h2>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-6">
+                        While SIP is for wealth creation, <strong>Systematic Withdrawal Plan (SWP)</strong> is for wealth consumption. It allows you to withdraw a fixed amount from your mutual fund investments at regular intervals. It is widely considered the most tax-efficient way to generate a "monthly salary" during retirement.
+                    </p>
+
+                    <div className="bg-rose-50 p-6 rounded-2xl border border-rose-100 my-8">
+                        <h3 className="text-lg font-bold text-rose-900 mb-2">SWP vs. Dividends</h3>
+                        <p className="text-sm text-rose-800 leading-relaxed">
+                            Unlike dividends, which are controlled by the fund house and are fully taxable at your slab rate, an SWP gives you control. You choose the amount and the date. More importantly, only the "gain" portion of your withdrawal is taxed, not the entire amount, making it significantly more efficient.
+                        </p>
+                    </div>
+
+                    <h2 className="text-2xl font-bold text-gray-800 mt-12 mb-6">Managing the 'Reverse Compounding' Risk</h2>
+                    <p className="mb-4">
+                        The biggest risk with SWP is withdrawing too much too fast. If your withdrawal rate is higher than your portfolio's growth rate, your principal will start depleting. This is known as negative amortization or reverse compounding.
+                    </p>
+                    <ul className="list-disc pl-5 space-y-3 mb-8">
+                        <li><strong>Withdrawal Rate:</strong> Aim to keep your SWP rate around 4-6% of your initial corpus to ensure your capital remains intact or continues to grow.</li>
+                        <li><strong>Cash Buffer:</strong> Keep 1-2 years of withdrawal amount in a liquid fund to avoid selling equity units during market crashes.</li>
+                    </ul>
+
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6">SWP FAQs</h2>
+                    <div className="space-y-4">
+                        {[
+                            {
+                                q: "Is SWP better than Fixed Deposit for monthly income?",
+                                a: "For those in higher tax brackets, SWP is generally better due to tax efficiency. However, SWP carries market risk, whereas FD returns are guaranteed."
+                            },
+                            {
+                                q: "How is SWP taxed?",
+                                a: "Every withdrawal is treated as a partial redemption. For equity funds held over 1 year, gains up to ₹1.25 Lakh per year are tax-free, and above that, taxed at 12.5% LTCG."
+                            },
+                            {
+                                q: "Can I stop or change my SWP amount?",
+                                a: "Yes, SWP is fully flexible. You can increase, decrease, or completely stop your withdrawals at any time."
+                            }
+                        ].map((faq, i) => (
+                            <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
+                                <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
+                                <p className="text-gray-600 text-sm">{faq.a}</p>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

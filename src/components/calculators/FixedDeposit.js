@@ -9,6 +9,7 @@ import { computeFixedDeposit } from '../../utils/finance';
 import { getActualYearAndMonth } from '../../utils/calculatorUtils';
 import { FinancialCompoundingBarChart } from '../common/FinancialCharts';
 import CollapsibleInvestmentTable from '../common/CollapsibleInvestmentTable';
+import { calculatorDetails } from '../../data/calculatorDetails';
 import { PiggyBank } from 'lucide-react';
 
 export default function FixedDeposit({ currency = 'INR' }) {
@@ -273,20 +274,7 @@ export default function FixedDeposit({ currency = 'INR' }) {
                         />
                     </div>
                 }
-                details={
-                    <div className="bg-gray-50 rounded-xl p-5 border border-gray-200 text-sm text-gray-700 space-y-3">
-                        <p><strong className="text-gray-900 text-base">Important Notes:</strong></p>
-                        <div className="space-y-2">
-                            <p>• <strong>Cumulative FD (Reinvestment):</strong> Interest is compounded quarterly and paid along with principal at maturity. This gives you the <strong className="text-indigo-600">maximum returns</strong> due to compounding.</p>
-                            <p>• <strong>Short Term (Days Mode):</strong> Simple interest calculation is used instead of compound interest.</p>
-                            <div className="bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
-                                <p className="font-semibold text-blue-900 mb-1">💡 Key Point: Total Interest Remains Same</p>
-                                <p className="text-blue-800">For all <strong>Regular Payout options</strong>, the <strong>total interest earned is identical</strong>. Only the <strong>payout frequency</strong> changes.</p>
-                            </div>
-                            <p>• <strong>No Compounding in Payouts:</strong> Regular payout FDs do not reinvest interest, so you miss out on compound growth compared to cumulative FDs.</p>
-                        </div>
-                    </div>
-                }
+                details={calculatorDetails['fixed-deposit'].render()}
             />
         </div>
     );

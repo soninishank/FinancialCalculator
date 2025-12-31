@@ -8,6 +8,7 @@ import { downloadPDF } from '../../utils/export';
 import { computePPF } from '../../utils/finance';
 import { FinancialCompoundingBarChart } from '../common/FinancialCharts';
 import CollapsibleInvestmentTable from '../common/CollapsibleInvestmentTable';
+import { calculatorDetails } from '../../data/calculatorDetails';
 import { ShieldCheck, AlertTriangle } from 'lucide-react';
 
 export default function PPFCalculator({ currency = 'INR' }) {
@@ -165,38 +166,7 @@ export default function PPFCalculator({ currency = 'INR' }) {
                         />
                     </div>
                 }
-                details={
-                    <div className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                                <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                    Key Features of PPF
-                                </h4>
-                                <ul className="space-y-3">
-                                    <li className="flex gap-3 text-sm text-gray-600">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
-                                        <span><strong>Lock-in Period:</strong> 15 years, extendable in blocks of 5 years indefinitely.</span>
-                                    </li>
-                                    <li className="flex gap-3 text-sm text-gray-600">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
-                                        <span><strong>Tax Benefits (EEE):</strong> Exempt-Exempt-Exempt status.</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                                <h4 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                    Extension Rules
-                                </h4>
-                                <p className="text-sm text-gray-600">Continue investing or earn interest without fresh deposits after 15 years.</p>
-                            </div>
-                        </div>
-                        <div className="bg-indigo-50 rounded-xl p-5 border border-indigo-100">
-                            <p className="text-[13px] text-indigo-900 leading-relaxed font-medium">
-                                PPF interest is compounded annually. For maximum benefit, invest before the 5th of each month.
-                            </p>
-                        </div>
-                    </div>
-                }
+                details={calculatorDetails['ppf-calculator'].render()}
             />
         </div>
     );

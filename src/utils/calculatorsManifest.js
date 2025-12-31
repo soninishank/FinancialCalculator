@@ -7,7 +7,7 @@ const calculators = [
   {
     slug: 'pure-sip',
     title: 'SIP Calculator',
-    description: 'Calculate the future value of regular monthly SIP investments at an expected annual return rate.',
+    description: 'Calculate the future value of your monthly SIP investments accurately. Use our SIP calculator to estimate returns from mutual funds and build your wealth.',
     keywords: 'sip calculator, monthly sip, mutual fund sip, investment calculator, sip calculator sbi, sip calculator groww, sip calculator yearly, daily sip calculator, sip calculator hdfc, monthly sip calculator, sip, sip calculator icici, sip calculator axis bank, sip calculator kotak, sip calculator bandhan bank, sip calculator au finance',
     category: 'SIP + LUMPSUM',
     component: 'PureSIP'
@@ -15,7 +15,7 @@ const calculators = [
   {
     slug: 'lump-sum',
     title: 'Lump Sum Calculator',
-    description: 'Project growth of a single lump-sum investment over time using compound interest.',
+    description: 'Estimate the future value of your one-time mutual fund investment. See how a lump-sum investment grows over time with the power of compounding.',
     keywords: 'lump sum calculator, one-time investment, compound interest',
     category: 'SIP + LUMPSUM',
     component: 'LumpSumOnly'
@@ -23,7 +23,7 @@ const calculators = [
   {
     slug: 'sip-plus-lump',
     title: 'SIP + Lump Sum Calculator',
-    description: 'Estimate future value by combining an initial lump sum with monthly SIP contributions and compounding returns.',
+    description: 'Combine initial lump sum and monthly SIP to forecast your total portfolio value. Plan your wealth creation strategy with this powerful hybrid tool.',
     keywords: 'sip plus lump sum, sip calculator, lump sum calculator, investment growth',
     category: 'SIP + LUMPSUM',
     component: 'SIPWithLumpSum'
@@ -39,7 +39,7 @@ const calculators = [
   {
     slug: 'step-up-sip',
     title: 'Step-Up SIP Calculator',
-    description: 'Model SIPs that increase periodically (step-up) to reflect salary hikes or increasing savings capacity.',
+    description: 'Accelerate wealth creation with a Step-Up SIP. Calculate how increasing your monthly investment annually—matching your salary hikes—can exponentially boost your final maturity corpus.',
     keywords: 'step-up sip, increasing sip, sip escalator, sip growth, step up sip calculator',
     category: 'SIP + LUMPSUM',
     component: 'StepUpSIP'
@@ -55,7 +55,7 @@ const calculators = [
   {
     slug: 'car-loan-emi',
     title: 'Car Loan EMI Calculator',
-    description: 'Calculate monthly EMIs for your dream car with ease.',
+    description: 'Calculate monthly EMIs for your dream car. Compare interest rates and find the most affordable loan tenure for your new or used vehicle purchase.',
     keywords: 'car loan emi calculator, auto loan calculator, car emi, vehicle loan calculator, new car loan emi, used car loan sbi, car loan emi calculator groww, car loan emi calculator hdfc, car loan emi calculator icici, car loan interest rate',
     category: 'Loan',
     component: 'CarLoanEMI'
@@ -104,8 +104,8 @@ const calculators = [
   {
     slug: 'cagr-calculator',
     title: 'CAGR Calculator',
-    description: 'Calculate the Compound Annual Growth Rate (CAGR) between two values across a period.',
-    keywords: 'cagr calculator, compound annual growth rate, investment returns',
+    description: 'Compare investment performance with our CAGR calculator. Determine the Compound Annual Growth Rate for stocks, mutual funds, or any asset over multiple years with annualised precision.',
+    keywords: 'cagr calculator, compound annual growth rate, investment returns, cagr formula',
     category: 'Math',
     component: 'CAGRCalculator'
   },
@@ -147,7 +147,7 @@ const calculators = [
   {
     slug: 'swp-calculator',
     title: 'SWP Calculator',
-    description: 'Model monthly withdrawals from your investment corpus while the remaining balance continues to grow through compounding.',
+    description: 'Generate a steady monthly income with our SWP calculator. Plan systematic withdrawals from your mutual fund corpus while ensuring your remaining capital continues to grow tax-efficiently.',
     keywords: 'swp, systematic withdrawal plan, income, retirement, swp calculator, swp calculator sbi, swp calculator hdfc, swp calculator icici, swp calculator axis bank, swp calculator kotak, swp calculator bandhan bank, swp calculator au finance',
     category: 'SIP + LUMPSUM',
     component: 'SWPCalculator'
@@ -196,15 +196,15 @@ const calculators = [
   {
     slug: 'recurring-deposit',
     title: 'Recurring Deposit Calculator',
-    description: 'Calculate maturity value of monthly recurring deposits with quarterly compounding.',
-    keywords: 'recurring deposit, rd calculator, post office rd, bank rd',
+    description: 'Plan your short-term goals with our Recurring Deposit (RD) calculator. Estimate guaranteed maturity values with quarterly compounding for bank and post office RD schemes.',
+    keywords: 'recurring deposit, rd calculator, post office rd, bank rd, rd interest rate',
     category: 'Bank Scheme',
     component: 'RecurringDeposit'
   },
   {
     slug: 'fixed-deposit',
     title: 'Fixed Deposit (FD) Calculator',
-    description: 'Calculate returns on FDs with Cumulative (Reinvestment), Monthly, Quarterly Payouts, or Short-Term schemes.',
+    description: 'Maximize your savings with our Fixed Deposit (FD) calculator. Estimate maturity amounts for cumulative FDs or calculate monthly/quarterly payouts for regular income. Support for all major banks.',
     keywords: 'fd calculator, fixed deposit, term deposit, bank fd, interest payout, fd calculator sbi, fd calculator hdfc, fd calculator chase, fd calculator wells fargo, fd calculator icici, fd calculator axis bank, fd calculator bandhan bank, fd calculator au finance, fd calculator kotak mahindra, fd calculator citibank, fd calculator capital one, fd calculator pnc bank',
     category: 'Bank Scheme',
     component: 'FixedDeposit'
@@ -212,8 +212,8 @@ const calculators = [
   {
     slug: 'ppf-calculator',
     title: 'PPF Calculator',
-    description: 'Calculate Public Provident Fund (PPF) returns. Tax-free investment with 15-year lock-in.',
-    keywords: 'ppf calculator, public provident fund, tax saving, 80c, retirement',
+    description: 'Plan your retirement with the Public Provident Fund (PPF) calculator. Estimate tax-free returns and maturity value for India’s safest government-backed EEE investment scheme.',
+    keywords: 'ppf calculator, public provident fund, tax saving, 80c, retirement, ppf interest rate, ppf extension',
     category: 'Bank Scheme',
     component: 'PPFCalculator'
   },

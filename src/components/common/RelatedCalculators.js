@@ -15,6 +15,9 @@ const MANUAL_RELATIONS = {
 
 
 const RelatedCalculators = ({ currentSlug, category }) => {
+    const [discovery, setDiscovery] = React.useState([]);
+    const [mounted, setMounted] = React.useState(false);
+
     // 1. Get calculators in the same category
     const sameCategory = manifest.filter(
         (m) => m.category === category && m.slug !== currentSlug
@@ -32,14 +35,14 @@ const RelatedCalculators = ({ currentSlug, category }) => {
     );
     const recommendations = uniqueRel.slice(0, 4);
 
-    // 4. Randomized Discovery (Discover More)
-    // Filter out current and already recommended ones
-    const excludedSlugs = new Set([currentSlug, ...recommendations.map(r => r.slug)]);
-    const pool = manifest.filter(m => !excludedSlugs.has(m.slug));
-
-    // Shuffle and pick 10
-    const shuffled = [...pool].sort(() => 0.5 - Math.random());
-    const discovery = shuffled.slice(0, 10);
+    // 4. Randomized Discovery (Discover More) - Move to useEffect for hydration
+    React.useEffect(() => {
+        setMounted(true);
+        const excludedSlugs = new Set([currentSlug, ...recommendations.map(r => r.slug)]);
+        const pool = manifest.filter(m => !excludedSlugs.has(m.slug));
+        const shuffled = [...pool].sort(() => 0.5 - Math.random());
+        setDiscovery(shuffled.slice(0, 10));
+    }, [currentSlug, recommendations.length]); // Re-run if slug or core recommendations change
 
     return (
         <div className="space-y-6">
@@ -77,49 +80,51 @@ const RelatedCalculators = ({ currentSlug, category }) => {
             )}
 
             {/* DISCOVER MORE (Randomized) */}
-            <div className="bg-white rounded-2xl shadow-sm border border-indigo-100 overflow-hidden ring-1 ring-indigo-50/50">
-                <Link
-                    href="/calculators"
-                    className="px-5 py-4 border-b border-indigo-50 bg-indigo-50/40 flex justify-between items-center group/header hover:bg-indigo-100/40 transition-colors"
-                >
-                    <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
-                        <h3 className="text-[12px] font-extrabold text-indigo-700 uppercase tracking-widest leading-none transition-colors">
-                            Discover More
-                        </h3>
-                    </div>
-                    <span className="text-[10px] text-indigo-600 font-black px-2.5 py-1 bg-indigo-100/50 rounded-full group-hover/header:bg-indigo-600 group-hover/header:text-white transition-all shadow-sm">
-                        Surprise Me!
-                    </span>
-                </Link>
-                <div className="divide-y divide-gray-50">
-                    {discovery.map((calc) => (
-                        <Link
-                            key={calc.slug}
-                            href={`/calculators/${calc.slug}`}
-                            className="block px-5 py-3.5 hover:bg-indigo-50/30 transition-all group"
-                        >
-                            <div className="flex flex-col gap-0.5">
-                                <h4 className="text-[13px] font-bold text-gray-700 group-hover:text-indigo-600 transition-colors">
-                                    {calc.title}
-                                </h4>
-                                <span className="text-[9px] text-gray-400 uppercase tracking-wider font-bold">
-                                    {calc.category}
-                                </span>
-                            </div>
-                        </Link>
-                    ))}
-                </div>
-                <div className="bg-gray-50/50 px-5 py-3 border-t border-gray-50">
+            {mounted && (
+                <div className="bg-white rounded-2xl shadow-sm border border-indigo-100 overflow-hidden ring-1 ring-indigo-50/50">
                     <Link
                         href="/calculators"
-                        className="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center justify-between group"
+                        className="px-5 py-4 border-b border-indigo-50 bg-indigo-50/40 flex justify-between items-center group/header hover:bg-indigo-100/40 transition-colors"
                     >
-                        Browser Catalog
-                        <span className="transform transition-transform group-hover:translate-x-1">→</span>
+                        <div className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+                            <h3 className="text-[12px] font-extrabold text-indigo-700 uppercase tracking-widest leading-none transition-colors">
+                                Discover More
+                            </h3>
+                        </div>
+                        <span className="text-[10px] text-indigo-600 font-black px-2.5 py-1 bg-indigo-100/50 rounded-full group-hover/header:bg-indigo-600 group-hover/header:text-white transition-all shadow-sm">
+                            Surprise Me!
+                        </span>
                     </Link>
+                    <div className="divide-y divide-gray-50">
+                        {discovery.map((calc) => (
+                            <Link
+                                key={calc.slug}
+                                href={`/calculators/${calc.slug}`}
+                                className="block px-5 py-3.5 hover:bg-indigo-50/30 transition-all group"
+                            >
+                                <div className="flex flex-col gap-0.5">
+                                    <h4 className="text-[13px] font-bold text-gray-700 group-hover:text-indigo-600 transition-colors">
+                                        {calc.title}
+                                    </h4>
+                                    <span className="text-[9px] text-gray-400 uppercase tracking-wider font-bold">
+                                        {calc.category}
+                                    </span>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                    <div className="bg-gray-50/50 px-5 py-3 border-t border-gray-50">
+                        <Link
+                            href="/calculators"
+                            className="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center justify-between group"
+                        >
+                            Browser Catalog
+                            <span className="transform transition-transform group-hover:translate-x-1">→</span>
+                        </Link>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };

@@ -11,6 +11,7 @@ import SocialShare from '../components/common/SocialShare';
 // Explicit dynamic imports so bundlers can split chunks
 import { lazyLoad } from '../utils/lazyLoad';
 import ErrorBoundary from '../components/common/ErrorBoundary';
+import Breadcrumbs from '../components/common/Breadcrumbs';
 
 const calculatorCache = {};
 
@@ -124,9 +125,16 @@ export default function CalculatorPage() {
               <span className="mr-2">←</span> Back
             </button>
 
+            <Breadcrumbs
+              items={[
+                { label: 'Calculators', href: '/calculators' },
+                { label: meta.title }
+              ]}
+            />
             <h1 id="main-title" className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight mb-2">
               {meta.title}
             </h1>
+
             <p className="text-gray-500 text-base mb-8 max-w-3xl leading-relaxed">
               {meta.description}
             </p>

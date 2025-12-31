@@ -15,11 +15,16 @@ import { CalculationModeToggle, DateRangeInputs } from '../common/CommonCalculat
 
 const CAGRCalculator = ({ currency }) => {
   const {
-    lumpSum: beginningValue, setLumpSum: setBeginningValue,
-    calculationMode, setCalculationMode,
-    startDate, setStartDate,
-    endDate, setEndDate,
-    scheduleStartDate, setScheduleStartDate
+    lumpSum: beginningValue,
+    setLumpSum: setBeginningValue,
+    calculationMode,
+    setCalculationMode,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    scheduleStartDate,
+    setScheduleStartDate
   } = useCalculatorState({
     lumpSum: 100000,
     years: 5
@@ -202,7 +207,7 @@ const CAGRCalculator = ({ currency }) => {
           />
         </div>
       }
-      details={calculatorDetails.cagr_calculator.render()}
+      details={calculatorDetails['cagr-calculator'].render()}
     />
   );
 };

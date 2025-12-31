@@ -9,6 +9,7 @@ import { FinancialCompoundingBarChart, FinancialInvestmentPieChart } from '../co
 import CollapsibleInvestmentTable from '../common/CollapsibleInvestmentTable';
 import UnifiedSummary from '../common/UnifiedSummary';
 import CalculatorLayout from '../common/CalculatorLayout';
+import { calculatorDetails } from '../../data/calculatorDetails';
 import { MAX_SIP } from '../../utils/constants';
 
 export default function RecurringDeposit({ currency }) {
@@ -187,6 +188,7 @@ export default function RecurringDeposit({ currency }) {
                 </div>
             }
             pieChart={pieChart}
+            details={calculatorDetails['recurring-deposit'].render()}
             table={
                 <div className="mt-8">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">

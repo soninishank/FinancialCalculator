@@ -252,11 +252,7 @@ export default function SWPCalculator({ currency = 'INR' }) {
           />
         </div>
       }
-      details={
-        <div className="mt-12">
-          {calculatorDetails.swp.render()}
-        </div>
-      }
+      details={calculatorDetails['swp-calculator'].render()}
     />
   );
 }
