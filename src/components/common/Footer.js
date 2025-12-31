@@ -50,6 +50,7 @@ const Footer = () => {
                     <p>© {new Date().getFullYear()} Hashmatic. All rights reserved.</p>
                     <div className="flex gap-6">
                         <Link href="/calculators" className="hover:text-teal-600 transition-colors">All Calculators</Link>
+                        <Link href="/ipo" className="hover:text-teal-600 transition-colors">Live IPO Tracker</Link>
                         <a href="https://github.com/soninishank" target="_blank" rel="noopener noreferrer" className="hover:text-teal-600 transition-colors">Github</a>
                     </div>
                 </div>

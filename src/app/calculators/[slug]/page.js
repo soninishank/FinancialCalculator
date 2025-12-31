@@ -15,14 +15,14 @@ export async function generateMetadata({ params }) {
     const defaultImage = `${baseUrl}/logo192.png`; // Fallback image
 
     return {
-        title: `${meta.title} - Hashmatic`,
+        title: meta.title,
         description: meta.description,
         keywords: meta.keywords,
         alternates: {
             canonical: pageUrl,
         },
         openGraph: {
-            title: `${meta.title} | Hashmatic Financial Tools`,
+            title: `${meta.title} | Financial Tools`,
             description: meta.description,
             url: pageUrl,
             siteName: 'Hashmatic',
@@ -39,7 +39,7 @@ export async function generateMetadata({ params }) {
         },
         twitter: {
             card: 'summary',
-            title: `${meta.title} | Hashmatic`,
+            title: meta.title,
             description: meta.description,
             images: [defaultImage],
         },
@@ -122,6 +122,9 @@ export default async function Page({ params }) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
             />
+            <div className="sr-only">
+                <h1>{meta.title} | Financial Calculator</h1>
+            </div>
             <CalculatorPage />
         </>
     );

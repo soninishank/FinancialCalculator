@@ -1,8 +1,9 @@
 import { Suspense } from 'react';
 import CalculatorsList from '../../pages/CalculatorsList';
+import manifest from '../../utils/calculatorsManifest';
 
 export const metadata = {
-    title: 'Free Financial Calculators (SIP, EMI, Loan) - Hashmatic',
+    title: 'Financial Calculators Catalog',
     description: "Take control of your finances with Hashmatic's free, accurate online calculators. Instantly calculate SIP returns, Loan EMIs, and Retirement goals. Start planning your future today!",
     keywords: ['calculator list', 'financial tools', 'investment calculators'],
     alternates: {
@@ -25,7 +26,7 @@ export const metadata = {
     },
     twitter: {
         card: 'summary',
-        title: "All Calculators | Hashmatic",
+        title: "Financial Calculators Catalog",
         description: "Plan your future with Hashmatic's free online tools.",
         images: ['https://www.hashmatic.in/logo192.png'],
     },
@@ -69,6 +70,12 @@ export default async function Page({ searchParams }) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
             />
+            <div className="max-w-6xl mx-auto px-6 py-4">
+                <h1 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight mb-2">
+                    Financial <span className="text-teal-600">Calculators</span>
+                </h1>
+                <p className="text-gray-500 text-lg">Browse our complete list of free investment and loan tools.</p>
+            </div>
             <CalculatorsList initialFiltered={initialFiltered} initialQ={q} />
         </>
     );

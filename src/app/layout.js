@@ -5,7 +5,10 @@ import { Providers } from './providers';
 import Script from 'next/script';
 
 export const metadata = {
-    title: 'Hashmatic - Free Online Financial Calculators (SIP, EMI, Loan)',
+    title: {
+        template: '%s | Hashmatic',
+        default: 'Hashmatic - Free Online Financial Calculators (SIP, EMI, Loan)',
+    },
     description: "Take control of your finances with Hashmatic's free, accurate online calculators. Instantly calculate SIP returns, Loan EMIs, and Retirement goals. Start planning your future today!",
     manifest: '/manifest.json',
     metadataBase: new URL('https://www.hashmatic.in'),

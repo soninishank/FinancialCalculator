@@ -1,11 +1,11 @@
 import Link from "next/link";
 
 export const metadata = {
-    title: "Financial Calculators & Planning Tools - Hashmatic",
+    title: "Financial Calculators & Planning Tools",
     description: "Take control of your finances with Hashmatic's free, accurate online calculators. Instantly calculate SIP returns, Loan EMIs, and Retirement goals. Start planning your future today!",
     keywords: ['financial calculator', 'sip calculator', 'loan emi calculator', 'cagr calculator', 'hashmatic'],
     openGraph: {
-        title: "Smart Financial Planning Tools | Hashmatic",
+        title: "Smart Financial Planning Tools",
         description: "Free, accurate calculators for SIP, EMI, Retirement, and more. Plan your financial journey today.",
         url: 'https://www.hashmatic.in',
         siteName: 'Hashmatic',
@@ -21,7 +21,7 @@ export const metadata = {
     },
     twitter: {
         card: 'summary',
-        title: "Financial Planning Tools | Hashmatic",
+        title: "Financial Planning Tools",
         description: "Master your investments with professional-grade calculators.",
         images: ['https://www.hashmatic.in/logo192.png'],
     },

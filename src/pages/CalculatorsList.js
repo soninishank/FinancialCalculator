@@ -16,8 +16,7 @@ export default function CalculatorsList({ initialFiltered, initialQ }) {
   // However, useCalculatorSearch(q) where q is initialQ should already return the same list.
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">All Calculators</h1>
+    <div className="p-6 pt-0 max-w-6xl mx-auto">
 
       <section className="mb-6">
         <div className="bg-white rounded-xl p-6 shadow-sm">
