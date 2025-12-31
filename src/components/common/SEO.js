@@ -51,9 +51,16 @@ export default function SEO({ title, description, keywords, schema, path, image 
             link.setAttribute('rel', 'canonical');
             document.head.appendChild(link);
         }
-        link.setAttribute('href', currentUrl);
 
-    }, [fullTitle, description, keywords, currentUrl, image]);
+        // Construct canonical URL: favors explicit path, falls back to window.location
+        const domain = 'https://www.hashmatic.in';
+        const canonicalUrl = path
+            ? `${domain}${path === '/' ? '' : path}`
+            : currentUrl;
+
+        link.setAttribute('href', canonicalUrl);
+
+    }, [fullTitle, description, keywords, currentUrl, image, path]);
 
     // Inject JSON-LD Schema
     useEffect(() => {

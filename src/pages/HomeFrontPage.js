@@ -10,22 +10,20 @@ export default function HomeFrontPage() {
 
   const schema = {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "WebApplication",
     "name": "Hashmatic",
-    "url": "https://hashmatic.in",
-    "logo": "https://hashmatic.in/logo512.png",
-    "sameAs": [
-      // Add social profiles here if available
-    ]
+    "url": "https://www.hashmatic.in",
+    "applicationCategory": "FinanceApplication"
   };
 
   return (
     <>
       <SEO
         title="Financial Calculators & Planning Tools"
-        description="Free financial calculators for SIP, Loans, EMI, CAGR and Retirement Planning. Plan your financial journey with Hashmatic."
+        description="Take control of your finances with Hashmatic's free, accurate online calculators. Instantly calculate SIP returns, Loan EMIs, and Retirement goals. Start planning your future today!"
         keywords={['financial calculator', 'sip calculator', 'loan emi calculator', 'cagr calculator', 'hashmatic']}
         schema={schema}
+        path="/"
       />
 
       {/* -------- HERO SECTION -------- */}

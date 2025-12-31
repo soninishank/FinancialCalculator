@@ -25,8 +25,8 @@ export default function CalculatorsList() {
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <SEO
-        title="All Calculators"
-        description="Browse our complete collection of free financial calculators including SIP, Loan EMI, CAGR, FIRE and more."
+        title="Free Financial Calculators (SIP, EMI, Loan)"
+        description="Take control of your finances with Hashmatic's free, accurate online calculators. Instantly calculate SIP returns, Loan EMIs, and Retirement goals. Start planning your future today!"
         keywords={['calculator list', 'financial tools', 'investment calculators']}
         path="/calculators"
       />
