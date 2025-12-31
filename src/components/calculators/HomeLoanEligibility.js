@@ -3,7 +3,7 @@ import React, { useMemo, useState } from "react";
 // --- IMPORTS ---
 import SummaryCards from "../common/SummaryCards";
 import { FinancialDoughnutChart, FinancialBarChart } from "../common/FinancialCharts";
-import ResultsTable from "../common/ResultsTable";
+import CollapsibleAmortizationTable from "../common/CollapsibleAmortizationTable";
 import InputWithSlider from "../common/InputWithSlider";
 import CalculatorLayout from "../common/CalculatorLayout";
 import { moneyFormat } from "../../utils/formatting";
@@ -51,6 +51,7 @@ export default function HomeLoanEligibility({ currency, setCurrency }) {
             for (let y = 1; y <= Number(years); y++) {
                 let yearlyInterest = 0;
                 let yearlyPrincipal = 0;
+                let openingBalance = balance;
 
                 for (let m = 1; m <= 12; m++) {
                     const interest = balance * R;
@@ -63,10 +64,12 @@ export default function HomeLoanEligibility({ currency, setCurrency }) {
 
                 yearlyRows.push({
                     year: y,
+                    openingBalance: openingBalance,
                     principalPaid: yearlyPrincipal,
                     interestPaid: yearlyInterest,
                     totalPaid: yearlyPrincipal + yearlyInterest,
-                    remainingBalance: Math.max(0, balance)
+                    remainingBalance: Math.max(0, balance),
+                    closingBalance: Math.max(0, balance) // Alias for compatibility
                 });
             }
         }
@@ -266,24 +269,21 @@ export default function HomeLoanEligibility({ currency, setCurrency }) {
                 </div>
             }
             table={
-                <ResultsTable
-                    data={yearlyRows.map(r => ({
-                        year: r.year,
-                        principalPaid: r.principalPaid,
-                        interestPaid: r.interestPaid,
-                        totalInvested: r.totalPaid, // Mapped for table column
-                        growth: r.totalPaid, // Placeholder
-                        overallValue: r.remainingBalance // Mapped for Balance
-                    }))}
-                    currency={currency}
-                    customColumns={[
-                        { header: 'Year', accessor: 'year' },
-                        { header: 'Principal Paid', accessor: 'principalPaid' },
-                        { header: 'Interest Paid', accessor: 'interestPaid' },
-                        { header: 'Remaining Balance', accessor: 'overallValue' }
-                    ]}
-                    onExport={handleExport}
-                />
+                <div className="mt-8">
+                    <div className="flex justify-end mb-4">
+                        <button
+                            onClick={handleExport}
+                            className="text-xs font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-2"
+                        >
+                            Download PDF report
+                        </button>
+                    </div>
+                    <CollapsibleAmortizationTable
+                        yearlyData={yearlyRows}
+                        monthlyData={[]} // No monthly breakdown in this eligible calc
+                        currency={currency}
+                    />
+                </div>
             }
         />
     );

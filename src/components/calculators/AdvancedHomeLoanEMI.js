@@ -218,8 +218,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
         actualPropertyTaxYearly, actualHomeInsuranceYearly, actualMaintenanceMonthly,
         emiStepUp, prepaymentStepUp, rateChanges, showExpenses, actualLoanFees]);
 
-    const { summary, monthlyRows, yearlyRows, financialYearlyRows } = results;
-    const displayRows = viewMode === 'financial' ? financialYearlyRows : yearlyRows;
+    const { summary, monthlyRows, yearlyRows, financialYearlyRows } = results || {};
 
     // Derived Closing Date
     const closingDateDisplay = useMemo(() => {
@@ -236,17 +235,14 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
         return "-";
     }, [monthlyRows]);
 
+    // Safety check
+    if (!summary || !monthlyRows) return <div className="p-8 text-center text-red-500 font-bold">Error calculating loan data. Please check inputs.</div>;
+
+    const displayRows = viewMode === 'financial' ? financialYearlyRows : yearlyRows;
+
     return (
         <div className="animate-fade-in space-y-8">
-            <div className="flex flex-col md:flex-row items-center gap-6 mb-10">
-                <div className="bg-indigo-600 p-4 rounded-2xl shadow-xl shadow-indigo-200 animate-bounce">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                </div>
-                <div>
-                    <h2 className="text-4xl font-black text-slate-950 tracking-tight mb-2">Advanced Home Loan EMI</h2>
-                    <p className="text-slate-900 font-bold text-lg">Master your property investment with part-payments, taxes, and smart interest analysis.</p>
-                </div>
-            </div>
+
 
             {/* SECTION 1: LOAN DETAILS */}
             <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-md">
@@ -842,158 +838,98 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
             {/* SECTION 5: SUMMARY & CHARTS */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Summary Cards */}
-                <div className="md:col-span-1 space-y-6 lg:contents">
+                <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6 content-start">
                     {/* 1. Initial Payment (Upfront) */}
-                    <div className="bg-white p-6 rounded-2xl border-l-8 border-slate-700 shadow-xl ring-1 ring-slate-100">
-                        <p className="text-xs font-black text-slate-900 uppercase tracking-tighter mb-1">Initial Payment (DP + Fees)</p>
-                        <p className="text-2xl font-black text-slate-800 leading-none">
-                            {moneyFormat(Math.round(downPaymentAmount + actualLoanFees + (showExpenses ? actualOneTimeExpenses : 0)), currency)}
+                    <div className="bg-white p-6 rounded-2xl border-l-4 border-slate-700 shadow-xl ring-1 ring-slate-100">
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Initial Payment (DP + Fees)</p>
+                        <p className="text-2xl font-black text-slate-800 leading-none truncate" title={moneyFormat(Math.round(downPaymentAmount + actualLoanFees + (showExpenses ? actualOneTimeExpenses : 0)), currency)}>
+                            {moneyFormat(Math.round(downPaymentAmount + actualLoanFees + (showExpenses ? actualOneTimeExpenses : 0)), currency, true)}
                         </p>
                     </div>
 
                     {/* 2. Regular Monthly EMI (Recurring Base) */}
-                    <div className="bg-white p-6 rounded-2xl border-l-8 border-indigo-600 shadow-xl ring-1 ring-indigo-50">
-                        <p className="text-xs font-black text-slate-900 uppercase tracking-tighter mb-1">Regular Monthly EMI</p>
-                        <p className="text-3xl font-black text-indigo-700 leading-none">{moneyFormat(Math.round(summary.baseEMI), currency)}</p>
+                    <div className="bg-white p-6 rounded-2xl border-l-4 border-indigo-600 shadow-xl ring-1 ring-indigo-50">
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Regular Monthly EMI</p>
+                        <p className="text-2xl font-black text-indigo-700 leading-none truncate" title={moneyFormat(Math.round(summary.baseEMI), currency)}>{moneyFormat(Math.round(summary.baseEMI), currency, true)}</p>
                     </div>
 
                     {/* 3. Monthly Breakdown (Recurring Detail) */}
-                    <div className="bg-white p-6 rounded-xl border-l-4 border-emerald-500 shadow-sm relative overflow-hidden">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className="text-xs font-black text-slate-900 uppercase">Monthly EMI Breakdown</p>
-                                <p className="text-2xl font-black text-emerald-700 mt-1">
-                                    {moneyFormat(Math.round(summary.baseEMI + monthlyPrepayment + (showExpenses ? (actualPropertyTaxYearly / 12 + actualHomeInsuranceYearly / 12 + actualMaintenanceMonthly) : 0)), currency)}
-                                </p>
-                            </div>
-                            <div className="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-1 rounded font-bold border border-emerald-100 uppercase tracking-wider">Total Monthly Payment</div>
+                    <div className="bg-white p-6 rounded-2xl border-l-4 border-emerald-500 shadow-sm relative overflow-hidden">
+                        <div className="flex flex-col">
+                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Total Monthly Payment</p>
+                            <p className="text-2xl font-black text-emerald-700 leading-none truncate mb-4" title={moneyFormat(Math.round(summary.baseEMI + monthlyPrepayment + (showExpenses ? (actualPropertyTaxYearly / 12 + actualHomeInsuranceYearly / 12 + actualMaintenanceMonthly) : 0)), currency)}>
+                                {moneyFormat(Math.round(summary.baseEMI + monthlyPrepayment + (showExpenses ? (actualPropertyTaxYearly / 12 + actualHomeInsuranceYearly / 12 + actualMaintenanceMonthly) : 0)), currency, true)}
+                            </p>
                         </div>
 
                         {/* Detailed Breakdown */}
-                        <div className="mt-4 pt-4 border-t border-emerald-50 space-y-2">
-                            <div className="flex justify-between items-center text-[11px]">
+                        <div className="pt-3 border-t border-emerald-50 space-y-1.5">
+                            <div className="flex justify-between items-center text-[10px]">
                                 <span className="text-gray-500 font-medium">Principal & Interest (EMI)</span>
                                 <span className="font-bold text-gray-700">{moneyFormat(Math.round(summary.baseEMI), currency)}</span>
                             </div>
-                            <div className="flex justify-between items-center text-[11px]">
+                            <div className="flex justify-between items-center text-[10px]">
                                 <span className="text-gray-500 font-medium">Monthly Extra Payment</span>
                                 <span className="font-bold text-emerald-600">{moneyFormat(Math.round(monthlyPrepayment), currency)}</span>
                             </div>
-                            <div className="flex justify-between items-center text-[11px]">
-                                <span className="text-slate-950 font-bold">Property Taxes</span>
-                                <span className="font-black text-slate-900">{moneyFormat(Math.round(showExpenses ? actualPropertyTaxYearly / 12 : 0), currency)}</span>
+                            <div className="flex justify-between items-center text-[10px]">
+                                <span className="text-gray-500 font-medium">Property Taxes</span>
+                                <span className="font-bold text-slate-700">{moneyFormat(Math.round(showExpenses ? actualPropertyTaxYearly / 12 : 0), currency)}</span>
                             </div>
-                            <div className="flex justify-between items-center text-[11px]">
-                                <span className="text-slate-950 font-bold">Home Insurance</span>
-                                <span className="font-black text-slate-900">{moneyFormat(Math.round(showExpenses ? actualHomeInsuranceYearly / 12 : 0), currency)}</span>
+                            <div className="flex justify-between items-center text-[10px]">
+                                <span className="text-gray-500 font-medium">Home Insurance</span>
+                                <span className="font-bold text-slate-700">{moneyFormat(Math.round(showExpenses ? actualHomeInsuranceYearly / 12 : 0), currency)}</span>
                             </div>
-                            <div className="flex justify-between items-center text-[11px]">
-                                <span className="text-slate-950 font-bold">Maintenance Charges</span>
-                                <span className="font-black text-slate-900">{moneyFormat(Math.round(showExpenses ? actualMaintenanceMonthly : 0), currency)}</span>
+                            <div className="flex justify-between items-center text-[10px]">
+                                <span className="text-gray-500 font-medium">Maintenance Charges</span>
+                                <span className="font-bold text-slate-700">{moneyFormat(Math.round(showExpenses ? actualMaintenanceMonthly : 0), currency)}</span>
                             </div>
                         </div>
                     </div>
 
                     {/* 4. Extra Part-Payments (Strategy) */}
-                    <div className="bg-white p-6 rounded-2xl border-l-8 border-emerald-600 shadow-xl ring-1 ring-emerald-50">
-                        <p className="text-sm font-black text-slate-900 uppercase tracking-tighter mb-1">Extra Part-Payments</p>
-                        <p className="text-3xl font-black text-emerald-700 leading-none">{moneyFormat(Math.round(summary.totalPrepayments), currency)}</p>
+                    <div className="bg-white p-6 rounded-2xl border-l-4 border-emerald-600 shadow-xl ring-1 ring-emerald-50">
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Extra Part-Payments</p>
+                        <p className="text-2xl font-black text-emerald-700 leading-none truncate" title={moneyFormat(Math.round(summary.totalPrepayments), currency)}>{moneyFormat(Math.round(summary.totalPrepayments), currency, true)}</p>
                     </div>
 
                     {/* 5. Effective Tenure (Outcome Time) */}
-                    <div className="bg-white p-6 rounded-2xl border-l-8 border-indigo-600 shadow-xl ring-1 ring-indigo-50 flex justify-between items-center">
+                    <div className="bg-white p-6 rounded-2xl border-l-4 border-indigo-600 shadow-xl ring-1 ring-indigo-50 flex justify-between items-center">
                         <div>
-                            <p className="text-sm font-black text-slate-900 uppercase tracking-tighter mb-1">Effective Tenure</p>
-                            <p className="text-3xl font-black text-indigo-700 leading-none">
-                                {summary.actualTenureYears.toFixed(1)} <span className="text-sm">Years</span>
+                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Effective Tenure</p>
+                            <p className="text-2xl font-black text-indigo-700 leading-none">
+                                {summary.actualTenureYears.toFixed(1)} <span className="text-sm text-indigo-400 font-bold">Years</span>
                             </p>
                         </div>
                         <div className="text-right border-l-2 border-slate-100 pl-6">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Original Plan</p>
-                            <p className="text-base font-black text-slate-900 leading-none">{tenureYears} <span className="text-[10px]">Years</span></p>
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Original</p>
+                            <p className="text-sm font-black text-slate-700 leading-none">{tenureYears} <span className="text-[9px]">Years</span></p>
                         </div>
                     </div>
 
                     {/* 6. Total Interest (Outcome Cost) */}
-                    <div className="bg-white p-6 rounded-2xl border-l-8 border-amber-500 shadow-xl ring-1 ring-amber-50">
-                        <p className="text-sm font-black text-slate-900 uppercase tracking-tighter mb-1">Total Interest Paid</p>
-                        <p className="text-2xl font-bold text-amber-700 mt-1">{moneyFormat(Math.round(summary.totalInterest), currency)}</p>
-                        {summary.savedInterest > 0 && (
-                            <p className="text-xs font-bold text-green-600 mt-2 bg-green-50 inline-block px-2 py-1 rounded">
-                                Saved {moneyFormat(Math.round(summary.savedInterest), currency)}
-                            </p>
-                        )}
+                    <div className="bg-white p-6 rounded-2xl border-l-4 border-amber-500 shadow-xl ring-1 ring-amber-50">
+                        <div className="flex justify-between items-start mb-1">
+                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Total Interest Paid</p>
+                            {summary.savedInterest > 0 && (
+                                <span className="text-[9px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded border border-green-100">
+                                    Saved {moneyFormat(Math.round(summary.savedInterest), currency, true)}
+                                </span>
+                            )}
+                        </div>
+                        <p className="text-2xl font-black text-amber-700 leading-none truncate" title={moneyFormat(Math.round(summary.totalInterest), currency)}>{moneyFormat(Math.round(summary.totalInterest), currency, true)}</p>
                     </div>
 
                     {/* 7. Loan End Date */}
-                    <div className="bg-white p-6 rounded-2xl border-l-8 border-cyan-500 shadow-xl ring-1 ring-cyan-50">
-                        <p className="text-sm font-black text-slate-900 uppercase tracking-tighter mb-1">Loan Ends In</p>
+                    <div className="bg-white p-6 rounded-2xl border-l-4 border-cyan-500 shadow-xl ring-1 ring-cyan-50">
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Loan Ends In</p>
                         <p className="text-2xl font-black text-cyan-700 leading-none">
                             {closingDateDisplay}
                         </p>
                     </div>
                 </div>
 
-                {/* Comparison Summary (Only if enabled) */}
-                {isComparisonMode && resultsCompare && (
-                    <div className="md:col-span-3 bg-indigo-900 text-white p-6 rounded-xl shadow-lg">
-                        <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 0 00-2-2H5a2 0 00-2 2v6a2 0 002 2h2a2 0 002-2zm0 0V9a2 2 0 012-2h2a2 0 012 2v10m-6 0a2 2 0 002 2h2a2 0 002-2m0 0V5a2 0 012-2h2a2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                            Strategy Comparison
-                        </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            {/* Current Strategy */}
-                            <div className="bg-indigo-800/50 p-4 rounded-lg border border-indigo-700">
-                                <p className="text-xs uppercase font-bold text-indigo-300 mb-2">Current: {prepaymentStrategy === 'reduce_tenure' ? 'Reduce Tenure' : 'Reduce EMI'}</p>
-                                <div className="space-y-2">
-                                    <div className="flex justify-between">
-                                        <span className="text-indigo-200 text-sm">Total Interest</span>
-                                        <span className="font-bold">{moneyFormat(Math.round(summary.totalInterest), currency)}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-indigo-200 text-sm">Total Amount</span>
-                                        <span className="font-bold">{moneyFormat(Math.round(summary.totalAmountPaid), currency)}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-indigo-200 text-sm">Tenure</span>
-                                        <span className="font-bold">{summary.actualTenureYears.toFixed(1)} Years</span>
-                                    </div>
-                                </div>
-                            </div>
 
-                            {/* Comparison Strategy */}
-                            <div className="bg-white/10 p-4 rounded-lg border border-white/10 relative overflow-hidden">
-                                <div className="absolute top-0 right-0 bg-yellow-500 text-indigo-900 text-[10px] font-bold px-2 py-0.5 rounded-bl-lg">ALTERNATIVE</div>
-                                <p className="text-xs uppercase font-bold text-yellow-300 mb-2">Option: {prepaymentStrategy === 'reduce_tenure' ? 'Reduce EMI' : 'Reduce Tenure'}</p>
-                                <div className="space-y-2">
-                                    <div className="flex justify-between">
-                                        <span className="text-indigo-100 text-sm">Total Interest</span>
-                                        <span className="font-bold">{moneyFormat(Math.round(resultsCompare.summary.totalInterest), currency)}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-indigo-100 text-sm">Total Amount</span>
-                                        <span className="font-bold">{moneyFormat(Math.round(resultsCompare.summary.totalAmountPaid), currency)}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-indigo-100 text-sm">Tenure</span>
-                                        <span className="font-bold">{resultsCompare.summary.actualTenureYears.toFixed(1)} Years</span>
-                                    </div>
-                                </div>
-
-                                <div className="mt-4 pt-3 border-t border-white/10 text-xs text-center">
-                                    {summary.totalInterest < resultsCompare.summary.totalInterest
-                                        ? <div className="bg-emerald-500/20 text-emerald-300 p-2 rounded-lg font-bold border border-emerald-500/30">
-                                            ✅ Current strategy is RECOMMENDED. It saves {moneyFormat(Math.round(resultsCompare.summary.totalInterest - summary.totalInterest), currency)} more interest!
-                                        </div>
-                                        : <div className="bg-yellow-500/20 text-yellow-300 p-2 rounded-lg font-bold border border-yellow-500/30">
-                                            💡 RECOMMENDED: Switch to {prepaymentStrategy === 'reduce_tenure' ? 'Reduce EMI' : 'Reduce Tenure'} to save {moneyFormat(Math.round(summary.totalInterest - resultsCompare.summary.totalInterest), currency)}!
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
 
                 {/* Doughnut Chart */}
                 <div className="md:col-span-2 bg-white p-8 rounded-3xl border-2 border-slate-100 shadow-xl transition-all hover:shadow-2xl">
@@ -1020,64 +956,125 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                         </div>
 
                         {/* Detailed Legend/Breakdown */}
-                        <div className="bg-slate-900 p-8 rounded-3xl border border-slate-800 shadow-2xl h-full flex flex-col justify-center">
-                            <h5 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-800 pb-3">ESTIMATED TOTAL BREAKDOWN</h5>
+                        <div className="h-full flex flex-col justify-center pl-4 lg:pl-8">
+                            <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-200 pb-3">ESTIMATED TOTAL BREAKDOWN</h5>
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center group">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-4 h-4 rounded-full bg-[#94a3b8] ring-4 ring-slate-800 shadow-lg"></div>
-                                        <span className="text-xs font-black text-slate-300 uppercase">Initial Payment (DP + Fees)</span>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-[#94a3b8] ring-2 ring-white shadow-sm"></div>
+                                        <span className="text-[10px] font-bold text-slate-500 uppercase">Initial Payment (DP + Fees)</span>
                                     </div>
-                                    <span className="text-sm font-black text-white">{moneyFormat(downPaymentAmount + actualLoanFees + (showExpenses ? actualOneTimeExpenses : 0), currency)}</span>
+                                    <span className="text-xs font-bold text-slate-900 text-right">{moneyFormat(downPaymentAmount + actualLoanFees + (showExpenses ? actualOneTimeExpenses : 0), currency, true)}</span>
                                 </div>
                                 <div className="flex justify-between items-center group">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-4 h-4 rounded-full bg-[#6366f1] ring-4 ring-slate-800 shadow-lg"></div>
-                                        <span className="text-xs font-black text-slate-300 uppercase tracking-wide">Principal Amount</span>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-[#6366f1] ring-2 ring-white shadow-sm"></div>
+                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Principal Amount</span>
                                     </div>
-                                    <span className="text-sm font-black text-white">{moneyFormat(finalLoanAmount, currency)}</span>
+                                    <span className="text-xs font-bold text-slate-900 text-right">{moneyFormat(finalLoanAmount, currency, true)}</span>
                                 </div>
                                 <div className="flex justify-between items-center group">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-4 h-4 rounded-full bg-[#2dd4bf] ring-4 ring-slate-800 shadow-lg"></div>
-                                        <span className="text-xs font-black text-slate-300 uppercase tracking-wide">Extra Part-Payments</span>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-[#2dd4bf] ring-2 ring-white shadow-sm"></div>
+                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Extra Part-Payments</span>
                                     </div>
                                     <div className="flex items-baseline gap-2">
-                                        <span className="text-sm font-black text-emerald-400">{moneyFormat(summary.totalPrepayments, currency)}</span>
+                                        <span className="text-xs font-bold text-emerald-600 text-right">{moneyFormat(summary.totalPrepayments, currency, true)}</span>
                                     </div>
                                 </div>
                                 <div className="flex justify-between items-center group">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-4 h-4 rounded-full bg-[#f59e0b] ring-4 ring-slate-800 shadow-lg"></div>
-                                        <span className="text-xs font-black text-slate-300 uppercase tracking-wide">Total Interest Paid</span>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-[#f59e0b] ring-2 ring-white shadow-sm"></div>
+                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Total Interest Paid</span>
                                     </div>
-                                    <span className="text-sm font-black text-amber-400">{moneyFormat(summary.totalInterest, currency)}</span>
+                                    <span className="text-xs font-bold text-amber-600 text-right">{moneyFormat(summary.totalInterest, currency, true)}</span>
                                 </div>
                                 <div className="flex justify-between items-center group">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-4 h-4 rounded-full bg-[#f97316] ring-4 ring-slate-800 shadow-lg"></div>
-                                        <span className="text-xs font-black text-slate-300 uppercase tracking-wide">Property Taxes</span>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-[#f97316] ring-2 ring-white shadow-sm"></div>
+                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Property Taxes</span>
                                     </div>
-                                    <span className="text-sm font-black text-orange-400">{moneyFormat(summary.totalTaxes, currency)}</span>
+                                    <span className="text-xs font-bold text-orange-600 text-right">{moneyFormat(summary.totalTaxes, currency)}</span>
                                 </div>
                                 <div className="flex justify-between items-center group">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-4 h-4 rounded-full bg-[#a855f7] ring-4 ring-slate-800 shadow-lg"></div>
-                                        <span className="text-xs font-black text-slate-300 uppercase tracking-wide">Home Insurance & Maintenance</span>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-[#a855f7] ring-2 ring-white shadow-sm"></div>
+                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Home Insurance</span>
                                     </div>
-                                    <span className="text-sm font-black text-purple-400">{moneyFormat(summary.totalInsurance + summary.totalMaintenance, currency)}</span>
+                                    <span className="text-xs font-bold text-purple-600 text-right">{moneyFormat(summary.totalInsurance + summary.totalMaintenance, currency)}</span>
                                 </div>
 
-                                <div className="pt-6 mt-4 border-t-2 border-dashed border-slate-700 flex justify-between items-center">
-                                    <span className="text-sm font-black text-slate-100 uppercase tracking-widest leading-tight">TOTAL PAYABLE :</span>
-                                    <span className="text-2xl font-black text-indigo-400 leading-none">
-                                        {moneyFormat(summary.totalCostOfOwnership + downPaymentAmount + (showExpenses ? actualOneTimeExpenses : 0), currency)}
+                                <div className="pt-6 mt-4 border-t-2 border-dashed border-slate-200 flex justify-between items-center">
+                                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-tight">TOTAL PAYABLE :</span>
+                                    <span className="text-xl font-bold text-indigo-600 leading-none text-right">
+                                        {moneyFormat(summary.totalCostOfOwnership + downPaymentAmount + (showExpenses ? actualOneTimeExpenses : 0), currency, true)}
                                     </span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                {/* Comparison Summary (Only if enabled) */}
+                {isComparisonMode && resultsCompare && (
+                    <div className="md:col-span-4 bg-indigo-900 text-white p-6 rounded-xl shadow-lg">
+                        <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 0 00-2-2H5a2 0 00-2 2v6a2 0 002 2h2a2 0 002-2zm0 0V9a2 2 0 012-2h2a2 0 012 2v10m-6 0a2 2 0 002 2h2a2 0 002-2m0 0V5a2 0 012-2h2a2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                            Strategy Comparison
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {/* Current Strategy */}
+                            <div className="bg-indigo-800/50 p-4 rounded-lg border border-indigo-700">
+                                <p className="text-xs uppercase font-bold text-indigo-300 mb-2">Current: {prepaymentStrategy === 'reduce_tenure' ? 'Reduce Tenure' : 'Reduce EMI'}</p>
+                                <div className="space-y-2">
+                                    <div className="flex justify-between">
+                                        <span className="text-indigo-200 text-sm">Total Interest</span>
+                                        <span className="font-bold">{moneyFormat(Math.round(summary.totalInterest), currency, true)}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-indigo-200 text-sm">Total Amount</span>
+                                        <span className="font-bold">{moneyFormat(Math.round(summary.totalAmountPaid), currency, true)}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-indigo-200 text-sm">Tenure</span>
+                                        <span className="font-bold">{summary.actualTenureYears.toFixed(1)} Years</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Comparison Strategy */}
+                            <div className="bg-white/10 p-4 rounded-lg border border-white/10 relative overflow-hidden">
+                                <div className="absolute top-0 right-0 bg-yellow-500 text-indigo-900 text-[10px] font-bold px-2 py-0.5 rounded-bl-lg">ALTERNATIVE</div>
+                                <p className="text-xs uppercase font-bold text-yellow-300 mb-2">Option: {prepaymentStrategy === 'reduce_tenure' ? 'Reduce EMI' : 'Reduce Tenure'}</p>
+                                <div className="space-y-2">
+                                    <div className="flex justify-between">
+                                        <span className="text-indigo-100 text-sm">Total Interest</span>
+                                        <span className="font-bold">{moneyFormat(Math.round(resultsCompare.summary.totalInterest), currency, true)}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-indigo-100 text-sm">Total Amount</span>
+                                        <span className="font-bold">{moneyFormat(Math.round(resultsCompare.summary.totalAmountPaid), currency, true)}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-indigo-100 text-sm">Tenure</span>
+                                        <span className="font-bold">{resultsCompare.summary.actualTenureYears.toFixed(1)} Years</span>
+                                    </div>
+                                </div>
+
+                                <div className="mt-4 pt-3 border-t border-white/10 text-xs text-center">
+                                    {summary.totalInterest < resultsCompare.summary.totalInterest
+                                        ? <div className="bg-emerald-500/20 text-emerald-300 p-2 rounded-lg font-bold border border-emerald-500/30">
+                                            ✅ Current strategy is RECOMMENDED. It saves {moneyFormat(Math.round(resultsCompare.summary.totalInterest - summary.totalInterest), currency, true)} more interest!
+                                        </div>
+                                        : <div className="bg-yellow-500/20 text-yellow-300 p-2 rounded-lg font-bold border border-yellow-500/30">
+                                            💡 RECOMMENDED: Switch to {prepaymentStrategy === 'reduce_tenure' ? 'Reduce EMI' : 'Reduce Tenure'} to save {moneyFormat(Math.round(summary.totalInterest - resultsCompare.summary.totalInterest), currency, true)}!
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* SECTION 5: SCHEDULE & PROJECTION */}

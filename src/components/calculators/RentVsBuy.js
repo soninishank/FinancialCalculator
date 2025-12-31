@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import CalculatorLayout from '../common/CalculatorLayout';
 import InputWithSlider from '../common/InputWithSlider';
+import MonthYearPicker from '../common/MonthYearPicker';
 import { computeRentVsBuyLedger } from '../../utils/finance';
 import { moneyFormat } from '../../utils/formatting';
 import { downloadPDF } from '../../utils/export';
 import { FinancialLineChart } from '../common/FinancialCharts';
-import ResultsTable from '../common/ResultsTable';
+import CollapsibleInvestmentTable from '../common/CollapsibleInvestmentTable';
 import {
     DEFAULT_LOAN_RATE,
     DEFAULT_INFLATION,
@@ -35,31 +36,43 @@ export default function RentVsBuy({ currency }) {
     const [monthlyRent, setMonthlyRent] = useState(DEFAULT_RENT);
     const [rentInflation, setRentInflation] = useState(DEFAULT_INFLATION);
     const [investmentReturn, setInvestmentReturn] = useState(DEFAULT_RATE);
+    const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 7));
 
-    const ledger = useMemo(() => computeRentVsBuyLedger({
-        homePrice,
-        downPayment,
-        loanRate,
-        loanTenureYears: loanTenure,
-        monthlyRent,
-        investReturnRate: investmentReturn,
-        propertyAppreciationRate: appreciation,
-        rentInflationRate: rentInflation
-    }).map(r => ({
-        ...r,
-        diff: Math.abs(r.netWorthBuy - r.netWorthRent)
-    })), [homePrice, downPayment, loanRate, loanTenure, appreciation, monthlyRent, rentInflation, investmentReturn]);
+    const { yearlyLedger, monthlyLedger } = useMemo(() => {
+        const result = computeRentVsBuyLedger({
+            homePrice,
+            downPayment,
+            loanRate,
+            loanTenureYears: loanTenure,
+            monthlyRent,
+            investReturnRate: investmentReturn,
+            propertyAppreciationRate: appreciation,
+            rentInflationRate: rentInflation,
+            startDate // Pass start date
+        });
 
-    const finalYear = ledger[ledger.length - 1];
-    const isBuyBetter = finalYear.netWorthBuy > finalYear.netWorthRent;
-    const difference = Math.abs(finalYear.netWorthBuy - finalYear.netWorthRent);
+        // Post-process for UI needs (diff calculation for diff column)
+        const activeYearly = result.yearlyLedger.map(r => ({
+            ...r,
+            diff: Math.abs(r.netWorthBuy - r.netWorthRent)
+        }));
+
+        return {
+            yearlyLedger: activeYearly,
+            monthlyLedger: result.monthlyLedger
+        };
+    }, [homePrice, downPayment, loanRate, loanTenure, appreciation, monthlyRent, rentInflation, investmentReturn, startDate]);
+
+    const finalYear = yearlyLedger[yearlyLedger.length - 1]; // Use new yearlyLedger name
+    const isBuyBetter = finalYear ? finalYear.netWorthBuy > finalYear.netWorthRent : false;
+    const difference = finalYear ? Math.abs(finalYear.netWorthBuy - finalYear.netWorthRent) : 0;
 
     const chartData = {
-        labels: ledger.map(r => `Year ${r.year}`),
+        labels: yearlyLedger.map(r => `Year ${r.year}`),
         datasets: [
             {
                 label: 'Net Worth (Buying)',
-                data: ledger.map(r => r.netWorthBuy),
+                data: yearlyLedger.map(r => r.netWorthBuy),
                 borderColor: CHART_COLORS.SUCCESS,
                 backgroundColor: 'rgba(16, 185, 129, 0.1)',
                 fill: true,
@@ -67,7 +80,7 @@ export default function RentVsBuy({ currency }) {
             },
             {
                 label: 'Net Worth (Renting + Investing)',
-                data: ledger.map(r => r.netWorthRent),
+                data: yearlyLedger.map(r => r.netWorthRent),
                 borderColor: CHART_COLORS.SECONDARY,
                 backgroundColor: 'rgba(99, 102, 241, 0.1)',
                 fill: true,
@@ -97,6 +110,13 @@ export default function RentVsBuy({ currency }) {
         <>
             <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm mb-6">
                 <h4 className="text-teal-700 font-bold mb-4">🏠 Buying Scenario</h4>
+                <div className="mb-6">
+                    <MonthYearPicker
+                        label="Start Month & Year"
+                        value={startDate}
+                        onChange={setStartDate}
+                    />
+                </div>
                 <InputWithSlider
                     label="Property Price"
                     value={homePrice}
@@ -169,13 +189,13 @@ export default function RentVsBuy({ currency }) {
                         {isBuyBetter ? "🏡 Buying is Financially Better" : "📈 Renting & Investing is Better"}
                     </h3>
                     <p className="text-gray-600 mb-4">
-                        After <span className="font-bold">{ledger.length} years</span>, {isBuyBetter ? 'Buying' : 'Renting'} leaves you richer by:
+                        After <span className="font-bold">{yearlyLedger.length} years</span>, {isBuyBetter ? 'Buying' : 'Renting'} leaves you richer by:
                     </p>
                     <div className={`text-3xl font-extrabold ${isBuyBetter ? 'text-emerald-600' : 'text-indigo-600'}`}>
                         {moneyFormat(difference, currency)}
                     </div>
                     <p className="text-xs text-gray-500 mt-2">
-                        Buy Net Worth: {moneyFormat(finalYear.netWorthBuy, currency)} | Rent Net Worth: {moneyFormat(finalYear.netWorthRent, currency)}
+                        Buy Net Worth: {finalYear ? moneyFormat(finalYear.netWorthBuy, currency) : 0} | Rent Net Worth: {finalYear ? moneyFormat(finalYear.netWorthRent, currency) : 0}
                     </p>
                 </div>
             }
@@ -186,24 +206,43 @@ export default function RentVsBuy({ currency }) {
             }
             table={
                 <div className="mt-8">
-                    <ResultsTable
-                        data={ledger}
-                        columns={[
-                            { key: 'year', label: 'Year', align: 'left' },
-                            { key: 'netWorthBuy', label: 'Buy Net Worth', align: 'right', format: 'money', color: 'emerald' },
-                            { key: 'netWorthRent', label: 'Rent Net Worth', align: 'right', format: 'money', color: 'indigo' },
-                            { key: 'diff', label: 'Difference', align: 'right', format: 'money' }
-                        ]}
-                        onExport={() => {
-                            const rows = ledger.map(r => [
-                                `Year ${r.year}`,
-                                Math.round(r.netWorthBuy),
-                                Math.round(r.netWorthRent),
-                                Math.round(Math.abs(r.netWorthBuy - r.netWorthRent))
-                            ]);
-                            downloadPDF(rows, ['Year', 'Buy Net Worth', 'Rent Net Worth', 'Difference'], 'rent_vs_buy_comparison.pdf');
-                        }}
+                    <div className="flex justify-end mb-4">
+                        <button
+                            onClick={() => {
+                                const rows = yearlyLedger.map(r => [
+                                    `Year ${r.year}`,
+                                    Math.round(r.netWorthBuy),
+                                    Math.round(r.netWorthRent),
+                                    Math.round(Math.abs(r.netWorthBuy - r.netWorthRent))
+                                ]);
+                                downloadPDF(rows, ['Year', 'Buy Net Worth', 'Rent Net Worth', 'Difference'], 'rent_vs_buy_comparison.pdf');
+                            }}
+                            className="text-xs font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-2"
+                        >
+                            Download PDF report
+                        </button>
+                    </div>
+                    <CollapsibleInvestmentTable
+                        yearlyData={yearlyLedger.map(r => ({
+                            year: r.year,
+                            totalInvested: r.netWorthBuy, // Using 'totalInvested' slot for Buy Net Worth
+                            growth: r.netWorthRent,       // Using 'growth' slot for Rent Net Worth (Green)
+                            balance: r.diff,              // Using 'balance' slot for Difference (Blue)
+                        }))}
+                        monthlyData={monthlyLedger.map(r => ({
+                            year: r.year,
+                            month: r.month,
+                            monthName: r.monthName,
+                            invested: r.netWorthBuy,
+                            interest: r.netWorthRent,
+                            balance: r.diff
+                        }))}
                         currency={currency}
+                        labels={{
+                            invested: "Buy Net Worth",
+                            interest: "Rent Net Worth",
+                            balance: "Difference"
+                        }}
                     />
                 </div>
             }

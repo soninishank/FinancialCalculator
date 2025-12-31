@@ -1526,7 +1526,8 @@ export function computeRentVsBuyLedger({
   investReturnRate,
   propertyAppreciationRate,
   rentInflationRate,
-  maintenanceRate = 1 // % of property value per year
+  maintenanceRate = 1, // % of property value per year
+  startDate // "2024-01"
 }) {
   // 1. Setup Data
   const loanAmount = homePrice - downPayment;
@@ -1539,6 +1540,7 @@ export function computeRentVsBuyLedger({
   let loanBalance = loanAmount;
 
   const ledger = [];
+  const monthlyLedger = [];
   const maxYears = Math.max(loanTenureYears, 30); // Show up to 30 years to see long term impact
   const totalMonths = maxYears * 12;
 
@@ -1546,7 +1548,10 @@ export function computeRentVsBuyLedger({
   const monthlyLoanRate = loanRate / 12 / 100;
   const monthlyInvestRate = investReturnRate / 12 / 100;
 
-
+  const start = startDate ? new Date(startDate) : new Date();
+  const startMonth = start.getMonth(); // 0-based
+  const startYear = start.getFullYear();
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   for (let m = 1; m <= totalMonths; m++) {
 
@@ -1570,8 +1575,6 @@ export function computeRentVsBuyLedger({
         loanBalance -= principalComponent;
         if (loanBalance < 0) loanBalance = 0; // Floating point safety
       } else {
-        // Loan finished but potentially tiny balance left due to math? 
-        // Should be handled above.
         loanBalance = 0;
       }
     }
@@ -1591,25 +1594,30 @@ export function computeRentVsBuyLedger({
 
     // --- INVESTMENT (Monthly) ---
     // Surplus = Cost of Buying - Cost of Renting
-    // If Buy > Rent, we "save" less (actually negative savings relative to baseline? No.)
-    // Logic: We have X amount of cash flow.
-    // Scenario Buy: We spend EMI + Maint.
-    // Scenario Rent: We spend Rent. Remainder = (EMI + Maint) - Rent.
-    // NOTE: This assumes we *have* the cashflow to afford Buying.
-    // If Surplus is negative (Rent > Buy), we withdraw from corpus to pay Rent.
-
     const monthlySurplus = totalMonthlyBuyCost - totalMonthlyRentCost;
 
-    // 1. Apply Growth to existing corpus (Start of month or end? Monthly compounding usually applies to balance)
+    // 1. Apply Growth to existing corpus
     investmentCorpus = investmentCorpus * (1 + monthlyInvestRate);
 
     // 2. Add Surplus (End of month contribution)
     investmentCorpus += monthlySurplus;
 
+    // --- MONTHLY DATA RECORDING ---
+    const currentAbsMonth = startMonth + (m - 1);
+    const calendarYear = startYear + Math.floor(currentAbsMonth / 12);
+    const calendarMonth = currentAbsMonth % 12; // 0-11
+
+    monthlyLedger.push({
+      year: calendarYear,
+      month: calendarMonth + 1,
+      monthName: monthNames[calendarMonth],
+      netWorthBuy: currentPropertyVal - Math.max(0, loanBalance),
+      netWorthRent: investmentCorpus,
+      diff: Math.abs((currentPropertyVal - Math.max(0, loanBalance)) - investmentCorpus)
+    });
+
     // --- END OF YEAR UPDATES ---
     if (m % 12 === 0) {
-      const currentYear = m / 12;
-
       // 1. Appreciate Property
       // Value at END of year = Value * (1 + rate)
       currentPropertyVal = currentPropertyVal * (1 + propertyAppreciationRate / 100);
@@ -1617,9 +1625,9 @@ export function computeRentVsBuyLedger({
       // 2. Increase Rent for NEXT year
       const nextYearRent = currentMonthlyRent * (1 + rentInflationRate / 100);
 
-      // 3. Push to Ledger
+      // 3. Push to Ledger (Using the calendar year from the last month of the block)
       ledger.push({
-        year: currentYear,
+        year: calendarYear, // Actual calendar year
         propertyValue: currentPropertyVal,
         loanBalance: Math.max(0, loanBalance),
         homeEquity: currentPropertyVal - Math.max(0, loanBalance),
@@ -1634,14 +1642,10 @@ export function computeRentVsBuyLedger({
 
       // Update Rent for next loop
       currentMonthlyRent = nextYearRent;
-
-      // Reset annual trackers (not currently used in ledger output)
-      // yearlyBuyOutflow = 0;
-      // yearlyRentPaid = 0;
     }
   }
 
-  return ledger;
+  return { yearlyLedger: ledger, monthlyLedger };
 }
 
 /**
