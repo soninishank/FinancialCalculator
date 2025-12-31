@@ -35,7 +35,11 @@ export default async function Page({ searchParams }) {
         return (
             m.title.toLowerCase().includes(term) ||
             m.description.toLowerCase().includes(term) ||
-            (m.keywords && m.keywords.toLowerCase().includes(term))
+            (m.keywords && (
+                Array.isArray(m.keywords)
+                    ? m.keywords.some(k => k.toLowerCase().includes(term))
+                    : m.keywords.toLowerCase().includes(term)
+            ))
         );
     });
 
