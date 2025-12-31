@@ -17,7 +17,6 @@ export async function generateMetadata({ params }) {
     return {
         title: meta.title,
         description: meta.description,
-        keywords: meta.keywords,
         alternates: {
             canonical: pageUrl,
         },
@@ -26,22 +25,13 @@ export async function generateMetadata({ params }) {
             description: meta.description,
             url: pageUrl,
             siteName: 'Hashmatic',
-            images: [
-                {
-                    url: defaultImage,
-                    width: 192,
-                    height: 192,
-                    alt: meta.title,
-                },
-            ],
             locale: 'en_IN',
             type: 'website',
         },
         twitter: {
-            card: 'summary',
+            // card: 'summary_large_image', // Handled by Next.js automatically
             title: meta.title,
             description: meta.description,
-            images: [defaultImage],
         },
     };
 }

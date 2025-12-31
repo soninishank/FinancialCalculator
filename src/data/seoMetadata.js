@@ -179,6 +179,48 @@ export const calculatorFaqs = {
             q: "What are the tax benefits available under Home Loan repayment?",
             a: "You can save tax on two fronts: 1) Principal Repayment: Up to ₹1.5 Lakhs can be claimed under Section 80C (shared with PPF, LIC, etc.). 2) Interest Payment: Up to ₹2 Lakhs can be claimed as a deduction under Section 24(b) for a self-occupied property. If the property is let out, the entire interest can theoretically be set off against rental income, though there are caps on the 'loss from house property' you can carry forward."
         }
+    ],
+    'step-up-sip': [
+        {
+            q: "What is the ideal percentage for a Step-up SIP?",
+            a: "Most financial advisors recommend a 5% to 10% annual increase, as it usually aligns with average salary hikes and inflation."
+        },
+        {
+            q: "Can I cap my Step-up SIP after a few years?",
+            a: "Yes, you can specify a 'Maximum Amount' for your SIP. Once reached, the SIP continues at that fixed amount until the end of the tenure."
+        },
+        {
+            q: "Is Step-up better than a One-time Lumpsum?",
+            a: "Step-up SIP is generally better for salaried individuals as it builds discipline and reduces the risk of investing a large sum at a market peak."
+        }
+    ],
+    'recurring-deposit': [
+        {
+            q: "What is the minimum tenure for a Recurring Deposit?",
+            a: "Most banks offer RDs starting from 6 months up to 10 years."
+        },
+        {
+            q: "Is the interest earned on RD taxable?",
+            a: "Yes, interest earned on RD is fully taxable as per your income tax slab. Banks also deduct TDS (Tax Deducted at Source) if the interest exceeds ₹40,000 (₹50,000 for senior citizens) in a financial year."
+        },
+        {
+            q: "Can I withdraw money from RD before maturity?",
+            a: "Yes, premature withdrawal is possible, but banks usually charge a penalty of 0.5% to 1% on the applicable interest rate."
+        }
+    ],
+    'fixed-deposit': [
+        {
+            q: "What is the difference between Cumulative and Non-cumulative FD?",
+            a: "In a Cumulative FD, interest is reinvested and paid at maturity, benefiting from compounding. In a Non-cumulative FD, interest is paid out periodically (monthly/quarterly) to provide regular income."
+        },
+        {
+            q: "Is FD interest taxable?",
+            a: "Yes, interest earned on FD is added to your total income and taxed as per your tax slab. Banks also deduct TDS (typically 10%) if interest exceeds ₹40,000 in a year."
+        },
+        {
+            q: "What is a Tax-Saving FD?",
+            a: "It is a special type of FD with a mandatory 5-year lock-in period that offers tax deductions under Section 80C of the Income Tax Act."
+        }
     ]
 };
 

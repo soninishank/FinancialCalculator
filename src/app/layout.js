@@ -17,13 +17,11 @@ export const metadata = {
         url: 'https://www.hashmatic.in/',
         title: 'Hashmatic - Free Online Financial Calculators (SIP, EMI, Loan)',
         description: "Take control of your finances with Hashmatic's free, accurate online calculators. Instantly calculate SIP returns, Loan EMIs, and Retirement goals. Start planning your future today!",
-        images: ['https://placehold.co/1200x630/teal/white?text=Hashmatic'],
     },
     twitter: {
         card: 'summary_large_image',
         title: 'Hashmatic - Free Online Financial Calculators (SIP, EMI, Loan)',
         description: "Take control of your finances with Hashmatic's free, accurate online calculators. Instantly calculate SIP returns, Loan EMIs, and Retirement goals. Start planning your future today!",
-        images: ['https://placehold.co/1200x630/teal/white?text=Hashmatic'],
     },
 };
 
@@ -33,8 +31,7 @@ export default function RootLayout({ children }) {
     return (
         <html lang="en">
             <head>
-                <link rel="icon" href="/favicon.ico" />
-                <link rel="apple-touch-icon" href="/logo192.png" />
+                {/* Icons are handled automatically by file convention (src/app/icon.png) */}
             </head>
             <body>
                 <Script

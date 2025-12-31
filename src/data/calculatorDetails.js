@@ -1,4 +1,5 @@
 import React from 'react';
+import { calculatorFaqs } from './seoMetadata';
 
 export const calculatorDetails = {
     ruleOf72: {
@@ -541,28 +542,7 @@ export const calculatorDetails = {
                     <div className="mt-12 space-y-6">
                         <h3 className="text-xl font-bold text-gray-800 mb-6">Frequently Asked Questions</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {[
-                                {
-                                    q: "How much time does it take to calculate?",
-                                    a: "Our calculator works instantly. Just input your loan amount, interest rate, and tenure to see your EMI immediately."
-                                },
-                                {
-                                    q: "Can I get a loan for a used vehicle?",
-                                    a: "Yes! Most lenders offer pre-owned car loans, though interest rates might be slightly higher compared to new cars."
-                                },
-                                {
-                                    q: "What is the typical tenure for car loans?",
-                                    a: "Car loans in India usually range from 1 to 7 years. A longer tenure reduces EMI but increases total interest cost."
-                                },
-                                {
-                                    q: "Do I need a co-guarantor?",
-                                    a: "Usually not, if you have a stable income and a good credit score (750+). A co-applicant may be needed if your income is below the lender's threshold."
-                                },
-                                {
-                                    q: "Why would a car loan application be rejected?",
-                                    a: "Rejections typically happen due to a low credit score, unstable income history, or high existing debt-to-income ratio."
-                                }
-                            ].map((faq, i) => (
+                            {(calculatorFaqs['car-loan-emi'] || []).map((faq, i) => (
                                 <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-gray-200 transition-colors">
                                     <h5 className="font-bold text-gray-800 text-sm mb-2">Q: {faq.q}</h5>
                                     <p className="text-gray-600 text-xs leading-relaxed">{faq.a}</p>
@@ -619,24 +599,7 @@ export const calculatorDetails = {
 
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">Calculated SIP FAQs</h2>
                     <div className="space-y-4">
-                        {[
-                            {
-                                q: "What is a SIP (Systematic Investment Plan) and how does it actually work?",
-                                a: "A Systematic Investment Plan (SIP) is a disciplined investment approach that allows you to invest a fixed sum of money at regular intervals. It automates your savings and benefits from Rupee Cost Averaging, helping you build wealth without needing to time the market."
-                            },
-                            {
-                                q: "How does Rupee Cost Averaging benefit a long-term SIP investor?",
-                                a: "By investing a fixed amount monthly, you buy more units when prices are low and fewer when prices are high. This averages out the cost of your units over time, often resulting in better returns than trying to pick the 'perfect' time to invest."
-                            },
-                            {
-                                q: "What is the difference between a Growth SIP and a Dividend (IDCW) SIP?",
-                                a: "The Growth option reinvests all profits back into the fund, maximizing compounding. The IDCW option may payout dividends periodically, which reduces the final corpus and may have different tax implications."
-                            },
-                            {
-                                q: "Can I increase or decrease my SIP amount after the investment has started?",
-                                a: "Yes, SIPs are flexible. You can start a new SIP with a higher amount or use 'Step-up' SIP features. Most platforms also allow you to pause or stop a SIP at any time without penalties."
-                            }
-                        ].map((faq, i) => (
+                        {(calculatorFaqs['pure-sip'] || []).map((faq, i) => (
                             <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
                                 <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
                                 <p className="text-gray-600 text-sm">{faq.a}</p>
@@ -706,20 +669,7 @@ export const calculatorDetails = {
 
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">Lump Sum FAQs</h2>
                     <div className="space-y-4">
-                        {[
-                            {
-                                q: "When is the most opportunistic time to make a lumpsum investment?",
-                                a: "The best time is often during a market correction or when valuations are attractive. However, for long-term goals, 'time in the market' is more valuable than 'timing the market'."
-                            },
-                            {
-                                q: "How should I manage the risk of investing a large lumpsum amount?",
-                                a: "Using an STP (Systematic Transfer Plan) is the best way. It spreads your entry over many months while keeping your core capital in a safe liquid fund earning some interest."
-                            },
-                            {
-                                q: "What are the tax implications for lumpsum equity mutual fund withdrawals?",
-                                a: "Gains over ₹1.25 Lakh per year for equity funds held for more than 1 year are taxed as LTCG. Short-term gains (under 1 year) are taxed at higher rates."
-                            }
-                        ].map((faq, i) => (
+                        {(calculatorFaqs['lump-sum'] || []).map((faq, i) => (
                             <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
                                 <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
                                 <p className="text-gray-600 text-sm">{faq.a}</p>
@@ -762,20 +712,7 @@ export const calculatorDetails = {
 
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">Step-Up SIP FAQs</h2>
                     <div className="space-y-4">
-                        {[
-                            {
-                                q: "What is the ideal percentage for a Step-up SIP?",
-                                a: "Most financial advisors recommend a 5% to 10% annual increase, as it usually aligns with average salary hikes and inflation."
-                            },
-                            {
-                                q: "Can I cap my Step-up SIP after a few years?",
-                                a: "Yes, you can specify a 'Maximum Amount' for your SIP. Once reached, the SIP continues at that fixed amount until the end of the tenure."
-                            },
-                            {
-                                q: "Is Step-up better than a One-time Lumpsum?",
-                                a: "Step-up SIP is generally better for salaried individuals as it builds discipline and reduces the risk of investing a large sum at a market peak."
-                            }
-                        ].map((faq, i) => (
+                        {(calculatorFaqs['step-up-sip'] || []).map((faq, i) => (
                             <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
                                 <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
                                 <p className="text-gray-600 text-sm">{faq.a}</p>
@@ -818,20 +755,7 @@ export const calculatorDetails = {
 
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">Recurring Deposit FAQs</h2>
                     <div className="space-y-4">
-                        {[
-                            {
-                                q: "What is the minimum tenure for a Recurring Deposit?",
-                                a: "Most banks offer RDs starting from 6 months up to 10 years."
-                            },
-                            {
-                                q: "Is the interest earned on RD taxable?",
-                                a: "Yes, interest earned on RD is fully taxable as per your income tax slab. Banks also deduct TDS (Tax Deducted at Source) if the interest exceeds ₹40,000 (₹50,000 for senior citizens) in a financial year."
-                            },
-                            {
-                                q: "Can I withdraw money from RD before maturity?",
-                                a: "Yes, premature withdrawal is possible, but banks usually charge a penalty of 0.5% to 1% on the applicable interest rate."
-                            }
-                        ].map((faq, i) => (
+                        {(calculatorFaqs['recurring-deposit'] || []).map((faq, i) => (
                             <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
                                 <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
                                 <p className="text-gray-600 text-sm">{faq.a}</p>
@@ -868,20 +792,7 @@ export const calculatorDetails = {
 
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">Fixed Deposit FAQs</h2>
                     <div className="space-y-4">
-                        {[
-                            {
-                                q: "What is the difference between Cumulative and Non-cumulative FD?",
-                                a: "In a Cumulative FD, interest is reinvested and paid at maturity, benefiting from compounding. In a Non-cumulative FD, interest is paid out periodically (monthly/quarterly) to provide regular income."
-                            },
-                            {
-                                q: "Is FD interest taxable?",
-                                a: "Yes, interest earned on FD is added to your total income and taxed as per your tax slab. Banks also deduct TDS (typically 10%) if interest exceeds ₹40,000 in a year."
-                            },
-                            {
-                                q: "What is a Tax-Saving FD?",
-                                a: "It is a special type of FD with a mandatory 5-year lock-in period that offers tax deductions under Section 80C of the Income Tax Act."
-                            }
-                        ].map((faq, i) => (
+                        {(calculatorFaqs['fixed-deposit'] || []).map((faq, i) => (
                             <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
                                 <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
                                 <p className="text-gray-600 text-sm">{faq.a}</p>
@@ -916,20 +827,7 @@ export const calculatorDetails = {
 
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">PPF FAQs</h2>
                     <div className="space-y-4">
-                        {[
-                            {
-                                q: "What is the maximum amount I can deposit in PPF yearly?",
-                                a: "The current limit is ₹1,50,000 per financial year. You must also deposit a minimum of ₹500 to keep the account active."
-                            },
-                            {
-                                q: "Can I withdraw money from PPF before 15 years?",
-                                a: "Partial withdrawals are allowed from the 7th year onwards under specific conditions. You can also take loans against your PPF balance between the 3rd and 6th year."
-                            },
-                            {
-                                q: "How many times can I extend my PPF account?",
-                                a: "After the initial 15 years, you can extend your account indefinitely in blocks of 5 years each, with or without fresh contributions."
-                            }
-                        ].map((faq, i) => (
+                        {(calculatorFaqs['ppf-calculator'] || []).map((faq, i) => (
                             <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
                                 <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
                                 <p className="text-gray-600 text-sm">{faq.a}</p>
@@ -968,20 +866,7 @@ export const calculatorDetails = {
 
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">SWP FAQs</h2>
                     <div className="space-y-4">
-                        {[
-                            {
-                                q: "Is SWP better than Fixed Deposit for monthly income?",
-                                a: "For those in higher tax brackets, SWP is generally better due to tax efficiency. However, SWP carries market risk, whereas FD returns are guaranteed."
-                            },
-                            {
-                                q: "How is SWP taxed?",
-                                a: "Every withdrawal is treated as a partial redemption. For equity funds held over 1 year, gains up to ₹1.25 Lakh per year are tax-free, and above that, taxed at 12.5% LTCG."
-                            },
-                            {
-                                q: "Can I stop or change my SWP amount?",
-                                a: "Yes, SWP is fully flexible. You can increase, decrease, or completely stop your withdrawals at any time."
-                            }
-                        ].map((faq, i) => (
+                        {(calculatorFaqs['swp-calculator'] || []).map((faq, i) => (
                             <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
                                 <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
                                 <p className="text-gray-600 text-sm">{faq.a}</p>

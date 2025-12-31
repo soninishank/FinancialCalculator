@@ -62,6 +62,11 @@ const Footer = () => {
                         <a href="https://github.com/soninishank" target="_blank" rel="noopener noreferrer" className="hover:text-teal-600 transition-colors">Github</a>
                     </div>
                 </div>
+
+                {/* YMYL Disclaimer */}
+                <div className="pt-4 mt-4 border-t border-gray-50 text-[10px] text-gray-300 text-center">
+                    All calculators are for educational purposes only and do not constitute financial advice.
+                </div>
             </div>
         </footer>
     );

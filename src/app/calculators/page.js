@@ -6,7 +6,6 @@ import Breadcrumbs from '../../components/common/Breadcrumbs';
 export const metadata = {
     title: 'Financial Calculators Catalog',
     description: "Take control of your finances with Hashmatic's free, accurate online calculators. Instantly calculate SIP returns, Loan EMIs, and Retirement goals. Start planning your future today!",
-    keywords: ['calculator list', 'financial tools', 'investment calculators'],
     alternates: {
         canonical: 'https://www.hashmatic.in/calculators',
     },
@@ -15,13 +14,6 @@ export const metadata = {
         description: "Browse our complete list of free investment and loan calculators.",
         url: 'https://www.hashmatic.in/calculators',
         siteName: 'Hashmatic',
-        images: [
-            {
-                url: 'https://www.hashmatic.in/logo192.png',
-                width: 192,
-                height: 192,
-            },
-        ],
         locale: 'en_IN',
         type: 'website',
     },
@@ -29,7 +21,6 @@ export const metadata = {
         card: 'summary',
         title: "Financial Calculators Catalog",
         description: "Plan your future with Hashmatic's free online tools.",
-        images: ['https://www.hashmatic.in/logo192.png'],
     },
 };
 
