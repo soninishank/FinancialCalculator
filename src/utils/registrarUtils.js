@@ -38,7 +38,7 @@ export const getRegistrarAllotmentLink = (registrarName) => {
     }
 
     // Try partial match (case insensitive)
-    const lowerName = registrarName.toLowerCase();
+    const lowerName = String(registrarName).toLowerCase();
 
     // Check if the input contains any of the known keys or vice-versa
     for (const [key, value] of Object.entries(REGISTRAR_ALLOTMENT_LINKS)) {

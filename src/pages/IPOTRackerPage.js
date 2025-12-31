@@ -31,7 +31,7 @@ export default function IPOTracker() {
     const filteredData = rawData.filter(ipo => {
         if (securityFilter === 'All') return true;
         // Check for loose match (e.g. "SME" inside "SME Emerge")
-        const type = (ipo.type || "").toUpperCase();
+        const type = String(ipo.type || "").toUpperCase();
         if (securityFilter === 'SME') return type.includes('SME');
         if (securityFilter === 'Equity') return !type.includes('SME'); // Assume non-SME is generic Equity
         return true;

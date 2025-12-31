@@ -59,7 +59,7 @@ export default function IPODetail() {
     } = ipo;
 
     const filteredDocuments = documents ? documents.filter(doc => {
-        const title = doc.title?.trim().toLowerCase() || '';
+        const title = String(doc.title || '').trim().toLowerCase();
         return !(
             title.includes('list of mobile applications') ||
             title.includes('video link') ||
@@ -73,7 +73,7 @@ export default function IPODetail() {
     // Helper function to enhance document title with descriptive text
     const getEnhancedDocTitle = (title) => {
         if (!title) return title;
-        const lowerTitle = title.toLowerCase();
+        const lowerTitle = String(title).toLowerCase();
         if (lowerTitle.includes('red herring prospectus')) {
             return `${title} (Final SEBI-Approved Document)`;
         }
