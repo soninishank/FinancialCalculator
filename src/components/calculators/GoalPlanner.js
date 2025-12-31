@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import CalculatorLayout from "../common/CalculatorLayout";
 import MonthYearPicker from "../common/MonthYearPicker";
 import CollapsibleInvestmentTable from "../common/CollapsibleInvestmentTable";
@@ -17,6 +17,7 @@ import { downloadPDF } from "../../utils/export";
 import TaxToggle from "../common/TaxToggle";
 import InflationToggle from "../common/InflationToggle";
 import { FinancialLineChart } from "../common/FinancialCharts";
+import ToggleCard from "../common/ToggleCard";
 import {
   DEFAULT_TARGET_AMOUNT,
   DEFAULT_TENURE_YEARS,
@@ -57,6 +58,8 @@ export default function GoalPlanner({ currency, setCurrency }) {
     isInflationAdjusted: false,
     inflationRate: DEFAULT_INFLATION,
   });
+
+  const [isStepUpEnabled, setIsStepUpEnabled] = useState(false);
 
   // --- CRITICAL LOGIC: Calculate the Effective Rate ---
   const effectiveRate = isInflationAdjusted
@@ -201,12 +204,19 @@ export default function GoalPlanner({ currency, setCurrency }) {
         onChange={setAnnualRate}
         min={MIN_RATE} max={MAX_RATE} symbol="%"
       />
-      <InputWithSlider
-        label="Step-Up Percentage (%)"
-        value={stepUpPercent}
-        onChange={setStepUpPercent}
-        min={LOC_MIN_STEP_UP} max={MAX_STEP_UP} symbol="%"
-      />
+      <ToggleCard
+        checked={isStepUpEnabled}
+        onChange={setIsStepUpEnabled}
+        title="Enable Step-Up SIP Strategy?"
+        description="Increase your SIP amount every year to reach goals faster"
+      >
+        <InputWithSlider
+          label="Step-Up Percentage (%)"
+          value={stepUpPercent}
+          onChange={setStepUpPercent}
+          min={LOC_MIN_STEP_UP} max={MAX_STEP_UP} symbol="%"
+        />
+      </ToggleCard>
       <TaxToggle
         currency={currency}
         isTaxApplied={isTaxApplied}
@@ -236,7 +246,7 @@ export default function GoalPlanner({ currency, setCurrency }) {
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-4">
         <div className="bg-indigo-50 border-l-4 border-indigo-500 rounded-xl p-6 shadow-sm">
-          <div className="text-xs font-bold text-indigo-600 uppercase">Option 1: One-time investment</div>
+          <div className="text-xs font-bold text-indigo-600 uppercase">Option 1: Lumpsum investment</div>
           <div className="text-3xl font-extrabold text-gray-900 mt-2">
             {moneyFormat(Math.round(requiredLump), currency)}
           </div>
@@ -247,15 +257,17 @@ export default function GoalPlanner({ currency, setCurrency }) {
             {moneyFormat(Math.round(requiredSIP), currency)}
           </div>
         </div>
-        <div className="bg-rose-50 border-l-4 border-rose-500 rounded-xl p-6 shadow-sm">
-          <div className="text-xs font-bold text-rose-600 uppercase">Option 3: Step-Up SIP</div>
-          <div className="text-3xl font-extrabold text-gray-900 mt-2">
-            {moneyFormat(Math.round(requiredStepUp), currency)}
+        {isStepUpEnabled && (
+          <div className="bg-rose-50 border-l-4 border-rose-500 rounded-xl p-6 shadow-sm animate-fade-in">
+            <div className="text-xs font-bold text-rose-600 uppercase">Option 3: Step-Up SIP</div>
+            <div className="text-3xl font-extrabold text-gray-900 mt-2">
+              {moneyFormat(Math.round(requiredStepUp), currency)}
+            </div>
+            {stepUpPercent > 0 && (
+              <p className="text-xs text-rose-700 mt-1 font-medium">Increases by {stepUpPercent}% every year</p>
+            )}
           </div>
-          {stepUpPercent > 0 && (
-            <p className="text-xs text-rose-700 mt-1 font-medium">Increases by {stepUpPercent}% every year</p>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );
@@ -272,27 +284,27 @@ export default function GoalPlanner({ currency, setCurrency }) {
               labels: lumpSumData.map(r => `Year ${r.year}`),
               datasets: [
                 {
-                  label: 'One-time Path',
-                  data: lumpSumData.map(r => r.balance),
+                  label: 'Lumpsum Path',
+                  data: lumpSumData.map(r => r.overallValue),
                   borderColor: '#6366F1',
                   backgroundColor: 'transparent',
                   tension: 0.4
                 },
                 {
                   label: 'SIP Path',
-                  data: sipData.map(r => r.balance),
+                  data: sipData.map(r => r.overallValue),
                   borderColor: '#10B981',
                   backgroundColor: 'transparent',
                   tension: 0.4
                 },
-                {
+                ...(isStepUpEnabled ? [{
                   label: 'Step-Up Path',
-                  data: stepUpData.map(r => r.balance),
+                  data: stepUpData.map(r => r.overallValue),
                   borderColor: '#F43F5E',
                   backgroundColor: 'transparent',
                   tension: 0.4,
                   borderDash: [5, 5]
-                }
+                }] : [])
               ]
             }}
             currency={currency}
@@ -320,7 +332,7 @@ export default function GoalPlanner({ currency, setCurrency }) {
               <h4 className="text-md font-bold text-indigo-700">Option 1: Lump Sum Schedule</h4>
               <button
                 onClick={() => {
-                  const data = lumpSumData.map(r => [`Year ${r.year}`, Math.round(r.invested), Math.round(r.interestEarned), Math.round(r.balance)]);
+                  const data = lumpSumData.map(r => [`Year ${r.year}`, Math.round(r.invested), Math.round(r.interestEarned || r.growth), Math.round(r.overallValue)]);
                   downloadPDF(data, ['Year', 'Invested', 'Interest', 'Balance'], 'goal_lumpsum_schedule.pdf');
                 }}
                 className="text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-1 rounded-lg transition-colors"
@@ -340,7 +352,7 @@ export default function GoalPlanner({ currency, setCurrency }) {
               <h4 className="text-md font-bold text-emerald-700">Option 2: SIP Schedule</h4>
               <button
                 onClick={() => {
-                  const data = sipData.map(r => [`Year ${r.year}`, Math.round(r.invested), Math.round(r.interestEarned), Math.round(r.balance)]);
+                  const data = sipData.map(r => [`Year ${r.year}`, Math.round(r.invested), Math.round(r.interestEarned || r.growth), Math.round(r.overallValue)]);
                   downloadPDF(data, ['Year', 'Invested', 'Interest', 'Balance'], 'goal_sip_schedule.pdf');
                 }}
                 className="text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 py-1 rounded-lg transition-colors"
@@ -355,25 +367,27 @@ export default function GoalPlanner({ currency, setCurrency }) {
             />
           </div>
 
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <h4 className="text-md font-bold text-rose-700">Option 3: Step-Up SIP</h4>
-              <button
-                onClick={() => {
-                  const data = stepUpData.map(r => [`Year ${r.year}`, Math.round(r.invested), Math.round(r.interestEarned), Math.round(r.balance)]);
-                  downloadPDF(data, ['Year', 'Invested', 'Interest', 'Balance'], 'goal_stepup_schedule.pdf');
-                }}
-                className="text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-3 py-1 rounded-lg transition-colors"
-              >
-                Export PDF
-              </button>
+          {isStepUpEnabled && (
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <h4 className="text-md font-bold text-rose-700">Option 3: Step-Up SIP</h4>
+                <button
+                  onClick={() => {
+                    const data = stepUpData.map(r => [`Year ${r.year}`, Math.round(r.invested), Math.round(r.interestEarned || r.growth), Math.round(r.overallValue)]);
+                    downloadPDF(data, ['Year', 'Invested', 'Interest', 'Balance'], 'goal_stepup_schedule.pdf');
+                  }}
+                  className="text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-3 py-1 rounded-lg transition-colors"
+                >
+                  Export PDF
+                </button>
+              </div>
+              <CollapsibleInvestmentTable
+                yearlyData={stepUpData}
+                monthlyData={stepUpMonthly}
+                currency={currency}
+              />
             </div>
-            <CollapsibleInvestmentTable
-              yearlyData={stepUpData}
-              monthlyData={stepUpMonthly}
-              currency={currency}
-            />
-          </div>
+          )}
         </div>
       }
     />

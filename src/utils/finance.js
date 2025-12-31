@@ -1351,12 +1351,12 @@ export function calculateRealValue(nominalValue, inflationRate, years) {
  * Goal: Corpus where (Corpus * SWR) >= Annual Expenses
  */
 export function calculateTimeToFIRE({
-  currentCorpus,
-  monthlyExpenses,
-  monthlyInvestment,
-  annualReturn,
-  swr, // Safe Withdrawal Rate (e.g., 4%)
-  inflation = 0 // Optional: if we want to target real corpus
+  currentCorpus = 0,
+  monthlyExpenses = 0,
+  monthlyInvestment = 0,
+  annualReturn = 0,
+  swr = 4, // Default to 4% if not provided
+  inflation = 0
 }) {
   // Target Corpus = (Monthly Exp * 12) / (SWR / 100)
   const annualExpenses = monthlyExpenses * 12;
@@ -1369,7 +1369,15 @@ export function calculateTimeToFIRE({
   // Real Rate = ((1 + Nominal) / (1 + Inflation)) - 1
   let effectiveAnnualRate = annualReturn;
   if (inflation > 0) {
-    effectiveAnnualRate = ((1 + annualReturn / 100) / (1 + inflation / 100) - 1) * 100;
+    const R = annualReturn / 100;
+    const I = inflation / 100;
+    effectiveAnnualRate = ((1 + R) / (1 + I) - 1) * 100;
+  }
+
+  // UNREACHABLE GUARD:
+  // If Target is above current, but investment is 0 AND growth is <= 0
+  if (targetCorpus > currentCorpus && monthlyInvestment <= 0 && effectiveAnnualRate <= 0) {
+    return { years: 100, months: 0, targetCorpus, unreachable: true };
   }
 
   // Calculate true monthly rate from effective annual return (proper compounding)
@@ -2122,4 +2130,77 @@ export function computePPF({ investmentAmount, frequency, interestRate, years, s
     yearlyData,
     monthlyData
   };
+}
+
+/**
+ * Calculates time (years) to reach a target with lumpsum & SIP inputs.
+ * Uses NPER formula logic.
+ */
+export function calculateInvestmentDuration({
+  principal = 0,
+  contribution = 0, // SIP Amount per frequency
+  target,
+  annualRate,
+  frequency = 'monthly', // 'monthly', 'quarterly', 'half-yearly', 'yearly'
+}) {
+  const P = Number(principal);
+  const PMT = Number(contribution);
+  const FV = Number(target);
+  const R = Number(annualRate); // Annual %
+
+  if (FV <= P && PMT >= 0) return 0; // Already reached
+
+  // Determine Period Rate (r) and Periods Per Year (n_freq)
+  let n_freq = 12;
+  if (frequency === 'quarterly') n_freq = 4;
+  if (frequency === 'half-yearly') n_freq = 2;
+  if (frequency === 'yearly') n_freq = 1;
+
+  const r = R / n_freq / 100;
+
+  // Zero Interest Case
+  if (r === 0) {
+    if (PMT === 0) return 999; // Eternal wait
+    // FV = P + PMT * n
+    // n = (FV - P) / PMT
+    const n = (FV - P) / PMT;
+    return n / n_freq; // Years
+  }
+
+  // NPER Formula for FV:
+  // FV = P*(1+r)^n + PMT * [ ((1+r)^n - 1) / r ] * (1+r)  <-- Assuming Annuity Due (Beginning of period)
+  // Common SIP is Annuity Due (Invest, then wait). 
+  // If Annuity Immediate (End of period): term is just PMT * [ ((1+r)^n - 1) / r ]
+
+  // Let q = 1 if Annuity Due, 0 if Annuity Immediate. 
+  // Most standard calculators assume Annuity Due for SIP (Money goes in today, earns interest).
+  const type = 1;
+
+  // Rearranging for n:
+  // FV = P(1+r)^n + PMT(1+r*type)/r * [ (1+r)^n - 1 ]
+  // Let K = PMT(1+r*type)/r
+  // FV = P(1+r)^n + K(1+r)^n - K
+  // FV + K = (P + K)(1+r)^n
+  // (FV + K) / (P + K) = (1+r)^n
+  // n = ln( (FV + K) / (P + K) ) / ln(1+r)
+
+  const K = (PMT * (1 + r * type)) / r;
+
+  // Safety check: If principal + K is 0 or negative, we can't reach a positive target via growth
+  if (P + K <= 0) {
+    return FV > P ? 999 : 0;
+  }
+
+  const numeratorValue = (FV + K) / (P + K);
+  if (numeratorValue <= 0) return 999; // Should not happen with typical positive FV/P/PMT
+
+  const numerator = Math.log(numeratorValue);
+  const denominator = Math.log(1 + r);
+
+  if (denominator === 0) return 0;
+
+  // n is number of periods
+  const n = numerator / denominator;
+
+  return n / n_freq; // Convert periods to Years
 }

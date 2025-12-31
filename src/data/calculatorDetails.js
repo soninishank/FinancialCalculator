@@ -160,6 +160,71 @@ export const calculatorDetails = {
             </div >
         )
     },
+    'time-to-goal': {
+        title: "How Long to Reach Your Financial Goal?",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-6">Strategy: Lumpsum vs. SIP for Your Goal</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-6">
+                        When you have a target amount in mind—whether it's ₹10 Lakhs for a new car or ₹1 Crore for retirement—the most common question is: <strong>"How long will it take?"</strong>
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+                        <div className="bg-blue-50 p-5 rounded-2xl border border-blue-100">
+                            <h4 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
+                                <span className="p-1.5 bg-blue-500 text-white rounded-lg text-xs">A</span>
+                                Lumpsum Path
+                            </h4>
+                            <p className="text-sm text-blue-800 leading-relaxed">
+                                Ideal if you already have a corpus. This path calculates the time required for your initial capital to grow to the target through 100% compounding.
+                            </p>
+                        </div>
+
+                        <div className="bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
+                            <h4 className="font-bold text-emerald-900 mb-3 flex items-center gap-2">
+                                <span className="p-1.5 bg-emerald-500 text-white rounded-lg text-xs">B</span>
+                                SIP Path
+                            </h4>
+                            <p className="text-sm text-emerald-800 leading-relaxed">
+                                Perfect for salaried professionals. It calculates how many months of regular monthly contributions (at your chosen rate) are needed to hit the target.
+                            </p>
+                        </div>
+                    </div>
+
+                    <h4 className="font-bold text-gray-800 mb-4">The Mathematical Logic</h4>
+                    <p className="mb-4">
+                        This calculator solves for <strong>Time (n)</strong> using the standard future value formulas. For a Lumpsum, it uses logs to find when the growth factor bridges the gap. For SIP, it solves the "Annuity Due" formula where interest is calculated at the beginning of each period.
+                    </p>
+
+                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 mb-8 font-mono text-center">
+                        <p className="text-sm text-slate-800 font-bold mb-2">For Lumpsum Growth:</p>
+                        <p className="text-lg font-bold text-slate-800">n = ln(Target / Principal) / ln(1 + Rate)</p>
+                    </div>
+
+                    <div className="bg-teal-50 p-6 rounded-2xl border border-teal-100 mb-8">
+                        <h4 className="font-bold text-teal-900 mb-3">Goal Reachability</h4>
+                        <p className="text-sm text-teal-800 leading-relaxed">
+                            Our calculator also features a <strong>"Winner Strategy"</strong> comparison. It highlights which method gets you to your goal faster and explicitly identifies if a goal is mathematically unreachable (e.g., if you have zero investment but a positive target).
+                        </p>
+                    </div>
+
+                    {/* FAQ SECTION */}
+                    <div className="mt-12 space-y-6">
+                        <h3 className="text-xl font-bold text-gray-800 mb-6">Frequently Asked Questions</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {(calculatorFaqs['time-duration-calculator'] || []).map((faq, i) => (
+                                <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-gray-200 transition-colors">
+                                    <h5 className="font-bold text-gray-800 text-sm mb-2">Q: {faq.q}</h5>
+                                    <p className="text-gray-600 text-xs leading-relaxed">{faq.a}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    },
     loanEmi: {
         title: "Understanding Loans",
         render: () => (

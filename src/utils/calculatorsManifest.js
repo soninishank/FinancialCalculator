@@ -128,7 +128,7 @@ const calculators = [
   {
     slug: 'target-amount-calculator',
     title: 'Target Amount Calculator',
-    description: 'Planning for a specific financial goal? Calculate exactly how much you need to save monthly (SIP) or as a one-time lump sum to reach your target amount by a specific date.',
+    description: 'Planning for a specific financial goal? Calculate exactly how much you need to save monthly (SIP), as a Step-Up SIP, or as a one-time lump sum to reach your target amount by a specific date.',
     keywords: 'target amount calculator, goal planner, sip for goal, investment for target, financial goal calculator, education planning, retirement goal',
     category: 'Planner',
     component: 'GoalPlanner'

@@ -29,7 +29,7 @@ const getPerformanceBadge = (xirr) => {
     return { label: 'Below Average', color: 'red', emoji: '⚠️' };
 };
 
-export default function XIRRCalculator({ currency = '₹' }) {
+export default function XIRRCalculator({ currency = 'INR' }) {
     const [mode, setMode] = useState('simple');
 
 

@@ -9,7 +9,8 @@ import {
     computeSWPPlan, computeYearlySchedule, computeStepUpSchedule, calculateRealValue,
     calculateTimeToFIRE, calculateCoastFIRE, calculateCostOfDelay, computeRentVsBuyLedger,
     calculateInflationImpact, calculateRebalancing, calculateFIRELevel, computeFixedDeposit,
-    computeStepUpLoanAmortization, computeMoratoriumLoanAmortization, computePPF
+    computeStepUpLoanAmortization, computeMoratoriumLoanAmortization, computePPF,
+    calculateInvestmentDuration
 } from '../utils/finance';
 
 describe('Finance Utility Functions - 100% Coverage Suite', () => {
@@ -443,6 +444,104 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
                 propertyAppreciationRate: 0, rentInflationRate: 0
             });
             expect(res.yearlyLedger.length).toBeGreaterThan(0);
+        });
+    });
+
+    // --- 10. Investment Duration (Time to Goal) ---
+    describe('calculateInvestmentDuration', () => {
+        const target = 1000000; // 10 Lakhs
+
+        test('Goal reached immediately if principal >= target', () => {
+            expect(calculateInvestmentDuration({
+                principal: 1500000,
+                target: 1000000,
+                annualRate: 12
+            })).toBe(0);
+        });
+
+        test('Lumpsum only: 5L @ 12% to reach 10L (Monthly Compounding)', () => {
+            const years = calculateInvestmentDuration({
+                principal: 500000,
+                contribution: 0,
+                target: 1000000,
+                annualRate: 12
+            });
+            // 2 = (1 + 0.12/12)^n => n = ln(2)/ln(1.01) ~= 69.66 months ~= 5.805 years
+            expect(years).toBeCloseTo(5.805, 3);
+        });
+
+        test('SIP only: 10k monthly @ 12% to reach 10L (Annuity Due)', () => {
+            const years = calculateInvestmentDuration({
+                principal: 0,
+                contribution: 10000,
+                target: 1000000,
+                annualRate: 12,
+                frequency: 'monthly'
+            });
+            // Result is approx 69 months / 12 ~= 5.76 yrs
+            expect(years).toBeCloseTo(5.763, 3);
+        });
+
+        test('Edge Case: 0 Investment for positive target (Unreachable)', () => {
+            const years = calculateInvestmentDuration({
+                principal: 0,
+                contribution: 0,
+                target: 1000000,
+                annualRate: 12
+            });
+            expect(years).toBe(999);
+        });
+
+        test('Edge Case: 0 Return Rate (Linear Growth)', () => {
+            const years = calculateInvestmentDuration({
+                principal: 200000,
+                contribution: 10000,
+                target: 1000000,
+                annualRate: 0,
+                frequency: 'monthly'
+            });
+            expect(years).toBeCloseTo(6.667, 2);
+        });
+
+        test('Edge Case: Both principal and SIP are 0', () => {
+            const years = calculateInvestmentDuration({
+                principal: 0,
+                contribution: 0,
+                target: 1000000,
+                annualRate: 10
+            });
+            expect(years).toBe(999);
+        });
+    });
+
+    describe('Audit Stress Tests - Boundary Conditions', () => {
+        test('getRequiredSIP with 0 years', () => {
+            // target 1L, 10% rate, 0 years
+            expect(getRequiredSIP(100000, 10, 0)).toBe(Infinity);
+        });
+
+        test('calculateLoanTenure with EMI too small', () => {
+            // principal 1L, rate 12% => monthly interest 1000. 
+            // If EMI is 1000, it never pays off principal.
+            expect(calculateLoanTenure(100000, 1000, 12)).toBe(Infinity);
+            // If EMI is 500, it never pays off interest even.
+            expect(calculateLoanTenure(100000, 500, 12)).toBe(Infinity);
+        });
+
+        test('calculateTimeToFIRE with 0 investment and negative growth', () => {
+            const res = calculateTimeToFIRE({
+                currentCorpus: 100,
+                monthlyExpenses: 1000,
+                monthlyInvestment: 0,
+                annualReturn: 0,
+                inflation: 5 // effectively negative growth
+            });
+            expect(res.years).toBe(100); // capped at 1200 months
+        });
+
+        test('calculateRealRate with return < inflation', () => {
+            // Return 4%, Inflation 5%
+            expect(calculateRealRate(4, 5)).toBe(0); // App standard currently
         });
     });
 });

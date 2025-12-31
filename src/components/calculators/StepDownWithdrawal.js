@@ -156,9 +156,7 @@ export default function StepDownWithdrawal({ currency }) {
             {
                 type: 'bar',
                 label: 'Annual Withdrawal',
-                data: result.yearlyData.map(d =>
-                    d.year === 0 ? null : d.annualWithdrawal
-                ),
+                data: result.yearlyData.map(d => d.annualWithdrawal),
                 yAxisID: 'y1',
                 backgroundColor: ctx => {
                     if (!isStepDownEnabled) return `${CHART_COLORS.SECONDARY}45`; // Adding opacity via hex? No. 
