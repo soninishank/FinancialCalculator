@@ -305,7 +305,7 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
                 loanTenureYears: 20, monthlyRent: 15000, investReturnRate: 10,
                 propertyAppreciationRate: 5, rentInflationRate: 5
             });
-            expect(res.length).toBeGreaterThan(0);
+            expect(res.yearlyLedger.length).toBeGreaterThan(0);
         });
     });
 
@@ -442,7 +442,7 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
                 loanTenureYears: 1, monthlyRent: 0, investReturnRate: 0,
                 propertyAppreciationRate: 0, rentInflationRate: 0
             });
-            expect(res.length).toBeGreaterThan(0);
+            expect(res.yearlyLedger.length).toBeGreaterThan(0);
         });
     });
 });

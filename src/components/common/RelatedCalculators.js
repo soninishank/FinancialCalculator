@@ -20,7 +20,7 @@ const RelatedCalculators = ({ currentSlug, category }) => {
 
     // 1. Get calculators in the same category
     const sameCategory = manifest.filter(
-        (m) => m.category === category && m.slug !== currentSlug
+        (m) => m && m.category === category && m.slug !== currentSlug
     );
 
     // 2. Get manual relations

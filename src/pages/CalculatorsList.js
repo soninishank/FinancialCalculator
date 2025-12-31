@@ -8,7 +8,7 @@ import CalculatorAdvisor from "../components/home/CalculatorAdvisor";
 // import SEO from "../components/common/SEO"; // Handled by metadata
 import { Search } from "lucide-react";
 
-export default function CalculatorsList({ initialFiltered, initialQ }) {
+export default function CalculatorsList({ initialFiltered = [], initialQ = "" }) {
   const [q, setQ] = React.useState(initialQ || "");
   const [mounted, setMounted] = React.useState(false);
   const filtered = useCalculatorSearch(q);
@@ -18,7 +18,7 @@ export default function CalculatorsList({ initialFiltered, initialQ }) {
   }, []);
 
   // Use initialFiltered until mounted to avoid hydration mismatch
-  const displayList = mounted ? filtered : initialFiltered;
+  const displayList = mounted ? (filtered || []) : (initialFiltered || []);
 
   return (
     <div className="p-6 pt-0 max-w-6xl mx-auto">
