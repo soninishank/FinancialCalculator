@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { prefetchPDF } from '../../utils/export';
 
 export default function CalculatorLayout({
     inputs,
@@ -8,6 +9,13 @@ export default function CalculatorLayout({
     table,
     details
 }) {
+    useEffect(() => {
+        // Prefetch PDF capability after initial load (idle time)
+        const timer = setTimeout(() => {
+            prefetchPDF();
+        }, 2500);
+        return () => clearTimeout(timer);
+    }, []);
     return (
         <div className="animate-fade-in">
             {/* INPUTS SECTION */}

@@ -1,7 +1,7 @@
-import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
+export async function downloadPDF(data, headers, filename = "investment_report.pdf") {
+  const { jsPDF } = await import("jspdf");
+  const { default: autoTable } = await import("jspdf-autotable");
 
-export function downloadPDF(data, headers, filename = "investment_report.pdf") {
   const doc = new jsPDF();
 
   // Add a title
@@ -33,3 +33,10 @@ export function downloadPDF(data, headers, filename = "investment_report.pdf") {
 
   doc.save(filename);
 }
+
+export const prefetchPDF = () => {
+  // Creating a promise that resolves immediately but triggers the network request
+  // webpack/Next.js will see these imports and start loading the chunks
+  import("jspdf");
+  import("jspdf-autotable");
+};

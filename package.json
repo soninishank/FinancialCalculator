@@ -13,6 +13,7 @@
     "compromise": "^14.14.4",
     "compromise-numbers": "^1.4.0",
     "cors": "^2.8.5",
+    "critters": "^0.0.23",
     "dotenv": "^17.2.3",
     "eslint-config-next": "^16.1.1",
     "express": "^5.2.1",
@@ -56,8 +57,7 @@
   },
   "browserslist": {
     "production": [
-      ">0.5%",
-      "last 2 versions",
+      "supports es6-module",
       "not dead",
       "not op_mini all"
     ],
