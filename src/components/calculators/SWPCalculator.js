@@ -220,7 +220,7 @@ export default function SWPCalculator({ currency = 'INR' }) {
                 Export PDF
               </button>
               <div className="flex items-center">
-                <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
+                <label className="text-sm font-black text-slate-900 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
                 <div className="w-48">
                   <MonthYearPicker
                     value={startDate}

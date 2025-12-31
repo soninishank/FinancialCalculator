@@ -66,7 +66,7 @@ export default function AssetAllocation({ currency }) {
                 </div>
 
                 <div className="mb-8">
-                    <label className="text-sm font-medium text-gray-700 block mb-2">Desired Split</label>
+                    <label className="text-sm font-black text-slate-900 uppercase tracking-tight block mb-2">Desired Split</label>
                     <div className="flex items-center gap-4">
                         <div className="flex-1 text-center p-3 bg-blue-50 border border-blue-100 rounded-lg">
                             <span className="block text-xl font-bold text-blue-700">{targetEquityPercent}%</span>

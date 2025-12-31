@@ -113,18 +113,22 @@ const CompoundInterest = ({ currency }) => {
                     symbol="%"
                     isDecimal={true}
                 />
-                <div className="flex flex-col">
-                    <label htmlFor="compounding-frequency" className="text-sm font-bold text-gray-700 mb-1">Compounding Frequency</label>
+                <div className="flex flex-col mb-4">
+                    <div className="flex justify-between items-end mb-2">
+                        <label htmlFor="compounding-frequency" className="text-sm font-black text-slate-900 uppercase tracking-tight cursor-pointer">Compounding Frequency</label>
+                        {/* Invisible spacer to match InputWithSlider's badge height for alignment */}
+                        <span className="text-xs font-black px-3 py-1 border border-transparent opacity-0 select-none">Spacer</span>
+                    </div>
                     <div className="relative">
                         <select
                             id="compounding-frequency"
                             value={compoundingFrequency}
                             onChange={(e) => setCompoundingFrequency(Number(e.target.value))}
-                            className="w-full p-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 bg-white font-semibold text-gray-900 appearance-none cursor-pointer"
+                            className="w-full py-3 px-4 border-2 border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all font-black text-slate-950 text-lg appearance-none cursor-pointer bg-white"
                         >
                             {COMPOUND_FREQUENCIES.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
                         </select>
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400">
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -136,7 +140,7 @@ const CompoundInterest = ({ currency }) => {
             {calculationMode === 'duration' ? (
                 <div>
                     <div className="flex justify-between items-center mb-2">
-                        <label className="text-sm font-bold text-gray-700">Time Period</label>
+                        <label className="text-sm font-black text-slate-900 uppercase tracking-tight">Time Period</label>
                         <div className="flex bg-gray-100 p-1 rounded-lg">
                             {['years', 'months', 'days'].map((u) => (
                                 <button
@@ -169,23 +173,27 @@ const CompoundInterest = ({ currency }) => {
             )}
 
             <div className="flex flex-col lg:flex-row gap-6">
-                <TaxToggle
-                    currency={currency}
-                    isTaxApplied={isTaxApplied}
-                    setIsTaxApplied={setIsTaxApplied}
-                    taxRate={ltcgRate}
-                    onTaxRateChange={setLtcgRate}
-                    isExemptionApplied={isExemptionApplied}
-                    setIsExemptionApplied={setIsExemptionApplied}
-                    exemptionLimit={exemptionLimit}
-                    onExemptionLimitChange={setExemptionLimit}
-                />
-                <InflationToggle
-                    isAdjusted={isInflationAdjusted}
-                    setIsAdjusted={setIsInflationAdjusted}
-                    rate={inflationRate}
-                    setRate={setInflationRate}
-                />
+                <div className="flex-1">
+                    <TaxToggle
+                        currency={currency}
+                        isTaxApplied={isTaxApplied}
+                        setIsTaxApplied={setIsTaxApplied}
+                        taxRate={ltcgRate}
+                        onTaxRateChange={setLtcgRate}
+                        isExemptionApplied={isExemptionApplied}
+                        setIsExemptionApplied={setIsExemptionApplied}
+                        exemptionLimit={exemptionLimit}
+                        onExemptionLimitChange={setExemptionLimit}
+                    />
+                </div>
+                <div className="flex-1">
+                    <InflationToggle
+                        isAdjusted={isInflationAdjusted}
+                        setIsAdjusted={setIsInflationAdjusted}
+                        rate={inflationRate}
+                        setRate={setInflationRate}
+                    />
+                </div>
             </div>
         </div>
     );

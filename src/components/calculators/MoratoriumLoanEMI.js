@@ -70,7 +70,7 @@ export default function MoratoriumLoanEMI({ currency = 'INR' }) {
                         <InputWithSlider label="Moratorium Months" value={moratoriumMonths} onChange={setMoratoriumMonths} min={0} max={36} suffix="Months" />
 
                         <div className="flex items-center justify-between mt-4 bg-gray-50 p-3 rounded-lg">
-                            <span className="text-sm font-semibold text-gray-700">Pay Interest during Moratorium?</span>
+                            <span className="text-sm font-black text-slate-900 uppercase tracking-tight">Pay Interest during Moratorium?</span>
                             <label className="relative inline-flex items-center cursor-pointer">
                                 <span className="sr-only">Pay Interest</span>
                                 <div

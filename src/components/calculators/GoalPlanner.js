@@ -305,7 +305,7 @@ export default function GoalPlanner({ currency, setCurrency }) {
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold text-gray-800">Growth Schedules</h3>
             <div className="flex items-center">
-              <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
+              <label className="text-sm font-black text-slate-900 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
               <div className="w-48">
                 <MonthYearPicker
                   value={startDate}

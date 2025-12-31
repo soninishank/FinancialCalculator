@@ -250,7 +250,7 @@ export default function StepDownWithdrawal({ currency }) {
 
             <div className="my-6 pt-4 border-t">
                 <div className="flex justify-between mb-2">
-                    <span className="text-sm font-medium">
+                    <span className="text-sm font-black text-slate-900 uppercase tracking-tight">
                         How long should this last?
                     </span>
                     <span className="font-bold text-blue-600">
@@ -282,7 +282,7 @@ export default function StepDownWithdrawal({ currency }) {
                     <div className={`w-5 h-5 rounded border flex items-center justify-center mr-2 transition-colors ${isStepDownEnabled ? 'bg-indigo-600 border-indigo-600' : 'bg-white border-gray-300'}`}>
                         {isStepDownEnabled && <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                     </div>
-                    <label className="text-sm cursor-pointer select-none">
+                    <label className="text-sm font-black text-slate-900 uppercase tracking-tight cursor-pointer select-none">
                         I anticipate expenses dropping later
                     </label>
                 </div>

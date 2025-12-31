@@ -74,7 +74,7 @@ export default function MonthYearPicker({ value, onChange, minDate }) {
 
                     {/* HEADER: YEAR SLIDER */}
                     <div className="mb-4 text-center">
-                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Select Year</label>
+                        <label className="block text-xs font-black text-slate-900 uppercase tracking-wider mb-1">Select Year</label>
                         <div className="flex items-center justify-between gap-2 mb-2">
                             <button
                                 onClick={() => setSelectedYear(y => y - 1)}

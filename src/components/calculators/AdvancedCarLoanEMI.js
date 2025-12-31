@@ -173,7 +173,7 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <InputWithSlider label="Loan Term (months)" value={loanTerm} onChange={setLoanTerm} min={12} max={120} step={1} />
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                                    <label className="text-xs font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
                                         <Calendar size={14} /> Start Date
                                     </label>
                                     <MonthYearPicker value={startDate} onChange={setStartDate} />
@@ -193,7 +193,7 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                         <div className="space-y-6">
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Processing Fee</label>
+                                    <label className="text-xs font-black text-slate-900 uppercase tracking-tight">Processing Fee</label>
                                     <div className="flex bg-gray-100 p-1 rounded-lg">
                                         <button onClick={() => setProcessingFeeMode('flat')} className={`px-4 py-2 text-xs font-bold rounded-md transition-all ${processingFeeMode === 'flat' ? 'bg-white shadow-sm text-indigo-700' : 'text-gray-400'}`}>FIXED</button>
                                         <button onClick={() => setProcessingFeeMode('percent')} className={`px-4 py-2 text-xs font-bold rounded-md transition-all ${processingFeeMode === 'percent' ? 'bg-white shadow-sm text-indigo-700' : 'text-gray-400'}`}>%</button>
@@ -220,7 +220,7 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                     >
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <label htmlFor="credit-score-select" className="text-xs font-bold text-gray-500 uppercase tracking-wider">Credit Score Range</label>
+                                <label htmlFor="credit-score-select" className="text-xs font-black text-slate-900 uppercase tracking-tight">Credit Score Range</label>
                                 <select
                                     id="credit-score-select"
                                     value={creditScoreRange}
@@ -300,7 +300,7 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                             {monthlyIncome > 0 && (
                                 <div className={`p-4 rounded-xl border ${emi > monthlyIncome * 0.4 ? 'bg-rose-50 border-rose-100' : 'bg-emerald-50 border-emerald-100'}`}>
                                     <div className="flex justify-between items-center mb-2">
-                                        <span className="text-xs font-bold text-gray-700">EMI to Income Ratio</span>
+                                        <span className="text-xs font-black text-slate-900 uppercase tracking-tight">EMI to Income Ratio</span>
                                         <span className={`text-sm font-black ${emi > monthlyIncome * 0.4 ? 'text-rose-600' : 'text-emerald-600'}`}>
                                             {((emi / monthlyIncome) * 100).toFixed(1)}%
                                         </span>

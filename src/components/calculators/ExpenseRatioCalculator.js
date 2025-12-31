@@ -182,7 +182,7 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
                         />
 
                         <div className="flex items-center justify-between mt-2">
-                            <span className="text-sm font-medium text-slate-600">Frequency</span>
+                            <span className="text-xs font-black text-slate-900 uppercase tracking-tight">Frequency</span>
                             <div className="flex bg-white rounded-lg p-1 border border-slate-200">
                                 <button
                                     onClick={() => setIsYearlyContribution(false)}

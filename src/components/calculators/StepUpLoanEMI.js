@@ -160,7 +160,7 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
 
 
                         <div className="mt-4">
-                            <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block mb-2">Loan Start Date</label>
+                            <label className="text-xs font-black text-slate-900 uppercase tracking-tight block mb-2">Loan Start Date</label>
                             <MonthYearPicker value={startDate} onChange={setStartDate} />
                         </div>
                     </div>

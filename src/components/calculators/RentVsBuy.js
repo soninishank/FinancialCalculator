@@ -111,8 +111,8 @@ export default function RentVsBuy({ currency }) {
             <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm mb-6">
                 <h4 className="text-teal-700 font-bold mb-4">🏠 Buying Scenario</h4>
                 <div className="mb-6">
+                    <label className="text-xs font-black text-slate-900 mb-2 block uppercase tracking-wide">Start Month & Year</label>
                     <MonthYearPicker
-                        label="Start Month & Year"
                         value={startDate}
                         onChange={setStartDate}
                     />

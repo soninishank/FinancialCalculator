@@ -313,7 +313,7 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
       <div className="flex justify-center mt-6 mb-10">
         <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-xl border border-gray-200">
           <div className="flex items-center gap-1.5 pl-2">
-            <span className="text-gray-700 text-sm font-bold tracking-tight">EMI Scheme</span>
+            <span className="text-slate-900 text-sm font-black tracking-tight uppercase">EMI Scheme</span>
             <div className="group relative flex items-center">
               <Info className="w-4 h-4 text-gray-400 cursor-pointer hover:text-gray-600 transition-colors" />
 
@@ -479,7 +479,7 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
             <div>
               <h3 className="text-lg font-bold text-gray-800">Amortization Schedule</h3>
               <div className="flex items-center mt-2 w-full sm:w-auto">
-                <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
+                <label className="text-sm font-black text-slate-900 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
                 <div className="w-48">
                   <MonthYearPicker
                     value={startDate}

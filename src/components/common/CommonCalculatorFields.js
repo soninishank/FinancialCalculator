@@ -45,7 +45,7 @@ export const DateRangeInputs = ({ startDate, setStartDate, endDate, setEndDate }
     return (
         <div className="grid grid-cols-2 gap-4">
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                <label className="block text-sm font-black text-slate-900 uppercase tracking-tight mb-2">Start Date</label>
                 <input
                     type="date"
                     value={startDate}
@@ -59,7 +59,7 @@ export const DateRangeInputs = ({ startDate, setStartDate, endDate, setEndDate }
                 )}
             </div>
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                <label className="block text-sm font-black text-slate-900 uppercase tracking-tight mb-2">End Date</label>
                 <input
                     type="date"
                     value={endDate}

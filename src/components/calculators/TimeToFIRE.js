@@ -183,7 +183,7 @@ export default function TimeToFIRE({ currency }) {
             </div>
 
             <div className="md:col-span-2 border-b pb-4 mb-2">
-                <h4 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2">
                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                     Life & Retirement
                 </h4>
@@ -251,7 +251,7 @@ export default function TimeToFIRE({ currency }) {
                     </div>
                 ) : (
                     <div className="mb-4 border p-5 rounded-2xl bg-gray-50/50 shadow-inner">
-                        <h4 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <h4 className="text-sm font-black text-slate-900 mb-4 flex items-center gap-2">
                             <span className="w-2 h-2 bg-teal-500 rounded-full"></span>
                             Target Monthly Expenses Breakdown
                         </h4>
@@ -306,7 +306,7 @@ export default function TimeToFIRE({ currency }) {
                             />
                         </div>
                         <div className="mt-5 pt-4 border-t border-gray-200 flex justify-between items-center">
-                            <span className="text-sm font-bold text-gray-700 uppercase tracking-tight">Total Monthly:</span>
+                            <span className="text-sm font-black text-slate-900 uppercase tracking-tight">Total Monthly:</span>
                             <span className="text-xl font-black text-teal-700">{moneyFormat(totalMonthlyExpenses, currency)}</span>
                         </div>
                     </div>
@@ -706,7 +706,7 @@ function CategoryInput({ label, value, onChange, active, onToggle, ...props }) {
                     >
                         <div className={`w-3 h-3 bg-white rounded-full shadow-sm transform transition-transform ${active ? 'translate-x-4' : 'translate-x-1'}`} />
                     </button>
-                    <span className={`text-[11px] font-bold uppercase tracking-wider ${active ? 'text-teal-700' : 'text-gray-400 line-through'}`}>
+                    <span className={`text-[11px] font-black uppercase tracking-wider ${active ? 'text-teal-700' : 'text-gray-400 line-through'}`}>
                         {label}
                     </span>
                 </div>

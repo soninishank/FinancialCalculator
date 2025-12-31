@@ -79,7 +79,7 @@ const SimpleInterest = ({ currency }) => {
             {calculationMode === 'duration' ? (
                 <div>
                     <div className="flex justify-between items-center mb-2">
-                        <label className="text-sm font-bold text-gray-700">Time Period</label>
+                        <label className="text-sm font-black text-slate-900 uppercase tracking-tight">Time Period</label>
                         <div className="flex bg-gray-100 p-1 rounded-lg">
                             {['years', 'months', 'days'].map((u) => (
                                 <button
@@ -148,7 +148,7 @@ const SimpleInterest = ({ currency }) => {
                                 Export PDF
                             </button>
                             <div className="flex items-center">
-                                <label className="text-sm text-gray-700 mr-2 font-medium whitespace-nowrap">Schedule starts:</label>
+                                <label className="text-sm font-black text-slate-900 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
                                 <div className="w-48 relative">
                                     <MonthYearPicker
                                         value={effectiveScheduleStartDate}

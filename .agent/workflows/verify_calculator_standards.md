@@ -9,7 +9,10 @@ Use this workflow when creating or refactoring a calculator to ensure it meets a
 ## 1. UI Consistency Check
 - [ ] **Table Component**: Does it use `CollapsibleInvestmentTable` (for investments) or `CollapsibleAmortizationTable` (for loans)?
 - [ ] **Charts**: Does it use `FinancialLineChart`, `FinancialBarChart`, or `FinancialDoughnutChart`?
-- [ ] **Inputs**: Does it use `InputWithSlider` or `CalculatorLayout`?
+- [ ] **Labels**: MUST use `text-sm font-black text-slate-900 uppercase tracking-tight`. NO `text-gray-700` or `font-bold`.
+- [ ] **Inputs**: MUST use `InputWithSlider` where possible.
+- [ ] **Custom Inputs**: If not using `InputWithSlider`, MUST match styles: `border-2 border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-indigo-50`.
+- [ ] **Label Alignment**: Flex containers for labels MUST align baselines `items-end`. If adjacent to `InputWithSlider`, use an invisible spacer to match badge height.
 - [ ] **Start Date**: Does it allow the user to select a Start Month/Year?
 - [ ] **Monthly Breakdown**: Does the table support expanding rows to show monthly details?
 
