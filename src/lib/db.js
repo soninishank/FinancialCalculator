@@ -1,22 +1,32 @@
 import { Pool } from 'pg';
 
-console.log('[DB] Initializing connection pool...');
-if (!process.env.DATABASE_URL) {
+const rawUrl = process.env.DATABASE_URL || '';
+let connectionString = rawUrl;
+
+// [FIX] Automatically clean the URL if it was copied as a full 'psql' command
+if (rawUrl.includes('psql') || rawUrl.includes("'")) {
+    const postgresMatch = rawUrl.match(/postgresql:\/\/[^\s']+/);
+    if (postgresMatch) {
+        connectionString = postgresMatch[0];
+        console.log('[DB] Sanitized DATABASE_URL (removed psql prefix/quotes)');
+    }
+}
+
+if (!connectionString) {
     console.error('[DB] CRITICAL: DATABASE_URL is missing!');
 } else {
-    const url = process.env.DATABASE_URL;
-    const hiddenUrl = url.replace(/:([^@]+)@/, ':****@');
+    const hiddenUrl = connectionString.replace(/:([^@]+)@/, ':****@');
     console.log('[DB] DATABASE_URL info:', {
-        length: url.length,
-        prefix: url.substring(0, 15),
-        isPlaceholder: url.includes('your_') || url === 'base',
-        hostPart: url.split('@')[1]?.split('/')[0]
+        length: connectionString.length,
+        prefix: connectionString.substring(0, 15),
+        isPlaceholder: connectionString.includes('your_') || connectionString === 'base',
+        hostPart: connectionString.split('@')[1]?.split('/')[0]
     });
     console.log('[DB] Connection String:', hiddenUrl.split('?')[0]);
 }
 
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString,
     ssl: {
         rejectUnauthorized: false
     }
