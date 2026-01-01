@@ -26,6 +26,9 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
+    if (!process.env.DATABASE_URL) {
+        return NextResponse.json({ error: 'DATABASE_URL is not configured' }, { status: 500 });
+    }
     try {
         const body = await request.json();
         const { name, email, content, calc_slug, parent_id, website } = body;
