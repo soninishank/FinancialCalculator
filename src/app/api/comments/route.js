@@ -78,6 +78,6 @@ export async function POST(request) {
         });
     } catch (err) {
         console.error('Error posting comment:', err);
-        return NextResponse.json({ error: 'Failed to post comment' }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to post comment', details: err.message }, { status: 500 });
     }
 }
