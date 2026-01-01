@@ -27,37 +27,50 @@ export async function GET(request) {
 
 export async function POST(request) {
     if (!process.env.DATABASE_URL) {
+        console.error('[API] POST Fail: DATABASE_URL is missing');
         return NextResponse.json({ error: 'DATABASE_URL is not configured' }, { status: 500 });
     }
+
     try {
         const body = await request.json();
         const { name, email, content, calc_slug, parent_id, website } = body;
 
-        // 1. Honeypot check (website field should be empty)
+        console.log('[API] New POST request received', {
+            slug: calc_slug,
+            name: name?.slice(0, 10),
+            contentLength: content?.length,
+            hasParent: !!parent_id
+        });
+
+        // 1. Honeypot check
         if (website) {
-            console.log('[SPAM] Honeypot triggered');
+            console.warn('[API] SPAM: Honeypot triggered');
             return NextResponse.json({ message: 'Comment submitted (spam detected)' }, { status: 200 });
         }
 
         // 2. Validation
         if (!name || !email || !content || !calc_slug) {
+            console.warn('[API] Validation Fail: Missing fields', { name: !!name, email: !!email, content: !!content, slug: !!calc_slug });
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
         if (name.trim().length < 2 || name.length > 50) {
+            console.warn('[API] Validation Fail: Name length', name.length);
             return NextResponse.json({ error: 'Name must be between 2 and 50 characters' }, { status: 400 });
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
+            console.warn('[API] Validation Fail: Invalid email', email);
             return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
         }
 
         if (content.trim().length < 10 || content.length > 5000) {
+            console.warn('[API] Validation Fail: Content length', content.length);
             return NextResponse.json({ error: 'Comment must be between 10 and 5000 characters' }, { status: 400 });
         }
 
-        // Simple sanitation: strip HTML tags to prevent XSS
+        // Simple sanitation
         const sanitizedContent = content.replace(/<[^>]*>?/gm, '').trim();
         const sanitizedName = name.replace(/<[^>]*>?/gm, '').trim();
 
@@ -66,13 +79,18 @@ export async function POST(request) {
         const isSpam = SPAM_KEYWORDS.some(word => lowerContent.includes(word));
         const status = isSpam ? 'spam' : 'approved';
 
-        // 4. Rate Limiting (Optional - can be done via IP check or Vercel middleware)
+        if (isSpam) console.warn('[API] Flagged as spam');
+
+        // 4. Rate Limiting
         const ip = request.headers.get('x-forwarded-for') || '0.0.0.0';
 
+        console.log('[API] Database inserting...');
         const result = await query(
             'INSERT INTO comments (name, email, content, calc_slug, parent_id, status, ip_address) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
             [sanitizedName, email, sanitizedContent, calc_slug, parent_id || null, status, ip]
         );
+
+        console.log('[API] Insert success', { id: result.rows[0].id });
 
         return NextResponse.json({
             id: result.rows[0].id,
@@ -80,7 +98,11 @@ export async function POST(request) {
             message: status === 'spam' ? 'Comment flagged for review' : 'Comment posted successfully'
         });
     } catch (err) {
-        console.error('Error posting comment:', err);
-        return NextResponse.json({ error: 'Failed to post comment', details: err.message }, { status: 500 });
+        console.error('[API] POST Catch-all error:', err);
+        return NextResponse.json({
+            error: 'Failed to post comment',
+            details: err.message,
+            stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+        }, { status: 500 });
     }
 }
