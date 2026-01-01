@@ -99,9 +99,15 @@ export async function POST(request) {
         });
     } catch (err) {
         console.error('[API] POST Catch-all error:', err);
+        const url = process.env.DATABASE_URL || '';
         return NextResponse.json({
             error: 'Failed to post comment',
             details: err.message,
+            urlPreview: {
+                length: url.length,
+                prefix: url.substring(0, 15),
+                isBase: url === 'base'
+            },
             stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
         }, { status: 500 });
     }
