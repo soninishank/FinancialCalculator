@@ -4,8 +4,15 @@ console.log('[DB] Initializing connection pool...');
 if (!process.env.DATABASE_URL) {
     console.error('[DB] CRITICAL: DATABASE_URL is missing!');
 } else {
-    const hiddenUrl = process.env.DATABASE_URL.replace(/:([^@]+)@/, ':****@');
-    console.log('[DB] Using DATABASE_URL:', hiddenUrl.split('?')[0]); // Log without query params for safety
+    const url = process.env.DATABASE_URL;
+    const hiddenUrl = url.replace(/:([^@]+)@/, ':****@');
+    console.log('[DB] DATABASE_URL info:', {
+        length: url.length,
+        prefix: url.substring(0, 15),
+        isPlaceholder: url.includes('your_') || url === 'base',
+        hostPart: url.split('@')[1]?.split('/')[0]
+    });
+    console.log('[DB] Connection String:', hiddenUrl.split('?')[0]);
 }
 
 const pool = new Pool({
