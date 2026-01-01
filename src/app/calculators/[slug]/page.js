@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import CalculatorPage from '../../../pages/CalculatorPage';
 import manifest from '../../../utils/calculatorsManifest';
 
@@ -115,7 +116,9 @@ export default async function Page({ params }) {
             <div className="sr-only">
                 <h1>{meta.title} | Financial Calculator</h1>
             </div>
-            <CalculatorPage />
+            <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading calculator...</div>}>
+                <CalculatorPage />
+            </Suspense>
         </>
     );
 }

@@ -61,6 +61,17 @@ const validateDataProp = (componentName, props) => {
     return <div data-testid={`mock-${componentName}`} />;
 };
 
+// Mock Next.js Navigation
+jest.mock('next/navigation', () => ({
+    useRouter: () => ({
+        replace: jest.fn(),
+        push: jest.fn(),
+        prefetch: jest.fn(),
+    }),
+    usePathname: () => '/',
+    useSearchParams: () => new URLSearchParams(),
+}));
+
 jest.mock('react-chartjs-2', () => {
     const React = require('react');
     return {

@@ -1,5 +1,6 @@
 // src/components/calculators/LoanEMI.js
 import React, { useMemo, useState } from "react";
+import { useUrlState } from "../../hooks/useUrlState";
 
 // --- IMPORTS ---
 import InputWithSlider from "../common/InputWithSlider";
@@ -30,22 +31,22 @@ import { calculateAPR } from "../../utils/finance"; // Import APR helper
 
 export default function LoanEMI({ currency, setCurrency, defaults, detailsKey }) {
   // Inputs: Use Default Constants or Props
-  const [principal, setPrincipal] = useState(defaults?.principal || DEFAULT_LOAN_PRINCIPAL);
-  const [annualRate, setAnnualRate] = useState(defaults?.rate || DEFAULT_LOAN_RATE);
-  const [years, setYears] = useState(defaults?.tenure || DEFAULT_LOAN_TENURE);
+  const [principal, setPrincipal] = useUrlState('p', defaults?.principal || DEFAULT_LOAN_PRINCIPAL);
+  const [annualRate, setAnnualRate] = useUrlState('r', defaults?.rate || DEFAULT_LOAN_RATE);
+  const [years, setYears] = useUrlState('y', defaults?.tenure || DEFAULT_LOAN_TENURE);
   // viewFrequency state removed as CollapsibleTable handles both views
 
-  const [processingFeePercent, setProcessingFeePercent] = useState(0);
-  const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 7)); // Default "YYYY-MM"
+  const [processingFeePercent, setProcessingFeePercent] = useUrlState('pfP', 0);
+  const [startDate, setStartDate] = useUrlState('start', new Date().toISOString().slice(0, 7)); // Default "YYYY-MM"
 
   // New State for Reverse Calculation
-  const [calculationMode, setCalculationMode] = useState('EMI'); // 'EMI' | 'LOAN'
-  const [targetEMI, setTargetEMI] = useState(30000);
-  const [emiScheme, setEmiScheme] = useState('arrears'); // 'arrears' | 'advance'
+  const [calculationMode, setCalculationMode] = useUrlState('mode', 'EMI'); // 'EMI' | 'LOAN'
+  const [targetEMI, setTargetEMI] = useUrlState('emi', 30000);
+  const [emiScheme, setEmiScheme] = useUrlState('scheme', 'arrears'); // 'arrears' | 'advance'
 
   // Fee Mode
-  const [feeMode, setFeeMode] = useState('percent'); // 'percent' | 'flat'
-  const [processingFeeFlat, setProcessingFeeFlat] = useState(10000); // Default flat fee
+  const [feeMode, setFeeMode] = useUrlState('fMode', 'percent'); // 'percent' | 'flat'
+  const [processingFeeFlat, setProcessingFeeFlat] = useUrlState('pfF', 10000); // Default flat fee
 
   // Tenure Calculation Mode
   const [tenureMode, setTenureMode] = useState('Years'); // 'Years' | 'Months'

@@ -22,6 +22,17 @@ jest.mock('react-chartjs-2', () => ({
     Doughnut: React.forwardRef((props, ref) => <MockChart {...props} ref={ref} />),
 }));
 
+// Mock Next.js Navigation
+jest.mock('next/navigation', () => ({
+    useRouter: () => ({
+        replace: jest.fn(),
+        push: jest.fn(),
+        prefetch: jest.fn(),
+    }),
+    usePathname: () => '/',
+    useSearchParams: () => new URLSearchParams(),
+}));
+
 // Mock Recharts components - Fully mocked to avoid import issues
 jest.mock('recharts', () => ({
     ResponsiveContainer: ({ children }) => <div style={{ width: 500, height: 500 }}>{children}</div>,

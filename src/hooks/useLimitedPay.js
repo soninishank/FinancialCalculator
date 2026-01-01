@@ -1,5 +1,5 @@
-// src/hooks/useLimitedPay.js
 import { useState } from "react";
+import { useUrlState } from "./useUrlState";
 import { MAX_YEARS } from "../utils/constants";
 
 export function useLimitedPay(initialYears = 10) {
@@ -13,9 +13,9 @@ export function useLimitedPay(initialYears = 10) {
   const initialValue = Math.min(Number(cleanInitialValue), MAX_YEARS);
 
   // State holds the value as a string for display consistency
-  const [totalYears, setTotalYears] = useState(String(initialValue));
-  const [sipYears, setSipYears] = useState(String(initialValue));
-  const [isLimitedPay, setIsLimitedPay] = useState(false);
+  const [totalYears, setTotalYears] = useUrlState('tY', String(initialValue));
+  const [sipYears, setSipYears] = useUrlState('sY', String(initialValue));
+  const [isLimitedPay, setIsLimitedPay] = useUrlState('lim', false);
 
   // Helper to safely convert state string to a comparable number
   const safeNumber = (val) => Number(String(val).replace(/\.$/, ''));

@@ -45,6 +45,7 @@
     "scraper": "node server/app.js",
     "dev:scraper": "NODE_NO_WARNINGS=1 nodemon -q server/app.js",
     "db:setup": "node server/db_setup/index.js",
+    "db:setup:comments": "node scripts/setup_comments_db.js",
     "start:server": "node server/app.js",
     "lint:fix": "eslint src --fix",
     "verify:calculators": "node scripts/verify_calculators.js",

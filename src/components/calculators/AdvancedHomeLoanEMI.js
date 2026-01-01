@@ -1,5 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
+import { useUrlState } from '../../hooks/useUrlState';
 import InputWithSlider from '../common/InputWithSlider';
 import MonthYearPicker from '../common/MonthYearPicker';
 import FormattedInput from '../common/FormattedInput';
@@ -25,20 +26,20 @@ const InfoIcon = ({ tooltip }) => (
 
 export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
     // --- STATE: Loan Details ---
-    const [homeValue, setHomeValue] = useState(5000000);
-    const [downPaymentPercent, setDownPaymentPercent] = useState(20);
-    const [interestRate, setInterestRate] = useState(9);
-    const [tenureYears, setTenureYears] = useState(20);
-    const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM
+    const [homeValue, setHomeValue] = useUrlState('hv', 5000000);
+    const [downPaymentPercent, setDownPaymentPercent] = useUrlState('dpP', 20);
+    const [interestRate, setInterestRate] = useUrlState('r', 9);
+    const [tenureYears, setTenureYears] = useUrlState('y', 20);
+    const [startDate, setStartDate] = useUrlState('start', new Date().toISOString().slice(0, 7)); // YYYY-MM
 
     // Derived Loan Amount
     const downPaymentAmount = homeValue * (downPaymentPercent / 100);
-    const [loanInsurance, setLoanInsurance] = useState(0);
+    const [loanInsurance, setLoanInsurance] = useUrlState('ins', 0);
 
     // Loan Fees States
-    const [loanFeesMode, setLoanFeesMode] = useState('amount'); // 'amount' | 'percent'
-    const [loanFeesAmount, setLoanFeesAmount] = useState(0);
-    const [loanFeesPercent, setLoanFeesPercent] = useState(0);
+    const [loanFeesMode, setLoanFeesMode] = useUrlState('fMode', 'amount'); // 'amount' | 'percent'
+    const [loanFeesAmount, setLoanFeesAmount] = useUrlState('fAmt', 0);
+    const [loanFeesPercent, setLoanFeesPercent] = useUrlState('fPerc', 0);
 
     const actualLoanFees = loanFeesMode === 'amount'
         ? loanFeesAmount
@@ -47,15 +48,16 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
     const finalLoanAmount = homeValue + loanInsurance - downPaymentAmount;
 
     // --- STATE: Advanced Loan Options ---
-    const [showAdvancedLoan, setShowAdvancedLoan] = useState(false);
-    const [emiStepUp, setEmiStepUp] = useState(0); // % Annual increase in EMI
+    const [showAdvancedLoan, setShowAdvancedLoan] = useUrlState('showAdv', false);
+    const [emiStepUp, setEmiStepUp] = useUrlState('stepUp', 0); // % Annual increase in EMI
+    // rateChanges is an array, sync as JSON string if needed, but for now skip complex objects
     const [rateChanges, setRateChanges] = useState([]);
     const [newRateDate, setNewRateDate] = useState(new Date().toISOString().slice(0, 7));
     const [newRate, setNewRate] = useState('');
 
     // --- STATE: Expenses ---
-    const [showExpenses, setShowExpenses] = useState(false);
-    const [oneTimeMode, setOneTimeMode] = useState('amount');
+    const [showExpenses, setShowExpenses] = useUrlState('showExp', false);
+    const [oneTimeMode, setOneTimeMode] = useUrlState('otMode', 'amount');
     const [oneTimeValue, setOneTimeValue] = useState(0);
     const [propertyTaxMode, setPropertyTaxMode] = useState('amount');
     const [propertyTaxValue, setPropertyTaxValue] = useState(0);
@@ -73,12 +75,12 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
     // --- STATE: Prepayments ---
     const [showPrepayments, setShowPrepayments] = useState(false);
 
-    const [monthlyPrepayment, setMonthlyPrepayment] = useState(0);
-    const [quarterlyPrepayment, setQuarterlyPrepayment] = useState(0);
-    const [yearlyPrepayment, setYearlyPrepayment] = useState(0);
+    const [monthlyPrepayment, setMonthlyPrepayment] = useUrlState('mPre', 0);
+    const [quarterlyPrepayment, setQuarterlyPrepayment] = useUrlState('qPre', 0);
+    const [yearlyPrepayment, setYearlyPrepayment] = useUrlState('yPre', 0);
 
-    const [prepaymentStepUp, setPrepaymentStepUp] = useState(0);
-    const [prepaymentStrategy, setPrepaymentStrategy] = useState('reduce_tenure'); // 'reduce_tenure' | 'reduce_emi'
+    const [prepaymentStepUp, setPrepaymentStepUp] = useUrlState('pStep', 0);
+    const [prepaymentStrategy, setPrepaymentStrategy] = useUrlState('pStr', 'reduce_tenure'); // 'reduce_tenure' | 'reduce_emi'
 
     // Custom One-Time Prepayments
     const [customPrepayments, setCustomPrepayments] = useState([]);

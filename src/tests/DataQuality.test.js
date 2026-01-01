@@ -52,6 +52,17 @@ jest.mock('../utils/export', () => ({
     downloadCSV: jest.fn(),
 }));
 
+// Mock Next.js Navigation
+jest.mock('next/navigation', () => ({
+    useRouter: () => ({
+        replace: jest.fn(),
+        push: jest.fn(),
+        prefetch: jest.fn(),
+    }),
+    usePathname: () => '/',
+    useSearchParams: () => new URLSearchParams(),
+}));
+
 /**
  * Enhanced Data Quality Mock for Chart.js
  */

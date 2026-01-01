@@ -1,18 +1,26 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams, usePathname } from 'next/navigation';
 import { Share2, Twitter, Linkedin, MessageCircle, Link as LinkIcon } from 'lucide-react';
 
 const SocialShare = ({ title, url }) => {
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
     const [shareUrl, setShareUrl] = useState(url || '');
     const [shareTitle, setShareTitle] = useState(title || '');
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            if (!url) setShareUrl(window.location.href);
+            // Priority: provided url prop > current window URL
+            if (url) {
+                setShareUrl(url);
+            } else {
+                setShareUrl(window.location.href);
+            }
             if (!title) setShareTitle(document.title);
         }
-    }, [url, title]);
+    }, [url, title, searchParams, pathname]);
 
     // If we are on server and don't have URL, we might render buttons with empty links or placeholder
     // Ideally we want links to work if possible.

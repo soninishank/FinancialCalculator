@@ -11,6 +11,7 @@ import { lazyLoad } from '../utils/lazyLoad';
 import { getLazyCalculator } from '../utils/calculatorImports';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import Breadcrumbs from '../components/common/Breadcrumbs';
+import CommentSection from '../components/common/CommentSection';
 
 const calculatorCache = {};
 
@@ -99,6 +100,9 @@ export default function CalculatorPage() {
 
             {/* AuthorBio removed as per user request */}
             <SocialShare title={meta.title} />
+
+            {/* Comment Section */}
+            <CommentSection slug={slug} />
           </div>
         </main>
 

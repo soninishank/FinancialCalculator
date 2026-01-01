@@ -1,5 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
+import { useUrlState } from '../../hooks/useUrlState';
 import InputWithSlider from '../common/InputWithSlider';
 import MonthYearPicker from '../common/MonthYearPicker';
 import CollapsibleAmortizationTable from '../common/CollapsibleAmortizationTable';
@@ -53,21 +54,21 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
     };
 
     // --- MAIN INPUTS ---
-    const [purchasePrice, setPurchasePrice] = useState(1000000);
-    const [downPayment, setDownPayment] = useState(200000);
-    const [tradeInValue, setTradeInValue] = useState(0);
-    const [loanTerm, setLoanTerm] = useState(60);
-    const [annualRate, setAnnualRate] = useState(9.5);
-    const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 7));
+    const [purchasePrice, setPurchasePrice] = useUrlState('price', 1000000);
+    const [downPayment, setDownPayment] = useUrlState('down', 200000);
+    const [tradeInValue, setTradeInValue] = useUrlState('trade', 0);
+    const [loanTerm, setLoanTerm] = useUrlState('term', 60);
+    const [annualRate, setAnnualRate] = useUrlState('rate', 9.5);
+    const [startDate, setStartDate] = useUrlState('start', new Date().toISOString().slice(0, 7));
 
     // --- FEES & CHARGES ---
-    const [processingFeeMode, setProcessingFeeMode] = useState('flat');
-    const [processingFeeFlat, setProcessingFeeFlat] = useState(5000);
-    const [processingFeePercent, setProcessingFeePercent] = useState(0.5);
-    const [docFee, setDocFee] = useState(2000);
-    const [salesTaxPercent, setSalesTaxPercent] = useState(12);
-    const [registrationCharges, setRegistrationCharges] = useState(7500);
-    const [addOnProducts, setAddOnProducts] = useState(0);
+    const [processingFeeMode, setProcessingFeeMode] = useUrlState('pfMode', 'flat');
+    const [processingFeeFlat, setProcessingFeeFlat] = useUrlState('pfFlat', 5000);
+    const [processingFeePercent, setProcessingFeePercent] = useUrlState('pfPerc', 0.5);
+    const [docFee, setDocFee] = useUrlState('docFee', 2000);
+    const [salesTaxPercent, setSalesTaxPercent] = useUrlState('tax', 12);
+    const [registrationCharges, setRegistrationCharges] = useUrlState('reg', 7500);
+    const [addOnProducts, setAddOnProducts] = useUrlState('addons', 0);
 
     // --- CREDIT IMPACT ---
     const [creditScoreRange, setCreditScoreRange] = useState('Good (670-739)');
