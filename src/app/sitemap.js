@@ -1,26 +1,37 @@
-import manifest from '../utils/calculatorsManifest';
+import calculators from '../utils/calculatorsManifest';
 
 export default function sitemap() {
     const baseUrl = 'https://www.hashmatic.in';
 
-    // 1. Static Routes
-    const staticRoutes = [
-        '',
-        '/calculators',
-    ].map((route) => ({
-        url: `${baseUrl}${route}`,
+    // Calculator routes
+    // Core pillars to boost for Sitelinks
+    const CORE_PILLARS = ['pure-sip', 'loan-emi', 'lump-sum', 'time-to-fire'];
+
+    // Calculator routes
+    const calculatorUrls = calculators.map((calc) => ({
+        url: `${baseUrl}/calculators/${calc.slug}`,
         lastModified: new Date(),
-        changeFrequency: 'monthly',
-        priority: 1,
+        changeFrequency: 'weekly',
+        // Boost core pillars to 0.9, keep rest at 0.7 to create authority gap
+        priority: CORE_PILLARS.includes(calc.slug) ? 0.9 : 0.7,
     }));
 
-    // 2. Dynamic Calculator Routes
-    const calculatorRoutes = manifest.map((m) => ({
-        url: `${baseUrl}/calculators/${m.slug}`,
-        lastModified: new Date(),
-        changeFrequency: 'monthly',
-        priority: 0.8,
-    }));
+    // Static routes (Home, Calculators index)
+    const routes = [
+        {
+            url: baseUrl,
+            lastModified: new Date(),
+            changeFrequency: 'daily',
+            priority: 1,
+        },
+        {
+            url: `${baseUrl}/calculators`,
+            lastModified: new Date(),
+            changeFrequency: 'daily',
+            priority: 0.9,
+        },
+        // Add other known static routes here if needed (e.g., /about, /contact)
+    ];
 
-    return [...staticRoutes, ...calculatorRoutes];
+    return [...routes, ...calculatorUrls];
 }

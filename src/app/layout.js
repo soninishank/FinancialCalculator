@@ -7,21 +7,21 @@ import Script from 'next/script';
 export const metadata = {
     title: {
         template: '%s | Hashmatic',
-        default: 'Hashmatic - Free Online Financial Calculators (SIP, EMI, Loan)',
+        default: 'Financial Calculators - SIP, EMI, Loan & Investment Tools',
     },
-    description: "Take control of your finances with Hashmatic's free, accurate online calculators. Instantly calculate SIP returns, Loan EMIs, and Retirement goals. Start planning your future today!",
+    description: "Free online financial calculators for SIP, Home Loan EMI, Income Tax, and Retirement planning. Accurate, ad-free investment tools for Indian investors.",
     manifest: '/manifest.json',
     metadataBase: new URL('https://www.hashmatic.in'),
     openGraph: {
         type: 'website',
         url: 'https://www.hashmatic.in/',
-        title: 'Hashmatic - Free Online Financial Calculators (SIP, EMI, Loan)',
-        description: "Take control of your finances with Hashmatic's free, accurate online calculators. Instantly calculate SIP returns, Loan EMIs, and Retirement goals. Start planning your future today!",
+        title: 'Financial Calculators - SIP, EMI, Loan & Investment Tools',
+        description: "Free online financial calculators for SIP, Home Loan EMI, Income Tax, and Retirement planning. Accurate, ad-free investment tools for Indian investors.",
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'Hashmatic - Free Online Financial Calculators (SIP, EMI, Loan)',
-        description: "Take control of your finances with Hashmatic's free, accurate online calculators. Instantly calculate SIP returns, Loan EMIs, and Retirement goals. Start planning your future today!",
+        title: 'Financial Calculators - SIP, EMI, Loan & Investment Tools',
+        description: "Free online financial calculators for SIP, Home Loan EMI, Income Tax, and Retirement planning. Accurate, ad-free investment tools for Indian investors.",
     },
 };
 
@@ -46,6 +46,24 @@ export default function RootLayout({ children }) {
             gtag('js', new Date());
             gtag('config', '${GA_MEASUREMENT_ID}');
           `}
+                </Script>
+
+                {/* Structured Data for Sitelinks */}
+                <Script id="schema-website" type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "WebSite",
+                        "name": "Hashmatic",
+                        "url": "https://www.hashmatic.in/",
+                        "potentialAction": {
+                            "@type": "SearchAction",
+                            "target": {
+                                "@type": "EntryPoint",
+                                "urlTemplate": "https://www.hashmatic.in/calculators?q={search_term_string}"
+                            },
+                            "query-input": "required name=search_term_string"
+                        }
+                    })}
                 </Script>
 
                 <Providers>

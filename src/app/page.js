@@ -1,12 +1,12 @@
 import Link from "next/link";
 
 export const metadata = {
-    title: "Financial Calculators & Planning Tools",
-    description: "Take control of your finances with Hashmatic's free, accurate online calculators. Instantly calculate SIP returns, Loan EMIs, and Retirement goals. Start planning your future today!",
-    keywords: ['financial calculator', 'sip calculator', 'loan emi calculator', 'cagr calculator', 'hashmatic'],
+    title: "Financial Calculators - SIP, EMI, Loan & Investment Tools | Hashmatic",
+    description: "Free online financial calculators for SIP, Home Loan EMI, Income Tax, and Retirement planning. Accurate, ad-free investment tools for Indian investors.",
+    keywords: ['financial calculator', 'sip calculator', 'loan emi calculator', 'investment tools', 'income tax calculator', 'retirement planner'],
     openGraph: {
-        title: "Smart Financial Planning Tools",
-        description: "Free, accurate calculators for SIP, EMI, Retirement, and more. Plan your financial journey today.",
+        title: "Financial Calculators - SIP, EMI, Loan & Investment Tools",
+        description: "Free online financial calculators for SIP, Home Loan EMI, Income Tax, and Retirement planning. Accurate, ad-free investment tools for Indian investors.",
         url: 'https://www.hashmatic.in',
         siteName: 'Hashmatic',
         images: [
@@ -20,9 +20,9 @@ export const metadata = {
         type: 'website',
     },
     twitter: {
-        card: 'summary',
-        title: "Financial Planning Tools",
-        description: "Master your investments with professional-grade calculators.",
+        card: 'summary_large_image',
+        title: "Financial Calculators - SIP, EMI, Loan & Investment Tools",
+        description: "Free online financial calculators for SIP, Home Loan EMI, Income Tax, and Retirement planning. Accurate, ad-free investment tools for Indian investors.",
         images: ['https://www.hashmatic.in/logo192.png'],
     },
 };
@@ -33,7 +33,7 @@ export default function Home() {
         "@graph": [
             {
                 "@type": "WebApplication",
-                "name": "Hashmatic Financial Tools",
+                "name": "Financial Calculators Suite",
                 "url": "https://www.hashmatic.in",
                 "applicationCategory": "FinanceApplication",
                 "operatingSystem": "Web",
@@ -49,16 +49,6 @@ export default function Home() {
                 "url": "https://www.hashmatic.in",
                 "logo": "https://www.hashmatic.in/logo192.png",
                 "description": "Professional-grade financial planning tools for smart investors."
-            },
-            {
-                "@type": "WebSite",
-                "name": "Hashmatic",
-                "url": "https://www.hashmatic.in",
-                "potentialAction": {
-                    "@type": "SearchAction",
-                    "target": "https://www.hashmatic.in/calculators?q={search_term_string}",
-                    "query-input": "required name=search_term_string"
-                }
             }
         ]
     };
