@@ -209,7 +209,7 @@ export default function CompareLoans({ currency }) {
             charts={verdict} // Using charts slot for Verdict to leverage full width
             pieChart={null}
             table={null}
-            details={calculatorDetails.compareLoans.render()}
+            details={calculatorDetails['compare-loans'].render()}
         />
     );
 }

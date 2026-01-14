@@ -436,7 +436,7 @@ export default function EMIComparison({ currency }) {
             charts={charts}
             pieChart={null}
             table={amortizationTable}
-            details={calculatorDetails.emiComparison.render()}
+            details={calculatorDetails['emi-comparison'].render()}
         />
     );
 }

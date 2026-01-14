@@ -171,7 +171,7 @@ const SimpleInterest = ({ currency }) => {
                     />
                 </div>
             }
-            details={calculatorDetails.simple_interest.render()}
+            details={calculatorDetails['simple-interest'].render()}
         />
     );
 };

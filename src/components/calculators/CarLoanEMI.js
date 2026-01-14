@@ -12,7 +12,7 @@ export default function CarLoanEMI({ currency, setCurrency }) {
                 rate: 8.5,
                 tenure: 5
             }}
-            detailsKey="carLoanEMI"
+            detailsKey="car-loan-emi"
         />
     );
 }

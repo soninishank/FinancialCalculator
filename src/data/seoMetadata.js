@@ -235,6 +235,81 @@ export const calculatorFaqs = {
             q: "What is a Tax-Saving FD?",
             a: "It is a special type of FD with a mandatory 5-year lock-in period that offers tax deductions under Section 80C of the Income Tax Act."
         }
+    ],
+    'time-to-goal': [
+        { q: "How does inflation affect my time to goal?", a: "Inflation reduces the purchasing power of your money. If your goal requires ₹10 Lakhs today, you might need ₹15 Lakhs in 10 years. Accounting for inflation helps you set a more realistic target." }
+    ],
+    'sip-plus-lump': [
+        { q: "Can I do both SIP and Lump Sum in the same fund?", a: "Yes, most mutual funds allow you to start a SIP and also make additional purchase transactions (lumpsum top-ups) in the same folio." }
+    ],
+    'advanced-car-loan-emi': [
+        { q: "What is a 'balloon payment' in car loans?", a: "A balloon payment is a large lump sum payment due at the end of the loan term. It reduces your monthly EMI but requires you to have a significant amount of cash ready at the end." }
+    ],
+    'step-up-loan-emi': [
+        { q: "How much should I increase my EMI by each year?", a: "A common rule of thumb is to increase your EMI in proportion to your annual salary increment, typically 5-10%." }
+    ],
+    'moratorium-loan-emi': [
+        { q: "Is a loan moratorium 'interest-free'?", a: "No. Interest continues to accrue on the outstanding balance during the moratorium period, and is added to the principal, increasing your loan burden." }
+    ],
+    'compare-loans': [
+        { q: "What is the APR?", a: "APR (Annual Percentage Rate) includes the interest rate plus other costs like processing fees, giving you a true picture of the loan's cost." }
+    ],
+    'ultimate-fire-planner': [
+        { q: "What is the 4% rule?", a: "The 4% rule suggests you can withdraw 4% of your portfolio in the first year of retirement and adjust for inflation thereafter without running out of money for 30 years." }
+    ],
+    'target-amount-calculator': [
+        { q: "How do I decide my target amount?", a: "Consider the future cost of your goal, adjusted for inflation. For example, higher education that costs ₹20L today might cost ₹40L in 10 years." }
+    ],
+    'rent-vs-buy': [
+        { q: "What is the '5% Rule' for Rent vs Buy?", a: "The 5% rule suggests that unrecoverable costs of owning (taxes, maintenance, cost of capital) are roughly 5% of the property value. If annual rent is less than 5% of the property price, renting might be cheaper." }
+    ],
+    'step-up-plus-lump': [
+        { q: "Is this strategy aggressive?", a: "It can be. Combining initial exposure with increasing contributions maximizes equity exposure, which is great for long-term growth but volatile in the short term." }
+    ],
+    'swr-simulator': [
+        { q: "Why simulate sequence of returns?", a: "Average returns don't matter if the market crashes right after you retire. Simulation helps check if your portfolio survives 'bad luck' timing." }
+    ],
+    'cost-of-delay': [
+        { q: "Is it too late to start investing?", a: "It's never too late, but the later you start, the more you need to save to reach the same goal due to less time for compounding." }
+    ],
+    'step-down-withdrawal': [
+        { q: "Why step-down withdrawals?", a: "Many retirees spend more in early active years (travel) and less in later years. This model matches that reality better than flat withdrawals." }
+    ],
+    'inflation-impact': [
+        { q: "Which asset classes beat inflation?", a: "Historically, equities (stocks) and real estate have consistently beaten inflation over long periods, whereas savings accounts often lag behind." }
+    ],
+    'asset-allocation': [
+        { q: "How often should I rebalance?", a: "Rebalancing annually or when your allocation drifts by more than 5% from your target is a standard rigorous approach." }
+    ],
+    'credit-card-payoff': [
+        { q: "Avalanche or Snowball method?", a: "Avalanche (paying highest interest first) saves money. Snowball (paying smallest debt first) builds psychological momentum. Both work if you stick to them." }
+    ],
+    'roi-calculator': [
+        { q: "Does ROI include time?", a: "Standard ROI is just (Gain/Cost). To account for time, use Annualized ROI or CAGR." }
+    ],
+    'rule-of-72': [
+        { q: "Is Rule of 72 exact?", a: "It's an approximation. It's very accurate for interest rates between 6% and 10%, but becomes less precise at very high or low rates." }
+    ],
+    'refinance-calculator': [
+        { q: "When should I refinance?", a: "Consider refinancing if interest rates have dropped by at least 0.5-1.0% and you plan to stay in the home long enough to recoup the closing costs." }
+    ],
+    'topup-loan-emi': [
+        { q: "Is a top-up loan cheaper than a personal loan?", a: "Yes, usually top-up loans on home loans have significantly lower interest rates than unsecured personal loans." }
+    ],
+    'emi-comparison': [
+        { q: "Why compare EMIs?", a: "Different lenders offer different rates and tenures. Small differences in EMI can add up to huge differences in total interest paid." }
+    ],
+    'simple-interest': [
+        { q: "Is simple interest used in banks?", a: "Most savings accounts use compound interest. Simple interest is rarely used for standard banking products, mostly for short-term personal loans or specific bonds." }
+    ],
+    'home-loan-eligibility': [
+        { q: "How can I increase my eligibility?", a: "You can increase eligibility by adding a co-applicant, clearing existing debts, or increasing the loan tenure." }
+    ],
+    'property-loan-eligibility': [
+        { q: "What is LTV?", a: "Loan to Value ratio. Banks typically fund only 75-90% of the property value; the rest must come from your own down payment." }
+    ],
+    'expense-ratio-calculator': [
+        { q: "Is a lower expense ratio always better?", a: "Generally yes, for comparable funds. However, a fund with a slightly higher ratio that consistently generates much higher alpha (returns) might still be worth it." }
     ]
 };
 
@@ -254,3 +329,4 @@ export const siteOrganization = {
         "contactType": "customer service"
     }
 };
+

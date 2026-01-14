@@ -119,7 +119,7 @@ export default function RuleOf72({ currency }) {
     };
 
     // --- DETAILS ---
-    const details = calculatorDetails.ruleOf72.render({
+    const details = calculatorDetails['rule-of-72'].render({
         rate,
         yearsToDouble: result.years.toFixed(1)
     });

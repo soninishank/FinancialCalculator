@@ -507,7 +507,7 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
 
       {/* EXPLANATORY DETAILS */}
       <div className="mt-12">
-        {calculatorDetails[detailsKey || 'loanEmi'].render()}
+        {calculatorDetails[detailsKey || 'loan-emi'].render()}
       </div>
 
     </div>

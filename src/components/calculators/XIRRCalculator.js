@@ -540,7 +540,7 @@ export default function XIRRCalculator({ currency = 'INR' }) {
         <CalculatorLayout
             inputs={inputsSection}
             summary={summarySection}
-            details={calculatorDetails.xirr_calculator.render()}
+            details={calculatorDetails['xirr-calculator'].render()}
         />
     );
 }

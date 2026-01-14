@@ -205,7 +205,7 @@ export default function TopUpLoanEMI({ currency }) {
 
       {/* EXPLANATORY DETAILS */}
       <div className="mt-12">
-        {calculatorDetails.topUpLoan.render()}
+        {calculatorDetails['topup-loan-emi'].render()}
       </div>
 
     </div>

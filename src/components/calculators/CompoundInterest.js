@@ -258,7 +258,7 @@ const CompoundInterest = ({ currency }) => {
                     />
                 </div>
             }
-            details={calculatorDetails.compound_interest.render()}
+            details={calculatorDetails['compound-interest'].render()}
         />
     );
 };

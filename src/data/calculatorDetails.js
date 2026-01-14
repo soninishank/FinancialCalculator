@@ -2,7 +2,7 @@ import React from 'react';
 import { calculatorFaqs } from './seoMetadata';
 
 export const calculatorDetails = {
-    ruleOf72: {
+    'rule-of-72': {
         title: "Understanding the Rule of 72",
         render: ({ rate, yearsToDouble }) => (
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -39,7 +39,7 @@ export const calculatorDetails = {
             </div>
         )
     },
-    simple_interest: {
+    'simple-interest': {
         title: "How Simple Interest Works for You",
         render: () => (
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -74,7 +74,7 @@ export const calculatorDetails = {
             </div>
         )
     },
-    compound_interest: {
+    'compound-interest': {
         title: "The Power of Compounding",
         render: () => (
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -225,7 +225,7 @@ export const calculatorDetails = {
             </div>
         )
     },
-    loanEmi: {
+    'loan-emi': {
         title: "Understanding Loans",
         render: () => (
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -268,7 +268,7 @@ export const calculatorDetails = {
             </div>
         )
     },
-    topUpLoan: {
+    'topup-loan-emi': {
         title: "Understanding Top-Up Loans",
         render: () => (
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -298,7 +298,7 @@ export const calculatorDetails = {
         )
     },
     // old swp entry removed
-    compareLoans: {
+    'compare-loans': {
         title: "Flat Rate vs Reducing Balance",
         render: () => (
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -341,7 +341,7 @@ export const calculatorDetails = {
             </div>
         )
     },
-    emiComparison: {
+    'emi-comparison': {
         title: "Compare Multiple Loan Estimates",
         render: () => (
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -373,7 +373,7 @@ export const calculatorDetails = {
             </div>
         )
     },
-    advancedHomeLoan: {
+    'advanced-home-loan': {
         title: "Deep Dive: Home Loan Planning",
         render: () => (
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -442,7 +442,7 @@ export const calculatorDetails = {
             </div>
         )
     },
-    xirr_calculator: {
+    'xirr-calculator': {
         title: "Mastering XIRR",
         render: () => (
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -594,7 +594,7 @@ export const calculatorDetails = {
             </div>
         )
     },
-    carLoanEMI: {
+    'car-loan-emi': {
         title: "Car Loan EMI Calculator Guide",
         render: () => (
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -990,6 +990,204 @@ export const calculatorDetails = {
                             </div>
                         ))}
                     </div>
+                </div>
+            </div>
+        )
+    },
+    'sip-plus-lump': {
+        title: "Hybrid Strategy: SIP + Lump Sum",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Why Combine Both?</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p>Combine the power of a one-time investment with disciplined monthly savings to accelerate your wealth creation.</p>
+                </div>
+            </div>
+        )
+    },
+    'step-up-loan-emi': {
+        title: "Step-Up Loan Repayment",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Pay Off Debt Faster</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p>Increasing your EMI annually in line with your income growth can drastically reduce your loan tenure and interest burden.</p>
+                </div>
+            </div>
+        )
+    },
+    'moratorium-loan-emi': {
+        title: "Moratorium Impact Analysis",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">The Cost of 'Skipping' EMIs</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p>Understanding how interest capitalizes during a moratorium period and increases your future liability.</p>
+                </div>
+            </div>
+        )
+    },
+    'ultimate-fire-planner': {
+        title: "Financial Independence & Retire Early (FIRE)",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Planning Your Freedom</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p>Calculate your 'FI Number' and determine when you can retire based on your savings rate and expenses.</p>
+                </div>
+            </div>
+        )
+    },
+    'rent-vs-buy': {
+        title: "Rent vs Buy Decision",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">The Mathematical Truth</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p>Compare the net worth impact of buying a home versus renting and investing the surplus.</p>
+                </div>
+            </div>
+        )
+    },
+    'step-up-plus-lump': {
+        title: "Advanced Wealth Builder",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Maximum Growth Strategy</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p>A comprehensive view of how Step-Up SIPs combined with an initial Lump Sum can compound over time.</p>
+                </div>
+            </div>
+        )
+    },
+    'swr-simulator': {
+        title: "Safe Withdrawal Rate Simulator",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Will Your Money Last?</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p>Simulate different withdrawal rates (e.g., 4% Rule) to see how long your retirement corpus will survive market volatility.</p>
+                </div>
+            </div>
+        )
+    },
+    'cost-of-delay': {
+        title: "The Price of Procrastination",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Start Early, Win Big</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p>See exactly how much money you lose by delaying your investment journey by even a few years.</p>
+                </div>
+            </div>
+        )
+    },
+    'step-down-withdrawal': {
+        title: "Step-Down Withdrawal Planning",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Variable Retirement Expenses</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p>Model higher expenses in early retirement years (travel, hobbies) reducing to lower stable expenses later.</p>
+                </div>
+            </div>
+        )
+    },
+    'inflation-impact': {
+        title: "Inflation: The Silent Killer",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Purchasing Power Erosion</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p>Visualize how inflation eats into the value of your savings over time, necessitating higher returns.</p>
+                </div>
+            </div>
+        )
+    },
+    'asset-allocation': {
+        title: "Portfolio Rebalancing",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Stay on Target</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p>Calculate buy/sell amounts to restore your portfolio to its ideal Equity:Debt ratio.</p>
+                </div>
+            </div>
+        )
+    },
+    'credit-card-payoff': {
+        title: "Debt Freedom Planner",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Escape the Debt Trap</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p>See how increasing your monthly payment can save you thousands in interest and get you debt-free months sooner.</p>
+                </div>
+            </div>
+        )
+    },
+    'roi-calculator': {
+        title: "Return on Investment",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Measure Your Success</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p>Simple tools to calculate the percentage return and annualized yield of any investment.</p>
+                </div>
+            </div>
+        )
+    },
+    'refinance-calculator': {
+        title: "Loan Refinance Analysis",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Should You Switch?</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p>Calculate the break-even point and total savings when switching your loan to a lower interest rate.</p>
+                </div>
+            </div>
+        )
+    },
+    'home-loan-eligibility': {
+        title: "How Much Can You Borrow?",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Eligibility Calculator</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p>Estimate your home loan eligibility based on your income, existing debts, and bank FOIR norms.</p>
+                </div>
+            </div>
+        )
+    },
+    'property-loan-eligibility': {
+        title: "Property-Linked Eligibility",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">LTV & Income Analysis</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p>Determine the maximum loan based on property value limits (LTV) and your repayment capacity.</p>
+                </div>
+            </div>
+        )
+    },
+    'expense-ratio-calculator': {
+        title: "True Cost of Fees",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Impact of Expense Ratios</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p>See how a 1-2% difference in mutual fund expense ratios can cost you lakhs over a long-term investment horizon.</p>
+                </div>
+            </div>
+        )
+    },
+    'advanced-car-loan-emi': {
+        title: "Complete Car Financing",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Total Cost of Ownership</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p>Factor in down payments, trade-ins, fees, and taxes to see the real cost of buying your car.</p>
                 </div>
             </div>
         )
