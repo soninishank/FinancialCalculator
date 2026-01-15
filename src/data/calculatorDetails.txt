@@ -1,0 +1,71 @@
+
+    'gst-calculator': {
+        title: "Goods and Services Tax (GST) Explained",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding GST Calculation</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        The Goods and Services Tax (GST) is an indirect tax that has replaced many indirect taxes in India. It is calculated on the value of the goods or services supplied.
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                            <h4 className="font-bold text-indigo-800 mb-2">Exclusive GST</h4>
+                            <p className="text-sm text-indigo-700">
+                                This is when GST is <strong>added</strong> to the product price.
+                                <br />Result = Cost + (Cost × Rate%)
+                            </p>
+                        </div>
+                        <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                            <h4 className="font-bold text-emerald-800 mb-2">Inclusive GST</h4>
+                            <p className="text-sm text-emerald-700">
+                                This is when the price <strong>already includes</strong> GST.
+                                <br />Original Cost = MRP / (1 + Rate%)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'nps-calculator': {
+        title: "Planning Your Retirement with NPS",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Why Invest in NPS?</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        The <strong>National Pension System (NPS)</strong> is a government-sponsored pension scheme. It is cost-effective and tax-efficient, designed to encourage systematic saving during your subscriber's earning life.
+                    </p>
+                    <div className="bg-orange-50 p-4 rounded-xl border border-orange-100 my-4">
+                        <h4 className="font-bold text-orange-900 mb-2">NPS Maturity Rules</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-sm text-orange-800">
+                            <li>At age 60, you can withdraw up to <strong>60%</strong> of the corpus as a tax-free lump sum.</li>
+                            <li>The remaining <strong>40%</strong> (at minimum) must be used to purchase an Annuity plan that provides a monthly pension.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'ssy-calculator': {
+        title: "Sukanya Samriddhi Yojana (SSY) Guide",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">About the Scheme</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        <strong>Sukanya Samriddhi Yojana</strong> is a small deposit scheme by the Government of India meant exclusively for a girl child. It currently offers one of the highest interest rates among all small savings schemes.
+                    </p>
+                    <div className="bg-pink-50 p-4 rounded-xl border border-pink-100 my-4">
+                        <h4 className="font-bold text-pink-900 mb-2">Key Features</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-sm text-pink-800">
+                            <li><strong>Lock-in:</strong> Maturity is 21 years from the date of opening.</li>
+                            <li><strong>Deposits:</strong> You only need to deposit for the first 15 years.</li>
+                            <li><strong>Tax Benefits:</strong> EEE Status (Exempt-Exempt-Exempt). Investment, Interest, and Maturity are all tax-free.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        )
+    },

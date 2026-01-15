@@ -11,6 +11,13 @@ export const currencyOptions = [
   { code: "CNY", name: "Chinese Yuan", locale: "zh-CN" },
   { code: "HKD", name: "Hong Kong Dollar", locale: "zh-HK" },
   { code: "INR", name: "Indian Rupee", locale: "en-IN" },
+  { code: "SGD", name: "Singapore Dollar", locale: "en-SG" },
+  { code: "AED", name: "UAE Dirham", locale: "ar-AE" },
+  { code: "NZD", name: "NZ Dollar", locale: "en-NZ" },
+  { code: "SAR", name: "Saudi Riyal", locale: "ar-SA" },
+  { code: "MXN", name: "Mexican Peso", locale: "es-MX" },
+  { code: "BRL", name: "Brazilian Real", locale: "pt-BR" },
+  { code: "ZAR", name: "SA Rand", locale: "en-ZA" },
 ];
 
 // Use compact notation above 1 million

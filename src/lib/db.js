@@ -37,20 +37,35 @@ pool.on('error', (err) => {
 });
 
 export const query = async (text, params) => {
-    const start = Date.now();
-    try {
-        const res = await pool.query(text, params);
-        const duration = Date.now() - start;
-        console.log('[DB] Query executed successfully', { duration, rows: res.rowCount });
-        return res;
-    } catch (err) {
-        console.error('[DB] Query execution failed', {
-            message: err.message,
-            code: err.code,
-            detail: err.detail,
-            hint: err.hint
-        });
-        throw err;
+    let retries = 3;
+    while (retries > 0) {
+        const start = Date.now();
+        try {
+            const res = await pool.query(text, params);
+            const duration = Date.now() - start;
+            console.log('[DB] Query executed successfully', { duration, rows: res.rowCount });
+            return res;
+        } catch (err) {
+            retries--;
+            const isRetryable = err.message.includes('Connection terminated unexpectedly') ||
+                err.message.includes('ECONNRESET') ||
+                err.message.includes('ETIMEDOUT');
+
+            if (retries > 0 && isRetryable) {
+                console.warn(`[DB] Query failed, retrying... (${retries} attempts left)`, { message: err.message });
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1s before retry
+                continue;
+            }
+
+            console.error('[DB] Query execution failed', {
+                message: err.message,
+                code: err.code,
+                detail: err.detail,
+                hint: err.hint,
+                finalAttempt: true
+            });
+            throw err;
+        }
     }
 };
 

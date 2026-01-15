@@ -4,8 +4,8 @@ import manifest from '../../utils/calculatorsManifest';
 
 
 export const metadata = {
-    title: 'Financial Calculators Catalog',
-    description: "Take control of your finances with Hashmatic's free, accurate online calculators. Instantly calculate SIP returns, Loan EMIs, and Retirement goals. Start planning your future today!",
+    title: 'All SIP, EMI & Investment Calculators | Hashmatic',
+    description: "Browse 80+ free, accurate online financial tools. Calculate SIP returns, Home Loan EMIs, Income Tax, and Retirement goals. The complete investor's toolkit.",
     alternates: {
         canonical: 'https://www.hashmatic.in/calculators',
     },

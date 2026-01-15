@@ -67,14 +67,13 @@ export default function RootLayout({ children }) {
                 </Script>
 
                 <Providers>
-                    <div className="bg-gray-50 min-h-screen transition-colors duration-200 flex flex-col">
+                    <div className="bg-gray-50 dark:bg-slate-950 min-h-screen transition-colors duration-500 flex flex-col">
                         <Header />
                         <main className="pt-20 flex-grow">
                             <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-4 md:px-8 py-8">
                                 {children}
                             </div>
                         </main>
-                        <Footer />
                     </div>
                 </Providers>
             </body>

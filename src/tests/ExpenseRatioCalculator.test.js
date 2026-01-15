@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import ExpenseRatioCalculator from '../components/calculators/ExpenseRatioCalculator';
+import ExpenseRatioCalculator from '../components/calculators/investments/ExpenseRatioCalculator';
 import '@testing-library/jest-dom';
 
 // Mock TextEncoder/Decoder for JSDOM

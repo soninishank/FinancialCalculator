@@ -1,0 +1,57 @@
+
+    '401k-calculator': {
+        title: "401(k) Retirement Planner",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Maximize Your 401(k)</h3>
+                <div className="prose prose-blue max-w-none text-gray-600">
+                    <p className="mb-4">
+                        A <strong>401(k)</strong> is a feature of a qualified profit-sharing plan that allows employees to contribute a portion of their wages to individual accounts.
+                    </p>
+                    <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 my-4">
+                        <h4 className="font-bold text-blue-900 mb-2">Employer Match</h4>
+                        <p className="text-sm text-blue-800">
+                            Many employers match a portion of your contributions. This is essentially <strong>free money</strong>. Common match is 50% of your contribution up to 6% of your salary.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'roth-ira-calculator': {
+        title: "Roth IRA Growth Calculator",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Tax-Free Retirement Income</h3>
+                <div className="prose prose-purple max-w-none text-gray-600">
+                    <p className="mb-4">
+                        A <strong>Roth IRA</strong> allows you to contribute after-tax dollars. The biggest benefit is that your money grows tax-free, and you can withdraw it tax-free in retirement.
+                    </p>
+                    <ul className="list-disc pl-5 space-y-2 text-sm text-gray-600">
+                        <li><strong>2024 Limit:</strong> $7,000 ($8,000 if age 50+).</li>
+                        <li><strong>Flexibility:</strong> You can withdraw your <em>contributions</em> (not earnings) at any time without penalty.</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    },
+    '529-college-savings': {
+        title: "529 Education Savings Plan",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Saving for College</h3>
+                <div className="prose prose-sky max-w-none text-gray-600">
+                    <p className="mb-4">
+                        A <strong>529 Plan</strong> is a tax-advantaged savings plan designed to encourage saving for future education costs.
+                    </p>
+                    <div className="bg-sky-50 p-4 rounded-xl border border-sky-100 my-4">
+                        <h4 className="font-bold text-sky-900 mb-2">Key Benefits</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-sm text-sky-800">
+                            <li><strong>Tax-Free Growth:</strong> Earnings are not subject to federal tax.</li>
+                            <li><strong>Tax-Free Withdrawals:</strong> No tax when used for qualified education expenses (tuition, books, room & board).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        )
+    },

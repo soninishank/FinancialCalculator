@@ -1,131 +1,91 @@
-import Link from "next/link";
+import NewsAggregator from "../components/news/NewsAggregator";
 
 export const metadata = {
-    title: "Financial Calculators - SIP, EMI, Loan & Investment Tools | Hashmatic",
+    title: "Financial Calculators - SIP, EMI, Loan & Investment Tools",
     description: "Free online financial calculators for SIP, Home Loan EMI, Income Tax, and Retirement planning. Accurate, ad-free investment tools for Indian investors.",
-    keywords: ['financial calculator', 'sip calculator', 'loan emi calculator', 'investment tools', 'income tax calculator', 'retirement planner'],
+    keywords: [
+        'financial calculator', 'sip calculator', 'loan emi calculator',
+        'income tax calculator india', 'investment tools', 'retirement planner',
+        'mutual fund returns', 'wealth management', 'sip returns calculator',
+        'home loan prepayments', 'emi calculator', 'tax planner'
+    ],
     openGraph: {
         title: "Financial Calculators - SIP, EMI, Loan & Investment Tools",
         description: "Free online financial calculators for SIP, Home Loan EMI, Income Tax, and Retirement planning. Accurate, ad-free investment tools for Indian investors.",
         url: 'https://www.hashmatic.in',
         siteName: 'Hashmatic',
-        images: [
-            {
-                url: 'https://www.hashmatic.in/logo192.png',
-                width: 192,
-                height: 192,
-            },
-        ],
+        images: [{ url: 'https://www.hashmatic.in/logo192.png', width: 192, height: 192 }],
         locale: 'en_IN',
         type: 'website',
-    },
-    twitter: {
-        card: 'summary_large_image',
-        title: "Financial Calculators - SIP, EMI, Loan & Investment Tools",
-        description: "Free online financial calculators for SIP, Home Loan EMI, Income Tax, and Retirement planning. Accurate, ad-free investment tools for Indian investors.",
-        images: ['https://www.hashmatic.in/logo192.png'],
     },
 };
 
 export default function Home() {
-    const schema = {
-        "@context": "https://schema.org",
-        "@graph": [
-            {
-                "@type": "WebApplication",
-                "name": "Financial Calculators Suite",
-                "url": "https://www.hashmatic.in",
-                "applicationCategory": "FinanceApplication",
-                "operatingSystem": "Web",
-                "offers": {
-                    "@type": "Offer",
-                    "price": "0",
-                    "priceCurrency": "INR"
-                }
-            },
-            {
-                "@type": "Organization",
-                "name": "Hashmatic",
-                "url": "https://www.hashmatic.in",
-                "logo": "https://www.hashmatic.in/logo192.png",
-                "description": "Professional-grade financial planning tools for smart investors."
-            }
-        ]
-    };
+    const popularTools = [
+        { title: 'SIP Calculator', slug: 'pure-sip', icon: '📈' },
+        { title: 'Income Tax (2024-25)', slug: 'india-tax', icon: '🏛️' },
+        { title: 'Loan EMI Calculator', slug: 'loan-emi', icon: '🏠' },
+        { title: 'Step-Up SIP', slug: 'step-up-sip', icon: '🚀' },
+        { title: 'SWP Calculator', slug: 'swp-calculator', icon: '💰' },
+        { title: 'Time to Goal', slug: 'time-to-goal', icon: '🎯' },
+    ];
 
     return (
-        <>
+        <div className="min-h-screen bg-slate-50/50 dark:bg-transparent transition-colors duration-500 overflow-x-hidden">
+            {/* SEO Schema */}
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "WebApplication",
+                        "name": "Hashmatic Financial Suite",
+                        "url": "https://www.hashmatic.in",
+                        "applicationCategory": "FinanceApplication",
+                        "description": "Professional-grade financial planning tools (SIP, EMI, Tax) and real-time news."
+                    })
+                }}
             />
 
-            {/* -------- HERO SECTION -------- */}
-            <section className="bg-indigo-600 text-white py-14 rounded-3xl overflow-hidden shadow-2xl relative">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-400/10 rounded-full -ml-32 -mb-32 blur-3xl"></div>
+            {/* Background Decor */}
+            <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-screen -z-10 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-blue-50/50 via-transparent to-transparent dark:from-blue-900/10 dark:via-transparent pointer-events-none"></div>
 
-                <div className="max-w-6xl mx-auto px-4 text-center relative z-10">
-                    <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
-                        Plan Your Financial Future with Precision
-                    </h1>
-                    <p className="mt-6 text-indigo-100 text-xl max-w-2xl mx-auto font-medium">
-                        Master your investments with Hashmatic's professional-grade suite of SIP, EMI, and Retirement calculators.
-                    </p>
+            {/* Semantic SEO Header (Subtle) */}
+            <div className="container mx-auto px-4 pt-12 pb-4">
+                <h1 className="text-xs font-bold uppercase tracking-[0.3em] opacity-30 dark:opacity-20 text-center mb-0">
+                    Financial Intelligence & 80+ Professional Tools
+                </h1>
+            </div>
 
-                    <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link
-                            href="/calculators"
-                            className="px-8 py-4 bg-white text-indigo-600 font-bold rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 text-lg"
-                        >
-                            Explore All Calculators
-                        </Link>
+            {/* News Stream Section */}
+            <section className="pt-0 pb-12">
+                <div className="container mx-auto px-4">
+                    <NewsAggregator />
+                </div>
+            </section>
+
+            {/* Popular Tools Section - SEO Hub */}
+            <section className="pb-32">
+                <div className="container mx-auto px-4 max-w-4xl">
+                    <div className="flex items-center justify-between mb-8 px-2">
+                        <h2 className="text-lg font-bold tracking-tight opacity-70">Most Popular Tools</h2>
+                        <a href="/calculators" className="text-sm font-bold text-blue-600 dark:text-blue-400 hover:underline">View All 80+ Tools →</a>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {popularTools.map((tool) => (
+                            <a
+                                key={tool.slug}
+                                href={`/calculators/${tool.slug}`}
+                                className="group p-6 rounded-2xl bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-300 backdrop-blur-sm"
+                            >
+                                <div className="text-2xl mb-3 transform group-hover:scale-110 transition-transform">{tool.icon}</div>
+                                <h3 className="font-bold text-slate-800 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors uppercase text-[10px] tracking-widest">{tool.title}</h3>
+                            </a>
+                        ))}
                     </div>
                 </div>
             </section>
-
-            {/* Popular Sections */}
-            <section className="py-16">
-                <h2 className="text-3xl font-bold text-gray-900 mb-8">Popular Calculations</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <CalculatorCard
-                        title="SIP Calculator"
-                        desc="Calculate future value of your systematic investment plan."
-                        slug="pure-sip"
-                    />
-                    <CalculatorCard
-                        title="EMI Calculator"
-                        desc="Plan your loans with detailed monthly breakdown."
-                        slug="loan-emi"
-                    />
-                    <CalculatorCard
-                        title="Lumpsum Calculator"
-                        desc="See how a single investment grows over time."
-                        slug="lump-sum"
-                    />
-                </div>
-            </section>
-
-            <footer className="py-12 bg-gray-50 text-center rounded-3xl mt-8">
-                <p className="text-gray-500 font-medium italic">"The best time to start investing was 20 years ago. The second best time is now."</p>
-                <div className="mt-6 text-sm text-gray-400">
-                    © 2025 Hashmatic. Professional planning tools for smart investors.
-                </div>
-            </footer>
-        </>
-    );
-}
-
-function CalculatorCard({ title, desc, slug }) {
-    return (
-        <Link href={`/calculators/${slug}`} className="group">
-            <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300">
-                <h3 className="text-xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">{title}</h3>
-                <p className="mt-3 text-gray-600 leading-relaxed">{desc}</p>
-                <div className="mt-6 flex items-center text-indigo-500 font-bold text-sm">
-                    Try Calculator <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
-                </div>
-            </div>
-        </Link>
+        </div>
     );
 }

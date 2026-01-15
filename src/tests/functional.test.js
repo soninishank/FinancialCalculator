@@ -4,9 +4,9 @@ import '@testing-library/jest-dom';
 import { TextEncoder, TextDecoder } from 'util';
 
 // Imports
-import RecurringDeposit from '../components/calculators/RecurringDeposit';
-import SWPCalculator from '../components/calculators/SWPCalculator';
-import GoalPlanner from '../components/calculators/GoalPlanner';
+import RecurringDeposit from '../components/calculators/savings/RecurringDeposit';
+import SWPCalculator from '../components/calculators/investments/SWPCalculator';
+import GoalPlanner from '../components/calculators/investments/GoalPlanner';
 
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;

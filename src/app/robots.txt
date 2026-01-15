@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Allow: /calculators/
+Allow: /api/news
 
 Sitemap: https://www.hashmatic.in/sitemap.xml

@@ -310,6 +310,180 @@ export const calculatorFaqs = {
     ],
     'expense-ratio-calculator': [
         { q: "Is a lower expense ratio always better?", a: "Generally yes, for comparable funds. However, a fund with a slightly higher ratio that consistently generates much higher alpha (returns) might still be worth it." }
+    ],
+    'gst-calculator': [
+        { q: "What are the current GST slabs?", a: "The primary GST slabs in India are 5%, 12%, 18%, and 28%. Gold is taxed at 3% and rough precious stones at 0.25%." }
+    ],
+    'nps-calculator': [
+        { q: "Is NPS maturity tax-free?", a: "Yes, up to 60% of the corpus withdrawn as a lump sum at age 60 is tax-free. The remaining 40% must be used for annuity, which provides a taxable pension." }
+    ],
+    'ssy-calculator': [
+        { q: "Can I withdraw SSY before 21 years?", a: "Partial withdrawal up to 50% is allowed for the girl's higher education or marriage after she turns 18. Premature closure is allowed only in specific medical emergencies." }
+    ],
+    '401k-calculator': [
+        { q: "How much contributes to 401(k) in 2024?", a: "For 2024, the employee contribution limit is $23,000. If you are age 50 or older, you can contribute an additional $7,500 catch-up contribution." }
+    ],
+    'roth-ira-calculator': [
+        { q: "Who can open a Roth IRA?", a: "Anyone with earned income can open a Roth IRA, provided their Modified Adjusted Gross Income (MAGI) is below the IRS limits set for the year." }
+    ],
+    '529-college-savings': [
+        { q: "Can 529 funds be used for K-12?", a: "Yes, up to $10,000 per year per beneficiary can be used for tuition at K-12 public, private, or religious schools, in addition to college expenses." }
+    ],
+    'us-mortgage-calculator': [
+        { q: "What is PMI and when does it go away?", a: "PMI (Private Mortgage Insurance) is usually required if you put down less than 20%. It automatically cancels when your loan balance typically reaches 78% of the original home value, or you can request cancellation at 80%." },
+        { q: "Is mortgage interest tax deductible?", a: "Yes, for most taxpayers who itemize deductions, mortgage interest on the first $750,000 of indebtedness is deductible." }
+    ],
+    'rmd-calculator': [
+        { q: "When must I take my first RMD?", a: "You must take your first RMD by April 1 of the year following the year you turn 73. For all subsequent years, you must take it by December 31." },
+        { q: "Can I take more than the RMD amount?", a: "Yes, the RMD is just the *minimum* required. You can always withdraw more, but remember that regular withdrawals are taxed as ordinary income." }
+    ],
+    'us-capital-gains': [
+        { q: "How are short-term gains taxed?", a: "Short-term capital gains (held for 1 year or less) are taxed as ordinary income, meaning they are subject to your federal income tax bracket rates (10% to 37%)." },
+        { q: "What is tax-loss harvesting?", a: "This is a strategy where you sell investments that have lost value to offset the taxes you owe on your gains. Up to $3,000 of excess loss can also offset your ordinary income." }
+    ],
+    'social-security-break-even': [
+        { q: "Will Social Security run out?", a: "The Social Security Trust Funds are projected to be depleted in the mid-2030s, at which point continuing tax income would be sufficient to pay roughly 80% of scheduled benefits. It is unlikely to disappear completely, but benefits may be reduced by Congressional action." },
+        { q: "How does working affect my benefits?", a: "If you claim benefits before your Full Retirement Age and continue to work, your benefits will be reduced by $1 for every $2 you earn above the annual earnings limit ($22,320 in 2024). Once you reach FRA, you get these withheld amounts back." }
+    ],
+    'us-paycheck-calculator': [
+        { q: "Why is my bonus taxed so high?", a: "Bonuses are considered 'supplemental wages' and are effectively withheld at a flat 22% rate for federal taxes, plus FICA and state taxes. This often feels higher than your regular paycheck withholding, though the actual tax liability is reconciled when you file your return." },
+        { q: "Do I have to pay state tax where I live or where I work?", a: "Generally, if you live in one state and work in another, you file tax returns in both. You pay tax to the state where you work, and your home state usually gives you a credit for those taxes to avoid double taxation. Telecommuters usually pay tax based on where they live." }
+    ],
+    'hsa-calculator': [
+        { q: "What is the 2024 HSA contribution limit?", a: "For 2024, the limit is $4,150 for individuals and $8,300 for families. If you are 55 or older, you can contribute an additional $1,000 'catch-up' contribution." },
+        { q: "Do HSA funds expire?", a: "No. Unlike an FSA, HSA funds do not expire and roll over year after year. The account stays with you even if you change employers or health plans." }
+    ],
+    'hourly-to-salary': [
+        { q: "How many working hours are in a year?", a: "A standard full-time work year (40 hours/week, 52 weeks) contains 2,080 working hours." },
+        { q: "Should I use 50 or 52 weeks for my calculation?", a: "Use 52 weeks if you get paid vacation. Use 50 weeks if you take 2 weeks of unpaid time off per year." }
+    ],
+    'student-loan-payoff': [
+        { q: "Should I focus on my student loans or invest?", a: "Generally, if your student loan interest rate is higher than what you expect to earn from investments, focus on the loan. For many, a balanced approach—building an emergency fund while paying down high-interest loans—is most effective." },
+        { q: "How much interest can I save by paying an extra $100/month?", a: "On a typical $30,000 loan at 6% interest, an extra $100/month can save you over $4,000 in interest and shave nearly 4 years off your repayment timeline." }
+    ],
+    'student-loan-forgiveness': [
+        { q: "What counts as a qualifying PSLF payment?", a: "A qualifying payment is one made while working full-time for a qualifying employer (government or non-profit), under a qualifying repayment plan, for the full amount due, after October 1, 2007." },
+        { q: "Are forgiven student loans taxable?", a: "PSLF forgiveness is not federally taxable. However, forgiveness after 20-25 years under an IDR plan is currently considered taxable income (the 'tax bomb'), though this is temporarily paused federally through 2025." }
+    ],
+    'medicare-cost-estimator': [
+        { q: "What is IRMAA and does it apply to me?", a: "IRMAA (Income-Related Monthly Adjustment Amount) is a surcharge on Part B and Part D premiums for those with higher income ($103k+ for singles, $206k+ for couples in 2024)." },
+        { q: "How much should I budget for Medicare supplements?", a: "Medigap plans typically cost $150-$300 per month depending on your age, location, and plan type (e.g., Plan G is common)." }
+    ],
+    'aca-marketplace-calculator': [
+        { q: "How do I qualify for ACA subsidies?", a: "Subsidies (Premium Tax Credits) are based on your household size and estimated annual income. Generally, you must earn between 100% and 400% of the Federal Poverty Level to qualify." },
+        { q: "What is the 'benchmark' Silver plan?", a: "The benchmark plan is the second-lowest-cost Silver plan in your area. Your subsidy amount is calculated to make this specific plan cost a certain percentage of your income." }
+    ],
+    'child-tax-credit': [
+        { q: "What are the income limits for the Child Tax Credit?", a: "The credit begins to phase out at $200,000 for single filers and $400,000 for married couples filing jointly." },
+        { q: "Who counts as a qualifying child?", a: "A child must be under age 17 at the end of the year, have a Social Security number, and live with you for more than half the year." }
+    ],
+    'fsa-calculator': [
+        { q: "What happens if I don't use the money in my FSA?", a: "FSAs are 'use-it-or-lose-it'. Some plans allow a carryover of up to $640 (for 2024) or a grace period of up to 2.5 months to spend the funds." },
+        { q: "What expenses are FSA eligible?", a: "Eligible expenses include co-pays, deductibles, prescriptions, vision care, dental work, and over-the-counter medications." }
+    ],
+    'traditional-ira-calculator': [
+        { q: "Can I deduct my Traditional IRA contribution?", a: "Deductibility depends on your income and whether you or your spouse are covered by a retirement plan at work. Phase-outs apply for higher earners." },
+        { q: "What is an RMD?", a: "A Required Minimum Distribution (RMD) is the amount you must withdraw annually from your IRA starting at age 73 (for 2024) to avoid penalties." }
+    ],
+    'home-affordability-calculator': [
+        { q: "What is the 28/36 rule?", a: "The 28/36 rule suggests that housing costs should not exceed 28% of gross monthly income, and total debt payments should not exceed 36%." },
+        { q: "Should I include my partner's income?", a: "Yes, if you plan to buy the home together and both names will be on the mortgage, you should combine your gross annual incomes." }
+    ],
+    'auto-lease-vs-buy': [
+        { q: "What is the 'money factor' in a lease?", a: "The money factor is essentially the interest rate on a lease. Multiply it by 2400 to get the roughly equivalent APR (e.g., 0.0025 * 2400 = 6%)." },
+        { q: "When is leasing better than buying?", a: "Leasing is often better if you want a new car every 3 years, drive less than 12k miles/year, and prefer lower monthly payments over long-term equity." }
+    ],
+    'property-tax-estimator': [
+        { q: "How is property tax calculated in the US?", a: "Property tax is usually calculated as (Assessed Value × Tax Rate). The assessed value is often a percentage of the market value, called the assessment ratio." },
+        { q: "Is property tax deductible on federal taxes?", a: "Yes, if you itemize. You can deduct up to $10,000 for State and Local Taxes (SALT), which includes both property and either income or sales taxes." }
+    ],
+    'debt-avalanche-snowball': [
+        { q: "Which method saves the most money?", a: "The Avalanche method always saves the most money because it eliminates high-interest debt first, reducing the total interest paid." },
+        { q: "Why would someone choose the Snowball method?", a: "The Snowball method focuses on psychological wins by paying off small balances first, which can provide motivation to continue the debt payoff journey." }
+    ],
+    'fico-score-impact': [
+        { q: "What is the most important factor in my FICO score?", a: "Payment history is the most important factor, accounting for 35% of your score. Missing even one payment can have a significant negative impact." },
+        { q: "Will checking my score lower it?", a: "No. Checking your own score is a 'soft inquiry' and does not affect your FICO score. Only 'hard inquiries' from lenders when you apply for credit can lower it." }
+    ],
+    'uk-income-tax': [
+        { q: "What is the Personal Allowance in the UK?", a: "The Personal Allowance is the amount of income you can earn before you start paying Income Tax. For the 2024/25 tax year, it is £12,570." },
+        { q: "How much is National Insurance in 2024?", a: "Following the April 2024 budget, the main rate of Class 1 National Insurance for employees was reduced from 10% to 8%." },
+        { q: "What is a 'Salary Sacrifice' pension?", a: "It's an agreement where you give up part of your gross salary in exchange for a non-cash benefit, like a pension contribution. This reduces your taxable income, saving you Income Tax and NI." }
+    ],
+    'australia-income-tax': [
+        { q: "What are the Stage 3 tax cuts?", a: "Stage 3 tax cuts are changes to the Australian personal income tax brackets effective July 1, 2024, designed to provide broad-based tax relief for middle-income earners." },
+        { q: "Is Superannuation included in my base salary?", a: "It depends on your contract. Some offers are 'Base + Super', while others are 'Package Inc. Super'. This calculator allows you to toggle between both." },
+        { q: "Who pays the Medicare Levy?", a: "Most Australian residents pay a 2% Medicare Levy. Low-income earners may be exempt or pay a reduced rate." }
+    ],
+    'canada-income-tax': [
+        { q: "How do RRSP contributions save tax?", a: "Contributions to a Registered Retirement Savings Plan (RRSP) are deducted from your gross income, reducing the amount of income you are taxed on for that year." },
+        { q: "What is the max CPP contribution for 2024?", a: "For 2024, the maximum employee CPP contribution is $3,867.50, based on a 5.95% rate and the Maximum Pensionable Earnings limit." },
+        { q: "Does this calculator handle all provinces?", a: "It uses an estimated average rate for the major provinces. For exact results, you should use a province-specific calculator as rates vary significantly in Quebec." }
+    ],
+    'europe-vat': [
+        { q: "What is the standard VAT rate in Germany?", a: "As of 2024, the standard VAT rate in Germany is 19%, with a reduced rate of 7% for certain goods like food and books." },
+        { q: "How do I remove VAT from a price?", a: "Divide the total price by (1 + VAT rate). For example, to remove 20% VAT: Gross / 1.20 = Net." },
+        { q: "Are all EU countries' VAT rates the same?", a: "No, each EU member state sets its own VAT rates, though they must follow certain EU-wide minimums and rules." }
+    ],
+    'japan-paycheck': [
+        { q: "What is Resident Tax (Jumin-zei) in Japan?", a: "Resident tax is a local tax (approx 10%) based on your previous year's income. Most employers deduct it monthly from your paycheck." },
+        { q: "What does Social Insurance include in Japan?", a: "Standard Social Insurance (Shakai Hoken) includes Health Insurance, Employees' Pension (Kosei Nenkin), and Employment Insurance." },
+        { q: "How are bonuses taxed in Japan?", a: "Bonuses are subject to the same health insurance, pension, and income tax rates as your regular salary, though the calculation logic differs slightly." }
+    ],
+    'hongkong-salary-tax': [
+        { q: "Is MPF mandatory for everyone in HK?", a: "Most employees and self-employed persons in HK aged 18 to 64 are required to join an MPF scheme." },
+        { q: "What is the difference between Progressive and Standard tax rates?", a: "Hong Kong calculates tax using both methods and charges you the LOWER amount. Progressive rates go up to 17%, while the standard rate is a flat 15% (for most) or 16% (high earners)." },
+        { q: "Are dividends taxed in Hong Kong?", a: "Generally, there is no tax on dividends or capital gains in Hong Kong, making it a very tax-friendly environment for investors." }
+    ],
+    'china-income-tax': [
+        { q: "What is the monthly tax-free threshold in China?", a: "The standard deduction for Individual Income Tax (IIT) is 5,000 RMB per month (60,000 RMB per year)." },
+        { q: "What are 'Special Additional Deductions'?", a: "These are specific categories like children's education, continuing education, healthcare, and mortgage interest that can further reduce your taxable income." },
+        { q: "Is Social Insurance mandatory for foreigners in China?", a: "In most cities, yes, foreigners working in China are required to participate in the social insurance system." }
+    ],
+    'switzerland-income-tax': [
+        { q: "Why do Swiss taxes vary by Canton?", a: "Switzerland is a federal state where cantons and communes have significant autonomy to set their own income tax rates." },
+        { q: "What is 'Tax at Source' (Quellensteuer)?", a: "Foreign workers on certain permits (like B or L) often have their taxes deducted directly from their salary by their employer." },
+        { q: "Is health insurance part of social security in Switzerland?", a: "No, health insurance (Krankenkasse) is private and mandatory but not deducted from your gross salary; you must pay it yourself from your net income." }
+    ],
+    'singapore-tax': [
+        { q: "What is the CPF wage ceiling for 2024?", a: "As of January 2024, the Ordinary Account (OA) wage ceiling is $6,800 per month." },
+        { q: "Are foreigners required to pay CPF?", a: "No, CPF contributions are only mandatory for Singapore Citizens and Permanent Residents (PRs)." },
+        { q: "How is Singapore's personal income tax calculated?", a: "It is based on a progressive residency-based system where rates increase as your assessable income rises." }
+    ],
+    'uae-gratuity': [
+        { q: "Does the UAE have income tax on salaries?", a: "No, the UAE does not currently impose personal income tax on salaries earned by individuals." },
+        { q: "Who is entitled to gratuity in the UAE?", a: "Expatriate employees who have completed at least one year of continuous service are entitled to an end-of-service gratuity." },
+        { q: "Is gratuity calculated on total salary?", a: "No, gratuity is calculated based on the employee's 'basic salary' as specified in their contract, excluding allowances." }
+    ],
+    'nz-paycheck': [
+        { q: "What is the ACC earner levy?", a: "It is a mandatory levy (approx 1.6%) that funds New Zealand's accident compensation scheme for non-work-related injuries." },
+        { q: "Can I opt out of KiwiSaver?", a: "New employees are automatically enrolled but can choose to opt out between day 14 and day 56 of starting a new job." },
+        { q: "How much is the student loan repayment rate in NZ?", a: "If you have a student loan and earn over the threshold, you typically repay 12% of every dollar earned above that threshold." }
+    ],
+    'india-tax': [
+        { q: "Should I choose the New or Old Tax Regime?", a: "The New Regime generally benefits those with fewer investments and deductions, while the Old Regime is better for those with high HRA and 80C/80D savings." },
+        { q: "What is the standard deduction in FY 2024-25?", a: "The standard deduction is ₹75,000 for the New Tax Regime and ₹50,000 for the Old Tax Regime." },
+        { q: "Is the rebate under Section 87A available in both regimes?", a: "Yes, but with different limits: up to ₹7 Lakhs taxable income in the New Regime and ₹5 Lakhs in the Old Regime." }
+    ],
+    'ireland-tax': [
+        { q: "What are the PRSI classes?", a: "Class A is the most common for private sector employees. Your class determines the rate of social insurance you pay and the benefits you receive." },
+        { q: "What is the Universal Social Charge (USC)?", a: "USC is a tax on your gross income, introduced to replace other levies. It has its own set of progressive rates." },
+        { q: "How do tax credits work in Ireland?", a: "Tax credits directly reduce the amount of Income Tax (PAYE) you pay. Everyone is entitled to personal and employee tax credits." }
+    ],
+    'mexico-isr': [
+        { q: "What is the Aguinaldo in Mexico?", a: "The Aguinaldo is a mandatory year-end bonus equivalent to at least 15 days of salary, usually paid in December." },
+        { q: "How much is the IMSS employee contribution?", a: "In 2024, the employee contribution to IMSS (Social Security) is approximately 2.5% to 3% of the base salary." },
+        { q: "Is ISR calculated monthly or annually?", a: "ISR is withheld monthly by employers, but an annual reconciliation is mandatory for those earning above a certain threshold." }
+    ],
+    'brazil-clt': [
+        { q: "What is the 13th salary in Brazil?", a: "Also known as the Gratificação Natalina, it is a mandatory extra month of salary paid to workers in two installments (November and December)." },
+        { q: "What does the INSS contribution cover?", a: "INSS is the Brazilian social security contribution that funds pensions, maternity leave, and disability benefits." },
+        { q: "Is FGTS deducted from my salary?", a: "No. FGTS (Fundo de Garantia do Tempo de Serviço) is an 8% contribution paid entirely by the employer on top of your monthly salary." }
+    ],
+    'south-africa-tax': [
+        { q: "What is the South African tax year?", a: "The South African tax year for individuals runs from March 1st to the last day of February the following year." },
+        { q: "Who is eligible for the Medical Schemes Fees Tax Credit?", a: "Any taxpayer who belongs to a registered medical scheme and pays the monthly contributions is eligible for this credit." },
+        { q: "What is a Tax Rebate?", a: "A tax rebate is a direct reduction in the individual's tax liability. It is not a deduction from taxable income but a reduction of the final tax amount owed." }
     ]
 };
 

@@ -1191,5 +1191,835 @@ export const calculatorDetails = {
                 </div>
             </div>
         )
-    }
+    },
+    'gst-calculator': {
+        title: "Goods and Services Tax (GST) Explained",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding GST Calculation</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        The Goods and Services Tax (GST) is an indirect tax that has replaced many indirect taxes in India. It is calculated on the value of the goods or services supplied.
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                            <h4 className="font-bold text-indigo-800 mb-2">Exclusive GST</h4>
+                            <p className="text-sm text-indigo-700">
+                                This is when GST is <strong>added</strong> to the product price.
+                                <br />Result = Cost + (Cost × Rate%)
+                            </p>
+                        </div>
+                        <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                            <h4 className="font-bold text-emerald-800 mb-2">Inclusive GST</h4>
+                            <p className="text-sm text-emerald-700">
+                                This is when the price <strong>already includes</strong> GST.
+                                <br />Original Cost = MRP / (1 + Rate%)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'nps-calculator': {
+        title: "Planning Your Retirement with NPS",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Why Invest in NPS?</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        The <strong>National Pension System (NPS)</strong> is a government-sponsored pension scheme. It is cost-effective and tax-efficient, designed to encourage systematic saving during your subscriber's earning life.
+                    </p>
+                    <div className="bg-orange-50 p-4 rounded-xl border border-orange-100 my-4">
+                        <h4 className="font-bold text-orange-900 mb-2">NPS Maturity Rules</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-sm text-orange-800">
+                            <li>At age 60, you can withdraw up to <strong>60%</strong> of the corpus as a tax-free lump sum.</li>
+                            <li>The remaining <strong>40%</strong> (at minimum) must be used to purchase an Annuity plan that provides a monthly pension.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'ssy-calculator': {
+        title: "Sukanya Samriddhi Yojana (SSY) Guide",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">About the Scheme</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        <strong>Sukanya Samriddhi Yojana</strong> is a small deposit scheme by the Government of India meant exclusively for a girl child. It currently offers one of the highest interest rates among all small savings schemes.
+                    </p>
+                    <div className="bg-pink-50 p-4 rounded-xl border border-pink-100 my-4">
+                        <h4 className="font-bold text-pink-900 mb-2">Key Features</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-sm text-pink-800">
+                            <li><strong>Lock-in:</strong> Maturity is 21 years from the date of opening.</li>
+                            <li><strong>Deposits:</strong> You only need to deposit for the first 15 years.</li>
+                            <li><strong>Tax Benefits:</strong> EEE Status (Exempt-Exempt-Exempt). Investment, Interest, and Maturity are all tax-free.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    '401k-calculator': {
+        title: "401(k) Retirement Planner",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Maximize Your 401(k)</h3>
+                <div className="prose prose-blue max-w-none text-gray-600">
+                    <p className="mb-4">
+                        A <strong>401(k)</strong> is a feature of a qualified profit-sharing plan that allows employees to contribute a portion of their wages to individual accounts.
+                    </p>
+                    <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 my-4">
+                        <h4 className="font-bold text-blue-900 mb-2">Employer Match</h4>
+                        <p className="text-sm text-blue-800">
+                            Many employers match a portion of your contributions. This is essentially <strong>free money</strong>. Common match is 50% of your contribution up to 6% of your salary.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'roth-ira-calculator': {
+        title: "Roth IRA Growth Calculator",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Tax-Free Retirement Income</h3>
+                <div className="prose prose-purple max-w-none text-gray-600">
+                    <p className="mb-4">
+                        A <strong>Roth IRA</strong> allows you to contribute after-tax dollars. The biggest benefit is that your money grows tax-free, and you can withdraw it tax-free in retirement.
+                    </p>
+                    <ul className="list-disc pl-5 space-y-2 text-sm text-gray-600">
+                        <li><strong>2024 Limit:</strong> $7,000 ($8,000 if age 50+).</li>
+                        <li><strong>Flexibility:</strong> You can withdraw your <em>contributions</em> (not earnings) at any time without penalty.</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    },
+    '529-college-savings': {
+        title: "529 Education Savings Plan",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Saving for College</h3>
+                <div className="prose prose-sky max-w-none text-gray-600">
+                    <p className="mb-4">
+                        A <strong>529 Plan</strong> is a tax-advantaged savings plan designed to encourage saving for future education costs.
+                    </p>
+                    <div className="bg-sky-50 p-4 rounded-xl border border-sky-100 my-4">
+                        <h4 className="font-bold text-sky-900 mb-2">Key Benefits</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-sm text-sky-800">
+                            <li><strong>Tax-Free Growth:</strong> Earnings are not subject to federal tax.</li>
+                            <li><strong>Tax-Free Withdrawals:</strong> No tax when used for qualified education expenses (tuition, books, room & board).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'us-mortgage-calculator': {
+        title: "Understanding Your US Mortgage",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">More Than Just Principal & Interest</h3>
+                <div className="prose prose-blue max-w-none text-gray-600">
+                    <p className="mb-4">
+                        In the US, your monthly housing payment is often referred to as <strong>PITI</strong> (Principal, Interest, Taxes, and Insurance). Understanding these components is crucial for budgeting.
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                            <h4 className="font-bold text-indigo-900 mb-2">The Core Payment</h4>
+                            <p className="text-sm text-indigo-800">
+                                <strong>Principal & Interest:</strong> This is the loan repayment. In the early years of a 30-year fixed loan, nearly 80-90% of this amount goes toward interest, not paying down debt.
+                            </p>
+                        </div>
+                        <div className="bg-sky-50 p-4 rounded-xl border border-sky-100">
+                            <h4 className="font-bold text-sky-900 mb-2">The "Escrow" Items</h4>
+                            <p className="text-sm text-sky-800">
+                                <strong>Taxes & Insurance:</strong> Most lenders collect 1/12th of your annual Property Tax and Homeowners Insurance bill every month and hold it in an Escrow Account to pay the bills for you.
+                            </p>
+                        </div>
+                    </div>
+                    <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 mb-4">
+                        <h4 className="font-bold text-amber-900 mb-2">What is PMI?</h4>
+                        <p className="text-sm text-amber-800">
+                            <strong>Private Mortgage Insurance (PMI)</strong> is usually required if your down payment is less than 20%. It protects the lender (not you) if you default. It typically costs 0.5% to 1% of the loan amount annually and can be removed once you build enough equity (usually 20%).
+                        </p>
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'rmd-calculator': {
+        title: "Navigating Required Minimum Distributions (RMDs)",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">The "Use It or Lose It" Rule</h3>
+                <div className="prose prose-blue max-w-none text-gray-600">
+                    <p className="mb-4">
+                        The IRS allows your retirement savings (Traditional IRA, 401k) to grow tax-deferred for decades. However, the government eventually wants its tax revenue. Starting at <strong>age 73</strong>, you are legally required to withdraw a specific minimum amount every year.
+                    </p>
+
+                    <div className="bg-red-50 p-4 rounded-xl border border-red-100 my-6">
+                        <h4 className="font-bold text-red-900 mb-2">⚠️ The Heavy Penalty</h4>
+                        <p className="text-sm text-red-800">
+                            If you fail to take your full RMD by the deadline (usually Dec 31), the IRS imposes a penalty (excise tax) of up to <strong>25%</strong> of the amount not withdrawn. This is one of the steepest penalties in the tax code!
+                        </p>
+                    </div>
+
+                    <h4 className="font-bold text-gray-800 mb-2">How is it Calculated?</h4>
+                    <p className="mb-4">
+                        Your RMD is calculated by dividing your account balance (as of Dec 31 of the prior year) by a <strong>Life Expectancy Factor</strong> from the IRS Uniform Lifetime Table. As you get older, this factor decreases, forcing you to withdraw a larger percentage of your portfolio.
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    'us-capital-gains': {
+        title: "Capital Gains Tax Guide",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Holding Period Matters</h3>
+                <div className="prose prose-blue max-w-none text-gray-600">
+                    <p className="mb-4">
+                        The US tax code rewards long-term investors. The tax rate you pay on asset profits depends heavily on how long you owned the asset.
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+                        <div className="bg-gray-100 p-4 rounded-xl border border-gray-200">
+                            <h4 className="font-bold text-gray-800 mb-2">Short Term (&lt; 1 Year)</h4>
+                            <p className="text-sm text-gray-700">
+                                Profits are taxed as <strong>Ordinary Income</strong>. This means they are added to your wages and taxed at your marginal tax bracket (which can be as high as 37%).
+                            </p>
+                        </div>
+                        <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                            <h4 className="font-bold text-emerald-900 mb-2">Long Term (&gt; 1 Year)</h4>
+                            <p className="text-sm text-emerald-800">
+                                Profits enjoy preferential tax rates: <strong>0%, 15%, or 20%</strong>, depending on your taxable income. This is significantly lower than ordinary income rates for most investors.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 mb-4">
+                        <h4 className="font-bold text-blue-900 mb-2">Net Investment Income Tax (NIIT)</h4>
+                        <p className="text-sm text-blue-800">
+                            High earners (Modified Adjusted Gross Income over $200k for single, $250k for married) may owe an additional <strong>3.8% surcharge</strong> on top of capital gains tax.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'social-security-break-even': {
+        title: "Social Security Claiming Strategy",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">When Should You Claim?</h3>
+                <div className="prose prose-blue max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Deciding when to start collecting Social Security benefits is one of the most important retirement decisions you'll make. You can start as early as age 62, or wait until age 70.
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+                        <div className="bg-orange-50 p-4 rounded-xl border border-orange-100">
+                            <h4 className="font-bold text-orange-900 mb-2">Age 62 (Early)</h4>
+                            <p className="text-sm text-orange-800">
+                                You get checks sooner, but they are <strong>permanently reduced</strong> (up to 30% less than your full benefit).
+                            </p>
+                        </div>
+                        <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                            <h4 className="font-bold text-emerald-900 mb-2">Full Retirement Age</h4>
+                            <p className="text-sm text-emerald-800">
+                                Usually 66 or 67. You get your standard "Primary Insurance Amount" (PIA).
+                            </p>
+                        </div>
+                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                            <h4 className="font-bold text-indigo-900 mb-2">Age 70 (Delayed)</h4>
+                            <p className="text-sm text-indigo-800">
+                                You get a <strong>permanently increased</strong> benefit (8% increase per year of delay).
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 mb-4">
+                        <h4 className="font-bold text-gray-900 mb-2">The Break-Even Concept</h4>
+                        <p className="text-sm text-gray-800">
+                            If you claim at 62, you receive more checks but smaller amounts. If you wait until 70, you receive fewer checks but much larger ones. The <strong>Break-Even Age</strong> is the point where the total lifetime payout of waiting catches up to the early claiming strategy. Usually, this is around age 80-82. If you expect to live longer than this, waiting usually pays off.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'us-paycheck-calculator': {
+        title: "Understanding Your Take-Home Pay",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Where Does the Money Go?</h3>
+                <div className="prose prose-blue max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Your <strong>Gross Pay</strong> is your salary before any deductions. Your <strong>Net Pay</strong> is what actually hits your bank account. The difference is taxes and other deductions.
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                        <div className="bg-rose-50 p-4 rounded-xl border border-rose-100">
+                            <h4 className="font-bold text-rose-900 mb-2">FICA Taxes</h4>
+                            <ul className="list-disc pl-5 space-y-1 text-sm text-rose-800">
+                                <li><strong>Social Security:</strong> 6.2% of your income (up to a limit). This funds retirement benefits for current retirees.</li>
+                                <li><strong>Medicare:</strong> 1.45% of your income (unlimited). This funds healthcare for seniors.</li>
+                            </ul>
+                        </div>
+                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                            <h4 className="font-bold text-indigo-900 mb-2">Income Taxes</h4>
+                            <ul className="list-disc pl-5 space-y-1 text-sm text-indigo-800">
+                                <li><strong>Federal Tax:</strong> Progressive rates from 10% to 37% based on your filing status.</li>
+                                <li><strong>State Tax:</strong> Varies by state. Some (like TX, FL, WA) have 0%, while others (like CA, NY) have high rates.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 mb-4">
+                        <h4 className="font-bold text-gray-900 mb-2">Pay Frequency Impact</h4>
+                        <p className="text-sm text-gray-800">
+                            While your total annual tax is the same, your paycheck size depends on frequency.
+                            <br />- <strong>Bi-Weekly (26 paychecks):</strong> You get paid every 2 weeks. This means 2 months a year you get 3 paychecks ("magic months").
+                            <br />- <strong>Semi-Monthly (24 paychecks):</strong> You get paid twice a month (e.g., 15th and 30th). Every paycheck is the same size.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'hsa-calculator': {
+        title: "The Power of a Health Savings Account (HSA)",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Why the HSA is the Ultimate Savings Tool</h3>
+                <div className="prose prose-emerald max-w-none text-gray-600">
+                    <p className="mb-4">
+                        An <strong>HSA</strong> is more than just a medical fund; it's a powerful investment vehicle. It offers a "Triple Tax Advantage" that no other account (including 401ks and IRAs) can match.
+                    </p>
+
+                    <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-100 my-8">
+                        <h4 className="text-lg font-bold text-emerald-900 mb-3 text-center">The Triple Tax Advantage</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                            <div>
+                                <p className="font-bold text-emerald-800">Tax-Deductible</p>
+                                <p className="text-xs text-emerald-700">Contributions reduce your taxable income.</p>
+                            </div>
+                            <div>
+                                <p className="font-bold text-emerald-800">Tax-Free Growth</p>
+                                <p className="text-xs text-emerald-700">Investment gains are not taxed.</p>
+                            </div>
+                            <div>
+                                <p className="font-bold text-emerald-800">Tax-Free Use</p>
+                                <p className="text-xs text-emerald-700">Withdrawals for medical costs are 100% tax-free.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 className="font-bold text-gray-800 mb-2">The Hidden Retirement Strategy</h4>
+                    <p className="mb-4">
+                        Many savvy investors use the HSA as a <strong>secondary retirement account</strong>. If you pay for current medical expenses out-of-pocket and leave your HSA money invested, it can grow into a massive tax-free nest egg. After age 65, you can withdraw money for <em>any</em> reason (taxed as ordinary income, like a Traditional IRA), but withdrawals for medical costs remain tax-free forever.
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    'hourly-to-salary': {
+        title: "Converting Hourly Wages to Salary",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Mastering Your Income Math</h3>
+                <div className="prose prose-indigo max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Understanding how your hourly rate translates to an annual salary is crucial for budgeting, loan applications, and job offer comparisons.
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                            <h4 className="font-bold text-indigo-900 mb-2">The "2,000 Hour" Rule</h4>
+                            <p className="text-sm text-indigo-800">
+                                A quick "back of the envelope" calculation is to multiply your hourly rate by 2,000 (40 hours/week × 50 weeks). For example, $25/hr ≈ $50,000/year.
+                            </p>
+                        </div>
+                        <div className="bg-gray-100 p-4 rounded-xl border border-gray-200">
+                            <h4 className="font-bold text-gray-800 mb-2">Full Precision</h4>
+                            <p className="text-sm text-gray-700">
+                                A standard full-time year actually has 2,080 working hours (40 hours × 52 weeks). Our calculator uses the 52-week standard for maximum accuracy.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 mb-4">
+                        <h4 className="font-bold text-amber-900 mb-2">Paid vs. Unpaid Time Off</h4>
+                        <p className="text-sm text-amber-800">
+                            Consider whether your position includes paid vacation. If you take 2 weeks of unpaid vacation, your "Weeks per Year" should be 50 instead of 52, which will reduce your effective annual salary.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'student-loan-payoff': {
+        title: "Accelerating Your Student Loan Payoff",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Strategic Debt Repayment</h3>
+                <div className="prose prose-blue max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Tackling student debt requires a clear plan. Our calculator helps you compare standard and extended repayment timelines while showing the massive impact of even small extra payments.
+                    </p>
+                    <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 my-4 text-sm text-blue-800">
+                        <strong>💡 Pro Tip:</strong> Paying $100 extra each month on a $30k loan can save you thousands in interest and shave years off your debt freedom date.
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'student-loan-forgiveness': {
+        title: "Navigating Student Loan Forgiveness",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">PSLF and IDR Strategies</h3>
+                <div className="prose prose-emerald max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Public Service Loan Forgiveness (PSLF) and Income-Driven Repayment (IDR) plans offer paths to debt relief after a certain period of service or payments.
+                    </p>
+                    <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100 my-4 text-sm text-emerald-800">
+                        <strong>⚠️ Important:</strong> Be aware of the 'Tax Bomb' for long-term IDR forgiveness (20-25 years), as the forgiven amount may be treated as taxable income.
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'medicare-cost-estimator': {
+        title: "Planning for Medicare Costs",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Medicare Premiums and IRMAA</h3>
+                <div className="prose prose-blue max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Medicare isn't free. Between Part B premiums, Part D drug plans, and Medigap supplements, costs can add up. High earners must also factor in IRMAA surcharges.
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    'aca-marketplace-calculator': {
+        title: "ACA Subsidy and Premium Estimator",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding Health Insurance Subsidies</h3>
+                <div className="prose prose-indigo max-w-none text-gray-600">
+                    <p className="mb-4">
+                        The Affordable Care Act (ACA) provides tax credits to help lower monthly premiums in the Marketplace. Your eligibility depends on household size and estimated annual income.
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    'child-tax-credit': {
+        title: "Maximizing Child Tax Credits",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Family Tax Benefits</h3>
+                <div className="prose prose-rose max-w-none text-gray-600">
+                    <p className="mb-4">
+                        The Child Tax Credit (CTC) provides significant relief for families. Our calculator handles current IRS rules, including phase-out limits for higher earners and the refundable portion.
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    'fsa-calculator': {
+        title: "Optimizing Your FSA",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Tax Savings with Flexible Spending Accounts</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Flexible Spending Accounts (FSAs) allow you to pay for healthcare and dependent care with pre-tax dollars. However, the 'use-it-or-lose-it' rule makes accurate planning essential.
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    'traditional-ira-calculator': {
+        title: "Traditional IRA Growth and Taxes",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Planning for Retirement with a Traditional IRA</h3>
+                <div className="prose prose-amber max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Traditional IRAs offer tax-deferred growth and potential immediate tax deductions. This calculator helps you project your balance and estimate future Required Minimum Distributions (RMDs).
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    'home-affordability-calculator': {
+        title: "How Much House Can You Afford?",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Navigating the Path to Homeownership</h3>
+                <div className="prose prose-blue max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Buying a home is the largest purchase most people make. Using the 28/36 debt-to-income rule, we help you find a sustainable price point that fits your budget.
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    'auto-lease-vs-buy': {
+        title: "Auto Lease vs. Buy Comparison",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Choosing Your Next Vehicle Path</h3>
+                <div className="prose prose-gray max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Should you lease or buy your next car? Leasing offers lower monthly payments, but buying builds equity. Our calculator compares the total cost of ownership over the long term.
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    'property-tax-estimator': {
+        title: "Estimating Property Taxes",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding Real Estate Tax Obligations</h3>
+                <div className="prose prose-indigo max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Property taxes vary wildly by state and local jurisdiction. This tool estimates your annual bill based on home value and provides insights into SALT deduction limits.
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    'debt-avalanche-snowball': {
+        title: "Avalanche vs. Snowball Debt Payoff",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Choosing the Best Strategy to Become Debt-Free</h3>
+                <div className="prose prose-purple max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Whether you prefer the mathematical efficiency of the Avalanche method or the psychological momentum of the Snowball method, the key is having a consistent plan to eliminate debts.
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    'fico-score-impact': {
+        title: "FICO Credit Score Simulator",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Simulating Your Credit Future</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Your credit score impacts everything from mortgage rates to insurance premiums. See how paying down debt or opening new credit accounts might influence your score over time.
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    'uk-income-tax': {
+        title: "UK Income Tax Guide",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding UK Personal Taxation</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        The UK tax system is based on an annual "Personal Allowance" and progressive tax bands. For the 2024/25 tax year, most individuals receive a standard allowance of £12,570 before paying any Income Tax.
+                    </p>
+                    <h4 className="font-semibold text-gray-800 mb-2">Key Components:</h4>
+                    <ul className="list-disc pl-5 space-y-2 mb-4">
+                        <li><strong>Income Tax:</strong> 20% (Basic), 40% (Higher), and 45% (Additional) rates.</li>
+                        <li><strong>National Insurance (NI):</strong> Mandatory contributions that qualify you for certain benefits and the State Pension. The main rate was reduced to 8% in April 2024.</li>
+                        <li><strong>Pension Contributions:</strong> Often deducted via "Salary Sacrifice" or "Net Pay" arrangements, reducing your taxable income.</li>
+                        <li><strong>Personal Allowance Taper:</strong> For every £2 earned above £100,000, you lose £1 of your personal allowance.</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    },
+    'australia-income-tax': {
+        title: "Australia Tax & Stage 3 Cuts",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Your Net Pay in Australia</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        From July 1, 2024, Australia implemented significant "Stage 3" tax cuts, lowering rates for most taxpayers to provide cost-of-living relief.
+                    </p>
+                    <h4 className="font-semibold text-gray-800 mb-2">Important Concepts:</h4>
+                    <ul className="list-disc pl-5 space-y-2 mb-4">
+                        <li><strong>Medicare Levy:</strong> Usually 2% of your taxable income, funding the public health system.</li>
+                        <li><strong>Superannuation Guarantee (SG):</strong> Currently 11.5% for 2024/25, paid by your employer on top of your base salary (unless your package is 'inclusive').</li>
+                        <li><strong>Tax-Free Threshold:</strong> The first $18,200 you earn is tax-free for residents.</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    },
+    'canada-income-tax': {
+        title: "Canada Income Tax Breakdown",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Federal and Provincial Taxes</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        In Canada, you pay both Federal income tax and Provincial/Territorial income tax. Most provinces (except Quebec) have their taxes collected by the federal government.
+                    </p>
+                    <h4 className="font-semibold text-gray-800 mb-2">Deductions and Credits:</h4>
+                    <ul className="list-disc pl-5 space-y-2 mb-4">
+                        <li><strong>RRSP Contributions:</strong> Investing in a Registered Retirement Savings Plan reduces your taxable income for the year.</li>
+                        <li><strong>CPP & EI:</strong> Canada Pension Plan and Employment Insurance are mandatory payroll deductions up to an annual maximum.</li>
+                        <li><strong>Basic Personal Amount:</strong> A non-refundable tax credit that everyone can claim to reduce their federal tax.</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    },
+    'europe-vat': {
+        title: "How VAT Works in Europe",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Value Added Tax (VAT)</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        VAT is a consumption tax placed on a product whenever value is added at each stage of the supply chain, from production to the point of sale.
+                    </p>
+                    <p className="mb-4">
+                        In the European Union, member states are required to have a standard VAT rate of at least 15%, but most choose rates around 19-25%. Many countries also offer "Reduced Rates" for essentials like food, books, or medicine.
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    'japan-paycheck': {
+        title: "Japan Salary and Social Insurance",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Living and Working in Japan</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Japan's payroll system includes deductions for Social Insurance (Shakai Hoken) and several layers of taxes.
+                    </p>
+                    <h4 className="font-semibold text-gray-800 mb-2">Primary Deductions:</h4>
+                    <ul className="list-disc pl-5 space-y-2 mb-4">
+                        <li><strong>Social Insurance:</strong> Includes Health Insurance, Employees' Pension, and Employment Insurance.</li>
+                        <li><strong>Income Tax (Shotoku-zei):</strong> A progressive national tax on your annual income.</li>
+                        <li><strong>Resident Tax (Jumin-zei):</strong> A local tax (usually ~10%) based on your income from the previous year.</li>
+                        <li><strong>Deductions:</strong> Japan offers an "Employment Income Deduction" which acts like a standard deduction based on your salary level.</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    },
+    'hongkong-salary-tax': {
+        title: "Hong Kong Salaries Tax Guide",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">HK's Low-Tax Advantage</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Hong Kong is known for its simple and low tax system. Tax is charged on your "Net Chargeable Income" using either progressive rates or a flat standard rate, whichever is lower.
+                    </p>
+                    <h4 className="font-semibold text-gray-800 mb-2">Highlights:</h4>
+                    <ul className="list-disc pl-5 space-y-2 mb-4">
+                        <li><strong>MPF:</strong> Mandatory Provident Fund contributions (usually 5% capped at HK$1,500/month).</li>
+                        <li><strong>Allowances:</strong> Generous basic allowances for individuals and married couples significantly reduce the tax burden.</li>
+                        <li><strong>Tax Reductions:</strong> The government often provides one-off tax reductions in the annual budget.</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    },
+    'china-income-tax': {
+        title: "Understanding China IIT",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Individual Income Tax (IIT)</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        China uses a progressive tax system for comprehensive income (wages, salaries, etc.).
+                    </p>
+                    <h4 className="font-semibold text-gray-800 mb-2">Calculation Flow:</h4>
+                    <ul className="list-disc pl-5 space-y-2 mb-4">
+                        <li><strong>Standard Deduction:</strong> 5,000 RMB per month (60,000 RMB per year).</li>
+                        <li><strong>Special Additional Deductions:</strong> Expenses like children's education, rent, or elderly care can be deducted (not modeled in this simplified calculator).</li>
+                        <li><strong>Social Insurance:</strong> Employee contributions to pension, medical, and unemployment insurance are tax-deductible.</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    },
+    'switzerland-income-tax': {
+        title: "Switzerland's Three-Tier Tax System",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Federal, Cantonal, and Communal Taxes</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Swiss taxes are decentralized. You pay a small percentage to the Federal government, but the bulk of your income tax goes to your Canton and your Local Commune (Municipality).
+                    </p>
+                    <h4 className="font-semibold text-gray-800 mb-2">Key Deductions:</h4>
+                    <ul className="list-disc pl-5 space-y-2 mb-4">
+                        <li><strong>Social Security (1st Pillar):</strong> AHV/IV/EO contributions are mandatory and deducted directly from your salary.</li>
+                        <li><strong>Pension Fund (2nd Pillar):</strong> BVG contributions vary by employer and age.</li>
+                        <li><strong>Canton Choice:</strong> Where you live matters—taxes in Canton Zug are famously much lower than in Zurich or Geneva.</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    },
+    'singapore-tax': {
+        title: "Singapore Personal Income Tax & CPF",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding CPF and Resident Tax</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Singapore has one of the world's most business-friendly tax systems, featuring low progressive rates and generous relief schemes.
+                    </p>
+                    <ul className="list-disc pl-5 space-y-2">
+                        <li><strong>CPF Contributions:</strong> Mandatory for Singapore Citizens and PRs. Employee contribution is typically 20% (up to a salary ceiling).</li>
+                        <li><strong>Progressive Brackets:</strong> Tax rates start at 0% and go up to 24% for very high earners (YA 2024).</li>
+                        <li><strong>Tax Reliefs:</strong> Citizens enjoy reliefs for Earned Income, CPF, dependents, and SRS contributions.</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    },
+    'uae-gratuity': {
+        title: "UAE End of Service Gratuity",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">How Gratuity is Calculated in the UAE</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Under the UAE Labor Law 2022, employees are entitled to a "gratuity" payment when their employment contract ends, provided they have completed at least one year of service.
+                    </p>
+                    <ul className="list-disc pl-5 space-y-2">
+                        <li><strong>Service Period:</strong> Calculated on a pro-rata basis for partial years after the first year.</li>
+                        <li><strong>First 5 Years:</strong> 21 days' basic salary for each year of service.</li>
+                        <li><strong>After 5 Years:</strong> 30 days' basic salary for each year of service beyond the first five.</li>
+                        <li><strong>Basic Salary:</strong> Calculation is based only on the basic salary, excluding allowances like housing or transport.</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    },
+    'nz-paycheck': {
+        title: "New Zealand's PAYE System",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Income Tax, ACC, and KiwiSaver</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        New Zealand uses the PAYE (Pay As You Earn) system to collect income tax and ACC earner levies directly from your salary.
+                    </p>
+                    <ul className="list-disc pl-5 space-y-2">
+                        <li><strong>Income Tax Brackets:</strong> Progressive rates ranging from 10.5% to 39%.</li>
+                        <li><strong>ACC Levy:</strong> A fixed percentage (approx 1.6%) that covers you for accidental injuries.</li>
+                        <li><strong>KiwiSaver:</strong> Optional retirement scheme with standard employee contribution rates of 3%, 4%, 6%, 8%, or 10%.</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    },
+    'india-tax': {
+        title: "India Income Tax: New vs. Old Regime",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Which Tax Regime is Right for You?</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        From FY 2024-25, the New Tax Regime is the default. It offers lower rates but few exemptions. The Old Regime allows for various deductions like 80C, 80D, and HRA.
+                    </p>
+                    <ul className="list-disc pl-5 space-y-2">
+                        <li><strong>Standard Deduction:</strong> Increased to ₹75,000 for New Regime and ₹50,000 for Old Regime.</li>
+                        <li><strong>Rebate Section 87A:</strong> Tax-free income up to ₹7 Lakhs in the New Regime.</li>
+                        <li><strong>Old Regime Exemptions:</strong> Useful if you have high HRA, home loan interest, and maximum 80C investments.</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    },
+    'ireland-tax': {
+        title: "Ireland PAYE, USC, and PRSI",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Summary of Irish Payroll Taxes</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Ireland has weight-based income tax tiers, along with Universal Social Charge (USC) and social insurance (PRSI).
+                    </p>
+                    <ul className="list-disc pl-5 space-y-2">
+                        <li><strong>PAYE Rates:</strong> 20% on income up to the cutoff, 40% on balance.</li>
+                        <li><strong>Tax Credits:</strong> Reduce the amount of PAYE you owe (e.g., Personal Tax Credit, Employee Tax Credit).</li>
+                        <li><strong>USC:</strong> A tax that applies to your total gross income with its own progressive brackets.</li>
+                        <li><strong>PRSI:</strong> Mandatory social insurance (typically 4% for Class A employees).</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    },
+    'mexico-isr': {
+        title: "Mexico's Income Tax (ISR) & IMSS",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding Impuesto sobre la Renta</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        In Mexico, employers are responsible for withholding monthly income tax (ISR) and social security contributions (IMSS).
+                    </p>
+                    <ul className="list-disc pl-5 space-y-2">
+                        <li><strong>ISR Brackets:</strong> Progressive monthly rates starting from 1.92% to 35%.</li>
+                        <li><strong>IMSS:</strong> Social security contribution that covers healthcare and pension.</li>
+                        <li><strong>Annual Bonus (Aguinaldo):</strong> Mandatory year-end bonus (typically 15 days of salary).</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    },
+    'brazil-clt': {
+        title: "Brazil CLT Paycheck (Salário Líquido)",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">INSS, IRRF, and FGTS</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        The CLT system in Brazil provides many protections but involves complex progressive deductions for social security (INSS) and income tax (IRRF).
+                    </p>
+                    <ul className="list-disc pl-5 space-y-2">
+                        <li><strong>INSS:</strong> Progressive contribution capped at the maximum benefit limit.</li>
+                        <li><strong>IRRF:</strong> Income tax deducted at source with specific monthly progressive tables.</li>
+                        <li><strong>Dependents:</strong> Fixed deduction from the tax base per dependent.</li>
+                        <li><strong>FGTS:</strong> 8% contribution paid by the employer to your severance fund.</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    },
+    'south-africa-tax': {
+        title: "South Africa's SARS Income Tax",
+        render: () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Tax Rates, Rebates, and Medical Credits</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        South Africa uses a progressive tax system (PAYE) with significant primary rebates that reduce your tax liability.
+                    </p>
+                    <ul className="list-disc pl-5 space-y-2">
+                        <li><strong>Tax Threshold:</strong> Below a certain income level, no tax is payable due to the primary rebate.</li>
+                        <li><strong>Medical Tax Credits:</strong> Direct tax reductions for medical scheme members and their dependents.</li>
+                        <li><strong>UIF:</strong> 1% contribution to the Unemployment Insurance Fund, capped at a maximum monthly salary.</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    },
 };

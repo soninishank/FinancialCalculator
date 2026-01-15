@@ -312,6 +312,336 @@ const calculators = [
     keywords: 'xirr calculator, sip returns, irregular cash flows, portfolio return, extended internal rate of return',
     category: 'General',
     component: 'XIRRCalculator'
+  },
+  {
+    slug: 'gst-calculator',
+    title: 'GST Calculator',
+    description: 'Calculate GST inclusive and exclusive amounts. Toggle between 5%, 12%, 18%, and 28% tax slabs for accurate billing.',
+    keywords: 'gst calculator, gst calculation, gst india, gst inclusive, gst exclusive, gst rate, gst amount',
+    category: 'Tax',
+    component: 'GSTCalculator'
+  },
+  {
+    slug: 'nps-calculator',
+    title: 'NPS Calculator',
+    description: 'Estimate your pension and lump sum amount upon retirement. Plan your National Pension System contributions effectively.',
+    keywords: 'nps calculator, national pension system, pension calculator, retirement planning, nps tier 1, nps return',
+    category: 'Govt Scheme',
+    component: 'NPSCalculator'
+  },
+  {
+    slug: 'ssy-calculator',
+    title: 'Sukanya Samriddhi Yojana (SSY)',
+    description: 'Calculate maturity amount for your daughter’s future. Plan investments for the Sukanya Samriddhi Yojana scheme with current interest rates.',
+    keywords: 'ssy calculator, sukanya samriddhi yojana, girl child scheme, ssy interest rate, ssy maturity, tax saving scheme',
+    category: 'Govt Scheme',
+    component: 'SSYCalculator'
+  },
+  {
+    slug: '401k-calculator',
+    title: '401(k) Retirement Calculator',
+    description: 'Estimate your 401(k) balance at retirement including employer matching contributions and annual growth.',
+    keywords: '401k calculator, retirement planner, employer match, 401k contribution, us retirement',
+    category: 'Retirement (US)',
+    component: 'Calculator401k'
+  },
+  {
+    slug: 'roth-ira-calculator',
+    title: 'Roth IRA Calculator',
+    description: 'Calculate tax-free growth potential in a Roth IRA. Plan annual contributions and visualize long-term savings.',
+    keywords: 'roth ira calculator, tax free retirement, ira contribution limit, roth growth, retirement savings',
+    category: 'Retirement (US)',
+    component: 'RothIRACalculator'
+  },
+  {
+    slug: '529-college-savings',
+    title: '529 College Savings Plan',
+    description: 'Plan for your child\'s education costs. Calculate savings growth and estimated shortfall for college expenses.',
+    keywords: '529 calculator, college savings, education planning, college cost estimator, 529 plan',
+    category: 'Education',
+    component: 'CollegeSavings529'
+  },
+  {
+    slug: 'us-mortgage-calculator',
+    title: 'US Mortgage Calculator',
+    description: 'Calculate your monthly US mortgage payments including Property Tax, PMI, Home Insurance, and HOA fees.',
+    keywords: 'us mortgage calculator, pmi calculator, property tax, us home loan',
+    category: 'Loan',
+    component: 'USMortgageCalculator'
+  },
+  {
+    slug: 'rmd-calculator',
+    title: 'RMD Calculator',
+    description: 'Required Minimum Distribution (RMD) calculator for US retirement accounts. Plan your mandatory withdrawals starting at age 73.',
+    keywords: 'rmd calculator, required minimum distribution, ira withdrawal, 401k rmd, us retirement',
+    category: 'Retirement (US)',
+    component: 'RMDCalculator'
+  },
+  {
+    slug: 'us-capital-gains',
+    title: 'US Capital Gains Tax',
+    description: 'Estimate your Federal Capital Gains Tax. Compare Short Term vs. Long Term tax liability based on your income bracket.',
+    keywords: 'capital gains tax, us tax calculator, short term capital gains, long term capital gains, investment tax',
+    category: 'Tax',
+    component: 'USCapitalGainsCalculator'
+  },
+  {
+    slug: 'social-security-break-even',
+    title: 'Social Security Break-Even',
+    description: 'Optimize your Social Security claiming strategy. Compare monthly benefits and lifetime payouts for claiming at 62, Full Retirement Age, or 70.',
+    keywords: 'social security calculator, claiming age, retirement benefits, ssa break even, early vs late filing',
+    category: 'Retirement (US)',
+    component: 'SocialSecurityCalculator'
+  },
+  {
+    slug: 'us-paycheck-calculator',
+    title: 'US Paycheck Calculator',
+    description: 'Calculate your take-home pay check. Estimate Federal, FICA, and State taxes 2024.',
+    keywords: 'paycheck calculator, salary calculator, take home pay, after tax income, federal tax calculator',
+    category: 'Tax',
+    component: 'USPaycheckCalculator'
+  },
+  {
+    slug: 'hsa-calculator',
+    title: 'HSA Growth Calculator',
+    description: 'Estimate the future value of your Health Savings Account. Account for contributions, growth, and medical expenses.',
+    keywords: 'hsa calculator, health savings account, hsa growth, triple tax advantage, medical savings',
+    category: 'Retirement (US)',
+    component: 'HSACalculator'
+  },
+  {
+    slug: 'hourly-to-salary',
+    title: 'Hourly to Salary Converter',
+    description: 'Convert your hourly wage to its annual, monthly, or weekly equivalent salary. Simple and precise.',
+    keywords: 'hourly to salary, wage converter, hourly pay, annual salary calculator, wage estimation',
+    category: 'Utility',
+    component: 'HourlyToSalaryCalculator'
+  },
+  // --- USA-Specific Calculators (Student Loans, Healthcare, Tax, Real Estate, Debt) ---
+  {
+    slug: 'student-loan-payoff',
+    title: 'Student Loan Payoff Calculator',
+    description: 'Calculate student loan payoff strategies with standard and extended repayment plans. See how extra payments reduce total interest and accelerate debt freedom.',
+    keywords: 'student loan calculator, student debt payoff, loan forgiveness, income driven repayment, student loan interest, student loan repayment, extra payment impact',
+    category: 'Loan',
+    component: 'StudentLoanPayoffCalculator'
+  },
+  {
+    slug: 'student-loan-forgiveness',
+    title: 'Student Loan Forgiveness Calculator',
+    description: 'Estimate Public Service Loan Forgiveness (PSLF) and Income-Driven Repayment (IDR) forgiveness timelines. Track qualifying payments and plan for tax implications.',
+    keywords: 'pslf calculator, loan forgiveness, public service loan forgiveness, idr forgiveness, student loan forgiveness, income driven repayment, qualifying payments',
+    category: 'Loan',
+    component: 'StudentLoanForgivenessCalculator'
+  },
+  {
+    slug: 'medicare-cost-estimator',
+    title: 'Medicare Cost Estimator',
+    description: 'Calculate Medicare Part B, Part D, Medigap premiums, and IRMAA surcharges based on income. Project lifetime healthcare costs in retirement.',
+    keywords: 'medicare cost calculator, medicare premium, irmaa calculator, medigap cost, medicare part b cost, part d premium, retirement healthcare',
+    category: 'Retirement (US)',
+    component: 'MedicareCostEstimator'
+  },
+  {
+    slug: 'aca-marketplace-calculator',
+    title: 'ACA Marketplace Calculator',
+    description: 'Estimate health insurance premiums and Premium Tax Credits (subsidies) on the ACA Marketplace. Compare Bronze, Silver, Gold, and Platinum plans.',
+    keywords: 'aca subsidy calculator, healthcare marketplace, obamacare premium, premium tax credit, health insurance subsidy, affordable care act, marketplace calculator',
+    category: 'Tax',
+    component: 'ACAMarketplaceCalculator'
+  },
+  {
+    slug: 'child-tax-credit',
+    title: 'Child Tax Credit Calculator',
+    description: 'Calculate Child Tax Credit (CTC) and Additional Child Tax Credit (refundable portion). Understand phase-out thresholds and dependent care credits.',
+    keywords: 'child tax credit calculator, ctc calculator, dependent tax credit, family tax benefits, irs child credit, additional child tax credit, tax credits',
+    category: 'Tax',
+    component: 'ChildTaxCreditCalculator'
+  },
+  {
+    slug: 'fsa-calculator',
+    title: 'FSA Calculator',
+    description: 'Optimize Flexible Spending Account contributions. Calculate tax savings from Healthcare FSA and Dependent Care FSA with use-it-or-lose-it planning.',
+    keywords: 'fsa calculator, flexible spending account, fsa tax savings, dependent care fsa, health fsa limit, fsa contribution, healthcare fsa',
+    category: 'Tax',
+    component: 'FSACalculator'
+  },
+  {
+    slug: 'traditional-ira-calculator',
+    title: 'Traditional IRA Calculator',
+    description: 'Calculate Traditional IRA growth, tax deductions, and Required Minimum Distributions (RMD). Understand contribution limits and phase-out rules.',
+    keywords: 'traditional ira calculator, ira contribution limit, ira tax deduction, ira growth calculator, retirement savings, rmd calculator, ira phase out',
+    category: 'Retirement (US)',
+    component: 'TraditionalIRACalculator'
+  },
+  {
+    slug: 'home-affordability-calculator',
+    title: 'Home Affordability Calculator',
+    description: 'Calculate maximum affordable home price using the 28/36 rule. Analyze debt-to-income ratios, PMI costs, and detailed payment breakdown.',
+    keywords: 'home affordability calculator, how much house can i afford, dti calculator, mortgage affordability, home buying budget, debt to income ratio, pmi calculator',
+    category: 'Loan',
+    component: 'HomeAffordabilityCalculator'
+  },
+  {
+    slug: 'auto-lease-vs-buy',
+    title: 'Auto Lease vs Buy Calculator',
+    description: 'Compare total cost of leasing versus buying a vehicle. Analyze money factor, residual value, depreciation, and long-term ownership costs.',
+    keywords: 'lease vs buy calculator, car lease calculator, auto lease comparison, vehicle lease or buy, car buying decision, money factor, residual value',
+    category: 'Decision',
+    component: 'AutoLeaseVsBuyCalculator'
+  },
+  {
+    slug: 'property-tax-estimator',
+    title: 'Property Tax Estimator',
+    description: 'Estimate annual property taxes by state and county. Understand SALT deduction limits, homestead exemptions, and long-term tax projections.',
+    keywords: 'property tax calculator, real estate tax estimator, property tax by state, home tax calculator, annual property tax, salt deduction, homestead exemption',
+    category: 'Tax',
+    component: 'PropertyTaxEstimator'
+  },
+  {
+    slug: 'debt-avalanche-snowball',
+    title: 'Debt Avalanche vs Snowball Calculator',
+    description: 'Compare Avalanche (highest interest) and Snowball (smallest balance) debt payoff methods. Track multiple debts and visualize payoff timelines.',
+    keywords: 'debt payoff calculator, avalanche vs snowball, debt reduction strategy, debt consolidation, multiple debt payoff, debt free calculator, payoff comparison',
+    category: 'Loan',
+    component: 'DebtAvalancheSnowballCalculator'
+  },
+  {
+    slug: 'fico-score-impact',
+    title: 'FICO Score Impact Calculator',
+    description: 'Simulate how financial actions affect your credit score. Test scenarios for paying down debt, opening new credit, and improving payment history.',
+    keywords: 'fico score calculator, credit score simulator, credit utilization calculator, improve credit score, credit score impact, credit score estimator, credit factors',
+    category: 'Utility',
+    component: 'FICOScoreImpactCalculator'
+  },
+  // --- Regional / Tax (New) ---
+  {
+    slug: 'uk-income-tax',
+    title: 'UK Income Tax Calculator',
+    description: 'Calculate your UK take-home pay after Income Tax, National Insurance, and Pension contributions for the 2024/25 tax year.',
+    keywords: 'uk tax calculator, take home pay uk, salary calculator uk, national insurance, income tax england',
+    category: 'Regional',
+    component: 'UKIncomeTaxCalculator'
+  },
+  {
+    slug: 'australia-income-tax',
+    title: 'Australia Income Tax Calculator',
+    description: 'Estimate your Australian net pay after Stage 3 tax cuts, Medicare Levy, and Superannuation contributions.',
+    keywords: 'australia tax calculator, pay calculator au, stage 3 tax cuts, medicare levy, superannuation',
+    category: 'Regional',
+    component: 'AustraliaIncomeTaxCalculator'
+  },
+  {
+    slug: 'canada-income-tax',
+    title: 'Canada Income Tax Calculator',
+    description: 'Calculate your Canadian take-home pay including Federal, Provincial taxes, CPP, and EI deductions.',
+    keywords: 'canada tax calculator, salary calculator canada, federal tax brackets, ontario tax, rrsp tax savings',
+    category: 'Regional',
+    component: 'CanadaIncomeTaxCalculator'
+  },
+  {
+    slug: 'europe-vat',
+    title: 'Europe VAT Calculator',
+    description: 'Quickly calculate VAT inclusive and exclusive amounts for European countries like Germany, France, and Spain.',
+    keywords: 'vat calculator, europe vat, vat inclusive, value added tax, germany vat, france vat',
+    category: 'Regional',
+    component: 'EuropeVATCalculator'
+  },
+  {
+    slug: 'japan-paycheck',
+    title: 'Japan Paycheck Calculator',
+    description: 'Estimate your net salary in Japan after Social Insurance, National Income Tax, and Resident Tax.',
+    keywords: 'japan tax calculator, salary japan, japan take home pay, social insurance japan, resident tax',
+    category: 'Regional',
+    component: 'JapanPaycheckCalculator'
+  },
+  {
+    slug: 'hongkong-salary-tax',
+    title: 'Hong Kong Salary Tax Calculator',
+    description: 'Calculate your Hong Kong take-home pay after MPF contributions and Salaries Tax using progressive or standard rates.',
+    keywords: 'hong kong tax calculator, hk salary tax, mpf calculator, hk tax allowance, salaries tax hk',
+    category: 'Regional',
+    component: 'HongKongSalaryTaxCalculator'
+  },
+  {
+    slug: 'china-income-tax',
+    title: 'China Income Tax Calculator',
+    description: 'Estimate your Individual Income Tax (IIT) and take-home pay in China after social insurance deductions.',
+    keywords: 'china tax calculator, iit china, china salary calculator, social insurance china, beijing tax',
+    category: 'Regional',
+    component: 'ChinaIncomeTaxCalculator'
+  },
+  {
+    slug: 'switzerland-income-tax',
+    title: 'Switzerland Income Tax Calculator',
+    description: 'Calculate your Swiss net salary including Federal, Cantonal, and Communal taxes along with social security.',
+    keywords: 'switzerland tax calculator, swiss salary calculator, canton tax, ahv calculator, zurich tax',
+    category: 'Regional',
+    component: 'SwitzerlandIncomeTaxCalculator'
+  },
+  {
+    slug: 'singapore-tax',
+    title: 'Singapore Income Tax & CPF',
+    description: 'Calculate your Singapore take-home pay after CPF contributions and progressive income tax rates.',
+    keywords: 'singapore tax calculator, cpf calculator, salary-calculator sg, income tax singapore, take home pay sg',
+    category: 'Regional',
+    component: 'SingaporeTaxCalculator'
+  },
+  {
+    slug: 'uae-gratuity',
+    title: 'UAE Gratuity Calculator',
+    description: 'Calculate your end-of-service gratuity in the UAE based on the latest 2022 Labor Law.',
+    keywords: 'uae gratuity calculator, end of service benefits uae, gratuity dubai, labor law uae, gratuity calculation limited contract',
+    category: 'Regional',
+    component: 'UAEGratuityCalculator'
+  },
+  {
+    slug: 'nz-paycheck',
+    title: 'New Zealand PAYE Calculator',
+    description: 'Estimate your NZ take-home pay after PAYE tax, ACC levy, and KiwiSaver contributions.',
+    keywords: 'nz tax calculator, paye calculator nz, kiwisaver calculator, take home pay nz, salary calculator nz',
+    category: 'Regional',
+    component: 'NZPaycheckCalculator'
+  },
+  {
+    slug: 'india-tax',
+    title: 'India Income Tax (New vs Old)',
+    description: 'Compare take-home pay under New vs Old Tax Regimes for FY 2024-25 with standard deductions.',
+    keywords: 'income tax india, new vs old regime, fy 2024-25 tax, income tax calculator india, sbi tax calculator',
+    category: 'Regional',
+    component: 'IndiaIncomeTaxCalculator'
+  },
+  {
+    slug: 'ireland-tax',
+    title: 'Ireland Income Tax (PAYE)',
+    description: 'Estimate your Irish net salary after PAYE, USC, and PRSI deductions for 2024.',
+    keywords: 'ireland tax calculator, paye calculator ireland, usc calculator, prsi ireland, take home pay ireland',
+    category: 'Regional',
+    component: 'IrelandIncomeTaxCalculator'
+  },
+  {
+    slug: 'mexico-isr',
+    title: 'Mexico ISR & Paycheck',
+    description: 'Calculate your net monthly salary in Mexico after ISR (Income Tax) and IMSS deductions.',
+    keywords: 'mexico tax calculator, calculatora de isr, salario neto mexico, isr 2024, imss calculator',
+    category: 'Regional',
+    component: 'MexicoISRCalculator'
+  },
+  {
+    slug: 'brazil-clt',
+    title: 'Brazil CLT Paycheck',
+    description: 'Calculate your net monthly salary in Brazil after INSS and IRRF deductions (Salário Líquido).',
+    keywords: 'brazil tax calculator, calculo salario liquido, inss 2024, irrf calculator, clt brazil',
+    category: 'Regional',
+    component: 'BrazilCLTCalculator'
+  },
+  {
+    slug: 'south-africa-tax',
+    title: 'South Africa Tax (PAYE)',
+    description: 'Calculate your South African net take-home pay including SARS rebates and medical credits.',
+    keywords: 'sa tax calculator, sars tax calculator, paye calculator sa, take home pay south africa, tax rebate sa',
+    category: 'Regional',
+    component: 'SouthAfricaTaxCalculator'
   }
 ];
 
