@@ -602,6 +602,11 @@ export async function GET(req) {
         // Optional: Trigger background AI enrichment if not cached
         // For the immediate GET request, we skip wait to keep it fast, 
         // but the warmup/background will catch it for the next user.
+        const response = {
+            clusters: ranked.slice(0, 60), // Top 60 clusters only
+            lastUpdated: new Date().toISOString()
+        };
+
         // Save to database cache (fast initial response)
         await setCachedNews(category, response);
 
