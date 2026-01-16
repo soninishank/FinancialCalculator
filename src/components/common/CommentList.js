@@ -23,26 +23,26 @@ function CommentItem({ comment, replies, onReply }) {
                     {initials}
                 </div>
                 <div className="flex-1">
-                    <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 shadow-sm transition-hover hover:border-teal-100">
+                    <div className="bg-gray-50 dark:bg-slate-800/40 rounded-2xl p-4 border border-gray-100 dark:border-slate-800 shadow-sm transition-all hover:border-teal-100 dark:hover:border-teal-900/50">
                         <div className="flex items-center justify-between mb-2">
-                            <h4 className="font-bold text-gray-900">{comment.name}</h4>
-                            <span className="text-xs text-gray-400">
+                            <h4 className="font-bold text-gray-900 dark:text-white transition-colors">{comment.name}</h4>
+                            <span className="text-xs text-gray-400 dark:text-slate-500">
                                 {new Date(comment.created_at).toLocaleDateString(undefined, {
                                     year: 'numeric', month: 'long', day: 'numeric'
                                 })}
                             </span>
                         </div>
-                        <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{comment.content}</p>
+                        <p className="text-gray-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap transition-colors">{comment.content}</p>
                         <button
                             onClick={() => onReply(comment.id)}
-                            className="mt-3 text-sm font-semibold text-teal-600 hover:text-teal-700 transition-colors"
+                            className="mt-3 text-sm font-semibold text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 transition-colors"
                         >
                             Reply
                         </button>
                     </div>
 
                     {replies.length > 0 && (
-                        <div className="ml-6 mt-6 border-l-2 border-gray-100 pl-6">
+                        <div className="ml-6 mt-6 border-l-2 border-gray-100 dark:border-slate-800 pl-6">
                             {replies.map(reply => (
                                 <CommentItem
                                     key={reply.id}
@@ -62,8 +62,8 @@ function CommentItem({ comment, replies, onReply }) {
 export default function CommentList({ comments, onReply }) {
     if (comments.length === 0) {
         return (
-            <div className="py-8 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200 mt-12">
-                <p className="text-gray-500 italic">No comments yet. Be the first to share your thoughts!</p>
+            <div className="py-8 text-center bg-gray-50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-gray-200 dark:border-slate-800 mt-12 transition-colors">
+                <p className="text-gray-500 dark:text-slate-500 italic">No comments yet. Be the first to share your thoughts!</p>
             </div>
         );
     }
@@ -73,8 +73,8 @@ export default function CommentList({ comments, onReply }) {
     const getReplies = (id) => comments.filter(c => c.parent_id === id);
 
     return (
-        <div className="mt-12 space-y-12">
-            <h3 className="text-xl font-bold text-gray-900 mb-8 border-b border-gray-100 pb-4">
+        <div className="mt-12 space-y-12 transition-colors">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-8 border-b border-gray-100 dark:border-slate-800 pb-4">
                 {comments.length} Response{comments.length !== 1 ? 's' : ''}
             </h3>
             <div className="space-y-8">

@@ -63,11 +63,11 @@ export default function CalculatorPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Main Content: 9 columns on large screens for a balanced width */}
         <main className="lg:col-span-9 order-1">
-          <div className="bg-white rounded-2xl p-3 sm:p-8 shadow-sm border border-gray-100">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-3 sm:p-8 shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
             {/* Back button */}
             <button
               onClick={handleBack}
-              className="text-sm font-medium text-teal-600 mb-6 inline-flex items-center hover:translate-x-[-4px] transition-transform"
+              className="text-sm font-medium text-teal-600 dark:text-teal-400 mb-6 inline-flex items-center hover:translate-x-[-4px] transition-all"
               aria-label="Go back"
             >
               <span className="mr-2">←</span> Back
@@ -79,11 +79,11 @@ export default function CalculatorPage() {
                 { label: meta.title }
               ]}
             />
-            <h1 id="main-title" className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight mb-2">
+            <h1 id="main-title" className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-2">
               {meta.title}
             </h1>
 
-            <p className="text-gray-500 text-base mb-8 max-w-3xl leading-relaxed">
+            <p className="text-gray-500 dark:text-slate-400 text-base mb-8 max-w-3xl leading-relaxed">
               {meta.description}
             </p>
 

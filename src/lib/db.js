@@ -27,6 +27,9 @@ if (!connectionString) {
 
 const pool = new Pool({
     connectionString,
+    max: 20, // Maximum number of clients in the pool
+    idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
+    connectionTimeoutMillis: 10000, // Relaxed timeout for better stability
     ssl: {
         rejectUnauthorized: false
     }

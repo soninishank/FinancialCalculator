@@ -1,9 +1,13 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import manifest from '../../utils/calculatorsManifest';
 
 const Footer = () => {
-    // Group calculators by category for the footer
+    const [newsCount, setNewsCount] = useState(60);
+
+    // Group calculators by category
     const categories = manifest.reduce((acc, calc) => {
         const cat = calc.category || 'General';
         if (!acc[cat]) acc[cat] = [];
@@ -12,32 +16,42 @@ const Footer = () => {
     }, {});
 
     return (
-        <footer className="bg-white border-t border-gray-100 py-10">
-            <div className="max-w-[1920px] mx-auto px-4 sm:px-6 md:px-8">
-                <div className="columns-2 md:columns-3 lg:columns-5 gap-8">
-                    {/* Brand Section */}
-                    <div className="break-inside-avoid mb-8 space-y-3">
-                        <Link href="/" className="text-xl font-black text-teal-600 tracking-tighter">
-                            HASHMATIC
+        <footer className="bg-white dark:bg-[#020617] border-t border-slate-100 dark:border-slate-800/30 pt-24 pb-12 transition-colors duration-500 overflow-hidden relative">
+            {/* Ambient Background Glow */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-teal-500/20 to-transparent"></div>
+
+            <div className="max-w-[1920px] mx-auto px-6 sm:px-8 md:px-12 relative z-10">
+
+                {/* 1. Live Tracker Header - Omni Aesthetic Removed */}
+                <div className="mb-8"></div>
+
+                {/* 3. Global Navigation Grid */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-20 border-t border-slate-50 dark:border-slate-800/30 pt-16">
+                    {/* Brand */}
+                    <div className="col-span-2 md:col-span-1 space-y-6">
+                        <Link href="/" className="inline-flex items-center gap-2.5 group">
+                            <div className="w-7 h-7 bg-teal-600 rounded-lg flex items-center justify-center group-hover:rotate-12 transition-transform shadow-lg shadow-teal-600/20">
+                                <span className="text-white font-black text-base">H</span>
+                            </div>
+                            <span className="text-xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">Hashmatic</span>
                         </Link>
-                        <p className="text-gray-500 text-xs leading-relaxed max-w-xs">
-                            Free, precise, and beautifully designed financial tools.
+                        <p className="text-slate-400 dark:text-slate-500 text-[11px] leading-relaxed font-bold uppercase tracking-wide max-w-xs">
+                            High-precision financial intelligence engine for a data-driven world.
                         </p>
+                        <div className="flex gap-2">
+                            <span className="text-[9px] font-black px-2.5 py-1 bg-teal-50 dark:bg-teal-500/5 text-teal-600 dark:text-teal-500 rounded-md border border-teal-100 dark:border-teal-500/10 uppercase tracking-widest">Ad-Free</span>
+                            <span className="text-[9px] font-black px-2.5 py-1 bg-blue-50 dark:bg-blue-500/5 text-blue-600 dark:text-blue-500 rounded-md border border-blue-100 dark:border-blue-500/10 uppercase tracking-widest">Verified Logic</span>
+                        </div>
                     </div>
 
-                    {/* Dynamic Links from Manifest */}
-                    {Object.entries(categories).map(([category, items]) => (
-                        <div key={category} className="break-inside-avoid mb-8">
-                            <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-3">{category}</h3>
-                            <ul className="space-y-1.5">
-                                {items.map(calc => (
+                    {/* Columns dynamically from categories */}
+                    {Object.entries(categories).slice(0, 3).map(([category, items]) => (
+                        <div key={category} className="space-y-5">
+                            <h3 className="text-[11px] font-black text-slate-900 dark:text-slate-400 uppercase tracking-[0.2em]">{category}</h3>
+                            <ul className="space-y-3">
+                                {items.slice(0, 6).map(calc => (
                                     <li key={calc.slug}>
-                                        <Link
-                                            href={`/calculators/${calc.slug}`}
-                                            className="text-gray-500 hover:text-teal-600 text-xs transition-colors block"
-                                        >
-                                            {calc.title}
-                                        </Link>
+                                        <Link href={`/calculators/${calc.slug}`} className="text-slate-500 dark:text-slate-500 hover:text-teal-600 dark:hover:text-teal-400 text-[11px] font-bold uppercase tracking-wider transition-all inline-block">{calc.title}</Link>
                                     </li>
                                 ))}
                             </ul>
@@ -45,26 +59,22 @@ const Footer = () => {
                     ))}
                 </div>
 
-                {/* Bottom Bar */}
-                <div className="pt-6 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-400">
-                    <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
-                        <p>© {new Date().getFullYear()} Hashmatic. All rights reserved.</p>
-                        <span className="hidden md:block text-gray-200">|</span>
-                        <p className="flex items-center text-teal-600/70 font-medium">
-                            <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                            </svg>
-                            Financial logic verified for {new Date().getFullYear()}
+                {/* 4. Bottom Legal & Versioning */}
+                <div className="pt-10 border-t border-slate-50 dark:border-slate-800/20 flex flex-col md:flex-row justify-between items-center gap-8">
+                    <div className="flex flex-wrap justify-center md:justify-start items-center gap-x-6 gap-y-3 text-[10px] font-bold text-slate-4300 dark:text-slate-600 uppercase tracking-widest">
+                        <p>© {new Date().getFullYear()} Hashmatic Intelligence</p>
+                        <p className="flex items-center text-teal-600/60 dark:text-teal-500/50">
+                            Verified v2.4.0
                         </p>
+                        <Link href="/calculators" className="hover:text-slate-900 dark:hover:text-white transition-colors">Complete Catalog</Link>
+                        <Link href="/privacy" className="hover:text-slate-900 dark:hover:text-white transition-colors">Privacy</Link>
+                        <Link href="/terms" className="hover:text-slate-900 dark:hover:text-white transition-colors">Terms</Link>
                     </div>
-                    <div className="flex gap-6">
-                        <Link href="/calculators" className="hover:text-teal-600 transition-colors">All Calculators</Link>
-                    </div>
-                </div>
 
-                {/* YMYL Disclaimer */}
-                <div className="pt-4 mt-4 border-t border-gray-50 text-[10px] text-gray-300 text-center">
-                    All calculators are for educational purposes only and do not constitute financial advice.
+                    <div className="text-[10px] text-slate-300 dark:text-slate-700 font-medium text-center md:text-right leading-relaxed max-w-lg">
+                        Informational purposes only. No financial advice provided.
+                        <br className="hidden sm:block" /> Consult a professional before major investment decisions.
+                    </div>
                 </div>
             </div>
         </footer>

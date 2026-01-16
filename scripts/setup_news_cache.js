@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { Pool } = require('pg');
 
 const pool = new Pool({
@@ -31,8 +32,18 @@ async function setupNewsCache() {
         `);
 
         await client.query(`
+            CREATE INDEX IF NOT EXISTS idx_news_cache_category 
+            ON news_cache(category);
+        `);
+
+        await client.query(`
             CREATE INDEX IF NOT EXISTS idx_news_cache_expires 
             ON news_cache(expires_at);
+        `);
+
+        await client.query(`
+            CREATE INDEX IF NOT EXISTS idx_news_cache_key_expires
+            ON news_cache(cache_key, expires_at);
         `);
 
         console.log('✓ News cache table setup complete!');

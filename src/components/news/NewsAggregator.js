@@ -2,6 +2,9 @@
 
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
+import {
+    Share2, Facebook, Twitter, Linkedin, Mail, Copy, Check, ExternalLink
+} from 'lucide-react';
 
 const NewsAggregator = () => {
     const [news, setNews] = useState(null);
@@ -13,6 +16,8 @@ const NewsAggregator = () => {
     const [visibleCount, setVisibleCount] = useState(10);
     const [expandedClusters, setExpandedClusters] = useState(new Set());
     const [selectedCategory, setSelectedCategory] = useState('All');
+    const [activeShareMenu, setActiveShareMenu] = useState(null); // stores cluster index
+    const [copiedUrl, setCopiedUrl] = useState(null);
 
     const CATEGORIES = ['All', 'Finance', 'Technology', 'Sports', 'Science', 'Entertainment', 'World'];
 
@@ -41,6 +46,13 @@ const NewsAggregator = () => {
         return () => clearInterval(interval);
     }, [fetchNews, selectedCategory]);
 
+    // Click outside listener for share menu
+    useEffect(() => {
+        const handleClickOutside = () => setActiveShareMenu(null);
+        window.addEventListener('click', handleClickOutside);
+        return () => window.removeEventListener('click', handleClickOutside);
+    }, []);
+
     // Initial load from localStorage
     useEffect(() => {
         const savedCategory = localStorage.getItem('news-category');
@@ -55,22 +67,41 @@ const NewsAggregator = () => {
 
 
 
-    const handleShare = async (e, title, url) => {
+
+    const handleShare = (e, platform, title, url) => {
         e.preventDefault();
         e.stopPropagation();
-        if (navigator.share) {
-            try {
-                await navigator.share({ title, url });
-            } catch (err) {
-                if (err.name !== 'AbortError') {
-                    console.error('Error sharing:', err);
-                }
-            }
-        } else {
-            navigator.clipboard.writeText(url);
-            alert('Link copied to clipboard!');
+
+        const encodedUrl = encodeURIComponent(url);
+        const encodedTitle = encodeURIComponent(title);
+
+        let shareUrl = '';
+        switch (platform) {
+            case 'facebook':
+                shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+                break;
+            case 'twitter':
+                shareUrl = `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`;
+                break;
+            case 'linkedin':
+                shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
+                break;
+            case 'email':
+                shareUrl = `mailto:?subject=${encodedTitle}&body=${encodedUrl}`;
+                break;
+            case 'copy':
+                navigator.clipboard.writeText(url);
+                setCopiedUrl(url);
+                setTimeout(() => setCopiedUrl(null), 2000);
+                return;
         }
+
+        if (shareUrl) {
+            window.open(shareUrl, '_blank', 'width=600,height=400');
+        }
+        setActiveShareMenu(null);
     };
+
 
     // Filter and Search Logic
     const allFilteredClusters = useMemo(() => {
@@ -185,15 +216,50 @@ const NewsAggregator = () => {
                                                             {cluster.category}
                                                         </span>
                                                     </div>
-                                                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                    <div className="flex items-center gap-6">
+                                                        {/* Share Interaction */}
+                                                        <div className="relative">
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    e.stopPropagation();
+                                                                    setActiveShareMenu(activeShareMenu === idx ? null : idx);
+                                                                }}
+                                                                className={`flex items-center gap-2 group/btn transition-all duration-300 ${activeShareMenu === idx ? 'text-blue-500' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
+                                                            >
+                                                                <span className="text-[11px] font-black uppercase tracking-widest">Share</span>
+                                                                <Share2 className={`w-4 h-4 transition-transform duration-300 ${activeShareMenu === idx ? 'scale-110' : 'group-hover/btn:scale-110'}`} />
+                                                            </button>
 
-                                                        <button
-                                                            onClick={(e) => handleShare(e, cluster.main.title, cluster.main.link)}
-                                                            className="p-2.5 text-slate-400 bg-slate-100 dark:bg-slate-800 rounded-xl transition-all hover:scale-110 active:scale-90"
-                                                            title="Share Story"
-                                                        >
-                                                            🔗
-                                                        </button>
+                                                            {/* Premium Share Dropdown */}
+                                                            {activeShareMenu === idx && (
+                                                                <div
+                                                                    className="absolute right-0 top-full mt-3 w-56 bg-black rounded-2xl shadow-[0_24px_48px_-12px_rgba(0,0,0,0.5)] border border-white/10 overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200 origin-top-right px-2 py-2"
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                >
+                                                                    <div className="flex flex-col space-y-1">
+                                                                        {[
+                                                                            { id: 'facebook', label: 'Facebook', icon: Facebook },
+                                                                            { id: 'twitter', label: 'X (Twitter)', icon: Twitter },
+                                                                            { id: 'linkedin', label: 'LinkedIn', icon: Linkedin },
+                                                                            { id: 'email', label: 'Email', icon: Mail },
+                                                                            { id: 'copy', label: copiedUrl === cluster.main.link ? 'Copied!' : 'Copy', icon: copiedUrl === cluster.main.link ? Check : Copy },
+                                                                        ].map((item) => (
+                                                                            <button
+                                                                                key={item.id}
+                                                                                onClick={(e) => handleShare(e, item.id, cluster.main.title, cluster.main.link)}
+                                                                                className="flex items-center gap-3 w-full px-4 py-3 rounded-xl hover:bg-white/10 text-white transition-colors text-left group/item"
+                                                                            >
+                                                                                <item.icon className={`w-4 h-4 ${item.id === 'copy' && copiedUrl === cluster.main.link ? 'text-emerald-400' : 'text-white/60 group-hover/item:text-white'}`} />
+                                                                                <span className="text-xs font-bold leading-none">{item.label}</span>
+                                                                            </button>
+                                                                        ))}
+                                                                    </div>
+                                                                    {/* Simple Pointer/Arrow */}
+                                                                    <div className="absolute -top-1.5 right-4 w-3 h-3 bg-black border-l border-t border-white/10 rotate-45"></div>
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -359,10 +425,6 @@ const NewsAggregator = () => {
                     </div>
                 )}
 
-                <div className={`mt-24 pt-10 border-t text-center text-[10px] font-black uppercase tracking-[0.5em] transition-opacity duration-1000 ${isDarkMode ? 'border-slate-800 text-slate-700' : 'border-slate-200 text-slate-400'
-                    }`}>
-                    Omni-Aggregator • {allFilteredClusters.length} distinct events currently tracked
-                </div>
             </div>
         </div>
     );

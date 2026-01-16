@@ -28,6 +28,12 @@ async function setupDatabase() {
     CREATE INDEX IF NOT EXISTS idx_comments_calc_slug ON comments(calc_slug);
     CREATE INDEX IF NOT EXISTS idx_comments_status ON comments(status);
     CREATE INDEX IF NOT EXISTS idx_comments_parent_id ON comments(parent_id);
+    -- Optimized composite index for main GET query
+    CREATE INDEX IF NOT EXISTS idx_comments_slug_status_date ON comments(calc_slug, status, created_at DESC);
+    -- Composite index for fetching comments by parent and status
+    CREATE INDEX IF NOT EXISTS idx_comments_parent_status ON comments(parent_id, status);
+    -- Composite index for fetching comments by slug and parent (for replies)
+    CREATE INDEX IF NOT EXISTS idx_comments_slug_parent ON comments(calc_slug, parent_id);
   `;
 
     try {

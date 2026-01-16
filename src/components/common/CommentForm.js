@@ -70,9 +70,9 @@ export default function CommentForm({ slug, parentId, onCommentPosted }) {
     };
 
     return (
-        <div className="mt-8 border-t border-gray-100 pt-8">
-            <h3 className="text-xl font-bold text-gray-900 mb-6">Leave a Reply</h3>
-            <p className="text-sm text-gray-500 mb-6">Your email address will not be published. Required fields are marked *</p>
+        <div className="mt-8 border-t border-gray-100 dark:border-slate-800 pt-8 transition-colors">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Leave a Reply</h3>
+            <p className="text-sm text-gray-500 dark:text-slate-400 mb-6">Your email address will not be published. Required fields are marked *</p>
 
             <form onSubmit={handleSubmit} className="space-y-4" aria-label="Comment form">
                 {/* Honeypot field - hidden from users */}
@@ -88,7 +88,7 @@ export default function CommentForm({ slug, parentId, onCommentPosted }) {
                 </div>
 
                 <div>
-                    <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">Comment *</label>
+                    <label htmlFor="content" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Comment *</label>
                     <textarea
                         id="content"
                         name="content"
@@ -97,7 +97,7 @@ export default function CommentForm({ slug, parentId, onCommentPosted }) {
                         value={formData.content}
                         onChange={handleChange}
                         maxLength={5000}
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.content ? 'border-red-500' : 'border-gray-200'} focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all resize-none shadow-sm`}
+                        className={`w-full px-4 py-3 rounded-xl border ${errors.content ? 'border-red-500' : 'border-gray-200 dark:border-slate-700'} bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all resize-none shadow-sm`}
                         placeholder="Share your thoughts..."
                     ></textarea>
                     <div className="flex justify-between mt-1">
@@ -110,7 +110,7 @@ export default function CommentForm({ slug, parentId, onCommentPosted }) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Name *</label>
                         <input
                             type="text"
                             id="name"
@@ -118,13 +118,13 @@ export default function CommentForm({ slug, parentId, onCommentPosted }) {
                             required
                             value={formData.name}
                             onChange={handleChange}
-                            className={`w-full px-4 py-3 rounded-xl border ${errors.name ? 'border-red-500' : 'border-gray-200'} focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all shadow-sm`}
+                            className={`w-full px-4 py-3 rounded-xl border ${errors.name ? 'border-red-500' : 'border-gray-200 dark:border-slate-700'} bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all shadow-sm`}
                             placeholder="Your Name"
                         />
                         {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
                     </div>
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Email *</label>
                         <input
                             type="email"
                             id="email"
@@ -132,7 +132,7 @@ export default function CommentForm({ slug, parentId, onCommentPosted }) {
                             required
                             value={formData.email}
                             onChange={handleChange}
-                            className={`w-full px-4 py-3 rounded-xl border ${errors.email ? 'border-red-500' : 'border-gray-200'} focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all shadow-sm`}
+                            className={`w-full px-4 py-3 rounded-xl border ${errors.email ? 'border-red-500' : 'border-gray-200 dark:border-slate-700'} bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all shadow-sm`}
                             placeholder="email@example.com"
                         />
                         {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}

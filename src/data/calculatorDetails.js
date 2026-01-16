@@ -5,7 +5,7 @@ export const calculatorDetails = {
     'rule-of-72': {
         title: "Understanding the Rule of 72",
         render: ({ rate, yearsToDouble }) => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding the Rule of 72</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -42,7 +42,7 @@ export const calculatorDetails = {
     'simple-interest': {
         title: "How Simple Interest Works for You",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">When is Simple Interest Used?</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -50,7 +50,7 @@ export const calculatorDetails = {
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                        <div className="bg-indigo-50 dark:bg-indigo-500/10 p-4 rounded-xl border border-indigo-100 dark:border-indigo-500/20 transition-colors">
                             <h4 className="font-bold text-indigo-800 mb-2">Common Use Cases</h4>
                             <ul className="list-disc pl-5 space-y-1 text-sm text-indigo-700">
                                 <li><strong>Short-term Loans:</strong> Often used for personal or bridge loans.</li>
@@ -77,7 +77,7 @@ export const calculatorDetails = {
     'compound-interest': {
         title: "The Power of Compounding",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Maximizing Your Wealth with Compounding</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -111,7 +111,7 @@ export const calculatorDetails = {
     'target-amount-calculator': {
         title: "Planning for a Target Amount",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">How to Reach Your Target Amount?</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -163,7 +163,7 @@ export const calculatorDetails = {
     'time-to-goal': {
         title: "How Long to Reach Your Financial Goal?",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-6">Strategy: Lumpsum vs. SIP for Your Goal</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-6">
@@ -181,7 +181,7 @@ export const calculatorDetails = {
                             </p>
                         </div>
 
-                        <div className="bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
+                        <div className="bg-emerald-50 dark:bg-emerald-500/10 p-5 rounded-2xl border border-emerald-100 dark:border-emerald-500/20 transition-colors">
                             <h4 className="font-bold text-emerald-900 mb-3 flex items-center gap-2">
                                 <span className="p-1.5 bg-emerald-500 text-white rounded-lg text-xs">B</span>
                                 SIP Path
@@ -202,7 +202,7 @@ export const calculatorDetails = {
                         <p className="text-lg font-bold text-slate-800">n = ln(Target / Principal) / ln(1 + Rate)</p>
                     </div>
 
-                    <div className="bg-teal-50 p-6 rounded-2xl border border-teal-100 mb-8">
+                    <div className="bg-teal-50 dark:bg-teal-500/10 p-6 rounded-2xl border border-teal-100 dark:border-teal-500/20 mb-8 transition-colors">
                         <h4 className="font-bold text-teal-900 mb-3">Goal Reachability</h4>
                         <p className="text-sm text-teal-800 leading-relaxed">
                             Our calculator also features a <strong>"Winner Strategy"</strong> comparison. It highlights which method gets you to your goal faster and explicitly identifies if a goal is mathematically unreachable (e.g., if you have zero investment but a positive target).
@@ -228,7 +228,7 @@ export const calculatorDetails = {
     'loan-emi': {
         title: "Understanding Loans",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding Loans</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -271,7 +271,7 @@ export const calculatorDetails = {
     'topup-loan-emi': {
         title: "Understanding Top-Up Loans",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding Top-Up Loans</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -301,7 +301,7 @@ export const calculatorDetails = {
     'compare-loans': {
         title: "Flat Rate vs Reducing Balance",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Flat Rate vs Reducing Balance</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -344,7 +344,7 @@ export const calculatorDetails = {
     'emi-comparison': {
         title: "Compare Multiple Loan Estimates",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Why Compare Loans?</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -352,7 +352,7 @@ export const calculatorDetails = {
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                        <div className="bg-indigo-50 dark:bg-indigo-500/10 p-4 rounded-xl border border-indigo-100 dark:border-indigo-500/20 transition-colors">
                             <h4 className="font-bold text-indigo-800 mb-2">Interest Rate Impact</h4>
                             <p className="text-sm text-indigo-700">
                                 A 0.5% difference on a ₹50 Lakh loan for 20 years can save you over <strong>₹3.5 Lakhs</strong> in interest payments!
@@ -376,7 +376,7 @@ export const calculatorDetails = {
     'advanced-home-loan': {
         title: "Deep Dive: Home Loan Planning",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Why use the Advanced Calculator?</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -384,7 +384,7 @@ export const calculatorDetails = {
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                        <div className="bg-indigo-50 dark:bg-indigo-500/10 p-4 rounded-xl border border-indigo-100 dark:border-indigo-500/20 transition-colors">
                             <h4 className="font-bold text-indigo-800 mb-2">Hidden Costs</h4>
                             <ul className="list-disc pl-5 space-y-1 text-sm text-indigo-700">
                                 <li><strong>Property Taxes:</strong> Recurring yearly cost often ignored.</li>
@@ -411,7 +411,7 @@ export const calculatorDetails = {
     'cagr-calculator': {
         title: "Mastering CAGR",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Why CAGR Matters</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -445,7 +445,7 @@ export const calculatorDetails = {
     'xirr-calculator': {
         title: "Mastering XIRR",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding XIRR</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -502,7 +502,7 @@ export const calculatorDetails = {
 
                     <h4 className="font-semibold text-gray-800 mb-2 mt-6">Real-World Use Cases</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
-                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                        <div className="bg-indigo-50 dark:bg-indigo-500/10 p-4 rounded-xl border border-indigo-100 dark:border-indigo-500/20 transition-colors">
                             <h5 className="font-bold text-indigo-800 mb-2">📊 Mutual Fund SIPs</h5>
                             <p className="text-sm text-indigo-700">
                                 Calculate the true annualized return of your monthly SIP investments. XIRR accounts for each installment's timing and amount.
@@ -597,7 +597,7 @@ export const calculatorDetails = {
     'car-loan-emi': {
         title: "Car Loan EMI Calculator Guide",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-6">Drive Your Dreams with Clarity</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-6">
@@ -626,7 +626,7 @@ export const calculatorDetails = {
                             </ul>
                         </div>
 
-                        <div className="bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
+                        <div className="bg-emerald-50 dark:bg-emerald-500/10 p-5 rounded-2xl border border-emerald-100 dark:border-emerald-500/20 transition-colors">
                             <h4 className="font-bold text-emerald-900 mb-3 flex items-center gap-2">
                                 <span className="p-1.5 bg-emerald-500 text-white rounded-lg text-xs">02</span>
                                 Financial Breakdown
@@ -648,7 +648,7 @@ export const calculatorDetails = {
                         </div>
                     </div>
 
-                    <div className="bg-teal-50 p-6 rounded-2xl border border-teal-100 mb-8">
+                    <div className="bg-teal-50 dark:bg-teal-500/10 p-6 rounded-2xl border border-teal-100 dark:border-teal-500/20 mb-8 transition-colors">
                         <h4 className="font-bold text-teal-900 mb-3">Understanding Amortization</h4>
                         <p className="text-sm text-teal-800 leading-relaxed">
                             An amortization schedule is your roadmap to being debt-free. It shows how each payment is split between the Interest (cost of borrowing) and the Principal (loan repayment). In the early years, interest dominates; as the balance drops, more of your money goes toward the principal.
@@ -674,7 +674,7 @@ export const calculatorDetails = {
     'pure-sip': {
         title: "Mastering Your Wealth with SIP",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">Why Systematic Investment Plan (SIP) is Your Best Friend</h2>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-6">
@@ -717,9 +717,9 @@ export const calculatorDetails = {
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">Calculated SIP FAQs</h2>
                     <div className="space-y-4">
                         {(calculatorFaqs['pure-sip'] || []).map((faq, i) => (
-                            <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
-                                <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
-                                <p className="text-gray-600 text-sm">{faq.a}</p>
+                            <div key={i} className="p-4 bg-gray-50 dark:bg-slate-800/40 rounded-xl border border-gray-100 dark:border-slate-700/50 italic transition-colors">
+                                <p className="font-bold text-gray-800 dark:text-gray-200 mb-2">Q: {faq.q}</p>
+                                <p className="text-gray-600 dark:text-gray-400 text-sm">{faq.a}</p>
                             </div>
                         ))}
                     </div>
@@ -730,7 +730,7 @@ export const calculatorDetails = {
     'lump-sum': {
         title: "Wealth Growth via Lump Sum Investment",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">The Power of One-Time Investment</h2>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-6">
@@ -787,9 +787,9 @@ export const calculatorDetails = {
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">Lump Sum FAQs</h2>
                     <div className="space-y-4">
                         {(calculatorFaqs['lump-sum'] || []).map((faq, i) => (
-                            <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
-                                <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
-                                <p className="text-gray-600 text-sm">{faq.a}</p>
+                            <div key={i} className="p-4 bg-gray-50 dark:bg-slate-800/40 rounded-xl border border-gray-100 dark:border-slate-700/50 italic transition-colors">
+                                <p className="font-bold text-gray-800 dark:text-gray-200 mb-2">Q: {faq.q}</p>
+                                <p className="text-gray-600 dark:text-gray-400 text-sm">{faq.a}</p>
                             </div>
                         ))}
                     </div>
@@ -800,7 +800,7 @@ export const calculatorDetails = {
     'step-up-sip': {
         title: "The Exponential Power of Step-Up SIP",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">Why You Should 'Step-Up' Your Investments</h2>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-6">
@@ -830,9 +830,9 @@ export const calculatorDetails = {
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">Step-Up SIP FAQs</h2>
                     <div className="space-y-4">
                         {(calculatorFaqs['step-up-sip'] || []).map((faq, i) => (
-                            <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
-                                <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
-                                <p className="text-gray-600 text-sm">{faq.a}</p>
+                            <div key={i} className="p-4 bg-gray-50 dark:bg-slate-800/40 rounded-xl border border-gray-100 dark:border-slate-700/50 italic transition-colors">
+                                <p className="font-bold text-gray-800 dark:text-gray-200 mb-2">Q: {faq.q}</p>
+                                <p className="text-gray-600 dark:text-gray-400 text-sm">{faq.a}</p>
                             </div>
                         ))}
                     </div>
@@ -843,7 +843,7 @@ export const calculatorDetails = {
     'recurring-deposit': {
         title: "Building Habits with Recurring Deposits (RD)",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">The Safety and Discipline of an RD</h2>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-6">
@@ -851,13 +851,13 @@ export const calculatorDetails = {
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
-                        <div className="bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
+                        <div className="bg-emerald-50 dark:bg-emerald-500/10 p-5 rounded-2xl border border-emerald-100 dark:border-emerald-500/20 transition-colors">
                             <h3 className="text-lg font-bold text-emerald-900 mb-3">Guaranteed Returns</h3>
                             <p className="text-sm text-emerald-800 leading-relaxed">
                                 Unlike SIPs in mutual funds, an RD guarantees your maturity amount. The interest rate is fixed at the time of opening and does not change regardless of market conditions.
                             </p>
                         </div>
-                        <div className="bg-amber-50 p-5 rounded-2xl border border-amber-100">
+                        <div className="bg-amber-50 dark:bg-amber-500/10 p-5 rounded-2xl border border-amber-100 dark:border-amber-500/20 transition-colors">
                             <h3 className="text-lg font-bold text-amber-900 mb-3">Goal-Based Savings</h3>
                             <p className="text-sm text-amber-800 leading-relaxed">
                                 RD is perfect for short-to-medium term goals like buying a gadget, a vacation, or building an emergency fund.
@@ -873,9 +873,9 @@ export const calculatorDetails = {
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">Recurring Deposit FAQs</h2>
                     <div className="space-y-4">
                         {(calculatorFaqs['recurring-deposit'] || []).map((faq, i) => (
-                            <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
-                                <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
-                                <p className="text-gray-600 text-sm">{faq.a}</p>
+                            <div key={i} className="p-4 bg-gray-50 dark:bg-slate-800/40 rounded-xl border border-gray-100 dark:border-slate-700/50 italic transition-colors">
+                                <p className="font-bold text-gray-800 dark:text-gray-200 mb-2">Q: {faq.q}</p>
+                                <p className="text-gray-600 dark:text-gray-400 text-sm">{faq.a}</p>
                             </div>
                         ))}
                     </div>
@@ -886,14 +886,14 @@ export const calculatorDetails = {
     'fixed-deposit': {
         title: "Security and Growth with Fixed Deposits (FD)",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">Why Fixed Deposits are an Institutional Favorite</h2>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-6">
                         A <strong>Fixed Deposit (FD)</strong> is the bedrock of conservative financial planning in India. It offers a higher rate of interest than a regular savings account and provides absolute certainty regarding the maturity amount. Whether you are a senior citizen seeking monthly income or a young professional building a safety net, FDs offer unmatched peace of mind.
                     </p>
 
-                    <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100 my-8">
+                    <div className="bg-blue-50 dark:bg-blue-500/10 p-6 rounded-2xl border border-blue-100 dark:border-blue-500/20 my-8 transition-colors">
                         <h3 className="text-lg font-bold text-blue-900 mb-2">The Comfort of Predictability</h3>
                         <p className="text-sm text-blue-800 leading-relaxed">
                             With an FD, your interest rate is locked in for the entire tenure. Even if market interest rates fall, your bank is contractually obligated to pay you the agreed-upon rate. This makes it an ideal tool for goals where capital preservation is more important than aggressive growth.
@@ -910,9 +910,9 @@ export const calculatorDetails = {
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">Fixed Deposit FAQs</h2>
                     <div className="space-y-4">
                         {(calculatorFaqs['fixed-deposit'] || []).map((faq, i) => (
-                            <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
-                                <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
-                                <p className="text-gray-600 text-sm">{faq.a}</p>
+                            <div key={i} className="p-4 bg-gray-50 dark:bg-slate-800/40 rounded-xl border border-gray-100 dark:border-slate-700/50 italic transition-colors">
+                                <p className="font-bold text-gray-800 dark:text-gray-200 mb-2">Q: {faq.q}</p>
+                                <p className="text-gray-600 dark:text-gray-400 text-sm">{faq.a}</p>
                             </div>
                         ))}
                     </div>
@@ -923,7 +923,7 @@ export const calculatorDetails = {
     'ppf-calculator': {
         title: "PPF: The Gold Standard of Long-Term Savings",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">The Power of EEE (Exempt-Exempt-Exempt)</h2>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-6">
@@ -945,9 +945,9 @@ export const calculatorDetails = {
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">PPF FAQs</h2>
                     <div className="space-y-4">
                         {(calculatorFaqs['ppf-calculator'] || []).map((faq, i) => (
-                            <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
-                                <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
-                                <p className="text-gray-600 text-sm">{faq.a}</p>
+                            <div key={i} className="p-4 bg-gray-50 dark:bg-slate-800/40 rounded-xl border border-gray-100 dark:border-slate-700/50 italic transition-colors">
+                                <p className="font-bold text-gray-800 dark:text-gray-200 mb-2">Q: {faq.q}</p>
+                                <p className="text-gray-600 dark:text-gray-400 text-sm">{faq.a}</p>
                             </div>
                         ))}
                     </div>
@@ -958,14 +958,14 @@ export const calculatorDetails = {
     'swp-calculator': {
         title: "Creating Monthly Income with SWP",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">Systematic Withdrawal Plan (SWP) Explained</h2>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-6">
                         While SIP is for wealth creation, <strong>Systematic Withdrawal Plan (SWP)</strong> is for wealth consumption. It allows you to withdraw a fixed amount from your mutual fund investments at regular intervals. It is widely considered the most tax-efficient way to generate a "monthly salary" during retirement.
                     </p>
 
-                    <div className="bg-rose-50 p-6 rounded-2xl border border-rose-100 my-8">
+                    <div className="bg-rose-50 dark:bg-rose-500/10 p-6 rounded-2xl border border-rose-100 dark:border-rose-500/20 my-8 transition-colors">
                         <h3 className="text-lg font-bold text-rose-900 mb-2">SWP vs. Dividends</h3>
                         <p className="text-sm text-rose-800 leading-relaxed">
                             Unlike dividends, which are controlled by the fund house and are fully taxable at your slab rate, an SWP gives you control. You choose the amount and the date. More importantly, only the "gain" portion of your withdrawal is taxed, not the entire amount, making it significantly more efficient.
@@ -984,9 +984,9 @@ export const calculatorDetails = {
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">SWP FAQs</h2>
                     <div className="space-y-4">
                         {(calculatorFaqs['swp-calculator'] || []).map((faq, i) => (
-                            <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
-                                <p className="font-bold text-gray-800 mb-2">Q: {faq.q}</p>
-                                <p className="text-gray-600 text-sm">{faq.a}</p>
+                            <div key={i} className="p-4 bg-gray-50 dark:bg-slate-800/40 rounded-xl border border-gray-100 dark:border-slate-700/50 italic transition-colors">
+                                <p className="font-bold text-gray-800 dark:text-gray-200 mb-2">Q: {faq.q}</p>
+                                <p className="text-gray-600 dark:text-gray-400 text-sm">{faq.a}</p>
                             </div>
                         ))}
                     </div>
@@ -997,7 +997,7 @@ export const calculatorDetails = {
     'sip-plus-lump': {
         title: "Hybrid Strategy: SIP + Lump Sum",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Why Combine Both?</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p>Combine the power of a one-time investment with disciplined monthly savings to accelerate your wealth creation.</p>
@@ -1008,7 +1008,7 @@ export const calculatorDetails = {
     'step-up-loan-emi': {
         title: "Step-Up Loan Repayment",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Pay Off Debt Faster</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p>Increasing your EMI annually in line with your income growth can drastically reduce your loan tenure and interest burden.</p>
@@ -1019,7 +1019,7 @@ export const calculatorDetails = {
     'moratorium-loan-emi': {
         title: "Moratorium Impact Analysis",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">The Cost of 'Skipping' EMIs</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p>Understanding how interest capitalizes during a moratorium period and increases your future liability.</p>
@@ -1030,7 +1030,7 @@ export const calculatorDetails = {
     'ultimate-fire-planner': {
         title: "Financial Independence & Retire Early (FIRE)",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Planning Your Freedom</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p>Calculate your 'FI Number' and determine when you can retire based on your savings rate and expenses.</p>
@@ -1041,7 +1041,7 @@ export const calculatorDetails = {
     'rent-vs-buy': {
         title: "Rent vs Buy Decision",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">The Mathematical Truth</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p>Compare the net worth impact of buying a home versus renting and investing the surplus.</p>
@@ -1052,7 +1052,7 @@ export const calculatorDetails = {
     'step-up-plus-lump': {
         title: "Advanced Wealth Builder",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Maximum Growth Strategy</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p>A comprehensive view of how Step-Up SIPs combined with an initial Lump Sum can compound over time.</p>
@@ -1063,7 +1063,7 @@ export const calculatorDetails = {
     'swr-simulator': {
         title: "Safe Withdrawal Rate Simulator",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Will Your Money Last?</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p>Simulate different withdrawal rates (e.g., 4% Rule) to see how long your retirement corpus will survive market volatility.</p>
@@ -1074,7 +1074,7 @@ export const calculatorDetails = {
     'cost-of-delay': {
         title: "The Price of Procrastination",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Start Early, Win Big</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p>See exactly how much money you lose by delaying your investment journey by even a few years.</p>
@@ -1085,7 +1085,7 @@ export const calculatorDetails = {
     'step-down-withdrawal': {
         title: "Step-Down Withdrawal Planning",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Variable Retirement Expenses</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p>Model higher expenses in early retirement years (travel, hobbies) reducing to lower stable expenses later.</p>
@@ -1096,7 +1096,7 @@ export const calculatorDetails = {
     'inflation-impact': {
         title: "Inflation: The Silent Killer",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Purchasing Power Erosion</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p>Visualize how inflation eats into the value of your savings over time, necessitating higher returns.</p>
@@ -1107,7 +1107,7 @@ export const calculatorDetails = {
     'asset-allocation': {
         title: "Portfolio Rebalancing",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Stay on Target</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p>Calculate buy/sell amounts to restore your portfolio to its ideal Equity:Debt ratio.</p>
@@ -1118,7 +1118,7 @@ export const calculatorDetails = {
     'credit-card-payoff': {
         title: "Debt Freedom Planner",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Escape the Debt Trap</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p>See how increasing your monthly payment can save you thousands in interest and get you debt-free months sooner.</p>
@@ -1129,7 +1129,7 @@ export const calculatorDetails = {
     'roi-calculator': {
         title: "Return on Investment",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Measure Your Success</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p>Simple tools to calculate the percentage return and annualized yield of any investment.</p>
@@ -1140,7 +1140,7 @@ export const calculatorDetails = {
     'refinance-calculator': {
         title: "Loan Refinance Analysis",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Should You Switch?</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p>Calculate the break-even point and total savings when switching your loan to a lower interest rate.</p>
@@ -1151,7 +1151,7 @@ export const calculatorDetails = {
     'home-loan-eligibility': {
         title: "How Much Can You Borrow?",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Eligibility Calculator</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p>Estimate your home loan eligibility based on your income, existing debts, and bank FOIR norms.</p>
@@ -1162,7 +1162,7 @@ export const calculatorDetails = {
     'property-loan-eligibility': {
         title: "Property-Linked Eligibility",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">LTV & Income Analysis</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p>Determine the maximum loan based on property value limits (LTV) and your repayment capacity.</p>
@@ -1173,7 +1173,7 @@ export const calculatorDetails = {
     'expense-ratio-calculator': {
         title: "True Cost of Fees",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Impact of Expense Ratios</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p>See how a 1-2% difference in mutual fund expense ratios can cost you lakhs over a long-term investment horizon.</p>
@@ -1184,7 +1184,7 @@ export const calculatorDetails = {
     'advanced-car-loan-emi': {
         title: "Complete Car Financing",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Total Cost of Ownership</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p>Factor in down payments, trade-ins, fees, and taxes to see the real cost of buying your car.</p>
@@ -1195,14 +1195,14 @@ export const calculatorDetails = {
     'gst-calculator': {
         title: "Goods and Services Tax (GST) Explained",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding GST Calculation</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
                         The Goods and Services Tax (GST) is an indirect tax that has replaced many indirect taxes in India. It is calculated on the value of the goods or services supplied.
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                        <div className="bg-indigo-50 dark:bg-indigo-500/10 p-4 rounded-xl border border-indigo-100 dark:border-indigo-500/20 transition-colors">
                             <h4 className="font-bold text-indigo-800 mb-2">Exclusive GST</h4>
                             <p className="text-sm text-indigo-700">
                                 This is when GST is <strong>added</strong> to the product price.
@@ -1224,7 +1224,7 @@ export const calculatorDetails = {
     'nps-calculator': {
         title: "Planning Your Retirement with NPS",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Why Invest in NPS?</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1244,7 +1244,7 @@ export const calculatorDetails = {
     'ssy-calculator': {
         title: "Sukanya Samriddhi Yojana (SSY) Guide",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">About the Scheme</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1265,7 +1265,7 @@ export const calculatorDetails = {
     '401k-calculator': {
         title: "401(k) Retirement Planner",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Maximize Your 401(k)</h3>
                 <div className="prose prose-blue max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1284,7 +1284,7 @@ export const calculatorDetails = {
     'roth-ira-calculator': {
         title: "Roth IRA Growth Calculator",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Tax-Free Retirement Income</h3>
                 <div className="prose prose-purple max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1301,7 +1301,7 @@ export const calculatorDetails = {
     '529-college-savings': {
         title: "529 Education Savings Plan",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Saving for College</h3>
                 <div className="prose prose-sky max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1321,14 +1321,14 @@ export const calculatorDetails = {
     'us-mortgage-calculator': {
         title: "Understanding Your US Mortgage",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">More Than Just Principal & Interest</h3>
                 <div className="prose prose-blue max-w-none text-gray-600">
                     <p className="mb-4">
                         In the US, your monthly housing payment is often referred to as <strong>PITI</strong> (Principal, Interest, Taxes, and Insurance). Understanding these components is crucial for budgeting.
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
-                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                        <div className="bg-indigo-50 dark:bg-indigo-500/10 p-4 rounded-xl border border-indigo-100 dark:border-indigo-500/20 transition-colors">
                             <h4 className="font-bold text-indigo-900 mb-2">The Core Payment</h4>
                             <p className="text-sm text-indigo-800">
                                 <strong>Principal & Interest:</strong> This is the loan repayment. In the early years of a 30-year fixed loan, nearly 80-90% of this amount goes toward interest, not paying down debt.
@@ -1354,7 +1354,7 @@ export const calculatorDetails = {
     'rmd-calculator': {
         title: "Navigating Required Minimum Distributions (RMDs)",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">The "Use It or Lose It" Rule</h3>
                 <div className="prose prose-blue max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1379,7 +1379,7 @@ export const calculatorDetails = {
     'us-capital-gains': {
         title: "Capital Gains Tax Guide",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Holding Period Matters</h3>
                 <div className="prose prose-blue max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1414,7 +1414,7 @@ export const calculatorDetails = {
     'social-security-break-even': {
         title: "Social Security Claiming Strategy",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">When Should You Claim?</h3>
                 <div className="prose prose-blue max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1434,7 +1434,7 @@ export const calculatorDetails = {
                                 Usually 66 or 67. You get your standard "Primary Insurance Amount" (PIA).
                             </p>
                         </div>
-                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                        <div className="bg-indigo-50 dark:bg-indigo-500/10 p-4 rounded-xl border border-indigo-100 dark:border-indigo-500/20 transition-colors">
                             <h4 className="font-bold text-indigo-900 mb-2">Age 70 (Delayed)</h4>
                             <p className="text-sm text-indigo-800">
                                 You get a <strong>permanently increased</strong> benefit (8% increase per year of delay).
@@ -1455,7 +1455,7 @@ export const calculatorDetails = {
     'us-paycheck-calculator': {
         title: "Understanding Your Take-Home Pay",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Where Does the Money Go?</h3>
                 <div className="prose prose-blue max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1470,7 +1470,7 @@ export const calculatorDetails = {
                                 <li><strong>Medicare:</strong> 1.45% of your income (unlimited). This funds healthcare for seniors.</li>
                             </ul>
                         </div>
-                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                        <div className="bg-indigo-50 dark:bg-indigo-500/10 p-4 rounded-xl border border-indigo-100 dark:border-indigo-500/20 transition-colors">
                             <h4 className="font-bold text-indigo-900 mb-2">Income Taxes</h4>
                             <ul className="list-disc pl-5 space-y-1 text-sm text-indigo-800">
                                 <li><strong>Federal Tax:</strong> Progressive rates from 10% to 37% based on your filing status.</li>
@@ -1494,7 +1494,7 @@ export const calculatorDetails = {
     'hsa-calculator': {
         title: "The Power of a Health Savings Account (HSA)",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Why the HSA is the Ultimate Savings Tool</h3>
                 <div className="prose prose-emerald max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1530,7 +1530,7 @@ export const calculatorDetails = {
     'hourly-to-salary': {
         title: "Converting Hourly Wages to Salary",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Mastering Your Income Math</h3>
                 <div className="prose prose-indigo max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1538,7 +1538,7 @@ export const calculatorDetails = {
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
-                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                        <div className="bg-indigo-50 dark:bg-indigo-500/10 p-4 rounded-xl border border-indigo-100 dark:border-indigo-500/20 transition-colors">
                             <h4 className="font-bold text-indigo-900 mb-2">The "2,000 Hour" Rule</h4>
                             <p className="text-sm text-indigo-800">
                                 A quick "back of the envelope" calculation is to multiply your hourly rate by 2,000 (40 hours/week × 50 weeks). For example, $25/hr ≈ $50,000/year.
@@ -1565,7 +1565,7 @@ export const calculatorDetails = {
     'student-loan-payoff': {
         title: "Accelerating Your Student Loan Payoff",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Strategic Debt Repayment</h3>
                 <div className="prose prose-blue max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1581,7 +1581,7 @@ export const calculatorDetails = {
     'student-loan-forgiveness': {
         title: "Navigating Student Loan Forgiveness",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">PSLF and IDR Strategies</h3>
                 <div className="prose prose-emerald max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1597,7 +1597,7 @@ export const calculatorDetails = {
     'medicare-cost-estimator': {
         title: "Planning for Medicare Costs",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Medicare Premiums and IRMAA</h3>
                 <div className="prose prose-blue max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1610,7 +1610,7 @@ export const calculatorDetails = {
     'aca-marketplace-calculator': {
         title: "ACA Subsidy and Premium Estimator",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding Health Insurance Subsidies</h3>
                 <div className="prose prose-indigo max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1623,7 +1623,7 @@ export const calculatorDetails = {
     'child-tax-credit': {
         title: "Maximizing Child Tax Credits",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Family Tax Benefits</h3>
                 <div className="prose prose-rose max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1636,7 +1636,7 @@ export const calculatorDetails = {
     'fsa-calculator': {
         title: "Optimizing Your FSA",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Tax Savings with Flexible Spending Accounts</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1649,7 +1649,7 @@ export const calculatorDetails = {
     'traditional-ira-calculator': {
         title: "Traditional IRA Growth and Taxes",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Planning for Retirement with a Traditional IRA</h3>
                 <div className="prose prose-amber max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1662,7 +1662,7 @@ export const calculatorDetails = {
     'home-affordability-calculator': {
         title: "How Much House Can You Afford?",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Navigating the Path to Homeownership</h3>
                 <div className="prose prose-blue max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1675,7 +1675,7 @@ export const calculatorDetails = {
     'auto-lease-vs-buy': {
         title: "Auto Lease vs. Buy Comparison",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Choosing Your Next Vehicle Path</h3>
                 <div className="prose prose-gray max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1688,7 +1688,7 @@ export const calculatorDetails = {
     'property-tax-estimator': {
         title: "Estimating Property Taxes",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding Real Estate Tax Obligations</h3>
                 <div className="prose prose-indigo max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1701,7 +1701,7 @@ export const calculatorDetails = {
     'debt-avalanche-snowball': {
         title: "Avalanche vs. Snowball Debt Payoff",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Choosing the Best Strategy to Become Debt-Free</h3>
                 <div className="prose prose-purple max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1714,7 +1714,7 @@ export const calculatorDetails = {
     'fico-score-impact': {
         title: "FICO Credit Score Simulator",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Simulating Your Credit Future</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1727,7 +1727,7 @@ export const calculatorDetails = {
     'uk-income-tax': {
         title: "UK Income Tax Guide",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding UK Personal Taxation</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1747,7 +1747,7 @@ export const calculatorDetails = {
     'australia-income-tax': {
         title: "Australia Tax & Stage 3 Cuts",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Your Net Pay in Australia</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1766,7 +1766,7 @@ export const calculatorDetails = {
     'canada-income-tax': {
         title: "Canada Income Tax Breakdown",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Federal and Provincial Taxes</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1785,7 +1785,7 @@ export const calculatorDetails = {
     'europe-vat': {
         title: "How VAT Works in Europe",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Value Added Tax (VAT)</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1801,7 +1801,7 @@ export const calculatorDetails = {
     'japan-paycheck': {
         title: "Japan Salary and Social Insurance",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Living and Working in Japan</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1821,7 +1821,7 @@ export const calculatorDetails = {
     'hongkong-salary-tax': {
         title: "Hong Kong Salaries Tax Guide",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">HK's Low-Tax Advantage</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1840,7 +1840,7 @@ export const calculatorDetails = {
     'china-income-tax': {
         title: "Understanding China IIT",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Individual Income Tax (IIT)</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1859,7 +1859,7 @@ export const calculatorDetails = {
     'switzerland-income-tax': {
         title: "Switzerland's Three-Tier Tax System",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Federal, Cantonal, and Communal Taxes</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1878,7 +1878,7 @@ export const calculatorDetails = {
     'singapore-tax': {
         title: "Singapore Personal Income Tax & CPF",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding CPF and Resident Tax</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1896,7 +1896,7 @@ export const calculatorDetails = {
     'uae-gratuity': {
         title: "UAE End of Service Gratuity",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">How Gratuity is Calculated in the UAE</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1915,7 +1915,7 @@ export const calculatorDetails = {
     'nz-paycheck': {
         title: "New Zealand's PAYE System",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Income Tax, ACC, and KiwiSaver</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1933,7 +1933,7 @@ export const calculatorDetails = {
     'india-tax': {
         title: "India Income Tax: New vs. Old Regime",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Which Tax Regime is Right for You?</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1951,7 +1951,7 @@ export const calculatorDetails = {
     'ireland-tax': {
         title: "Ireland PAYE, USC, and PRSI",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Summary of Irish Payroll Taxes</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1970,7 +1970,7 @@ export const calculatorDetails = {
     'mexico-isr': {
         title: "Mexico's Income Tax (ISR) & IMSS",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Understanding Impuesto sobre la Renta</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -1988,7 +1988,7 @@ export const calculatorDetails = {
     'brazil-clt': {
         title: "Brazil CLT Paycheck (Salário Líquido)",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">INSS, IRRF, and FGTS</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">
@@ -2007,7 +2007,7 @@ export const calculatorDetails = {
     'south-africa-tax': {
         title: "South Africa's SARS Income Tax",
         render: () => (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Tax Rates, Rebates, and Medical Credits</h3>
                 <div className="prose prose-teal max-w-none text-gray-600">
                     <p className="mb-4">

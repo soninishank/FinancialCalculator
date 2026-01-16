@@ -3,9 +3,16 @@ import axios from 'axios';
 import https from 'https';
 import { query } from '../../../lib/db';
 import { enrichClustersWithAI } from '../../../lib/gemini';
+import NodeCache from 'node-cache';
+
+// Initialize in-memory cache with 45-minute TTL
+const memoryCache = new NodeCache({ stdTTL: 2700, checkperiod: 60 });
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Auto-create table on first run
 let tableInitialized = false;
+let lastCleanupTime = 0;
+const CLEANUP_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
 
 // Source authority tiers (higher = more authoritative)
 const SOURCE_TIERS = {
@@ -425,6 +432,7 @@ async function initializeTable() {
             CREATE INDEX IF NOT EXISTS idx_news_cache_key ON news_cache(cache_key);
             CREATE INDEX IF NOT EXISTS idx_news_cache_category ON news_cache(category);
             CREATE INDEX IF NOT EXISTS idx_news_cache_expires ON news_cache(expires_at);
+            CREATE INDEX IF NOT EXISTS idx_news_cache_key_expires ON news_cache(cache_key, expires_at);
             COMMIT;
         `);
 
@@ -435,10 +443,21 @@ async function initializeTable() {
     }
 }
 
-// Get cached data from database
+// Get cached data from Memory -> Database
 async function getCachedNews(category = 'All', includeStale = false) {
+    const cacheKey = `news-${category.toLowerCase()}`;
+
+    // 1. Check Memory Cache (Fastest)
+    if (!includeStale) {
+        const memData = memoryCache.get(cacheKey);
+        if (memData) {
+            console.log(`[News API] Cache hit from MEMORY (${memData.clusters.length} clusters)`);
+            return memData;
+        }
+    }
+
+    // 2. Fallback to Database Cache (Fast)
     try {
-        const cacheKey = `news-${category.toLowerCase()}`;
         const sql = includeStale
             ? `SELECT data FROM news_cache WHERE cache_key = $1`
             : `SELECT data FROM news_cache WHERE cache_key = $1 AND expires_at > NOW()`;
@@ -448,12 +467,16 @@ async function getCachedNews(category = 'All', includeStale = false) {
         if (result.rows.length > 0) {
             const data = result.rows[0].data;
             if (data && data.clusters && data.clusters.length > 0) {
-                if (!includeStale) console.log(`[News API] Cache hit from database (${data.clusters.length} clusters)`);
+                if (!includeStale) {
+                    console.log(`[News API] Cache hit from DATABASE (${data.clusters.length} clusters)`);
+                    // Populate memory cache for next hit
+                    memoryCache.set(cacheKey, data);
+                }
                 return data;
             }
         }
 
-        if (!includeStale) console.log('[News API] Cache miss');
+        if (!includeStale) console.log(`[News API] Cache miss for category: ${category}`);
         return null;
     } catch (error) {
         console.error('[News API] Error reading cache:', error);
@@ -461,10 +484,15 @@ async function getCachedNews(category = 'All', includeStale = false) {
     }
 }
 
-// Save data to database cache
+// Save data to Memory and Database cache
 async function setCachedNews(category, data) {
+    const cacheKey = `news-${category.toLowerCase()}`;
+
+    // 1. Save to Memory Cache (Sub-millisecond access)
+    memoryCache.set(cacheKey, data);
+
+    // 2. Save to Database Cache (Persistence)
     try {
-        const cacheKey = `news-${category.toLowerCase()}`;
         await query(
             `INSERT INTO news_cache (cache_key, category, data, expires_at)
              VALUES ($1, $2, $3, NOW() + INTERVAL '45 minutes')
@@ -473,19 +501,12 @@ async function setCachedNews(category, data) {
             [cacheKey, category, JSON.stringify(data)]
         );
 
-        console.log(`[News API] Cache saved for category: ${category}`);
+        console.log(`[News API] Cache persisted to DB for category: ${category}`);
 
-        // Cleanup expired entries and entries older than 1 month
-        const cleanupResult = await query(
-            `DELETE FROM news_cache 
-             WHERE expires_at < NOW() OR created_at < NOW() - INTERVAL '1 month'`
-        );
-
-        if (cleanupResult.rowCount > 0) {
-            console.log(`[News API] Cleaned up ${cleanupResult.rowCount} old cache entries`);
-        }
+        // Use periodic cleanup (once per 24h) instead of cleaning every time
+        await runPeriodicCleanup();
     } catch (error) {
-        console.error('[News API] Error saving cache:', error);
+        console.error('[News API] Error saving cache to DB:', error);
     }
 }
 
@@ -494,11 +515,13 @@ async function warmupAllCategories(excludeCategory) {
     const categories = ['All', 'Finance', 'Technology', 'Sports', 'Science', 'Entertainment', 'World'];
     console.log(`[News API] Background warmup started (excluding: ${excludeCategory})`);
 
+    const batchUpdates = [];
+
     for (const cat of categories) {
         if (cat === excludeCategory) continue;
 
         try {
-            // Check if valid cache already exists
+            // Check if valid cache already exists - prioritizing Memory Cache check
             const cached = await getCachedNews(cat, false);
             if (cached) {
                 console.log(`[News API] Warmup: ${cat} is already cached`);
@@ -513,22 +536,80 @@ async function warmupAllCategories(excludeCategory) {
             const clustered = clusterStories(freshStories);
             const ranked = rankClusters(clustered);
 
-            // Enrich with AI in the background warmup
-            const enriched = await enrichClustersWithAI(ranked.slice(0, 60));
+            // Priority categories for AI enrichment (save quota)
+            const PRIORITY_ENRICHMENT = ['All', 'Finance', 'Technology'];
+
+            // Enrich with AI in the background warmup - Only for priority categories
+            let enricheedClusters = ranked.slice(0, 40);
+            if (PRIORITY_ENRICHMENT.includes(cat)) {
+                enricheedClusters = await enrichClustersWithAI(ranked.slice(0, 40));
+            }
 
             const response = {
-                clusters: enriched,
+                clusters: enricheedClusters,
                 lastUpdated: new Date().toISOString()
             };
 
-            await setCachedNews(cat, response);
-            console.log(`[News API] Warmup: ${cat} completed`);
+            // Save to Memory immediately
+            memoryCache.set(`news-${cat.toLowerCase()}`, response);
+
+            // Queue for DB batch insert
+            batchUpdates.push({ category: cat, data: response });
+
+            console.log(`[News API] Warmup: ${cat} processed and queued for DB`);
         } catch (error) {
             console.error(`[News API] Warmup error for ${cat}:`, error.message);
         }
 
-        // Minor delay to avoid hammering
-        await new Promise(r => setTimeout(r, 1000));
+        // Reduced delay since we're batching DB writes
+        await sleep(500);
+    }
+
+    // Perform Batch DB Insert
+    if (batchUpdates.length > 0) {
+        try {
+            console.log(`[News API] Executing batch DB update for ${batchUpdates.length} categories...`);
+
+            // Note: pg-pool handles the connection. We can use a single multi-statement OR loop with a single client
+            // For simplicity and speed, we'll perform them sequentially but without the cleanup per call
+            for (const update of batchUpdates) {
+                const cacheKey = `news-${update.category.toLowerCase()}`;
+                await query(
+                    `INSERT INTO news_cache (cache_key, category, data, expires_at)
+                     VALUES ($1, $2, $3, NOW() + INTERVAL '45 minutes')
+                     ON CONFLICT (cache_key) 
+                     DO UPDATE SET data = $3, expires_at = NOW() + INTERVAL '45 minutes', created_at = NOW()`,
+                    [cacheKey, update.category, JSON.stringify(update.data)]
+                );
+            }
+
+            // Periodically clean up old entries (once per 24h)
+            await runPeriodicCleanup();
+
+            console.log(`[News API] Warmup batch DB update complete`);
+        } catch (err) {
+            console.error('[News API] Warmup batch DB error:', err.message);
+        }
+    }
+}
+
+// Periodically clean up expired DB entries (runs at most once every 24h)
+async function runPeriodicCleanup() {
+    const now = Date.now();
+    if (now - lastCleanupTime < CLEANUP_INTERVAL) return;
+
+    try {
+        console.log('[News API] Running daily database cleanup...');
+        const cleanupResult = await query(
+            `DELETE FROM news_cache 
+             WHERE expires_at < NOW() OR created_at < NOW() - INTERVAL '1 month'`
+        );
+        lastCleanupTime = now;
+        if (cleanupResult.rowCount > 0) {
+            console.log(`[News API] Cleaned up ${cleanupResult.rowCount} old cache entries from DB`);
+        }
+    } catch (error) {
+        console.error('[News API] Periodic cleanup error:', error);
     }
 }
 
@@ -536,8 +617,8 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const category = searchParams.get('category') || 'All';
 
-    // Initialize table on first run
-    await initializeTable();
+    // Initialize table on first run - optimized check
+    if (!tableInitialized) await initializeTable();
 
     // Check database cache (non-stale)
     const cachedData = await getCachedNews(category, false);
@@ -603,25 +684,28 @@ export async function GET(req) {
         // For the immediate GET request, we skip wait to keep it fast, 
         // but the warmup/background will catch it for the next user.
         const response = {
-            clusters: ranked.slice(0, 60), // Top 60 clusters only
+            clusters: ranked.slice(0, 40), // Top 40 clusters only
             lastUpdated: new Date().toISOString()
         };
 
         // Save to database cache (fast initial response)
         await setCachedNews(category, response);
 
-        // Schedule background AI enrichment so the next user gets the deep tags
-        (async () => {
-            try {
-                const enriched = await enrichClustersWithAI(ranked.slice(0, 60));
-                await setCachedNews(category, {
-                    clusters: enriched,
-                    lastUpdated: new Date().toISOString()
-                });
-            } catch (err) {
-                console.error(`[News API] Background AI enrichment failed for ${category}:`, err.message);
-            }
-        })();
+        // Schedule background AI enrichment - Only for priority categories
+        const PRIORITY_ENRICHMENT = ['All', 'Finance', 'Technology'];
+        if (PRIORITY_ENRICHMENT.includes(category)) {
+            (async () => {
+                try {
+                    const enriched = await enrichClustersWithAI(ranked.slice(0, 40));
+                    await setCachedNews(category, {
+                        clusters: enriched,
+                        lastUpdated: new Date().toISOString()
+                    });
+                } catch (err) {
+                    console.error(`[News API] Background AI enrichment failed for ${category}:`, err.message);
+                }
+            })();
+        }
 
         return NextResponse.json(response);
     } catch (error) {

@@ -52,9 +52,6 @@ export default function Home() {
 
             {/* Semantic SEO Header (Subtle) */}
             <div className="container mx-auto px-4 pt-12 pb-4">
-                <h1 className="text-xs font-bold uppercase tracking-[0.3em] opacity-30 dark:opacity-20 text-center mb-0">
-                    Financial Intelligence & 80+ Professional Tools
-                </h1>
             </div>
 
             {/* News Stream Section */}
@@ -64,28 +61,6 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Popular Tools Section - SEO Hub */}
-            <section className="pb-32">
-                <div className="container mx-auto px-4 max-w-4xl">
-                    <div className="flex items-center justify-between mb-8 px-2">
-                        <h2 className="text-lg font-bold tracking-tight opacity-70">Most Popular Tools</h2>
-                        <a href="/calculators" className="text-sm font-bold text-blue-600 dark:text-blue-400 hover:underline">View All 80+ Tools →</a>
-                    </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        {popularTools.map((tool) => (
-                            <a
-                                key={tool.slug}
-                                href={`/calculators/${tool.slug}`}
-                                className="group p-6 rounded-2xl bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-300 backdrop-blur-sm"
-                            >
-                                <div className="text-2xl mb-3 transform group-hover:scale-110 transition-transform">{tool.icon}</div>
-                                <h3 className="font-bold text-slate-800 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors uppercase text-[10px] tracking-widest">{tool.title}</h3>
-                            </a>
-                        ))}
-                    </div>
-                </div>
-            </section>
         </div>
     );
 }

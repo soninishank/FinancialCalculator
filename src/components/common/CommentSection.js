@@ -93,13 +93,13 @@ export default function CommentSection({ slug }) {
             {/* 1. Leave a Reply Form (Now at the Top) */}
             <div ref={formRef} className="transition-all">
                 {replyingTo && (
-                    <div className="bg-teal-50 text-teal-700 px-4 py-3 rounded-xl mb-4 flex justify-between items-center border border-teal-100">
+                    <div className="bg-teal-50 dark:bg-teal-500/10 text-teal-700 dark:text-teal-400 px-4 py-3 rounded-xl mb-4 flex justify-between items-center border border-teal-100 dark:border-teal-500/20 transition-colors">
                         <span className="text-sm font-medium italic">
                             Replying to {comments.find(c => c.id === replyingTo)?.name}'s comment
                         </span>
                         <button
                             onClick={() => setReplyingTo(null)}
-                            className="text-xs font-bold uppercase tracking-wider hover:text-teal-900"
+                            className="text-xs font-bold uppercase tracking-wider hover:text-teal-900 dark:hover:text-teal-200 transition-colors"
                         >
                             Cancel
                         </button>
@@ -121,19 +121,19 @@ export default function CommentSection({ slug }) {
             {/* Loading States & Intersection Trigger */}
             {isLoading ? (
                 <div className="mt-12 animate-pulse space-y-4">
-                    <div className="h-6 bg-gray-100 rounded w-1/4"></div>
-                    <div className="h-32 bg-gray-100 rounded"></div>
+                    <div className="h-6 bg-gray-100 dark:bg-slate-800 rounded w-1/4"></div>
+                    <div className="h-32 bg-gray-100 dark:bg-slate-800 rounded"></div>
                 </div>
             ) : (
                 <div ref={observerTarget} className="h-10 w-full flex items-center justify-center mt-8">
                     {isFetchingMore && (
-                        <div className="flex items-center gap-2 text-teal-600 font-medium">
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-600"></div>
+                        <div className="flex items-center gap-2 text-teal-600 dark:text-teal-400 font-medium">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-600 dark:border-teal-400"></div>
                             <span>Loading more comments...</span>
                         </div>
                     )}
                     {!hasMore && comments.length > 0 && (
-                        <p className="text-gray-400 text-sm italic">You've reached the end of the comments.</p>
+                        <p className="text-gray-400 dark:text-slate-500 text-sm italic transition-colors">You've reached the end of the comments.</p>
                     )}
                 </div>
             )}

@@ -3,7 +3,41 @@ import { query } from '../../../lib/db';
 
 const SPAM_KEYWORDS = ['crypto', 'bitcoin', 'betting', 'casino', 'poker', 'porn', 'lottery', 'viagra'];
 
+let tableInitialized = false;
+
+async function initializeTable() {
+    if (tableInitialized) return;
+    try {
+        await query(`
+            BEGIN;
+            CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+            CREATE TABLE IF NOT EXISTS comments (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                calc_slug TEXT NOT NULL,
+                name TEXT NOT NULL,
+                email TEXT NOT NULL,
+                content TEXT NOT NULL,
+                parent_id UUID REFERENCES comments(id) ON DELETE CASCADE,
+                status TEXT NOT NULL DEFAULT 'approved',
+                ip_address TEXT,
+                created_at TIMESTAMPTZ DEFAULT NOW(),
+                updated_at TIMESTAMPTZ DEFAULT NOW()
+            );
+            CREATE INDEX IF NOT EXISTS idx_comments_calc_slug ON comments(calc_slug);
+            CREATE INDEX IF NOT EXISTS idx_comments_status ON comments(status);
+            CREATE INDEX IF NOT EXISTS idx_comments_parent_id ON comments(parent_id);
+            CREATE INDEX IF NOT EXISTS idx_comments_slug_status_date ON comments(calc_slug, status, created_at DESC);
+            COMMIT;
+        `);
+        tableInitialized = true;
+        console.log('[Comments API] Database table initialized');
+    } catch (error) {
+        console.error('[Comments API] Table initialization error:', error);
+    }
+}
+
 export async function GET(request) {
+    if (!tableInitialized) await initializeTable();
     const { searchParams } = new URL(request.url);
     const slug = searchParams.get('slug');
     const limit = parseInt(searchParams.get('limit')) || 10;
@@ -26,6 +60,7 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
+    if (!tableInitialized) await initializeTable();
     if (!process.env.DATABASE_URL) {
         console.error('[API] POST Fail: DATABASE_URL is missing');
         return NextResponse.json({ error: 'DATABASE_URL is not configured' }, { status: 500 });

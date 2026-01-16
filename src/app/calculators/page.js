@@ -1,11 +1,12 @@
 import { Suspense } from 'react';
 import CalculatorsList from '../../pages/CalculatorsList';
 import manifest from '../../utils/calculatorsManifest';
+import { Providers } from '../providers';
 
 
 export const metadata = {
     title: 'All SIP, EMI & Investment Calculators | Hashmatic',
-    description: "Browse 80+ free, accurate online financial tools. Calculate SIP returns, Home Loan EMIs, Income Tax, and Retirement goals. The complete investor's toolkit.",
+    description: "Browse our free, accurate online financial tools. Calculate SIP returns, Home Loan EMIs, Income Tax, and Retirement goals. The complete investor's toolkit.",
     alternates: {
         canonical: 'https://www.hashmatic.in/calculators',
     },
@@ -83,13 +84,15 @@ export default async function Page({ searchParams }) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
             />
-            <div className="max-w-6xl mx-auto px-6 py-4">
-                <h1 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight mb-2">
-                    Financial <span className="text-teal-600">Calculators</span>
-                </h1>
-                <p className="text-gray-500 text-lg">Browse our complete list of free investment and loan tools.</p>
-            </div>
-            <CalculatorsList initialFiltered={initialFiltered} initialQ={q} />
+            <Providers>
+                <div className="max-w-6xl mx-auto px-6 py-4">
+                    <h1 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-2">
+                        Financial <span className="text-teal-600 dark:text-teal-400">Calculators</span>
+                    </h1>
+                    <p className="text-gray-500 dark:text-slate-400 text-lg">Browse our complete list of free investment and loan tools.</p>
+                </div>
+                <CalculatorsList initialFiltered={initialFiltered} initialQ={q} />
+            </Providers>
         </>
     );
 }
