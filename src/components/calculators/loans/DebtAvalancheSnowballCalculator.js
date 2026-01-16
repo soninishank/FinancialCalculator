@@ -184,7 +184,8 @@ export default function DebtAvalancheSnowballCalculator({ currency = 'USD' }) {
                                 type="text"
                                 value={debt.name}
                                 onChange={(e) => updateDebt(debt.id, 'name', e.target.value)}
-                                className="font-medium text-sm bg-transparent border-b border-gray-300 focus:border-blue-500 outline-none px-1"
+                                className="font-medium text-sm bg-transparent border-b border-gray-300 focus:border-blue-500 outline-none px-1 w-full"
+                                placeholder="Debt Name"
                             />
                             {debts.length > 1 && (
                                 <button
@@ -231,12 +232,7 @@ export default function DebtAvalancheSnowballCalculator({ currency = 'USD' }) {
 
     return (
         <div className="animate-fade-in">
-            <div className="bg-red-50 border border-red-100 p-4 rounded-xl mb-6">
-                <h2 className="text-lg font-bold text-red-900 flex items-center gap-2">
-                    <CreditCard className="w-5 h-5" /> Debt Avalanche vs Snowball Calculator
-                </h2>
-                <p className="text-sm text-red-800">Compare two proven debt payoff strategies side-by-side.</p>
-            </div>
+
 
             <CalculatorLayout
                 inputs={inputs}

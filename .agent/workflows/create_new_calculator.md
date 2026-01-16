@@ -6,6 +6,15 @@ description: Standard workflow for creating or refactoring a financial calculato
 
 Follow this checklist to ensure consistency across the application. **Do not reinvent the wheel.**
 
+> [!IMPORTANT]
+> Before starting, reviewing the [Calculator Standards](../../CALCULATOR_STANDARDS.md).
+> Key Rule: **NO RAW INPUTS**.
+
+## 0. Prerequisite Check
+- [ ] Will this calculator involve money? If yes, it must support currency switching (or locking).
+- [ ] Will it have a time component? If yes, it needs a Schedule Table.
+- [ ] Will it show growth/breakdown? If yes, it needs a Chart.
+
 ## 1. UI Components (Charts)
 **NEVER usage raw `react-chartjs-2` directly in the calculator component.** Always use the pre-configured wrappers in `src/components/common/FinancialCharts.js`.
 

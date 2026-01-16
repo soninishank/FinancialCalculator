@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import InputWithSlider from '../../common/InputWithSlider';
+import FormattedInput from '../../common/FormattedInput';
 import CalculatorLayout from '../../common/CalculatorLayout';
 import UnifiedSummary from '../../common/UnifiedSummary';
 import { calculatorDetails } from '../../../data/calculatorDetails';
@@ -85,17 +86,16 @@ export default function GSTCalculator({ currency = 'INR' }) {
                             {rate}%
                         </button>
                     ))}
-                    <div className="relative">
-                        <input
-                            type="number"
+                    <div className="relative w-full">
+                        <FormattedInput
                             value={gstRate}
-                            onChange={(e) => setGstRate(Number(e.target.value))}
-                            className={`w-full py-2 pl-2 pr-1 rounded-lg text-sm font-bold border text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${[5, 12, 18, 28].includes(gstRate)
+                            onChange={(val) => setGstRate(Number(val))}
+                            className={`w-full py-2 pl-2 pr-8 rounded-lg text-sm font-bold border text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${[5, 12, 18, 28].includes(gstRate)
                                 ? 'bg-gray-50 text-gray-500 border-gray-200'
                                 : 'bg-indigo-50 text-indigo-700 border-indigo-200'
                                 }`}
                         />
-                        <span className="absolute right-1 top-2.5 text-[10px] text-gray-400 font-bold">%</span>
+                        <span className="absolute right-3 top-2.5 text-xs text-gray-400 font-bold pointer-events-none">%</span>
                     </div>
                 </div>
             </div>

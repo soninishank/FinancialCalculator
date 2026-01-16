@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, useCallback } from 'react';
+import React, { Suspense, useCallback, useEffect } from 'react';
 import { useParams, useRouter, usePathname } from 'next/navigation';
 import manifest from '../utils/calculatorsManifest';
 import { useCurrency } from '../contexts/CurrencyContext';
@@ -13,6 +13,55 @@ import ErrorBoundary from '../components/common/ErrorBoundary';
 import Breadcrumbs from '../components/common/Breadcrumbs';
 import CommentSection from '../components/common/CommentSection';
 
+const FORCED_CURRENCY_MAP = {
+  // US Calculators (USD)
+  'us-capital-gains': 'USD',
+  'us-mortgage-calculator': 'USD',
+  'us-paycheck-calculator': 'USD',
+  'student-loan-payoff': 'USD',
+  'student-loan-forgiveness': 'USD',
+  'medicare-cost-estimator': 'USD',
+  'aca-marketplace-calculator': 'USD',
+  'child-tax-credit': 'USD',
+  'fsa-calculator': 'USD',
+  'traditional-ira-calculator': 'USD',
+  'roth-ira-calculator': 'USD',
+  '529-college-savings': 'USD',
+  'rmd-calculator': 'USD',
+  'hsa-calculator': 'USD',
+  'social-security-break-even': 'USD',
+  '401k-calculator': 'USD',
+  'home-affordability-calculator': 'USD',
+  'property-tax-estimator': 'USD',
+  'fico-score-impact': 'USD',
+
+  // India Calculators (INR)
+  'india-tax': 'INR',
+  'ppf-calculator': 'INR',
+  'nps-calculator': 'INR',
+  'ssy-calculator': 'INR',
+  'gst-calculator': 'INR',
+  'recurring-deposit': 'INR',
+  'fixed-deposit': 'INR',
+
+  // Other Regions
+  'uk-income-tax': 'GBP',
+  'australia-income-tax': 'AUD',
+  'canada-income-tax': 'CAD',
+  'europe-vat': 'EUR',
+  'japan-paycheck': 'JPY',
+  'hongkong-salary-tax': 'HKD',
+  'china-income-tax': 'CNY',
+  'switzerland-income-tax': 'CHF',
+  'singapore-tax': 'SGD',
+  'uae-gratuity': 'AED',
+  'nz-paycheck': 'NZD',
+  'ireland-tax': 'EUR',
+  'mexico-isr': 'MXN',
+  'brazil-clt': 'BRL',
+  'south-africa-tax': 'ZAR'
+};
+
 const calculatorCache = {};
 
 const importBySlug = (slug) => getLazyCalculator(slug, calculatorCache);
@@ -23,8 +72,23 @@ export default function CalculatorPage() {
   const slug = params?.slug; // Handle undefined initially on server
   const meta = manifest.find(m => m.slug === slug);
 
-  // call hooks unconditionally
-  const { currency, setCurrency } = useCurrency();
+  // Force specific currency for regional calculators
+  const forcedCurrency = FORCED_CURRENCY_MAP[slug];
+  const { currency: globalCurrency, setCurrency, setIsLocked } = useCurrency();
+
+  // Use forced currency if available, otherwise fallback to global context
+  const currency = forcedCurrency || globalCurrency;
+
+  useEffect(() => {
+    if (forcedCurrency) {
+      setCurrency(forcedCurrency);
+      setIsLocked(true);
+    } else {
+      setIsLocked(false);
+    }
+    // Cleanup: ensure we unlock when leaving the page
+    return () => setIsLocked(false);
+  }, [forcedCurrency, setCurrency, setIsLocked]);
 
   const router = useRouter();
   const pathname = usePathname();

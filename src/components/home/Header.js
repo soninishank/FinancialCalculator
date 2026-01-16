@@ -9,7 +9,7 @@ import ThemeToggle from '../common/ThemeToggle';
 
 const Header = () => {
   const pathname = usePathname();
-  const { currency, setCurrency } = useCurrency();
+  const { currency, setCurrency, isLocked } = useCurrency();
   const { isDarkMode } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -64,9 +64,11 @@ const Header = () => {
                 aria-label="Select Currency"
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
-                className={`appearance-none text-xs font-bold rounded-full pl-4 pr-10 py-2 outline-none transition-all cursor-pointer ${isDarkMode
-                    ? 'bg-slate-800 border-slate-700 text-slate-200 focus:ring-teal-500/20 focus:border-teal-500 hover:bg-slate-700'
-                    : 'bg-gray-50 border border-gray-200 text-gray-700 focus:ring-teal-500/20 focus:border-teal-500 hover:bg-white hover:shadow-sm'
+                disabled={isLocked}
+                title={isLocked ? "Currency is fixed for this calculator" : "Select Currency"}
+                className={`appearance-none text-xs font-bold rounded-full pl-4 pr-10 py-2 outline-none transition-all cursor-pointer ${isLocked ? 'opacity-50 cursor-not-allowed' : ''} ${isDarkMode
+                  ? 'bg-slate-800 border-slate-700 text-slate-200 focus:ring-teal-500/20 focus:border-teal-500 hover:bg-slate-700'
+                  : 'bg-gray-50 border border-gray-200 text-gray-700 focus:ring-teal-500/20 focus:border-teal-500 hover:bg-white hover:shadow-sm'
                   }`}
               >
                 <option value="INR">INR (₹)</option>

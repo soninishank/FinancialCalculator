@@ -14,6 +14,7 @@ export default function CurrencySelector({ currency: propCurrency, setCurrency: 
   const ctx = useCurrencyContext();
   const ctxCurrency = ctx?.currency ?? "INR";
   const ctxSetCurrency = ctx?.setCurrency ?? (() => { });
+  const ctxIsLocked = ctx?.isLocked ?? false;
 
   const currency = propCurrency ?? ctxCurrency;
   const setCurrency = propSetCurrency ?? ctxSetCurrency;
@@ -58,7 +59,8 @@ export default function CurrencySelector({ currency: propCurrency, setCurrency: 
           id="currency-selector"
           value={currency}
           onChange={(e) => setCurrency(e.target.value)}
-          className={finalClasses}
+          disabled={ctxIsLocked}
+          className={`${finalClasses} ${ctxIsLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           {currencyOptions.map((c) => {
             const symbol = getSymbol(c.locale, c.code);

@@ -6,28 +6,36 @@ description: Verify calculator implementation standards (tables, charts, pdfs, i
 
 Use this workflow when creating or refactoring a calculator to ensure it meets all standard requirements.
 
-## 1. UI Consistency Check
-- [ ] **Table Component**: Does it use `CollapsibleInvestmentTable` (for investments) or `CollapsibleAmortizationTable` (for loans)?
-- [ ] **Charts**: Does it use `FinancialLineChart`, `FinancialBarChart`, or `FinancialDoughnutChart`?
-- [ ] **Labels**: MUST use `text-sm font-black text-slate-900 uppercase tracking-tight`. NO `text-gray-700` or `font-bold`.
+> [!IMPORTANT]
+> **Definition of Done**: You MUST read and adhere to [CALCULATOR_STANDARDS.md](../../CALCULATOR_STANDARDS.md).
+
+## 1. Compliance Check
+- [ ] **Standards Review**: Have you verified the calculator against the 5 Golden Rules in `CALCULATOR_STANDARDS.md`?
+- [ ] **No Raw Inputs**: Confirm zero usage of `<input type="number">`.
+- [ ] **No Raw Charts**: Confirm usage of `FinancialCharts.js` wrappers.
+- [ ] **No Raw Tables**: Confirm usage of `CollapsibleInvestmentTable` or equivalent.
+
+## 2. Logic Validation (Manual - Risk Assessment)
+Validate logic **at least 3 times** before committing:
+- [ ] **Happy Path**: Enter standard/expected values. Does the result matching a known reliable source (e.g., Google/Investopedia)?
+- [ ] **Negative Path**: Enter `0`, negative numbers, or extremely high values. Does it crash? Does it show a useful error?
+- [ ] **Edge Cases**: Enter decimals, empty strings, or special characters.
+
+## 3. Automated Testing (REQUIRED)
+- [ ] **Test File**: Create/Update `<CalculatorName>.test.js`.
+- [ ] **Coverage**: Ensure tests cover:
+    - Default render state.
+    - User interaction (changing inputs).
+    - Calculation correctness (mocked outputs if needed).
+    - Validation messages (invalid inputs).
+
+## 4. UI Consistency Check
+- [ ] **Labels**: MUST use `text-sm font-medium text-gray-700 dark:text-gray-300`.
 - [ ] **Inputs**: MUST use `InputWithSlider` where possible.
-- [ ] **Custom Inputs**: If not using `InputWithSlider`, MUST match styles: `border-2 border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-indigo-50`.
-- [ ] **Label Alignment**: Flex containers for labels MUST align baselines `items-end`. If adjacent to `InputWithSlider`, use an invisible spacer to match badge height.
-- [ ] **Start Date**: Does it allow the user to select a Start Month/Year?
-- [ ] **Monthly Breakdown**: Does the table support expanding rows to show monthly details?
+- [ ] **Responsive Design**: Verify layout on mobile (flex-col on small screens).
 
-## 2. Feature Check
-- [ ] **Export to PDF**: Is there a functional "Export PDF" button above the table?
-- [ ] **URL Persistency**: Do inputs update the URL query params (if applicable/required)?
-- [ ] **Responsive Design**: Does it look good on mobile (padding, font sizes)?
-
-## 3. Code Quality
-- [ ] **Linting**: Run `npm run lint` and ensure no errors/warnings.
-- [ ] **Unused Code**: Remove any unused imports or variables.
-- [ ] **Prop Drilling**: Are props like `currency` passed correctly?
-
-## 4. Manual Verification Steps
-1. Open the calculator page.
-2. Change input values and verify charts/tables update.
-3. specific check: Expand a year in the table to see monthly data (if applicable).
-4. specific check: Click "Export PDF" and check the downloaded file content.
+## 5. Feature Check
+## 6. Regression Testing (CRITICAL)
+- [ ] **Import Integrity**: Did you ensure you didn't accidentally remove `import React` or hooks during refactoring?
+- [ ] **Run All Tests**: Execute `npm test` or `npm run test` to verify no regressions.
+- [ ] **Fix Failures**: If any tests fail, **YOU MUST FIX THEM IMMEDIATELY** before marking the task as done. Do not proceed with broken tests.

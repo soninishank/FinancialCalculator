@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState } from 'react';
 // Create context
 const CurrencyContext = createContext({
   currency: 'INR',
-  setCurrency: () => {}
+  setCurrency: () => { }
 });
 
 /**
@@ -12,8 +12,9 @@ const CurrencyContext = createContext({
  */
 export function CurrencyProvider({ children }) {
   const [currency, setCurrency] = useState('INR');
+  const [isLocked, setIsLocked] = useState(false);
   return (
-    <CurrencyContext.Provider value={{ currency, setCurrency }}>
+    <CurrencyContext.Provider value={{ currency, setCurrency, isLocked, setIsLocked }}>
       {children}
     </CurrencyContext.Provider>
   );
@@ -29,7 +30,9 @@ export function useCurrency() {
     // Fallback object — keeps calling code safe even if provider wasn't mounted.
     return {
       currency: 'INR',
-      setCurrency: () => {}
+      setCurrency: () => { },
+      isLocked: false,
+      setIsLocked: () => { }
     };
   }
   return ctx;

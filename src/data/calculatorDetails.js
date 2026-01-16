@@ -2,6 +2,114 @@ import React from 'react';
 import { calculatorFaqs } from './seoMetadata';
 
 export const calculatorDetails = {
+    'salary-hike': {
+        title: "Salary Hike Calculator: Know Your New Take-Home",
+        render: () => (
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Why Calculate Your Hike?</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Getting a salary increment is exciting, but understanding its real impact on your monthly take-home pay is crucial for financial planning. Whether you've just had an appraisal or are negotiating a new job offer, this tool gives you instant clarity.
+                    </p>
+                    <div className="bg-teal-50 p-4 rounded-xl border border-teal-100 my-4">
+                        <p className="font-semibold text-teal-800 mb-2">Key Features:</p>
+                        <ul className="list-disc pl-5 space-y-1 text-teal-700 text-sm">
+                            <li><strong>Percentage to Absolute:</strong> Instantly convert "15% hike" into actual Rupees.</li>
+                            <li><strong>Monthly Breakdown:</strong> See exactly how much extra cash hits your bank account every month.</li>
+                            <li><strong>Negotiation Tool:</strong> Use it to reverse-calculate the percentage needed to reach your target salary.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'margin-markup': {
+        title: "Margin vs Markup: The Critical Difference",
+        render: () => (
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Margin vs. Markup</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Business owners often confuse these two metrics, which can lead to pricing errors and lost profits.
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                            <h4 className="font-bold text-indigo-800 mb-2">Margin (Gross Profit)</h4>
+                            <p className="text-sm text-indigo-700">
+                                Profit as a percentage of <strong>Sales Price</strong>. This is what you see on your P&L statement.
+                                <br /><br />
+                                <code>Margin = (Price - Cost) / Price</code>
+                            </p>
+                        </div>
+                        <div className="bg-purple-50 p-4 rounded-xl border border-purple-100">
+                            <h4 className="font-bold text-purple-800 mb-2">Markup</h4>
+                            <p className="text-sm text-purple-700">
+                                Profit as a percentage of <strong>Cost</strong>. This is used to set prices.
+                                <br /><br />
+                                <code>Markup = (Price - Cost) / Cost</code>
+                            </p>
+                        </div>
+                    </div>
+                    <div className="bg-amber-50 p-4 rounded-xl border border-amber-100">
+                        <p className="text-sm text-amber-800 font-medium">
+                            💡 Example: If you buy for $100 and sell for $150, your Markup is 50%, but your Margin is only 33.3%.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        )
+    },
+    'discount-calculator': {
+        title: "Smart Shopping with Discount Calculator",
+        render: () => (
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Understand the "Real" Price</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Sales often use psychological pricing tactics like "50% + 20% off". This calculator reveals what you actually pay.
+                    </p>
+                    <div className="bg-rose-50 p-4 rounded-xl border border-rose-100 my-4">
+                        <p className="font-bold text-rose-800 mb-2">The "Double Discount" Trap</p>
+                        <p className="text-sm text-rose-700">
+                            A "50% + 20% off" sale is NOT 70% off. It works sequentially:
+                            <br />1. $100 - 50% = $50
+                            <br />2. $50 - 20% = $40
+                            <br /><strong>Total Discount: 60%</strong> (Not 70%).
+                        </p>
+                    </div>
+                    <p>
+                        Use this tool to check final prices during Black Friday, Cyber Monday, or End-of-Season sales to verify your bill.
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    'break-even-point': {
+        title: "Break-Even Analysis for Business",
+        render: () => (
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">When Will You Profit?</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        The <strong>Break-Even Point (BEP)</strong> is the magic number where your total revenue equals total costs. You make neither a profit nor a loss.
+                    </p>
+                    <ul className="list-disc pl-5 space-y-2 mb-4">
+                        <li><strong>Fixed Costs:</strong> Expenses that stay the same (Rent, Salaries).</li>
+                        <li><strong>Variable Costs:</strong> Expenses that rise with sales (Raw materials, Shipping).</li>
+                        <li><strong>Contribution Margin:</strong> The profit from each unit sold that goes towards covering fixed costs.</li>
+                    </ul>
+                    <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                        <p className="font-semibold text-emerald-800">
+                            Formula: BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)
+                        </p>
+                        <p className="text-sm text-emerald-700 mt-2">
+                            Any sale <strong>above</strong> this number is pure profit. Any sale <strong>below</strong> is a loss.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        )
+    },
     'rule-of-72': {
         title: "Understanding the Rule of 72",
         render: ({ rate, yearsToDouble }) => (
@@ -2017,6 +2125,84 @@ export const calculatorDetails = {
                         <li><strong>Tax Threshold:</strong> Below a certain income level, no tax is payable due to the primary rebate.</li>
                         <li><strong>Medical Tax Credits:</strong> Direct tax reductions for medical scheme members and their dependents.</li>
                         <li><strong>UIF:</strong> 1% contribution to the Unemployment Insurance Fund, capped at a maximum monthly salary.</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    },
+    'stock-average-calculator': {
+        title: "Stock Average Calculator",
+        render: () => (
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Why Average Down?</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Averaging down (buying more shares as the price drops) lowers your average cost per share. This means the stock price needs to rise less for you to break even.
+                    </p>
+                    <p className="text-sm font-semibold text-gray-700">
+                        Use this calculator to find out exactly how many shares you need to buy to bring your average price down to your target.
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    'rental-yield-calculator': {
+        title: "Rental Yield Calculator",
+        render: () => (
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Gross vs Net Yield</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        <strong>Gross Yield</strong> is simply your annual rent divided by property value. It's a quick metric but ignores costs.
+                    </p>
+                    <p className="mb-4">
+                        <strong>Net Yield</strong> is the real ROI. It subtracts maintenance, taxes, and other expenses from the rent before dividing by property value. Always base your investment decisions on Net Yield.
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    'dividend-yield-calculator': {
+        title: "Dividend Yield Calculator",
+        render: () => (
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">The Power of Dividends</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Dividend Yield tells you how much cash flow you are getting for every dollar invested. High dividend yields can be attractive, but beware of "yield traps" where the yield is high only because the stock price has crashed.
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    'car-affordability-calculator': {
+        title: "Car Affordability Calculator",
+        render: () => (
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">How much Car Can I Afford?</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        A common rule of thumb is the <strong>20/4/10 rule</strong>: Put 20% down, finance for no more than 4 years, and keep total car expenses (loan + insurance + gas) under 10% of your gross income.
+                    </p>
+                    <p className="text-sm font-semibold text-gray-700">
+                        This calculator estimates a safe budget based on your monthly disposable income to ensure your car doesn't become a financial burden.
+                    </p>
+                </div>
+            </div>
+        )
+    },
+    'emergency-fund-calculator': {
+        title: "Emergency Fund Calculator",
+        render: () => (
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Why You Need 3-6 Months of Expenses</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        An emergency fund prevents you from dipping into your long-term investments (like retirement or child's education) when life throws a curveball.
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1">
+                        <li><strong>Safe:</strong> Keep 6 months of expenses if you have dependents or variable income.</li>
+                        <li><strong>Risky:</strong> 3 months might be enough if you are single with a stable job.</li>
                     </ul>
                 </div>
             </div>

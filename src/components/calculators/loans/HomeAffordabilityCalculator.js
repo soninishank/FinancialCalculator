@@ -2,7 +2,16 @@ import React, { useState, useMemo } from 'react';
 import InputWithSlider from '../../common/InputWithSlider';
 import CalculatorLayout from '../../common/CalculatorLayout';
 import { calculatorDetails } from '../../../data/calculatorDetails';
+import { Doughnut } from 'react-chartjs-2';
+import {
+    Chart as ChartJS,
+    ArcElement,
+    Tooltip,
+    Legend
+} from 'chart.js';
 import { Home, Calculator } from 'lucide-react';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function HomeAffordabilityCalculator({ currency = 'USD' }) {
     const [annualIncome, setAnnualIncome] = useState(95000);
@@ -28,25 +37,25 @@ export default function HomeAffordabilityCalculator({ currency = 'USD' }) {
         // PMI calculation (if down payment < 20%)
         const needsPMI = downPaymentPercent < 20;
 
-        // Work backwards from max payment to find affordable home price
-        // Monthly payment = P&I + Property Tax + Insurance + HOA + PMI
+        // Monthly costs
         const monthlyInsurance = homeInsurance;
         const monthlyHOA = hoaFees;
 
-        // Available for P&I
-        let availableForPI = maxMortgagePayment - monthlyInsurance - monthlyHOA;
-
-        // Iterative calculation to find max home price
+        // Binary search to find max home price (much faster than linear search)
+        // Instead of iterating through 490 values, we do ~12 iterations
+        let low = 100000;
+        let high = 5000000;
         let homePrice = 0;
         let loanAmount = 0;
         let monthlyPI = 0;
         let pmiPayment = 0;
 
-        for (let testPrice = 100000; testPrice <= 5000000; testPrice += 10000) {
+        // Helper function to calculate total housing cost for a given price
+        const calculateHousingCost = (testPrice) => {
             const downPayment = testPrice * (downPaymentPercent / 100);
             const testLoanAmount = testPrice - downPayment;
             const testPropertyTax = (testPrice * (propertyTaxRate / 100)) / 12;
-            const testPMI = needsPMI ? (testLoanAmount * 0.005) / 12 : 0; // ~0.5% annual PMI
+            const testPMI = needsPMI ? (testLoanAmount * 0.005) / 12 : 0;
 
             const monthlyRate = interestRate / 100 / 12;
             const numPayments = loanTerm * 12;
@@ -55,16 +64,38 @@ export default function HomeAffordabilityCalculator({ currency = 'USD' }) {
                 : (testLoanAmount * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) /
                 (Math.pow(1 + monthlyRate, numPayments) - 1);
 
-            const totalHousingCost = testPI + testPropertyTax + monthlyInsurance + monthlyHOA + testPMI;
+            return {
+                totalCost: testPI + testPropertyTax + monthlyInsurance + monthlyHOA + testPMI,
+                loanAmount: testLoanAmount,
+                monthlyPI: testPI,
+                pmiPayment: testPMI
+            };
+        };
 
-            if (totalHousingCost <= maxMortgagePayment) {
-                homePrice = testPrice;
-                loanAmount = testLoanAmount;
-                monthlyPI = testPI;
-                pmiPayment = testPMI;
+        // Binary search for maximum affordable home price
+        while (high - low > 1000) {
+            const mid = Math.floor((low + high) / 2);
+            const result = calculateHousingCost(mid);
+
+            if (result.totalCost <= maxMortgagePayment) {
+                // Can afford this price, try higher
+                low = mid;
+                homePrice = mid;
+                loanAmount = result.loanAmount;
+                monthlyPI = result.monthlyPI;
+                pmiPayment = result.pmiPayment;
             } else {
-                break;
+                // Cannot afford, try lower
+                high = mid;
             }
+        }
+
+        // Final refinement with the found price
+        if (homePrice > 0) {
+            const finalResult = calculateHousingCost(homePrice);
+            loanAmount = finalResult.loanAmount;
+            monthlyPI = finalResult.monthlyPI;
+            pmiPayment = finalResult.pmiPayment;
         }
 
         const downPayment = homePrice * (downPaymentPercent / 100);
@@ -91,6 +122,39 @@ export default function HomeAffordabilityCalculator({ currency = 'USD' }) {
             monthlyIncome
         };
     }, [annualIncome, monthlyDebts, downPaymentPercent, interestRate, loanTerm, propertyTaxRate, homeInsurance, hoaFees]);
+
+    const chartData = {
+        labels: ['P&I', 'Tax', 'Insurance', 'HOA', 'PMI'],
+        datasets: [
+            {
+                data: [
+                    result.monthlyPI,
+                    result.monthlyPropertyTax,
+                    result.monthlyInsurance,
+                    result.monthlyHOA,
+                    result.pmiPayment
+                ],
+                backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444'],
+                borderWidth: 0,
+            },
+        ],
+    };
+
+    const chartOptions = {
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    usePointStyle: true,
+                    padding: 20,
+                    font: {
+                        size: 11
+                    }
+                }
+            }
+        },
+        cutout: '70%',
+    };
 
     const inputs = (
         <div className="space-y-6">
@@ -193,6 +257,22 @@ export default function HomeAffordabilityCalculator({ currency = 'USD' }) {
 
             <CalculatorLayout
                 inputs={inputs}
+                charts={
+                    <div className="flex flex-col items-center justify-center p-6 bg-white rounded-2xl border border-gray-100 dark:border-slate-700 h-full">
+                        <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-6">Payment Breakdown</h3>
+                        <div className="w-64 h-64 relative">
+                            <Doughnut data={chartData} options={chartOptions} />
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <div className="text-center">
+                                    <p className="text-xs text-gray-400">Total</p>
+                                    <p className="text-lg font-bold text-gray-800">
+                                        {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.totalMonthlyPayment)}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
                 summary={
                     <div className="space-y-6">
                         <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-6 rounded-xl text-white shadow-lg">

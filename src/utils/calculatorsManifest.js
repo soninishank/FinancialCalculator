@@ -5,6 +5,46 @@
 const calculators = [
   // --- Popular / Core ---
   {
+    slug: 'stock-average-calculator',
+    title: 'Stock Average Calculator',
+    description: 'Calculate average share price when buying stocks at different prices. Determine total cost and break-even point for your averaged-down portfolio.',
+    keywords: 'stock average calculator, average down calculator, stock price averaging, share average, stock market calculator, investment averaging',
+    category: 'Investments',
+    component: 'StockAverageCalculator'
+  },
+  {
+    slug: 'rental-yield-calculator',
+    title: 'Rental Yield Calculator',
+    description: 'Calculate gross and net rental yield for property investments. Analyze cash flow by factoring in rent, property tax, and maintenance costs.',
+    keywords: 'rental yield calculator, property yield, real estate return, rental income calculator, gross yield, net yield, property investment',
+    category: 'Investments',
+    component: 'RentalYieldCalculator'
+  },
+  {
+    slug: 'dividend-yield-calculator',
+    title: 'Dividend Yield Calculator',
+    description: 'Compute the dividend yield percentage of a stock based on its share price and annual dividend payout.',
+    keywords: 'dividend yield calculator, stock dividend, dividend percentage, investment return, dividend payout',
+    category: 'Investments',
+    component: 'DividendYieldCalculator'
+  },
+  {
+    slug: 'car-affordability-calculator',
+    title: 'Car Affordability Calculator',
+    description: 'Find out how much car you can afford based on your monthly income and expenses. Calculate the maximum loan amount and safe EMI.',
+    keywords: 'car affordability calculator, how much car can i afford, car budget calculator, auto loan affordability, car finance calculator',
+    category: 'Loan',
+    component: 'CarAffordabilityCalculator'
+  },
+  {
+    slug: 'emergency-fund-calculator',
+    title: 'Emergency Fund Calculator',
+    description: 'Determine the ideal emergency fund size to cover 3 to 12 months of expenses. Safeguard your finances against job loss or medical emergencies.',
+    keywords: 'emergency fund calculator, rainy day fund, safety net calculator, savings goal, financial safety',
+    category: 'Savings',
+    component: 'EmergencyFundCalculator'
+  },
+  {
     slug: 'pure-sip',
     title: 'SIP Calculator',
     description: 'Calculate the future value of your monthly SIP investments accurately. Use our SIP calculator to estimate returns from mutual funds and build your wealth.',
@@ -416,6 +456,40 @@ const calculators = [
     keywords: 'hourly to salary, wage converter, hourly pay, annual salary calculator, wage estimation',
     category: 'Utility',
     component: 'HourlyToSalaryCalculator'
+  },
+  {
+    slug: 'salary-hike',
+    title: 'Salary Hike Calculator',
+    description: 'Calculate your new salary after a percentage hike. See the absolute increase in your monthly and annual take-home pay.',
+    keywords: 'salary hike calculator, increment calculator, salary increase, pay rise calculator, appraisal calculator',
+    category: 'Income',
+    component: 'SalaryHikeCalculator'
+  },
+
+  // --- Business & Retail (New) ---
+  {
+    slug: 'margin-markup',
+    title: 'Margin & Markup Calculator',
+    description: 'Calculate Gross Profit Margin and Markup percentage. Essential for pricing products correctly and ensuring profitability.',
+    keywords: 'margin calculator, markup calculator, gross margin, profit margin, markup vs margin, pricing calculator',
+    category: 'Business',
+    component: 'MarginCalculator'
+  },
+  {
+    slug: 'break-even-point',
+    title: 'Break-Even Point Calculator',
+    description: 'Determine how many units you need to sell to cover your costs. Calculate your break-even point in units and revenue.',
+    keywords: 'break even point, bep calculator, break even analysis, fixed cost variable cost, business break even',
+    category: 'Business',
+    component: 'BreakEvenCalculator'
+  },
+  {
+    slug: 'discount-calculator',
+    title: 'Discount Calculator',
+    description: 'Calculate the final price after applying a discount. Supports single and double discounts (e.g., 50% + 10% off).',
+    keywords: 'discount calculator, sale price calculator, percentage off, double discount, shopping calculator',
+    category: 'Retail',
+    component: 'DiscountCalculator'
   },
   // --- USA-Specific Calculators (Student Loans, Healthcare, Tax, Real Estate, Debt) ---
   {

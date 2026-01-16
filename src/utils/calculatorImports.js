@@ -56,7 +56,19 @@ export const importCalculatorBySlug = (slug) => {
         case 'social-security-break-even': return import('../components/calculators/retirement/SocialSecurityCalculator');
         case 'us-paycheck-calculator': return import('../components/calculators/tax/USPaycheckCalculator');
         case 'hsa-calculator': return import('../components/calculators/retirement/HSACalculator');
+        case 'stock-average-calculator': return import('../components/calculators/investments/StockAverageCalculator');
+        case 'rental-yield-calculator': return import('../components/calculators/investments/RentalYieldCalculator');
+        case 'dividend-yield-calculator': return import('../components/calculators/investments/DividendYieldCalculator');
+        case 'car-affordability-calculator': return import('../components/calculators/loans/CarAffordabilityCalculator');
+        case 'emergency-fund-calculator': return import('../components/calculators/savings/EmergencyFundCalculator');
         case 'hourly-to-salary': return import('../components/calculators/utils/HourlyToSalaryCalculator');
+
+        // High Traffic / Daily Use
+        case 'salary-hike': return import('../components/calculators/income/SalaryHikeCalculator');
+        case 'margin-markup': return import('../components/calculators/business/MarginCalculator');
+        case 'break-even-point': return import('../components/calculators/business/BreakEvenCalculator');
+        case 'discount-calculator': return import('../components/calculators/retail/DiscountCalculator');
+
         // USA-Specific Calculators
         case 'student-loan-payoff': return import('../components/calculators/loans/StudentLoanPayoffCalculator');
         case 'student-loan-forgiveness': return import('../components/calculators/loans/StudentLoanForgivenessCalculator');

@@ -484,6 +484,37 @@ export const calculatorFaqs = {
         { q: "What is the South African tax year?", a: "The South African tax year for individuals runs from March 1st to the last day of February the following year." },
         { q: "Who is eligible for the Medical Schemes Fees Tax Credit?", a: "Any taxpayer who belongs to a registered medical scheme and pays the monthly contributions is eligible for this credit." },
         { q: "What is a Tax Rebate?", a: "A tax rebate is a direct reduction in the individual's tax liability. It is not a deduction from taxable income but a reduction of the final tax amount owed." }
+    ],
+    'salary-hike': [
+        { q: "Does this calculator consider tax?", a: "This simplified calculator shows the gross salary increase. Actual take-home pay varies based on your tax regime and specific deductions." },
+        { q: "What is a good salary hike percentage?", a: "Industry standards vary, but a 10-15% hike is common for annual appraisals, while 20-40% is typical when switching jobs." }
+    ],
+    'margin-markup': [
+        { q: "Why is Margin always lower than Markup?", a: "Margin is based on the final sales price (a larger number), while Markup is based on cost (a smaller number). Since the denominator for Margin is larger, the percentage is always smaller." },
+        { q: "Which one should I use for pricing?", a: "Markup is easier for setting prices (Cost + Markup = Price), but Margin is essential for analyzing overall business profitability." }
+    ],
+    'discount-calculator': [
+        { q: "What is a double discount?", a: "A double discount (e.g., 50% + 20% off) means the second discount is applied to the already reduced price, not the original price." },
+        { q: " How do I calculate 50% + 50% discount?", a: "It is not 100% off (Free). It is 75% off total. The first 50% halves the price, and the second 50% halves the remaining half." }
+    ],
+    'break-even-point': [
+        { q: "Why is knowing my BEP important?", a: "It sets your minimum sales target. Until you sell enough units to cross the Break-Even Point, your business is operating at a loss." },
+        { q: "How can I lower my Break-Even Point?", a: "You can lower it by either reducing your fixed costs (rent, overheads) or increasing your contribution margin per unit (raising prices or lowering variable costs)." }
+    ],
+    'stock-average-calculator': [
+        { q: "Is averaging down always a good idea?", a: "No. It is only a good strategy if the company's fundamentals remain strong. If the stock is dropping due to a permanent loss of business, averaging down simply increases your losses." }
+    ],
+    'rental-yield-calculator': [
+        { q: "What is a good rental yield?", a: "In India, residential rental yield is typically 2-3%. Commercial properties often yield 5-8%. In the US/UK, yields of 4-7% are common." }
+    ],
+    'dividend-yield-calculator': [
+        { q: "How often are dividends paid?", a: "Dividends are usually paid quarterly (US) or annually/interim (India). The yield is calculated on an annual basis." }
+    ],
+    'car-affordability-calculator': [
+        { q: "Does this include insurance and maintenance?", a: "The 'Affordable EMI' calculation focuses on the loan payment. You should budget extra (usually 10-20% of EMI) for insurance and maintenance." }
+    ],
+    'emergency-fund-calculator': [
+        { q: "Where should I keep my emergency fund?", a: "Keep it in a Liquid Fund or a High-Yield Savings Account. It needs to be accessible instantly (liquidity) and safe from market crashes." }
     ]
 };
 
