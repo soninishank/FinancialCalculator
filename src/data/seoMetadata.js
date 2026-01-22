@@ -520,17 +520,17 @@ export const calculatorFaqs = {
 
 export const siteOrganization = {
     "@type": "Organization",
-    "name": "Hashmatic",
+    "name": "FinCalc",
     "url": "https://www.hashmatic.in",
     "logo": "https://www.hashmatic.in/logo192.png",
     "sameAs": [
-        "https://twitter.com/hashmatic",
-        "https://facebook.com/hashmatic",
-        "https://linkedin.com/company/hashmatic"
+        "https://twitter.com/fincalc",
+        "https://facebook.com/fincalc",
+        "https://linkedin.com/company/fincalc"
     ],
     "contactPoint": {
         "@type": "ContactPoint",
-        "telephone": "+91-XXXXXXXXXX",
+        "telephone": "+1-XXXXXXXXXX",
         "contactType": "customer service"
     }
 };

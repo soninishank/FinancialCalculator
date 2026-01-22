@@ -170,7 +170,7 @@ export default function PropertyTaxEstimator({ currency = 'USD' }) {
                             <p className="text-xs font-bold uppercase mb-1 opacity-80">Annual Property Tax</p>
                             <p className="text-3xl font-bold">{new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.annualTax)}</p>
                             <p className="text-xs mt-2 opacity-90">
-                                ${result.monthlyTax.toFixed(0)}/month
+                                ${!isNaN(result.monthlyTax) ? result.monthlyTax.toFixed(0) : "0"}/month
                             </p>
                         </div>
 

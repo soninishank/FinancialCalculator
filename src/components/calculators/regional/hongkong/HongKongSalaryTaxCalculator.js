@@ -156,7 +156,7 @@ export default function HongKongSalaryTaxCalculator({ currency = 'HKD' }) {
                                 <span className="font-semibold">{new Intl.NumberFormat('zh-HK', { style: 'currency', currency }).format(Math.round(result.netChargeableIncome))}</span>
                             </div>
                             <div className="flex justify-between text-sm py-1 border-t mt-2 pt-2">
-                                <span className="text-gray-600">Salaries Tax (Lower of Std/Prog)</span>
+                                <span className="text-gray-600">Salaries Tax (Lower of Std ÷ Prog)</span>
                                 <span className="font-semibold text-red-600">-{new Intl.NumberFormat('zh-HK', { style: 'currency', currency }).format(Math.round(result.finalTax))}</span>
                             </div>
                             <div className="flex justify-between text-sm py-1">

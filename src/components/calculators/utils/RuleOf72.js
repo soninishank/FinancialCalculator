@@ -31,7 +31,7 @@ export default function RuleOf72({ currency }) {
         if (r <= 0) return { years: 0, exactYears: 0, yearlyData: [] };
 
         // Rule of 72 calculation
-        const yearsToDouble = 72 / r;
+        const yearsToDouble = r > 0 ? 72 / r : 0;
 
         // Generate chart data until it doubles
         const yearlyData = [];
@@ -121,7 +121,7 @@ export default function RuleOf72({ currency }) {
     // --- DETAILS ---
     const details = calculatorDetails['rule-of-72'].render({
         rate,
-        yearsToDouble: result.years.toFixed(1)
+        yearsToDouble: !isNaN(result.years) ? result.years.toFixed(1) : "0.0"
     });
 
     const tableColumns = [
@@ -137,7 +137,7 @@ export default function RuleOf72({ currency }) {
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center">
                 <p className="text-gray-500 text-sm font-medium uppercase tracking-wide">Time to Double</p>
                 <p className="text-4xl font-extrabold text-teal-600 mt-2">
-                    {result.years.toFixed(1)} Years
+                    {!isNaN(result.years) ? result.years.toFixed(1) : "0.0"} Years
                 </p>
                 <p className="text-sm text-gray-400 mt-1">
                     Based on Rule of 72

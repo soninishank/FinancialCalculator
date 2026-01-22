@@ -100,7 +100,7 @@ export default function SwitzerlandIncomeTaxCalculator({ currency = 'CHF' }) {
             <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
                 <p className="text-xs text-gray-500">
                     Includes <strong>Federal Tax</strong>, estimated <strong>Cantonal & Communal Tax</strong>,
-                    and <strong>AHV/IV/EO/ALV</strong> social security.
+                    and <strong>AHV & IV & EO & ALV</strong> social security.
                     Deductions (Professional, Insurance) are not fully modeled.
                 </p>
             </div>

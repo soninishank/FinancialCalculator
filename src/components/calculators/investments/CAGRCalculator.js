@@ -144,7 +144,7 @@ const CAGRCalculator = ({ currency }) => {
               </div>
               <div className="space-y-1">
                 <p className="text-gray-500 text-sm max-w-sm font-medium leading-relaxed">
-                  Growth average over <strong>{result.timeInYears.toFixed(2)} years</strong>.
+                  Growth average over <strong>{!isNaN(result.timeInYears) ? result.timeInYears.toFixed(2) : "0.00"} years</strong>.
                 </p>
                 {isVeryShort && (
                   <p className="text-[10px] text-amber-600 font-bold italic">
@@ -159,7 +159,7 @@ const CAGRCalculator = ({ currency }) => {
             gain={endingValue - beginningValue}
             total={endingValue}
             currency={currency}
-            years={result.timeInYears.toFixed(2)}
+            years={!isNaN(result.timeInYears) ? result.timeInYears.toFixed(2) : "0.00"}
           />
         </div>
       }

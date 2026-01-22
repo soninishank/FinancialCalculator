@@ -14,7 +14,7 @@ export default function ACAMarketplaceCalculator({ currency = 'USD' }) {
     const result = useMemo(() => {
         // 2024 Federal Poverty Level (FPL) - Continental US
         const fpl = 15060 + (householdSize - 1) * 5380;
-        const fplPercentage = (householdIncome / fpl) * 100;
+        const fplPercentage = (fpl > 0) ? (householdIncome / fpl) * 100 : 0;
 
         // Subsidy eligibility: 100% - 400% FPL
         const isEligibleForSubsidy = fplPercentage >= 100 && fplPercentage <= 400;
@@ -118,8 +118,8 @@ export default function ACAMarketplaceCalculator({ currency = 'USD' }) {
                             key={tier.value}
                             onClick={() => setMetalTier(tier.value)}
                             className={`px-4 py-3 rounded-lg text-left transition-all ${metalTier === tier.value
-                                    ? 'bg-blue-600 text-white shadow-md'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                ? 'bg-blue-600 text-white shadow-md'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             <div className="font-medium text-sm">{tier.label}</div>
@@ -155,7 +155,7 @@ export default function ACAMarketplaceCalculator({ currency = 'USD' }) {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="bg-white border border-gray-200 p-4 rounded-xl text-center">
                                 <p className="text-xs text-gray-500 uppercase font-bold mb-1">Income % of FPL</p>
-                                <p className="text-2xl font-bold text-gray-900">{result.fplPercentage.toFixed(0)}%</p>
+                                <p className="text-2xl font-bold text-gray-900">{!isNaN(result.fplPercentage) ? result.fplPercentage.toFixed(0) : "0"}%</p>
                                 <p className="text-[10px] text-gray-400 mt-1">FPL: {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.fpl)}</p>
                             </div>
                             <div className={`border p-4 rounded-xl text-center ${result.isEligibleForSubsidy ? 'bg-emerald-50 border-emerald-100' : 'bg-gray-50 border-gray-200'}`}>

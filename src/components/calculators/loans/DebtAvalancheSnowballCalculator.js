@@ -136,13 +136,13 @@ export default function DebtAvalancheSnowballCalculator({ currency = 'USD' }) {
             extraPayment,
             avalanche: {
                 months: avalancheMonths,
-                years: (avalancheMonths / 12).toFixed(1),
+                years: !isNaN(avalancheMonths) ? (avalancheMonths / 12).toFixed(1) : "0.0",
                 totalInterest: avalancheTotalInterest,
                 payoffOrder: avalanchePayoffOrder
             },
             snowball: {
                 months: snowballMonths,
-                years: (snowballMonths / 12).toFixed(1),
+                years: !isNaN(snowballMonths) ? (snowballMonths / 12).toFixed(1) : "0.0",
                 totalInterest: snowballTotalInterest,
                 payoffOrder: snowballPayoffOrder
             },
@@ -161,7 +161,7 @@ export default function DebtAvalancheSnowballCalculator({ currency = 'USD' }) {
                 max={10000}
                 step={50}
                 currency={currency}
-                helperText={`Min payment: $${result.totalMinPayment.toFixed(0)} | Extra: $${result.extraPayment.toFixed(0)}`}
+                helperText={`Min payment: $${!isNaN(result.totalMinPayment) ? result.totalMinPayment.toFixed(0) : "0"} | Extra: $${!isNaN(result.extraPayment) ? result.extraPayment.toFixed(0) : "0"}`}
             />
 
             <div className="space-y-3">
@@ -241,7 +241,7 @@ export default function DebtAvalancheSnowballCalculator({ currency = 'USD' }) {
                         <div className="bg-gradient-to-br from-red-500 to-pink-600 p-6 rounded-xl text-white shadow-lg">
                             <p className="text-xs font-bold uppercase mb-1 opacity-80">Total Debt</p>
                             <p className="text-3xl font-bold">{new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.totalDebt)}</p>
-                            <p className="text-xs mt-2 opacity-90">{debts.length} debts • ${result.extraPayment.toFixed(0)}/mo extra payment</p>
+                            <p className="text-xs mt-2 opacity-90">{debts.length} debts • ${!isNaN(result.extraPayment) ? result.extraPayment.toFixed(0) : "0"}/mo extra payment</p>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
@@ -315,7 +315,7 @@ export default function DebtAvalancheSnowballCalculator({ currency = 'USD' }) {
                                             </div>
                                             <div className="text-right">
                                                 <p className="text-xs text-blue-600">Month {debt.payoffMonth}</p>
-                                                <p className="text-[10px] text-gray-500">{(debt.payoffMonth / 12).toFixed(1)} yrs</p>
+                                                <p className="text-[10px] text-gray-500">{!isNaN(debt.payoffMonth) ? (debt.payoffMonth / 12).toFixed(1) : "0.0"} yrs</p>
                                             </div>
                                         </div>
                                     </div>
@@ -335,7 +335,7 @@ export default function DebtAvalancheSnowballCalculator({ currency = 'USD' }) {
                                             </div>
                                             <div className="text-right">
                                                 <p className="text-xs text-emerald-600">Month {debt.payoffMonth}</p>
-                                                <p className="text-[10px] text-gray-500">{(debt.payoffMonth / 12).toFixed(1)} yrs</p>
+                                                <p className="text-[10px] text-gray-500">{!isNaN(debt.payoffMonth) ? (debt.payoffMonth / 12).toFixed(1) : "0.0"} yrs</p>
                                             </div>
                                         </div>
                                     </div>

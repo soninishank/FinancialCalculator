@@ -24,7 +24,7 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
         if (mode === 'Months') {
             setTenure((prev) => Math.round(prev * 12));
         } else {
-            setTenure((prev) => Number((prev / 12).toFixed(1)));
+            setTenure((prev) => !isNaN(prev) ? Number((prev / 12).toFixed(1)) : 0);
         }
     };
 
@@ -69,7 +69,7 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
 
     const savingsInterest = regular.finalTotalInterest - smart.finalTotalInterest;
     const timeSavedMonths = regular.monthsTaken - smart.monthsTaken;
-    const timeSavedYears = (timeSavedMonths / 12).toFixed(1);
+    const timeSavedYears = !isNaN(timeSavedMonths) ? (timeSavedMonths / 12).toFixed(1) : "0.0";
 
     // Helper to calc end date
     const getEndDate = (months) => {
@@ -239,7 +239,7 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
                             <p className="text-xs text-emerald-600 font-bold uppercase mb-1">Step-Up Total Interest</p>
                             <p className="text-lg font-bold text-emerald-700">{moneyFormat(smart.finalTotalInterest, currency)}</p>
                             <div className="flex justify-between items-center mt-2 border-t border-emerald-200 pt-2">
-                                <p className="text-xs text-emerald-600">Tenure: {(smart.monthsTaken / 12).toFixed(1)} Years</p>
+                                <p className="text-xs text-emerald-600">Tenure: {!isNaN(smart.monthsTaken) ? (smart.monthsTaken / 12).toFixed(1) : "0.0"} Years</p>
                                 <p className="text-xs font-bold text-emerald-700">Ends: {smartEndDate}</p>
                             </div>
                         </div>

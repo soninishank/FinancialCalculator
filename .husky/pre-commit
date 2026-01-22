@@ -1,0 +1,13 @@
+
+# Run calculator linter before commit
+echo "🔍 Running calculator linter..."
+npm run lint:calculators
+
+# If linter fails, block the commit
+if [ $? -ne 0 ]; then
+  echo "❌ Calculator linting failed. Please fix the errors before committing."
+  echo "💡 Tip: Run 'npm run lint:calculators' to see all issues."
+  exit 1
+fi
+
+echo "✅ Calculator linting passed!"

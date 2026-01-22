@@ -28,7 +28,7 @@ export default function FICOScoreImpactCalculator({ currency = 'USD' }) {
         };
 
         // Current utilization
-        const currentUtilization = (currentBalance / totalCreditLimit) * 100;
+        const currentUtilization = (totalCreditLimit > 0) ? (currentBalance / totalCreditLimit) * 100 : 0;
 
         // Score calculation (simplified model)
         const getScoreFromFactors = (util, payment, age, inquiries, types) => {
@@ -68,7 +68,7 @@ export default function FICOScoreImpactCalculator({ currency = 'USD' }) {
 
         // Scenario 1: Pay off debt
         const balanceAfterPayoff = Math.max(0, currentBalance - payoffAmount);
-        const utilizationAfterPayoff = (balanceAfterPayoff / totalCreditLimit) * 100;
+        const utilizationAfterPayoff = (totalCreditLimit > 0) ? (balanceAfterPayoff / totalCreditLimit) * 100 : 0;
         const scoreAfterPayoff = getScoreFromFactors(
             utilizationAfterPayoff,
             onTimePayments,
@@ -79,7 +79,7 @@ export default function FICOScoreImpactCalculator({ currency = 'USD' }) {
 
         // Scenario 2: Open new credit card
         const newTotalLimit = totalCreditLimit + newCreditLimit;
-        const utilizationWithNewCard = (currentBalance / newTotalLimit) * 100;
+        const utilizationWithNewCard = (newTotalLimit > 0) ? (currentBalance / newTotalLimit) * 100 : 0;
         const scoreWithNewCard = getScoreFromFactors(
             utilizationWithNewCard,
             onTimePayments,
@@ -185,7 +185,7 @@ export default function FICOScoreImpactCalculator({ currency = 'USD' }) {
                     max={totalCreditLimit}
                     step={100}
                     currency={currency}
-                    helperText={`Utilization: ${result.currentUtilization.toFixed(1)}%`}
+                    helperText={`Utilization: ${!isNaN(result.currentUtilization) ? result.currentUtilization.toFixed(1) : "0.0"}%`}
                 />
 
                 <InputWithSlider
@@ -289,7 +289,7 @@ export default function FICOScoreImpactCalculator({ currency = 'USD' }) {
                                 <AlertCircle className="w-4 h-4 text-amber-600" />
                                 <p className="text-sm font-bold text-amber-900">Credit Utilization</p>
                             </div>
-                            <p className="text-2xl font-bold text-center text-amber-700">{result.currentUtilization.toFixed(1)}%</p>
+                            <p className="text-2xl font-bold text-center text-amber-700">{!isNaN(result.currentUtilization) ? result.currentUtilization.toFixed(1) : "0.0"}%</p>
                             <p className="text-xs text-center text-amber-600 mt-1">
                                 {result.currentUtilization < 10 ? '✅ Excellent' :
                                     result.currentUtilization < 30 ? '✅ Good' :
@@ -304,7 +304,7 @@ export default function FICOScoreImpactCalculator({ currency = 'USD' }) {
                                 <div className="flex justify-between items-center">
                                     <div>
                                         <p className="font-semibold text-sm">Pay Off ${payoffAmount.toLocaleString()}</p>
-                                        <p className="text-xs text-gray-600">Reduces utilization to {result.payoff.newUtilization.toFixed(1)}%</p>
+                                        <p className="text-xs text-gray-600">Reduces utilization to {!isNaN(result.payoff.newUtilization) ? result.payoff.newUtilization.toFixed(1) : "0.0"}%</p>
                                     </div>
                                     <div className="text-right">
                                         <p className={`text-lg font-bold ${result.payoff.impact >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
@@ -373,7 +373,7 @@ export default function FICOScoreImpactCalculator({ currency = 'USD' }) {
                         <div className="space-y-2">
                             {[
                                 { label: 'Payment History', weight: 35, desc: `${onTimePayments}% on-time` },
-                                { label: 'Credit Utilization', weight: 30, desc: `${result.currentUtilization.toFixed(1)}%` },
+                                { label: 'Credit Utilization', weight: 30, desc: `${!isNaN(result.currentUtilization) ? result.currentUtilization.toFixed(1) : "0.0"}%` },
                                 { label: 'Length of Credit History', weight: 15, desc: `${accountAge} years avg` },
                                 { label: 'New Credit Inquiries', weight: 10, desc: `${newInquiries} inquiries` },
                                 { label: 'Credit Mix', weight: 10, desc: `${accountTypes} account types` }

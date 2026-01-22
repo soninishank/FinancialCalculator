@@ -138,14 +138,14 @@ const SalaryHikeCalculator = ({ currency }) => {
                             <span className="w-3 h-3 rounded-full bg-slate-300"></span>
                             <span className="text-gray-600 dark:text-gray-300">Current Salary</span>
                         </div>
-                        <span className="font-medium text-gray-900 dark:text-white">{newSalary > 0 ? (parseFloat(currentSalary) / newSalary * 100).toFixed(1) : '0.0'}%</span>
+                        <span className="font-medium text-gray-900 dark:text-white">{newSalary > 0 && !isNaN(currentSalary) ? (parseFloat(currentSalary) / newSalary * 100).toFixed(1) : '0.0'}%</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center gap-2">
                             <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
                             <span className="text-gray-600 dark:text-gray-300">Hike Amount</span>
                         </div>
-                        <span className="font-medium text-gray-900 dark:text-white">{newSalary > 0 ? (hikeAmount / newSalary * 100).toFixed(1) : '0.0'}%</span>
+                        <span className="font-medium text-gray-900 dark:text-white">{newSalary > 0 && !isNaN(hikeAmount) ? (hikeAmount / newSalary * 100).toFixed(1) : '0.0'}%</span>
                     </div>
                 </div>
             </div>

@@ -123,7 +123,7 @@ const SimpleInterest = ({ currency }) => {
                         gain={result.interest}
                         total={result.totalAmount}
                         currency={currency}
-                        years={result.timeInYears.toFixed(2)}
+                        years={!isNaN(result.timeInYears) ? result.timeInYears.toFixed(2) : "0.00"}
                     />
                 </div>
             }

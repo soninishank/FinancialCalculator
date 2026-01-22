@@ -44,11 +44,11 @@ export default function XIRRCalculator({ currency = 'INR' }) {
     const [maturityAmount, setMaturityAmount] = useState(290000);
 
     const [result, setResult] = useState(null);
-    const [error, setError] = useState('');
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         setResult(null);
-        setError('');
+        setError(null);
     }, [mode, cashFlows, frequency, startDate, maturityDate, recurringAmount, maturityAmount]);
 
 
@@ -436,7 +436,7 @@ export default function XIRRCalculator({ currency = 'INR' }) {
 
                     <MetricCard
                         label="XIRR (Annualized Return)"
-                        value={`${(result * 100).toFixed(2)}%`}
+                        value={`${!isNaN(result) ? (result * 100).toFixed(2) : "0.00"}%`}
                         subtext="Compounded Annual Rate"
                         color="teal"
                         icon={<TrendingUp className="w-6 h-6" />}
@@ -456,7 +456,7 @@ export default function XIRRCalculator({ currency = 'INR' }) {
                             💡 What This Means
                         </h4>
                         <p className="text-sm text-gray-600 leading-relaxed mb-3">
-                            Your strategy acts like a bank account giving you <strong className="text-teal-700 bg-teal-50 px-1 rounded">{(result * 100).toFixed(2)}% interest per year</strong>.
+                            Your strategy acts like a bank account giving you <strong className="text-teal-700 bg-teal-50 px-1 rounded">{!isNaN(result) ? (result * 100).toFixed(2) : "0.00"}% interest per year</strong>.
                             You invested a total of <strong>{currency}{stats.totalInvested.toLocaleString()}</strong> and your current value is <strong>{currency}{stats.totalReturned.toLocaleString()}</strong>.
                         </p>
                         <div className="bg-gray-50 p-3 rounded-lg text-xs text-gray-600">

@@ -44,7 +44,7 @@ const DividendYieldCalculator = ({ currency }) => {
                 <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm flex flex-col items-center justify-center text-center h-full">
                     <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Dividend Yield</p>
                     <h2 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-600 mb-2">
-                        {yieldValue.toFixed(2)}%
+                        {!isNaN(yieldValue) ? yieldValue.toFixed(2) : "0.00"}%
                     </h2>
                     <p className="text-gray-400 text-sm">Return on investment from dividends alone</p>
                 </div>

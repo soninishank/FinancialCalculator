@@ -561,8 +561,12 @@ async function warmupAllCategories(excludeCategory) {
             console.error(`[News API] Warmup error for ${cat}:`, error.message);
         }
 
-        // Reduced delay since we're batching DB writes
-        await sleep(500);
+            // Reduced delay and check for quota
+            if (error.message.includes('429') || error.message.includes('quota')) {
+                console.log(`[News API] Quota hit during warmup for ${cat}, stopping further warmup`);
+                break;
+            }
+            await sleep(1000);
     }
 
     // Perform Batch DB Insert
@@ -624,7 +628,8 @@ export async function GET(req) {
     const cachedData = await getCachedNews(category, false);
     if (cachedData) {
         // Trigger background warmup for other categories if this is a primary request
-        if (category === 'All') {
+        // Only do this in production or if explicitly needed to avoid dev loop issues
+        if (category === 'All' && process.env.NODE_ENV === 'production') {
             warmupAllCategories('All').catch(console.error);
         }
         return NextResponse.json(cachedData);

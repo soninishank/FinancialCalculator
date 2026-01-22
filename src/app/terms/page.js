@@ -1,6 +1,6 @@
 export const metadata = {
-    title: 'Terms of Service | Hashmatic',
-    description: 'Terms of service for using Hashmatic financial calculators and tools.',
+    title: 'Terms of Service | FinCalc',
+    description: 'Terms of service for using FinCalc financial calculators and tools.',
 };
 
 export default function TermsOfService() {
@@ -14,14 +14,14 @@ export default function TermsOfService() {
                 <section>
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">1. Acceptance of Terms</h2>
                     <p>
-                        By accessing and using Hashmatic, you agree to comply with and be bound by these Terms of Service. If you do not agree, please do not use our services.
+                        By accessing and using FinCalc, you agree to comply with and be bound by these Terms of Service. If you do not agree, please do not use our services.
                     </p>
                 </section>
 
                 <section>
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">2. Description of Service</h2>
                     <p>
-                        Hashmatic provides various financial calculators and informational tools for educational and illustrative purposes. We do not provide financial, investment, or legal advice.
+                        FinCalc provides various financial calculators and informational tools for educational and illustrative purposes. We do not provide financial, investment, or legal advice.
                     </p>
                 </section>
 
@@ -35,7 +35,7 @@ export default function TermsOfService() {
                 <section>
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">4. Limitation of Liability</h2>
                     <p>
-                        Hashmatic and its creators shall not be liable for any direct, indirect, incidental, or consequential damages resulting from the use or inability to use our tools.
+                        FinCalc and its creators shall not be liable for any direct, indirect, incidental, or consequential damages resulting from the use or inability to use our tools.
                     </p>
                 </section>
 

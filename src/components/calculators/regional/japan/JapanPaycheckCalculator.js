@@ -141,7 +141,7 @@ export default function JapanPaycheckCalculator({ currency = 'JPY' }) {
 
                         <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
                             <div className="flex justify-between text-sm py-1">
-                                <span className="text-gray-600">Annual Gross (w/ Bonus)</span>
+                                <span className="text-gray-600">Annual Gross (with Bonus)</span>
                                 <span className="font-semibold">{new Intl.NumberFormat('ja-JP', { style: 'currency', currency }).format(Math.round(result.annualGross))}</span>
                             </div>
                             <div className="flex justify-between text-sm py-1">

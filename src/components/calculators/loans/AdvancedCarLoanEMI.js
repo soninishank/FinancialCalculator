@@ -303,13 +303,13 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                                     <div className="flex justify-between items-center mb-2">
                                         <span className="text-xs font-black text-slate-900 uppercase tracking-tight">EMI to Income Ratio</span>
                                         <span className={`text-sm font-black ${emi > monthlyIncome * 0.4 ? 'text-rose-600' : 'text-emerald-600'}`}>
-                                            {((emi / monthlyIncome) * 100).toFixed(1)}%
+                                            {monthlyIncome !== 0 && !isNaN(emi / monthlyIncome) ? ((emi / monthlyIncome) * 100).toFixed(1) : "0.0"}%
                                         </span>
                                     </div>
                                     <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                                         <div
                                             className={`h-full transition-all duration-1000 ${emi > monthlyIncome * 0.4 ? 'bg-rose-500' : 'bg-emerald-500'}`}
-                                            style={{ width: `${Math.min(100, (emi / monthlyIncome) * 100)}%` }}
+                                            style={{ width: `${monthlyIncome > 0 ? Math.min(100, (emi / monthlyIncome) * 100) : 0}%` }}
                                         />
                                     </div>
                                 </div>

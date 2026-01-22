@@ -1,21 +1,22 @@
 import NewsAggregator from "../components/news/NewsAggregator";
 
 export const metadata = {
-    title: "Financial Calculators - SIP, EMI, Loan & Investment Tools",
-    description: "Free online financial calculators for SIP, Home Loan EMI, Income Tax, and Retirement planning. Accurate, ad-free investment tools for Indian investors.",
+    title: "FinCalc - SIP, EMI, Loan & Tax Calculators",
+    description: "FinCalc offers a comprehensive suite of free financial tools including SIP, EMI, Income Tax, and FIRE calculators. Accurate and multi-currency support.",
     keywords: [
         'financial calculator', 'sip calculator', 'loan emi calculator',
-        'income tax calculator india', 'investment tools', 'retirement planner',
+        'income tax calculator 2024-25', 'investment tools', 'retirement planner',
         'mutual fund returns', 'wealth management', 'sip returns calculator',
-        'home loan prepayments', 'emi calculator', 'tax planner'
+        'home loan prepayments', 'emi calculator', 'tax planning tools',
+        'compound interest calculator', 'fire planner', 'stock average calculator'
     ],
     openGraph: {
-        title: "Financial Calculators - SIP, EMI, Loan & Investment Tools",
-        description: "Free online financial calculators for SIP, Home Loan EMI, Income Tax, and Retirement planning. Accurate, ad-free investment tools for Indian investors.",
+        title: "FinCalc - Premium Financial Suite",
+        description: "Professional financial planning tools for everyone. SIP, EMI, Tax, and more.",
         url: 'https://www.hashmatic.in',
-        siteName: 'Hashmatic',
+        siteName: 'FinCalc',
         images: [{ url: 'https://www.hashmatic.in/logo192.png', width: 192, height: 192 }],
-        locale: 'en_IN',
+        locale: 'en_US',
         type: 'website',
     },
 };
@@ -39,10 +40,17 @@ export default function Home() {
                     __html: JSON.stringify({
                         "@context": "https://schema.org",
                         "@type": "WebApplication",
-                        "name": "Hashmatic Financial Suite",
+                        "name": "FinCalc Financial Suite",
                         "url": "https://www.hashmatic.in",
                         "applicationCategory": "FinanceApplication",
-                        "description": "Professional-grade financial planning tools (SIP, EMI, Tax) and real-time news."
+                        "description": "Professional-grade financial planning tools (SIP, EMI, Tax) with multi-currency support.",
+                        "featureList": [
+                            "SIP Return Projections",
+                            "Advanced Home Loan EMI Analysis",
+                            "Income Tax Regime Comparison (FY 2024-25)",
+                            "FIRE & Retirement Planning",
+                            "Real-time Financial News Aggregator"
+                        ]
                     })
                 }}
             />

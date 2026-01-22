@@ -225,7 +225,7 @@ export default function PropertyLoanEligibility({ currency }) {
                             </div>
                             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Loan %</span>
-                                <span className="text-xl font-black text-gray-800">{Math.round((finalLoan / propVal) * 100)}%</span>
+                                <span className="text-xl font-black text-gray-800">{propVal !== 0 ? Math.round((finalLoan / propVal) * 100) : 0}%</span>
                             </div>
                         </div>
 

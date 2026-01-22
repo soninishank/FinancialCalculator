@@ -24,7 +24,7 @@ export default function USMortgageCalculator({ currency = 'USD' }) {
         // Principal & Interest (P&I)
         let monthlyPI = 0;
         if (monthlyRate === 0) {
-            monthlyPI = principal / numberOfPayments;
+            monthlyPI = numberOfPayments > 0 ? principal / numberOfPayments : 0;
         } else {
             monthlyPI = principal * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
         }
@@ -36,7 +36,7 @@ export default function USMortgageCalculator({ currency = 'USD' }) {
         const monthlyInsurance = homeInsurance / 12;
 
         // PMI (Monthly) - typically applies if Down Payment < 20%
-        const ltv = ((principal / homeValue) * 100);
+        const ltv = (homeValue > 0) ? ((principal / homeValue) * 100) : 0;
         let monthlyPMI = 0;
         if (ltv > 80) {
             // Simple PMI calculation: (Loan Amount * PMI Rate) / 12
@@ -99,7 +99,10 @@ export default function USMortgageCalculator({ currency = 'USD' }) {
                 max={homeValue}
                 step={1000}
                 currency={currency}
-                helperText={`LTV: ${((homeValue - downPayment) / homeValue * 100).toFixed(1)}%`}
+                helperText={`LTV: ${(() => {
+                    const ltv = ((homeValue - downPayment) / homeValue * 100);
+                    return (homeValue !== 0 && !isNaN(ltv)) ? ltv.toFixed(1) : "0.0";
+                })()}%`}
             />
 
             <InputWithSlider

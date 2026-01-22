@@ -208,7 +208,7 @@ const CompoundInterest = ({ currency }) => {
                         gain={gain}
                         total={result.totalAmount}
                         currency={currency}
-                        years={(result.timeInYears || 0).toFixed(2)}
+                        years={!isNaN(result.timeInYears) ? (result.timeInYears || 0).toFixed(2) : "0.00"}
                         tax={{ applied: isTaxApplied, postTaxValue: netFutureValueVal, postTaxGain: netGainVal, taxDeducted: taxAmount }}
                         inflation={{ applied: isInflationAdjusted, realValue: realValueVal, inflationRate: inflationRate }}
                     />

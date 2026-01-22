@@ -113,7 +113,7 @@ export default function IndiaIncomeTaxCalculator({ currency = 'INR' }) {
 
             <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
                 <p className="text-xs text-gray-500">
-                    Calculations based on <strong>FY 2024-25 / AY 2025-26</strong>.
+                    Calculations based on <strong>FY 2024-25 & AY 2025-26</strong>.
                     Includes <strong>Standard Deduction</strong> (New: 75k, Old: 50k) and <strong>4% Cess</strong>.
                 </p>
             </div>

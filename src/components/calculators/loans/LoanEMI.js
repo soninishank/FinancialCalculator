@@ -58,7 +58,7 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
     if (mode === 'Months') {
       setYears((prev) => Math.round(prev * 12));
     } else {
-      setYears((prev) => Number((prev / 12).toFixed(1))); // Keep 1 decimal for years if converting back
+      setYears((prev) => !isNaN(prev) ? Number((prev / 12).toFixed(1)) : 0); // Keep 1 decimal for years if converting back
     }
   };
 
@@ -371,7 +371,9 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
             <div className="p-6 text-center">
               <p className="text-sm font-semibold text-gray-500 mb-1">Loan Interest Rate</p>
               <p className="text-3xl font-extrabold text-gray-800">
-                {calculationMode === 'RATE' ? Number(finalAmortizationRate).toFixed(2) : Number(annualRate).toFixed(2)} %
+                {calculationMode === 'RATE'
+                  ? (!isNaN(finalAmortizationRate) ? Number(finalAmortizationRate).toFixed(2) : "0.00")
+                  : (!isNaN(annualRate) ? Number(annualRate).toFixed(2) : "0.00")} %
               </p>
             </div>
 
@@ -389,7 +391,10 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
                 </div>
               </div>
               <p className="text-3xl font-extrabold text-indigo-600">
-                {calculateAPR(finalAmortizationPrincipal, finalAmortizationEMI, finalAmortizationYears, processingFeeAmount).toFixed(2)} %
+                {(() => {
+                  const apr = calculateAPR(finalAmortizationPrincipal, finalAmortizationEMI, finalAmortizationYears, processingFeeAmount);
+                  return !isNaN(apr) ? apr.toFixed(2) : "0.00";
+                })()} %
               </p>
             </div>
 

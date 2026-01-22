@@ -79,7 +79,7 @@ export default function USPaycheckCalculator({ currency = 'USD' }) {
         const totalTax = federalTax + ficaTax + stateTax;
         const netPayAnnual = annualGross - totalTax;
 
-        const netPayPerCheck = netPayAnnual / payFrequency;
+        const netPayPerCheck = payFrequency > 0 ? netPayAnnual / payFrequency : 0;
 
         return {
             annualGross,
@@ -202,7 +202,7 @@ export default function USPaycheckCalculator({ currency = 'USD' }) {
                             currency={currency}
                         />
                         <div className="text-center text-xs text-gray-400 mt-2">
-                            Principal = Net Pay, Interest = Federal Tax, Fees = FICA/State Tax
+                            Principal = Net Pay, Interest = Federal Tax, Fees = FICA & State Tax
                         </div>
                     </div>
                 }

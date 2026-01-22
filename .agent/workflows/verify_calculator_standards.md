@@ -35,7 +35,12 @@ Validate logic **at least 3 times** before committing:
 - [ ] **Responsive Design**: Verify layout on mobile (flex-col on small screens).
 
 ## 5. Feature Check
-## 6. Regression Testing (CRITICAL)
+## 6. Automated Linting (CRITICAL - NEW)
+- [ ] **Run Calculator Linter**: Execute `npm run lint:calculators`
+- [ ] **Fix All Errors**: Address any division-by-zero, hardcoded currency, or NaN issues
+- [ ] **Review Warnings**: Consider fixing warnings for better code quality
+
+## 7. Regression Testing (CRITICAL)
 - [ ] **Import Integrity**: Did you ensure you didn't accidentally remove `import React` or hooks during refactoring?
 - [ ] **Run All Tests**: Execute `npm test` or `npm run test` to verify no regressions.
 - [ ] **Fix Failures**: If any tests fail, **YOU MUST FIX THEM IMMEDIATELY** before marking the task as done. Do not proceed with broken tests.

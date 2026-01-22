@@ -1,0 +1,219 @@
+
+> investment-calc@2.4.0 lint:calculators
+> node scripts/lint-calculators.js
+
+[34m🔍 Scanning calculators for logic errors...[0m
+
+Found 88 calculator files
+
+[31m❌ 44 ERROR(S) FOUND:[0m
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/business/BreakEvenCalculator.js:151
+  Division by 'Unit' without zero check
+  <span className="text-sm text-gray-500 dark:text-gray-400">Margin/Unit</span>
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/business/MarginCalculator.js:131
+  Division by 'Revenue' without zero check
+  <p className="text-xs text-gray-400 mt-1">(Profit / Revenue)</p>
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/business/MarginCalculator.js:138
+  Division by 'Cost' without zero check
+  <p className="text-xs text-gray-400 mt-1">(Profit / Cost)</p>
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/decision/AutoLeaseVsBuyCalculator.js:199
+  Division by 'Finance' without zero check
+  <p className="text-xs text-emerald-600 uppercase font-bold mb-2">Buy/Finance Option</p>
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/decision/AutoLeaseVsBuyCalculator.js:256
+  Division by 'year' without zero check
+  <li>You drive under {milesPerYear.toLocaleString()} miles/year</li>
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/investments/RentalYieldCalculator.js:106
+  Division by 'Property' without zero check
+  <p className="text-xs text-gray-400 mt-2">Annual Rent / Property Value</p>
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/loans/AdvancedCarLoanEMI.js:312
+  Division by 'monthlyIncome' without zero check
+  style={{ width: `${Math.min(100, (emi / monthlyIncome) * 100)}%` }}
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/loans/AdvancedHomeLoanEMI.js:271
+  Division by 'Down' without zero check
+  label={`Margin / Down Payment (DP) (${downPaymentPercent}%)`}
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/loans/CompareLoans.js:185
+  Division by 'month' without zero check
+  (+{moneyFormat(Math.round(flatEMI - reducingEMI), currency)} more/month)
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/loans/HomeAffordabilityCalculator.js:63
+  Division by 'numPayments' without zero check
+  ? testLoanAmount / numPayments
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/loans/HomeAffordabilityCalculator.js:106
+  Division by 'monthlyIncome' without zero check
+  const frontEndDTI = (totalMonthlyPayment / monthlyIncome) * 100;
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/loans/HomeAffordabilityCalculator.js:342
+  Division by 'Income' without zero check
+  <p className="text-[10px] text-blue-500 mt-1">Housing / Income (≤28%)</p>
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/loans/HomeAffordabilityCalculator.js:347
+  Division by 'Income' without zero check
+  <p className="text-[10px] text-purple-500 mt-1">Total Debt / Income (≤36%)</p>
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/loans/RefinanceCalculator.js:32
+  Division by 'months' without zero check
+  if (r === 0) return p / months;
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/loans/StudentLoanForgivenessCalculator.js:160
+  Division by 'result' without zero check
+  const progress = (qualifyingPayments / result.requiredPayments) * 100;
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/loans/StudentLoanPayoffCalculator.js:26
+  Division by 'termMonths' without zero check
+  ? loanAmount / termMonths
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/loans/USMortgageCalculator.js:27
+  Division by 'numberOfPayments' without zero check
+  monthlyPI = principal / numberOfPayments;
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/loans/USMortgageCalculator.js:39
+  Division by 'homeValue' without zero check
+  const ltv = ((principal / homeValue) * 100);
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/regional/canada/CanadaIncomeTaxCalculator.js:119
+  Division by 'EI' without zero check
+  CPP/EI calculated at standard 2024 rates.
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/regional/china/ChinaIncomeTaxCalculator.js:79
+  Division by 'month' without zero check
+  Includes <strong>5,000 RMB / month</strong> standard deduction.
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/regional/europe/EuropeVATCalculator.js:68
+  Division by 'Rate' without zero check
+  <label className="text-sm font-semibold text-gray-700">Country / Rate</label>
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/regional/hongkong/HongKongSalaryTaxCalculator.js:159
+  Division by 'Prog' without zero check
+  <span className="text-gray-600">Salaries Tax (Lower of Std/Prog)</span>
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/regional/india/IndiaIncomeTaxCalculator.js:116
+  Division by 'AY' without zero check
+  Calculations based on <strong>FY 2024-25 / AY 2025-26</strong>.
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/regional/india/IndiaIncomeTaxCalculator.js:184
+  Division by 'Math' without zero check
+  style={{ height: `${(result.newRegime.tax / Math.max(result.newRegime.tax, result.oldRegime.tax)) * 100}%`, minHeight: '10px' }}
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/regional/india/IndiaIncomeTaxCalculator.js:191
+  Division by 'Math' without zero check
+  style={{ height: `${(result.oldRegime.tax / Math.max(result.newRegime.tax, result.oldRegime.tax)) * 100}%`, minHeight: '10px' }}
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/regional/japan/JapanPaycheckCalculator.js:144
+  Division by 'Bonus' without zero check
+  <span className="text-gray-600">Annual Gross (w/ Bonus)</span>
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/regional/switzerland/SwitzerlandIncomeTaxCalculator.js:103
+  Division by 'IV' without zero check
+  and <strong>AHV/IV/EO/ALV</strong> social security.
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/regional/switzerland/SwitzerlandIncomeTaxCalculator.js:103
+  Division by 'ALV' without zero check
+  and <strong>AHV/IV/EO/ALV</strong> social security.
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/retirement/RMDCalculator.js:33
+  Division by 'factor' without zero check
+  const currentRMD = balance / factor;
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/retirement/RMDCalculator.js:44
+  Division by 'curFactor' without zero check
+  const rmd = curBalance / curFactor;
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/retirement/TimeToFIRE.js:437
+  Division by 'Food' without zero check
+  <b>Barista FIRE:</b> You have enough to cover bare <b>essentials</b> (Housing/Food). You only need a low-stress job to cover extra fun spending.
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/retirement/TimeToFIRE.js:443
+  Division by 'Chubby' without zero check
+  <b>Fat / Chubby FIRE:</b> You want a luxurious lifestyle. This calculator accounts for that via the "FIRE Levels" badge.
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/retirement/TraditionalIRACalculator.js:70
+  Division by 'rmdDivisor' without zero check
+  const firstRMD = balanceAtRMD / rmdDivisor;
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/savings/FixedDeposit.js:170
+  Division by 'Payout' without zero check
+  <label className="text-sm font-black text-slate-900 uppercase tracking-tight mb-2 block">Deposit Type / Payout</label>
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/savings/SSYCalculator.js:92
+  Division by 's' without zero check
+  <strong>Tax Benefit:</strong> Investment up to ₹1.5 Lakh is tax deductible u/s 80C.
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/tax/ACAMarketplaceCalculator.js:17
+  Division by 'fpl' without zero check
+  const fplPercentage = (householdIncome / fpl) * 100;
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/tax/FSACalculator.js:33
+  Division by 'cappedContribution' without zero check
+  const effectiveDiscountRate = (totalTaxSavings / cappedContribution) * 100;
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/tax/USCapitalGainsCalculator.js:87
+  Division by 'purchasePrice' without zero check
+  roi: (netProfit / purchasePrice) * 100
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/tax/USPaycheckCalculator.js:82
+  Division by 'payFrequency' without zero check
+  const netPayPerCheck = netPayAnnual / payFrequency;
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/tax/USPaycheckCalculator.js:205
+  Division by 'State' without zero check
+  Principal = Net Pay, Interest = Federal Tax, Fees = FICA/State Tax
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/utils/FICOScoreImpactCalculator.js:31
+  Division by 'totalCreditLimit' without zero check
+  const currentUtilization = (currentBalance / totalCreditLimit) * 100;
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/utils/FICOScoreImpactCalculator.js:71
+  Division by 'totalCreditLimit' without zero check
+  const utilizationAfterPayoff = (balanceAfterPayoff / totalCreditLimit) * 100;
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/utils/FICOScoreImpactCalculator.js:82
+  Division by 'newTotalLimit' without zero check
+  const utilizationWithNewCard = (currentBalance / newTotalLimit) * 100;
+
+[31mERROR[0m [UNSAFE_DIVISION] src/components/calculators/utils/RuleOf72.js:34
+  Division by 'r' without zero check
+  const yearsToDouble = 72 / r;
+
+[33m⚠️  6 WARNING(S) FOUND:[0m
+
+[33mWARNING[0m [EMPTY_INITIAL_STATE] src/components/calculators/investments/XIRRCalculator.js:47
+  Empty string initial state - consider using a default number
+  const [error, setError] = useState('');
+
+[33mWARNING[0m [EMPTY_INITIAL_STATE] src/components/calculators/loans/AdvancedHomeLoanEMI.js:56
+  Empty string initial state - consider using a default number
+  const [newRate, setNewRate] = useState('');
+
+[33mWARNING[0m [EMPTY_INITIAL_STATE] src/components/calculators/loans/AdvancedHomeLoanEMI.js:88
+  Empty string initial state - consider using a default number
+  const [newPrepaymentAmount, setNewPrepaymentAmount] = useState('');
+
+[33mWARNING[0m [POTENTIAL_NAN] src/components/calculators/loans/AdvancedHomeLoanEMI.js:371
+  Using .toFixed() without NaN check - could display "NaN"
+  {finalLoanAmount !== 0 ? moneyFormat(actualLoanFees, currency) : `${(finalLoanAmount !== 0 ? (actualLoanFees / finalLoanAmount) * 100 : 0).toFixed(2)}% of Loan`}
+
+[33mWARNING[0m [POTENTIAL_NAN] src/components/calculators/loans/AdvancedHomeLoanEMI.js:521
+  Using .toFixed() without NaN check - could display "NaN"
+  {homeValue !== 0 ? (oneTimeMode === 'percent' ? `Amount: ${moneyFormat(actualOneTimeExpenses, currency)}` : `${((actualOneTimeExpenses / homeValue) * 100).toFixed(2)}% of Value`) : "0.00%"}
+
+[33mWARNING[0m [POTENTIAL_NAN] src/components/calculators/loans/AdvancedHomeLoanEMI.js:547
+  Using .toFixed() without NaN check - could display "NaN"
+  {homeValue !== 0 ? (propertyTaxMode === 'percent' ? `Amount: ${moneyFormat(actualPropertyTaxYearly, currency)}` : `${((actualPropertyTaxYearly / homeValue) * 100).toFixed(2)}% of Value`) : "0.00%"}
+
+
+============================================================
+[31mErrors: 44[0m | [33mWarnings: 6[0m
+============================================================
+
+[31m❌ Linting failed. Please fix the errors above.[0m
+

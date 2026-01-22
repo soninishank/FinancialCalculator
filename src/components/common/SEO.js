@@ -3,9 +3,9 @@
 import { useEffect } from 'react';
 
 export default function SEO({ title, description, keywords, schema, path, image }) {
-    const fullTitle = title ? `${title} - Hashmatic` : 'Hashmatic - Financial Tools';
+    const fullTitle = title ? `${title} - FinCalc` : 'FinCalc - Financial Tools';
     const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
-    const defaultImage = "https://placehold.co/1200x630/teal/white?text=Hashmatic";
+    const defaultImage = "https://www.hashmatic.in/og-image.png";
 
     // Update Title
     useEffect(() => {

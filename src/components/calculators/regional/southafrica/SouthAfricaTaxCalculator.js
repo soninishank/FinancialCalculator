@@ -99,7 +99,7 @@ export default function SouthAfricaTaxCalculator({ currency = 'ZAR' }) {
             />
             <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
                 <p className="text-xs text-gray-500">
-                    Calculates <strong>SARS</strong> tax for 2024/25.
+                    Calculates <strong>SARS</strong> tax for 2024 ÷ 25.
                     Includes <strong>Primary Rebate</strong> and <strong>Medical Tax Credits</strong>.
                     Standard 1% <strong>UIF</strong> deduction applied.
                 </p>

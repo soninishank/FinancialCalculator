@@ -1,6 +1,6 @@
 export const metadata = {
-    title: 'Privacy Policy | Hashmatic',
-    description: 'Privacy policy for Hashmatic financial calculators and tools.',
+    title: 'Privacy Policy | FinCalc',
+    description: 'Privacy policy for FinCalc financial calculators and tools.',
 };
 
 export default function PrivacyPolicy() {
@@ -14,7 +14,7 @@ export default function PrivacyPolicy() {
                 <section>
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Introduction</h2>
                     <p>
-                        At Hashmatic, we prioritize your privacy. This Privacy Policy outlines how we handle information when you use our financial calculators and services. Our tools are designed to be privacy-first, often processing data entirely within your browser.
+                        At FinCalc, we prioritize your privacy. This Privacy Policy outlines how we handle information when you use our financial calculators and services. Our tools are designed to be privacy-first, often processing data entirely within your browser.
                     </p>
                 </section>
 

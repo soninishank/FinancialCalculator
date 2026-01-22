@@ -65,7 +65,7 @@ export default function EuropeVATCalculator({ currency = 'EUR' }) {
             />
 
             <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-700">Country / Rate</label>
+                <label className="text-sm font-semibold text-gray-700">Country ÷ Rate</label>
                 <select
                     value={selectedCountry}
                     onChange={(e) => setSelectedCountry(e.target.value)}

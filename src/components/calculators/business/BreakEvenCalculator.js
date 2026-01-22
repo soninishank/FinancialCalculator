@@ -148,9 +148,9 @@ const BreakEvenCalculator = ({ currency }) => {
                 <div className="w-64 h-64 relative">
                     <Doughnut data={chartData} options={chartOptions} />
                     <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
-                        <span className="text-sm text-gray-500 dark:text-gray-400">Margin/Unit</span>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">Margin per Unit</span>
                         <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
-                            {contributionMarginRatio.toFixed(1)}%
+                            {!isNaN(contributionMarginRatio) ? contributionMarginRatio.toFixed(1) : "0.0"}%
                         </span>
                     </div>
                 </div>

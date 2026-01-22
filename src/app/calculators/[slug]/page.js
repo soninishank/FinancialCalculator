@@ -25,7 +25,7 @@ export async function generateMetadata({ params }) {
             title: `${meta.title} | Financial Tools`,
             description: meta.description,
             url: pageUrl,
-            siteName: 'Hashmatic',
+            siteName: 'FinCalc',
             locale: 'en_IN',
             type: 'website',
         },
@@ -63,7 +63,7 @@ export default async function Page({ params }) {
                 },
                 "publisher": {
                     "@type": "Organization",
-                    "name": "Hashmatic",
+                    "name": "FinCalc",
                     "url": "https://www.hashmatic.in"
                 }
             },

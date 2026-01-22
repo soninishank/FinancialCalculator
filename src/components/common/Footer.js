@@ -31,9 +31,9 @@ const Footer = () => {
                     <div className="col-span-2 md:col-span-1 space-y-6">
                         <Link href="/" className="inline-flex items-center gap-2.5 group">
                             <div className="w-7 h-7 bg-teal-600 rounded-lg flex items-center justify-center group-hover:rotate-12 transition-transform shadow-lg shadow-teal-600/20">
-                                <span className="text-white font-black text-base">H</span>
+                                <span className="text-white font-black text-base">F</span>
                             </div>
-                            <span className="text-xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">Hashmatic</span>
+                            <span className="text-xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">FinCalc</span>
                         </Link>
                         <p className="text-slate-400 dark:text-slate-500 text-[11px] leading-relaxed font-bold uppercase tracking-wide max-w-xs">
                             High-precision financial intelligence engine for a data-driven world.
@@ -62,7 +62,7 @@ const Footer = () => {
                 {/* 4. Bottom Legal & Versioning */}
                 <div className="pt-10 border-t border-slate-50 dark:border-slate-800/20 flex flex-col md:flex-row justify-between items-center gap-8">
                     <div className="flex flex-wrap justify-center md:justify-start items-center gap-x-6 gap-y-3 text-[10px] font-bold text-slate-4300 dark:text-slate-600 uppercase tracking-widest">
-                        <p>© {new Date().getFullYear()} Hashmatic Intelligence</p>
+                        <p>© {new Date().getFullYear()} FinCalc Intelligence</p>
                         <p className="flex items-center text-teal-600/60 dark:text-teal-500/50">
                             Verified v2.4.0
                         </p>

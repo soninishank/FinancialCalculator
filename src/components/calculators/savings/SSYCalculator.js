@@ -89,7 +89,7 @@ export default function SSYCalculator({ currency = 'INR' }) {
             <div className="flex items-start gap-3 bg-amber-50 p-3 rounded-lg border border-amber-200">
                 <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                 <p className="text-xs text-amber-700 leading-relaxed">
-                    <strong>Tax Benefit:</strong> Investment up to ₹1.5 Lakh is tax deductible u/s 80C.
+                    <strong>Tax Benefit:</strong> Investment up to ₹1.5 Lakh is tax deductible under section 80C.
                 </p>
             </div>
 

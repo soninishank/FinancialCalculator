@@ -22,8 +22,8 @@ export default function StudentLoanPayoffCalculator({ currency = 'USD' }) {
         if (paymentPlan === 'extended') termMonths = 25 * 12;
 
         // Calculate base EMI (Standard Repayment)
-        const baseEMI = monthlyRate === 0
-            ? loanAmount / termMonths
+        const baseEMI = (monthlyRate === 0 || termMonths === 0)
+            ? (termMonths > 0 ? loanAmount / termMonths : 0)
             : (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, termMonths)) /
             (Math.pow(1 + monthlyRate, termMonths) - 1);
 
@@ -81,7 +81,7 @@ export default function StudentLoanPayoffCalculator({ currency = 'USD' }) {
             totalPayment: loanAmount + totalInterest,
             totalInterest,
             payoffMonths: monthCount,
-            payoffYears: (monthCount / 12).toFixed(1),
+            payoffYears: !isNaN(monthCount) ? (monthCount / 12).toFixed(1) : "0.0",
             schedule,
             interestSaved: extraPayment > 0 ? baseTotalInterest - totalInterest : 0,
             timeSaved: extraPayment > 0 ? termMonths - monthCount : 0

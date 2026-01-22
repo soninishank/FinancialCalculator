@@ -116,7 +116,7 @@ export default function CanadaIncomeTaxCalculator({ currency = 'CAD' }) {
                 <p className="text-xs text-gray-500">
                     Based on <strong>{CANADA_TAX_YEAR}</strong> Federal brackets.
                     Provincial taxes use an <strong>average estimated rate</strong> for simplicity.
-                    CPP/EI calculated at standard 2024 rates.
+                    CPP & EI calculated at standard 2024 rates.
                 </p>
             </div>
         </div>

@@ -76,7 +76,7 @@ export default function ChinaIncomeTaxCalculator({ currency = 'CNY' }) {
 
             <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
                 <p className="text-xs text-gray-500">
-                    Includes <strong>5,000 RMB / month</strong> standard deduction.
+                    Includes <strong>5,000 RMB per month</strong> standard deduction.
                     Calculates Individual Income Tax (IIT) based on 2024 progressive brackets.
                     Social Insurance rates vary by city (avg 10.5% used).
                 </p>

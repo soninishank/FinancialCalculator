@@ -30,7 +30,7 @@ export default function RMDCalculator({ currency = 'USD' }) {
         }
 
         const factor = UNIFORM_LIFETIME_TABLE[age] || 2.9;
-        const currentRMD = balance / factor;
+        const currentRMD = (factor > 0) ? balance / factor : 0;
 
         // Project next 20 years
         const yearlyData = [];
@@ -41,7 +41,7 @@ export default function RMDCalculator({ currency = 'USD' }) {
             if (curAge > 115) break;
 
             const curFactor = UNIFORM_LIFETIME_TABLE[curAge] || 2.9;
-            const rmd = curBalance / curFactor;
+            const rmd = (curFactor > 0) ? curBalance / curFactor : 0;
 
             // Interest earned during the year (simplified: on remaining balance)
             const growthAmount = (curBalance - rmd) * (annualGrowth / 100);

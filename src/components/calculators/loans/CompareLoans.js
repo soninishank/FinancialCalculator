@@ -69,10 +69,10 @@ export default function CompareLoans({ currency }) {
                 <div className="bg-white/10 rounded-xl p-4 border border-white/10">
                     <div className="flex justify-between items-center mb-2">
                         <span className="text-gray-300">True Cost of Flat Rate:</span>
-                        <span className="text-2xl font-bold text-rose-300">{effectiveFlatRate.toFixed(2)}%</span>
+                        <span className="text-2xl font-bold text-rose-300">{!isNaN(effectiveFlatRate) ? effectiveFlatRate.toFixed(2) : "0.00"}%</span>
                     </div>
                     <p className="text-sm text-gray-400">
-                        A Flat Rate of {rate}% is mathematically equal to a Reducing Rate of {effectiveFlatRate.toFixed(2)}%.
+                        A Flat Rate of {rate}% is mathematically equal to a Reducing Rate of {!isNaN(effectiveFlatRate) ? effectiveFlatRate.toFixed(2) : "0.00"}%.
                     </p>
                 </div>
 
@@ -84,7 +84,7 @@ export default function CompareLoans({ currency }) {
                         </span>
                     </div>
                     <p className="text-gray-300">
-                        Always choose <strong>Reducing Balance</strong> unless the Flat Rate is significantly lower (below {(effectiveFlatRate / 1.8).toFixed(1)}%).
+                        Always choose <strong>Reducing Balance</strong> unless the Flat Rate is significantly lower (below {!isNaN(effectiveFlatRate) ? (effectiveFlatRate / 1.8).toFixed(1) : "0.0"}%).
                     </p>
                 </div>
             </div>
@@ -182,7 +182,7 @@ export default function CompareLoans({ currency }) {
                         <p className="text-xs font-semibold text-rose-700 uppercase">Monthly EMI</p>
                         <p className="text-3xl font-extrabold text-rose-900">{moneyFormat(Math.round(flatEMI), currency)}</p>
                         <p className="text-xs text-rose-600 font-medium mt-1">
-                            (+{moneyFormat(Math.round(flatEMI - reducingEMI), currency)} more/month)
+                            (+{moneyFormat(Math.round(flatEMI - reducingEMI), currency)} more per month)
                         </p>
                     </div>
 

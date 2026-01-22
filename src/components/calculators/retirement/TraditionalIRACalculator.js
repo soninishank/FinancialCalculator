@@ -67,7 +67,7 @@ export default function TraditionalIRACalculator({ currency = 'USD' }) {
         const yearsToRMD = Math.max(0, rmdAge - currentAge);
         const balanceAtRMD = currentBalance * Math.pow(1 + expectedReturn / 100, yearsToRMD);
         const rmdDivisor = 26.5; // IRS uniform lifetime table approximation for age 73
-        const firstRMD = balanceAtRMD / rmdDivisor;
+        const firstRMD = (rmdDivisor > 0) ? balanceAtRMD / rmdDivisor : 0;
 
         return {
             years,
@@ -161,8 +161,8 @@ export default function TraditionalIRACalculator({ currency = 'USD' }) {
                             key={status.value}
                             onClick={() => setFilingStatus(status.value)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filingStatus === status.value
-                                    ? 'bg-indigo-600 text-white shadow-md'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                ? 'bg-indigo-600 text-white shadow-md'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             {status.label}

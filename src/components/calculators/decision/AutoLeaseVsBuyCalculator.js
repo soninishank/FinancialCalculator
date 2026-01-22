@@ -21,7 +21,7 @@ export default function AutoLeaseVsBuyCalculator({ currency = 'USD' }) {
         const capitalizedCost = vehiclePrice - downPayment;
 
         // Monthly lease payment = Depreciation + Finance charge
-        const depreciation = (capitalizedCost - residualAmount) / leaseMonths;
+        const depreciation = leaseMonths !== 0 ? (capitalizedCost - residualAmount) / leaseMonths : 0;
         const financeCharge = (capitalizedCost + residualAmount) * moneyFactor;
         const monthlyLeasePayment = depreciation + financeCharge;
 
@@ -34,7 +34,7 @@ export default function AutoLeaseVsBuyCalculator({ currency = 'USD' }) {
         const loanTermMonths = 60; // Standard 5-year auto loan
 
         const monthlyFinancePayment = monthlyRate === 0
-            ? loanAmount / loanTermMonths
+            ? (loanTermMonths !== 0 ? loanAmount / loanTermMonths : 0)
             : (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, loanTermMonths)) /
             (Math.pow(1 + monthlyRate, loanTermMonths) - 1);
 
@@ -56,7 +56,7 @@ export default function AutoLeaseVsBuyCalculator({ currency = 'USD' }) {
 
         // Long-term cost comparison
         const compareMonths = compareYears * 12;
-        let leaseCyclesNeeded = Math.ceil(compareMonths / leaseMonths);
+        let leaseCyclesNeeded = leaseMonths !== 0 ? Math.ceil(compareMonths / leaseMonths) : 0;
         const totalLeaseCostLongTerm = leaseCyclesNeeded * totalLeaseCost;
 
         // If bought: you own+the vehicle
@@ -196,7 +196,7 @@ export default function AutoLeaseVsBuyCalculator({ currency = 'USD' }) {
                                 <p className="text-[10px] text-gray-500 mt-1">{result.leaseMonths} months • No equity</p>
                             </div>
                             <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
-                                <p className="text-xs text-emerald-600 uppercase font-bold mb-2">Buy/Finance Option</p>
+                                <p className="text-xs text-emerald-600 uppercase font-bold mb-2">Buy ÷ Finance Option</p>
                                 <p className="text-2xl font-bold text-emerald-700 mb-1">
                                     {new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(result.monthlyFinancePayment)}/mo
                                 </p>
@@ -253,7 +253,7 @@ export default function AutoLeaseVsBuyCalculator({ currency = 'USD' }) {
                             <p className="font-semibold mb-2">Consider Leasing If:</p>
                             <ul className="list-disc list-inside space-y-1">
                                 <li>You want latest features every few years</li>
-                                <li>You drive under {milesPerYear.toLocaleString()} miles/year</li>
+                                <li>You drive under {milesPerYear.toLocaleString()} miles per year</li>
                                 <li>You prefer lower monthly payments</li>
                             </ul>
                             <p className="font-semibold mt-3 mb-2">Consider Buying If:</p>

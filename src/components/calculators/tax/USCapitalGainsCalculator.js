@@ -84,7 +84,7 @@ export default function USCapitalGainsCalculator({ currency = 'USD' }) {
             taxRate,
             taxAmount,
             netProfit,
-            roi: (netProfit / purchasePrice) * 100
+            roi: purchasePrice > 0 ? (netProfit / purchasePrice) * 100 : 0
         };
     }, [purchasePrice, salePrice, isLongTerm, filingStatus, annualIncome, shortTermRate]);
 
@@ -198,11 +198,11 @@ export default function USCapitalGainsCalculator({ currency = 'USD' }) {
                         <div className="grid grid-cols-2 gap-4 text-center">
                             <div className="bg-emerald-50 p-3 rounded-lg border border-emerald-100">
                                 <p className="text-xs text-emerald-600 font-bold uppercase mb-1">Effective Tax Rate</p>
-                                <p className="text-lg font-bold text-emerald-700">{result.taxRate.toFixed(1)}%</p>
+                                <p className="text-lg font-bold text-emerald-700">{!isNaN(result.taxRate) ? result.taxRate.toFixed(1) : "0.0"}%</p>
                             </div>
                             <div className="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
                                 <p className="text-xs text-indigo-600 font-bold uppercase mb-1">Return on Investment</p>
-                                <p className="text-lg font-bold text-indigo-700">{result.roi.toFixed(1)}%</p>
+                                <p className="text-lg font-bold text-indigo-700">{!isNaN(result.roi) ? result.roi.toFixed(1) : "0.0"}%</p>
                             </div>
                         </div>
                     </div>

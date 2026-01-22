@@ -106,7 +106,7 @@ export default function GoalPlanner({ currency, setCurrency }) {
       dummyInvestedTotal = rows[rows.length - 1].totalInvested;
     }
 
-    const K = dummyInvestedTotal / DUMMY_TARGET;
+    const K = DUMMY_TARGET !== 0 ? dummyInvestedTotal / DUMMY_TARGET : 0;
 
     // 2. Solve for Pre-Tax Maturity (M)
     // M - Tax = Target

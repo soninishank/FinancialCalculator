@@ -180,11 +180,17 @@ export default function AssetAllocation({ currency }) {
                     </div>
                     <div className="mt-6 w-full space-y-2">
                         <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">{LABELS.EQUITY} ({((equity / (equity + debt)) * 100).toFixed(1)}%)</span>
+                            <span className="text-gray-500">{LABELS.EQUITY} ({(() => {
+                                const ratio = (equity / (equity + debt)) * 100;
+                                return !isNaN(ratio) ? ratio.toFixed(1) : "0.0";
+                            })()}%)</span>
                             <span className="font-semibold">{moneyFormat(equity, currency)}</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">{LABELS.DEBT} ({((debt / (equity + debt)) * 100).toFixed(1)}%)</span>
+                            <span className="text-gray-500">{LABELS.DEBT} ({(() => {
+                                const ratio = (debt / (equity + debt)) * 100;
+                                return !isNaN(ratio) ? ratio.toFixed(1) : "0.0";
+                            })()}%)</span>
                             <span className="font-semibold">{moneyFormat(debt, currency)}</span>
                         </div>
                     </div>

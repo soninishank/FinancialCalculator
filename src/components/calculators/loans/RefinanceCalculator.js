@@ -29,7 +29,7 @@ export default function RefinanceCalculator({ currency }) {
     const calculateEMI = (p, r, t) => {
         const monthlyRate = r / 12 / 100;
         const months = t * 12;
-        if (r === 0) return p / months;
+        if (r === 0) return months > 0 ? p / months : 0;
         return (p * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
     };
 
@@ -191,7 +191,7 @@ export default function RefinanceCalculator({ currency }) {
                     {result.monthlySavings > 0 ? (
                         result.breakEvenMonths < 12
                             ? `${Math.ceil(result.breakEvenMonths)} Months`
-                            : `${(result.breakEvenMonths / 12).toFixed(1)} Years`
+                            : `${!isNaN(result.breakEvenMonths) ? (result.breakEvenMonths / 12).toFixed(1) : "0.0"} Years`
                     ) : 'Never'}
                 </p>
                 <p className="text-xs text-gray-400 mt-1">Time to recover costs</p>

@@ -26,7 +26,7 @@ export default function RecurringDeposit({ currency }) {
         if (mode === 'Months') {
             setYears((prev) => Math.round(prev * 12));
         } else {
-            setYears((prev) => Number((prev / 12).toFixed(1)));
+            setYears((prev) => !isNaN(prev) ? Number((prev / 12).toFixed(1)) : 0);
         }
     };
 

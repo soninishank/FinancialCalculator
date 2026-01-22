@@ -93,7 +93,7 @@ export default function TimeToFIRE({ currency }) {
             (useDiscretionary ? Number(expDiscretionary) : 0) * Number(inflationGen) +
             (useHealthcare ? Number(expHealthcare) : 0) * Number(inflationHealth)
         ) / safeTotalMonthlyExpenses;
-        return parseFloat(weighted.toFixed(2));
+        return !isNaN(weighted) ? parseFloat(weighted.toFixed(2)) : 0;
     }, [isAdvancedMode, inflationGen, expHousing, expFood, expTransport, expDiscretionary, expHealthcare, inflationHealth, safeTotalMonthlyExpenses, useHousing, useFood, useTransport, useDiscretionary, useHealthcare]);
 
     const result = useMemo(() => {
@@ -434,13 +434,13 @@ export default function TimeToFIRE({ currency }) {
                 <h5 className="font-bold text-blue-900 mt-4 uppercase tracking-wider text-xs">Core Strategies:</h5>
                 <ul className="list-disc pl-5 space-y-2">
                     <li>
-                        <b>Barista FIRE:</b> You have enough to cover bare <b>essentials</b> (Housing/Food). You only need a low-stress job to cover extra fun spending.
+                        <b>Barista FIRE:</b> You have enough to cover bare <b>essentials</b> (Housing & Food). You only need a low-stress job to cover extra fun spending.
                     </li>
                     <li>
                         <b>Coast FIRE:</b> You have saved enough today that compound interest alone will carry you to a full retirement at age {retirementAge}. You can stop saving!
                     </li>
                     <li>
-                        <b>Fat / Chubby FIRE:</b> You want a luxurious lifestyle. This calculator accounts for that via the "FIRE Levels" badge.
+                        <b>Fat & Chubby FIRE:</b> You want a luxurious lifestyle. This calculator accounts for that via the "FIRE Levels" badge.
                     </li>
                 </ul>
                 <h5 className="font-bold text-blue-900 mt-4 uppercase tracking-wider text-xs">Calculation Logic:</h5>

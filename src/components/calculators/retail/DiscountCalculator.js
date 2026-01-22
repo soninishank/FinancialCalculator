@@ -130,7 +130,7 @@ const DiscountCalculator = ({ currency }) => {
                         <div className="flex justify-between items-center text-sm">
                             <span className="text-emerald-600 dark:text-emerald-400 font-bold">Total Savings</span>
                             <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                                - {moneyFormat(totalSavings, currency)} <span className="text-xs bg-emerald-100 dark:bg-emerald-900/50 px-2 py-0.5 rounded-full ml-1">({effectiveDiscount.toFixed(2)}% off)</span>
+                                - {moneyFormat(totalSavings, currency)} <span className="text-xs bg-emerald-100 dark:bg-emerald-900/50 px-2 py-0.5 rounded-full ml-1">({!isNaN(effectiveDiscount) ? effectiveDiscount.toFixed(2) : "0.00"}% off)</span>
                             </span>
                         </div>
                     </div>
@@ -145,7 +145,7 @@ const DiscountCalculator = ({ currency }) => {
                     <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
                         <span className="text-sm text-gray-500 dark:text-gray-400">You Save</span>
                         <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                            {effectiveDiscount.toFixed(1)}%
+                            {!isNaN(effectiveDiscount) ? effectiveDiscount.toFixed(1) : "0.0"}%
                         </span>
                     </div>
                 </div>

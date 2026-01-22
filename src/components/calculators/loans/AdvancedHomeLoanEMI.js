@@ -53,7 +53,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
     // rateChanges is an array, sync as JSON string if needed, but for now skip complex objects
     const [rateChanges, setRateChanges] = useState([]);
     const [newRateDate, setNewRateDate] = useState(new Date().toISOString().slice(0, 7));
-    const [newRate, setNewRate] = useState('');
+    const [newRate, setNewRate] = useState(0);
 
     // --- STATE: Expenses ---
     const [showExpenses, setShowExpenses] = useUrlState('showExp', false);
@@ -85,7 +85,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
     // Custom One-Time Prepayments
     const [customPrepayments, setCustomPrepayments] = useState([]);
     const [newPrepaymentDate, setNewPrepaymentDate] = useState(new Date().toISOString().slice(0, 7));
-    const [newPrepaymentAmount, setNewPrepaymentAmount] = useState('');
+    const [newPrepaymentAmount, setNewPrepaymentAmount] = useState(0);
 
     // --- STATE: Advanced Comparison & Views
     const [isComparisonMode, setIsComparisonMode] = useState(false);
@@ -268,7 +268,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
 
                     <div className="lg:col-span-1">
                         <InputWithSlider
-                            label={`Margin / Down Payment (DP) (${downPaymentPercent}%)`}
+                            label={`Margin & Down Payment (DP) (${downPaymentPercent}%)`}
                             value={downPaymentPercent}
                             onChange={setDownPaymentPercent}
                             min={0}
@@ -368,9 +368,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                             )}
                             <div className="mt-4 pt-3 border-t border-slate-200 flex justify-between items-center px-1">
                                 <span className="text-[10px] font-black text-slate-900 uppercase tracking-tighter">Effective Fee Cost</span>
-                                <span className="text-xs font-black text-indigo-600">
-                                    {loanFeesMode === 'percent' ? moneyFormat(actualLoanFees, currency) : `${((actualLoanFees / finalLoanAmount) * 100).toFixed(2)}% of Loan`}
-                                </span>
+                                {finalLoanAmount > 0 ? moneyFormat(actualLoanFees, currency) : `${(!isNaN(finalLoanAmount) && finalLoanAmount > 0 ? (actualLoanFees / finalLoanAmount) * 100 : 0).toFixed(2)}% of Loan`}
                             </div>
                         </div>
                     </div>
@@ -520,7 +518,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                     hideLabel
                                 />
                                 <p className="text-[10px] font-black text-slate-900 border-l-2 border-slate-300 pl-2">
-                                    {oneTimeMode === 'percent' ? `Amount: ${moneyFormat(actualOneTimeExpenses, currency)}` : `${((actualOneTimeExpenses / homeValue) * 100).toFixed(2)}% of Value`}
+                                    {homeValue > 0 ? (oneTimeMode === 'percent' ? `Amount: ${moneyFormat(actualOneTimeExpenses, currency)}` : `${(!isNaN(actualOneTimeExpenses) && homeValue > 0 ? ((actualOneTimeExpenses / homeValue) * 100) : 0).toFixed(2)}% of Value`) : "0.00%"}
                                 </p>
                             </div>
 
@@ -546,7 +544,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                     hideLabel
                                 />
                                 <p className="text-[10px] font-black text-slate-900 border-l-2 border-slate-300 pl-2">
-                                    {propertyTaxMode === 'percent' ? `Amount: ${moneyFormat(actualPropertyTaxYearly, currency)}` : `${((actualPropertyTaxYearly / homeValue) * 100).toFixed(2)}% of Value`}
+                                    {homeValue > 0 ? (propertyTaxMode === 'percent' ? `Amount: ${moneyFormat(actualPropertyTaxYearly, currency)}` : `${(!isNaN(actualPropertyTaxYearly) && homeValue > 0 ? ((actualPropertyTaxYearly / homeValue) * 100) : 0).toFixed(2)}% of Value`) : "0.00%"}
                                 </p>
                             </div>
 
@@ -572,7 +570,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                     hideLabel
                                 />
                                 <p className="text-[10px] font-black text-slate-900 border-l-2 border-slate-300 pl-2">
-                                    {homeInsuranceMode === 'percent' ? `Amount: ${moneyFormat(actualHomeInsuranceYearly, currency)}` : `${((actualHomeInsuranceYearly / homeValue) * 100).toFixed(2)}% of Value`}
+                                    {homeValue !== 0 ? (homeInsuranceMode === 'percent' ? `Amount: ${moneyFormat(actualHomeInsuranceYearly, currency)}` : `${!isNaN(actualHomeInsuranceYearly / homeValue) ? ((actualHomeInsuranceYearly / homeValue) * 100).toFixed(2) : "0.00"}% of Value`) : "0.00%"}
                                 </p>
                             </div>
 
@@ -598,7 +596,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                     hideLabel
                                 />
                                 <p className="text-[10px] font-black text-slate-900 border-l-2 border-slate-300 pl-2">
-                                    {maintenanceMode === 'percent' ? `Amount: ${moneyFormat(actualMaintenanceMonthly, currency)}` : `${((actualMaintenanceMonthly / (homeValue / 12)) * 100).toFixed(2)}% of Value`}
+                                    {homeValue !== 0 ? (maintenanceMode === 'percent' ? `Amount: ${moneyFormat(actualMaintenanceMonthly, currency)}` : `${!isNaN(actualMaintenanceMonthly / (homeValue / 12)) ? ((actualMaintenanceMonthly / (homeValue / 12)) * 100).toFixed(2) : "0.00"}% of Value`) : "0.00%"}
                                 </p>
                             </div>
                         </div>
@@ -902,7 +900,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                         <div>
                             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Effective Tenure</p>
                             <p className="text-2xl font-black text-indigo-700 leading-none">
-                                {summary.actualTenureYears.toFixed(1)} <span className="text-sm text-indigo-400 font-bold">Years</span>
+                                {!isNaN(summary.actualTenureYears) ? summary.actualTenureYears.toFixed(1) : "0.0"} <span className="text-sm text-indigo-400 font-bold">Years</span>
                             </p>
                         </div>
                         <div className="text-right border-l-2 border-slate-100 pl-6">
@@ -1041,7 +1039,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-indigo-200 text-sm">Tenure</span>
-                                        <span className="font-bold">{summary.actualTenureYears.toFixed(1)} Years</span>
+                                        <span className="font-bold">{!isNaN(summary.actualTenureYears) ? summary.actualTenureYears.toFixed(1) : "0.0"} Years</span>
                                     </div>
                                 </div>
                             </div>
@@ -1061,7 +1059,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-indigo-100 text-sm">Tenure</span>
-                                        <span className="font-bold">{resultsCompare.summary.actualTenureYears.toFixed(1)} Years</span>
+                                        <span className="font-bold">{!isNaN(resultsCompare.summary.actualTenureYears) ? resultsCompare.summary.actualTenureYears.toFixed(1) : "0.0"} Years</span>
                                     </div>
                                 </div>
 

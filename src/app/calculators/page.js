@@ -5,23 +5,23 @@ import { Providers } from '../providers';
 
 
 export const metadata = {
-    title: 'All SIP, EMI & Investment Calculators | Hashmatic',
+    title: 'All SIP, EMI & Investment Calculators | FinCalc',
     description: "Browse our free, accurate online financial tools. Calculate SIP returns, Home Loan EMIs, Income Tax, and Retirement goals. The complete investor's toolkit.",
     alternates: {
         canonical: 'https://www.hashmatic.in/calculators',
     },
     openGraph: {
-        title: "All Financial Calculators | Hashmatic",
-        description: "Browse our complete list of free investment and loan calculators.",
+        title: "All Financial Calculators | FinCalc",
+        description: "Browse our complete list of free investment and loan calculators. Plan your future with FinCalc's free online tools.",
         url: 'https://www.hashmatic.in/calculators',
-        siteName: 'Hashmatic',
+        siteName: 'FinCalc',
         locale: 'en_IN',
         type: 'website',
     },
     twitter: {
         card: 'summary',
         title: "Financial Calculators Catalog",
-        description: "Plan your future with Hashmatic's free online tools.",
+        description: "Plan your future with FinCalc's free online tools.",
     },
 };
 

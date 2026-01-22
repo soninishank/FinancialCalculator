@@ -44,7 +44,7 @@ const Header = () => {
             <div className="absolute -inset-1 bg-gradient-to-br from-teal-500 to-indigo-600 rounded-xl blur opacity-20 group-hover:opacity-40 transition-opacity"></div>
           </div>
           <span className={`text-xl font-extrabold tracking-tight transition-colors ${isDarkMode ? 'text-white group-hover:text-teal-400' : 'text-gray-900 group-hover:text-teal-600'}`}>
-            Hash<span className="text-indigo-600">matic</span>
+            Fin<span className="text-indigo-600">Calc</span>
           </span>
         </Link>
 

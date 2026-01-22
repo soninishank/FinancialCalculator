@@ -3,7 +3,7 @@ import { ImageResponse } from 'next/og';
 
 
 // Image metadata
-export const alt = 'Hashmatic - Free Online Financial Calculators';
+export const alt = 'FinCalc - Free Online Financial Calculators';
 export const size = {
     width: 1200,
     height: 630,

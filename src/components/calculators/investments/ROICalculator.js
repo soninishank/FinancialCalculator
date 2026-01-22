@@ -132,7 +132,7 @@ export default function ROICalculator({ currency = 'INR' }) {
         if (mode === 'months') {
             setMonths(Math.round(years * 12));
         } else {
-            setYears(Number((months / 12).toFixed(2)));
+            setYears(Number(!isNaN(months) ? (months / 12).toFixed(2) : 0));
         }
         setTimeMode(mode);
     };
@@ -243,7 +243,7 @@ export default function ROICalculator({ currency = 'INR' }) {
             customCards={[
                 {
                     label: "Annualized Return (CAGR)",
-                    value: `${result.annualizedRoi.toFixed(2)}%`,
+                    value: `${!isNaN(result.annualizedRoi) ? result.annualizedRoi.toFixed(2) : "0.00"}%`,
                     color: "text-blue-600",
                     subtext: "Effective yearly growth rate"
                 }

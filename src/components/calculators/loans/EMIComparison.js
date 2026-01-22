@@ -351,7 +351,7 @@ export default function EMIComparison({ currency }) {
                         <YAxis
                             axisLine={false}
                             tickLine={false}
-                            tickFormatter={(value) => (value / 100000).toFixed(1) + 'L'}
+                            tickFormatter={(value) => !isNaN(value) ? (value / 100000).toFixed(1) + 'L' : "0L"}
                             tick={{ fill: '#6B7280', fontSize: 12 }}
                         />
                         <Tooltip

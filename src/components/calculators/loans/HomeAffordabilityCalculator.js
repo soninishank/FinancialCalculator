@@ -59,8 +59,8 @@ export default function HomeAffordabilityCalculator({ currency = 'USD' }) {
 
             const monthlyRate = interestRate / 100 / 12;
             const numPayments = loanTerm * 12;
-            const testPI = monthlyRate === 0
-                ? testLoanAmount / numPayments
+            const testPI = (monthlyRate === 0 || numPayments === 0)
+                ? (numPayments > 0 ? testLoanAmount / numPayments : 0)
                 : (testLoanAmount * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) /
                 (Math.pow(1 + monthlyRate, numPayments) - 1);
 
@@ -103,8 +103,8 @@ export default function HomeAffordabilityCalculator({ currency = 'USD' }) {
         const totalMonthlyPayment = monthlyPI + monthlyPropertyTax + monthlyInsurance + monthlyHOA + pmiPayment;
 
         // DTI ratios
-        const frontEndDTI = (totalMonthlyPayment / monthlyIncome) * 100;
-        const backEndDTI = ((totalMonthlyPayment + monthlyDebts) / monthlyIncome) * 100;
+        const frontEndDTI = (monthlyIncome > 0) ? (totalMonthlyPayment / monthlyIncome) * 100 : 0;
+        const backEndDTI = (monthlyIncome > 0) ? ((totalMonthlyPayment + monthlyDebts) / monthlyIncome) * 100 : 0;
 
         return {
             maxHomePrice: homePrice,
@@ -338,20 +338,20 @@ export default function HomeAffordabilityCalculator({ currency = 'USD' }) {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl text-center">
                                 <p className="text-xs text-blue-600 uppercase font-bold mb-1">Front-End DTI</p>
-                                <p className="text-xl font-bold text-blue-700">{result.frontEndDTI.toFixed(1)}%</p>
-                                <p className="text-[10px] text-blue-500 mt-1">Housing / Income (≤28%)</p>
+                                <p className="text-xl font-bold text-blue-700">{!isNaN(result.frontEndDTI) ? result.frontEndDTI.toFixed(1) : "0.0"}%</p>
+                                <p className="text-[10px] text-blue-500 mt-1">Housing ÷ Income (≤28%)</p>
                             </div>
                             <div className="bg-purple-50 border border-purple-100 p-4 rounded-xl text-center">
                                 <p className="text-xs text-purple-600 uppercase font-bold mb-1">Back-End DTI</p>
-                                <p className="text-xl font-bold text-purple-700">{result.backEndDTI.toFixed(1)}%</p>
-                                <p className="text-[10px] text-purple-500 mt-1">Total Debt / Income (≤36%)</p>
+                                <p className="text-xl font-bold text-purple-700">{!isNaN(result.backEndDTI) ? result.backEndDTI.toFixed(1) : "0.0"}%</p>
+                                <p className="text-[10px] text-purple-500 mt-1">Total Debt ÷ Income (≤36%)</p>
                             </div>
                         </div>
 
                         {result.needsPMI && (
                             <div className="p-3 bg-amber-50 border border-amber-100 rounded-xl text-center">
                                 <p className="text-xs text-amber-700">
-                                    💡 Tip: Put down 20% to avoid ${result.pmiPayment.toFixed(0)}/month PMI
+                                    💡 Tip: Put down 20% to avoid ${!isNaN(result.pmiPayment) ? result.pmiPayment.toFixed(0) : "0"}/month PMI
                                 </p>
                             </div>
                         )}

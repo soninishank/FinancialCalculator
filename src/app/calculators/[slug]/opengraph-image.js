@@ -92,7 +92,7 @@ export default async function Image({ params }) {
         ),
         {
             ...size,
-            alt: `${title} - Hashmatic Financial Calculator`,
+            alt: `${title} - FinCalc Financial Calculator`,
         }
     );
 }

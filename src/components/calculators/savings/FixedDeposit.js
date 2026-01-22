@@ -167,7 +167,7 @@ export default function FixedDeposit({ currency = 'INR' }) {
 
             {/* Payout Type */}
             <div>
-                <label className="text-sm font-black text-slate-900 uppercase tracking-tight mb-2 block">Deposit Type / Payout</label>
+                <label className="text-sm font-black text-slate-900 uppercase tracking-tight mb-2 block">Deposit Type ÷ Payout</label>
                 <div className="grid grid-cols-3 gap-2">
                     {['cumulative', 'monthly', 'quarterly', 'half-yearly', 'yearly'].map((type) => (
                         <button
@@ -222,7 +222,9 @@ export default function FixedDeposit({ currency = 'INR' }) {
                             gain={result.totalInterest}
                             total={result.maturityValue}
                             currency={currency}
-                            years={tenureMode === 'Years' ? tenureValue.toFixed(1) : (tenureValue / 12).toFixed(1)}
+                            years={tenureMode === 'Years'
+                                ? (!isNaN(tenureValue) ? tenureValue.toFixed(1) : "0.0")
+                                : (!isNaN(tenureValue) ? (tenureValue / 12).toFixed(1) : "0.0")}
                         />
                         {result.payoutAmount > 0 && (
                             <div className="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded-r-xl">

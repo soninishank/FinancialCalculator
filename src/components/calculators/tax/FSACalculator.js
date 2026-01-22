@@ -30,7 +30,7 @@ export default function FSACalculator({ currency = 'USD' }) {
         const totalTaxSavings = federalSavings + stateSavings + ficaSavings;
 
         // Effective discount on expenses
-        const effectiveDiscountRate = (totalTaxSavings / cappedContribution) * 100;
+        const effectiveDiscountRate = cappedContribution > 0 ? (totalTaxSavings / cappedContribution) * 100 : 0;
 
         // Monthly planning
         const monthlyContribution = cappedContribution / 12;
@@ -77,8 +77,8 @@ export default function FSACalculator({ currency = 'USD' }) {
                             key={type.value}
                             onClick={() => setFsaType(type.value)}
                             className={`px-4 py-3 rounded-lg text-left transition-all ${fsaType === type.value
-                                    ? 'bg-teal-600 text-white shadow-md'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                ? 'bg-teal-600 text-white shadow-md'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             <div className="font-medium text-sm">{type.label}</div>
@@ -143,7 +143,7 @@ export default function FSACalculator({ currency = 'USD' }) {
                             <p className="text-xs font-bold uppercase mb-1 opacity-80">Total Annual Tax Savings</p>
                             <p className="text-3xl font-bold">{new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.totalTaxSavings)}</p>
                             <p className="text-xs mt-2 opacity-90">
-                                {result.effectiveDiscountRate.toFixed(1)}% effective discount on expenses
+                                {!isNaN(result.effectiveDiscountRate) ? result.effectiveDiscountRate.toFixed(1) : "0.0"}% effective discount on expenses
                             </p>
                         </div>
 

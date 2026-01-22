@@ -105,7 +105,7 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
                 const lastPoint = dataPoints[dataPoints.length - 1];
                 if (lastPoint && lastPoint.month === m) continue;
 
-                const yearLabel = (m / 12).toFixed(1);
+                const yearLabel = !isNaN(m / 12) ? (m / 12).toFixed(1) : "0.0";
 
                 // Format label: remove .0 if whole number
                 const displayYear = Number(yearLabel) % 1 === 0 ? Number(yearLabel) : yearLabel;
@@ -133,7 +133,7 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
         }
 
         if (yearlyData.length === 0 && totalMonths > 0) {
-            const yearVal = (totalMonths / 12).toFixed(1);
+            const yearVal = !isNaN(totalMonths / 12) ? (totalMonths / 12).toFixed(1) : "0.0";
             yearlyData.push({
                 year: Number(yearVal) % 1 === 0 ? Number(yearVal) : yearVal,
                 invested: totalInvested,
@@ -266,7 +266,7 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
                             <div className="text-lg font-black text-orange-700">
                                 {moneyFormat(results.finalNet, currency, "word")}
                             </div>
-                            <p className="text-[10px] text-orange-600/70">{(growthRate - expenseRatio).toFixed(1)}% effective</p>
+                            <p className="text-[10px] text-orange-600/70">{!isNaN(growthRate - expenseRatio) ? (growthRate - expenseRatio).toFixed(1) : "0.0"}% effective</p>
                         </div>
                     </div>
 

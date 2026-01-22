@@ -126,16 +126,16 @@ const MarginCalculator = ({ currency }) => {
                         <div className="pt-4 md:pt-0 md:pl-6">
                             <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Margin</p>
                             <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mt-1">
-                                {margin.toFixed(2)}%
+                                {!isNaN(margin) ? margin.toFixed(2) : "0.00"}%
                             </p>
-                            <p className="text-xs text-gray-400 mt-1">(Profit / Revenue)</p>
+                            <p className="text-xs text-gray-400 mt-1">(Profit ÷ Revenue)</p>
                         </div>
                         <div className="pt-4 md:pt-0 md:pl-6">
                             <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Markup</p>
                             <p className="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">
-                                {markup.toFixed(2)}%
+                                {!isNaN(markup) ? markup.toFixed(2) : "0.00"}%
                             </p>
-                            <p className="text-xs text-gray-400 mt-1">(Profit / Cost)</p>
+                            <p className="text-xs text-gray-400 mt-1">(Profit ÷ Cost)</p>
                         </div>
                     </div>
                 </div>
@@ -157,7 +157,7 @@ const MarginCalculator = ({ currency }) => {
                     <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
                         <span className="text-sm text-gray-500 dark:text-gray-400">Margin</span>
                         <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                            {margin.toFixed(1)}%
+                            {!isNaN(margin) ? margin.toFixed(1) : "0.0"}%
                         </span>
                     </div>
                 </div>

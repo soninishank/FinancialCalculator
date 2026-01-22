@@ -336,7 +336,7 @@ export default function StepDownWithdrawal({ currency }) {
                     <div className="text-4xl font-extrabold">
                         {isSuccess
                             ? 'On Track'
-                            : `${result.yearsLasted.toFixed(1)} Years`}
+                            : `${!isNaN(result.yearsLasted) ? result.yearsLasted.toFixed(1) : "0.0"} Years`}
                     </div>
                     <p className="text-sm mt-2">
                         {isSuccess
