@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useUrlState } from '../../../hooks/useUrlState';
 import InputWithSlider from '../../common/InputWithSlider';
 
 const DividendYieldCalculator = ({ currency }) => {
-    const [stockPrice, setStockPrice] = useState(100);
-    const [dividendPerShare, setDividendPerShare] = useState(5);
+    const [stockPrice, setStockPrice] = useUrlState('price', 100);
+    const [dividendPerShare, setDividendPerShare] = useUrlState('div', 5);
     const [yieldValue, setYieldValue] = useState(0);
 
     useEffect(() => {

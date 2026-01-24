@@ -163,7 +163,9 @@ export default function CalculatorPage() {
             </ErrorBoundary>
 
             {/* AuthorBio removed as per user request */}
-            <SocialShare title={meta.title} />
+            <Suspense fallback={<div className="h-20 animate-pulse bg-gray-50 dark:bg-slate-800/50 rounded-xl mt-8"></div>}>
+              <SocialShare title={meta.title} />
+            </Suspense>
 
             {/* Comment Section */}
             <CommentSection slug={slug} />

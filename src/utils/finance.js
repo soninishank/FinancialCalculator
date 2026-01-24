@@ -3,6 +3,15 @@ export function calcSIPFutureValue(P, r_m, n) {
   return P * ((Math.pow(1 + r_m, n) - 1) / r_m) * (1 + r_m);
 }
 
+const parseDateUTC = (dateStr) => {
+  if (!dateStr) return new Date();
+  const parts = dateStr.split('-');
+  const y = parseInt(parts[0]);
+  const m = parts.length > 1 ? parseInt(parts[1]) - 1 : 0;
+  const d = parts.length > 2 ? parseInt(parts[2]) : 1;
+  return new Date(Date.UTC(y, m, d, 12, 0, 0)); // Noon UTC to avoid boundary shifts
+};
+
 export function calcLumpFutureValue(L, r_m, n) {
   return L * Math.pow(1 + r_m, n);
 }
@@ -11,8 +20,8 @@ export function calcLumpFutureValue(L, r_m, n) {
 export function calculateSimpleInterest({ principal, rate, time, timeUnit = 'years', startDate, endDate, scheduleStartDate = new Date().toISOString().slice(0, 7) }) {
   let t = 0;
   if (startDate && endDate) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const start = parseDateUTC(startDate);
+    const end = parseDateUTC(endDate);
     const diffTime = Math.abs(end - start);
     t = diffTime / (1000 * 60 * 60 * 24 * 365.25); // years
   } else {
@@ -29,7 +38,9 @@ export function calculateSimpleInterest({ principal, rate, time, timeUnit = 'yea
   const yearlyData = [];
   const monthlyData = [];
   const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const [startYear, startMonth] = scheduleStartDate.split('-').map(Number);
+  const startObj = parseDateUTC(scheduleStartDate);
+  const sYear = startObj.getUTCFullYear();
+  const sMonth = startObj.getUTCMonth();
 
   const totalMonths = Math.min(Math.ceil(t * 12), 1200); // Cap at 100 years for safety
   if (isNaN(totalMonths) || totalMonths <= 0) return { interest, totalAmount: P + interest, timeInYears: t, yearlyData: [], monthlyData: [] };
@@ -39,9 +50,9 @@ export function calculateSimpleInterest({ principal, rate, time, timeUnit = 'yea
     const currentT = monthsElapsed / 12;
     const currentInterest = (P * R * currentT) / 100;
 
-    const actualMonthIndex = (startMonth - 1 + m - 1) % 12;
-    const yearsElapsed = Math.floor((startMonth - 1 + m - 1) / 12);
-    const actualYear = startYear + yearsElapsed;
+    const actualMonthIndex = (sMonth + m - 1) % 12;
+    const yearsElapsed = Math.floor((sMonth + m - 1) / 12);
+    const actualYear = sYear + yearsElapsed;
 
     monthlyData.push({
       year: actualYear,
@@ -74,8 +85,8 @@ export function calculateSimpleInterest({ principal, rate, time, timeUnit = 'yea
 export function calculateCompoundInterest({ principal, rate, time, timeUnit = 'years', frequency = 1, startDate, endDate, scheduleStartDate = new Date().toISOString().slice(0, 7) }) {
   let t = 0;
   if (startDate && endDate) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const start = parseDateUTC(startDate);
+    const end = parseDateUTC(endDate);
     const diffTime = Math.abs(end - start);
     t = diffTime / (1000 * 60 * 60 * 24 * 365.25); // years
   } else {
@@ -93,7 +104,9 @@ export function calculateCompoundInterest({ principal, rate, time, timeUnit = 'y
   const yearlyData = [];
   const monthlyData = [];
   const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const [startYear, startMonth] = scheduleStartDate.split('-').map(Number);
+  const startObj = parseDateUTC(scheduleStartDate);
+  const sYear = startObj.getUTCFullYear();
+  const sMonth = startObj.getUTCMonth();
 
   const totalMonths = Math.min(Math.ceil(t * 12), 1200); // Cap at 100 years for safety
   if (isNaN(totalMonths) || totalMonths <= 0) return { interest: amount - P, totalAmount: amount, timeInYears: t, yearlyData: [], monthlyData: [] };
@@ -102,9 +115,9 @@ export function calculateCompoundInterest({ principal, rate, time, timeUnit = 'y
     const currentT = m / 12;
     const currentAmount = P * Math.pow(1 + r / n, n * currentT);
 
-    const actualMonthIndex = (startMonth - 1 + m - 1) % 12;
-    const yearsElapsed = Math.floor((startMonth - 1 + m - 1) / 12);
-    const actualYear = startYear + yearsElapsed;
+    const actualMonthIndex = (sMonth + m - 1) % 12;
+    const yearsElapsed = Math.floor((sMonth + m - 1) / 12);
+    const actualYear = sYear + yearsElapsed;
 
     monthlyData.push({
       year: actualYear,
@@ -182,14 +195,14 @@ export function calculateRealRate(nominalRate, inflationRate) {
 
 export function computeLoanAmortization({ principal, annualRate, years, emi, startDate }) {
   const R_m = annualRate / 12 / 100;
-  const N = years * 12;
+  let N = years * 12;
 
   let balance = principal;
 
   // Start Date Logic
-  const start = startDate ? new Date(startDate) : new Date();
-  const startMonth = start.getMonth(); // 0-based
-  const startYear = start.getFullYear();
+  const start = parseDateUTC(startDate);
+  const startMonth = start.getUTCMonth(); // 0-based
+  const startYear = start.getUTCFullYear();
 
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -267,6 +280,9 @@ export function computeLoanAmortization({ principal, annualRate, years, emi, sta
       totalPaidPercent: yearTotalPaidPercent
     });
   });
+
+  // Calculate total months taken
+  N = allMonthlyRows.length;
 
   let finalTotalInterest = (emi * N) - principal;
   let finalTotalPaid = emi * N;
@@ -420,9 +436,9 @@ export function computeAdvancedLoanAmortization({
   let currentMonthlyExtra = monthlyExtra;
 
   let balance = principal;
-  const start = startDate ? new Date(startDate) : new Date();
-  const startMonth = start.getMonth();
-  const startYear = start.getFullYear();
+  const start = parseDateUTC(startDate);
+  const startMonth = start.getUTCMonth();
+  const startYear = start.getUTCFullYear();
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   const allMonthlyRows = [];
@@ -522,15 +538,13 @@ export function computeAdvancedLoanAmortization({
 
     // 4. Update Balance
     balance -= (principalPaid + prepaymentThisMonth);
-    if (balance < 0) balance = 0; // Floating point safety
+    if (balance < 1) balance = 0; // Floating point safety - close loan if < 1 unit
 
     // STRATEGY: Reduce EMI (Recalculate EMI to keep original tenure)
     // Only if we made a prepayment this month and option is selected and we still have balance.
     if (prepaymentStrategy === 'reduce_emi' && prepaymentThisMonth > 0 && balance > 0) {
-      const remainingMonths = N - processingMonth;
-      // If we are past original tenure? unlikely with prepayments.
+      const remainingMonths = N - (processingMonth - 1) - 1; // Months remaining after THIS month
       if (remainingMonths > 0) {
-        // Recalculate EMI required to clear 'balance' in 'remainingMonths'
         currentBaseEMI = calculateEMI(balance, R_m, remainingMonths);
       }
     }
@@ -821,7 +835,9 @@ export function calculateDetailedCAGR({ beginningValue, endingValue, time, timeU
   const yearlyData = [];
   const monthlyData = [];
   const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const [startYear, startMonth] = scheduleStartDate.split('-').map(Number);
+  const startObj = parseDateUTC(scheduleStartDate);
+  const sYear = startObj.getUTCFullYear();
+  const sMonth = startObj.getUTCMonth();
 
   const totalMonths = Math.min(Math.ceil(t * 12), 1200); // Cap at 100 years for safety
   if (isNaN(totalMonths) || totalMonths <= 0) return { cagr, timeInYears: t, yearlyData: [], monthlyData: [] };
@@ -833,9 +849,9 @@ export function calculateDetailedCAGR({ beginningValue, endingValue, time, timeU
     const currentT = monthsElapsed / 12;
     const currentValue = P * Math.pow(1 + rate, currentT);
 
-    const actualMonthIndex = (startMonth - 1 + m - 1) % 12;
-    const yearsElapsed = Math.floor((startMonth - 1 + m - 1) / 12);
-    const actualYear = startYear + yearsElapsed;
+    const actualMonthIndex = (sMonth + m - 1) % 12;
+    const yearsElapsed = Math.floor((sMonth + m - 1) / 12);
+    const actualYear = sYear + yearsElapsed;
 
     monthlyData.push({
       year: actualYear,
@@ -1060,9 +1076,9 @@ export function computeSWPPlan({
   effectiveYears = Math.min(effectiveYears, MAX_YEARS_SWP);
   const totalMonthsRequested = Math.ceil(effectiveYears * 12);
 
-  const startObj = new Date(startDate);
-  const startMonth = startObj.getMonth();
-  const startYear = startObj.getFullYear();
+  const startObj = parseDateUTC(startDate);
+  const startMonth = startObj.getUTCMonth();
+  const startYear = startObj.getUTCFullYear();
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   // Process Year by Year
@@ -1202,9 +1218,9 @@ export function computeYearlySchedule({
   let sipMonths = 0;
 
   if (calculationMode === 'date' && startDate && endDate) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    totalMonths = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+    const start = parseDateUTC(startDate);
+    const end = parseDateUTC(endDate);
+    totalMonths = (end.getUTCFullYear() - start.getUTCFullYear()) * 12 + (end.getUTCMonth() - start.getUTCMonth());
     // Since we usually treat "end of month" for calculations, if end date is same month as start, it's 0 or 1.
     // Let's ensure at least 1 month if they are different days? 
     // Actually, simple month diff is standard for these calculators.
@@ -1226,9 +1242,9 @@ export function computeYearlySchedule({
   const rows = [];
   const monthlyRows = [];
 
-  const startObj = new Date(startDate);
-  const startMonth = startObj.getMonth();
-  const startYear = startObj.getFullYear();
+  const startObj = parseDateUTC(startDate);
+  const startMonth = startObj.getUTCMonth();
+  const startYear = startObj.getUTCFullYear();
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   for (let m = 1; m <= totalMonths; m++) {
@@ -2039,7 +2055,9 @@ export function computePPF({ investmentAmount, frequency, interestRate, years, s
   const N = Number(years);
   const P = Number(investmentAmount);
 
-  const [startYear, startMonth] = startDate.split('-').map(Number);
+  const startObj = parseDateUTC(startDate);
+  const sYear = startObj.getUTCFullYear();
+  const sMonth = startObj.getUTCMonth();
   const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   const yearlyData = [];
@@ -2077,8 +2095,8 @@ export function computePPF({ investmentAmount, frequency, interestRate, years, s
     cumulativeInterest += monthlyAccrued;
 
     const monthsElapsed = month - 1;
-    const yearsElapsed = Math.floor((startMonth - 1 + monthsElapsed) / 12);
-    const actualYear = startYear + yearsElapsed;
+    const yearsElapsed = Math.floor((sMonth + monthsElapsed) / 12);
+    const actualYear = sYear + yearsElapsed;
     const monthInYear = ((month - 1) % 12) + 1;
     const isYearEnd = (month % 12 === 0);
 
@@ -2088,7 +2106,7 @@ export function computePPF({ investmentAmount, frequency, interestRate, years, s
       annualAccruedInterest = 0;
     }
 
-    const actualMonthIndex = (startMonth - 1 + month - 1) % 12;
+    const actualMonthIndex = (sMonth + month - 1) % 12;
     const actualMonthName = monthNames[actualMonthIndex];
 
     monthlyData.push({

@@ -43,7 +43,13 @@ export default async function Page({ params }) {
     const { slug } = await params;
     const meta = manifest.find((m) => m.slug === slug);
 
-    if (!meta) return <CalculatorPage />;
+    if (!meta) {
+        return (
+            <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+                <CalculatorPage />
+            </Suspense>
+        );
+    }
 
     const faqs = calculatorFaqs[slug] || [];
 

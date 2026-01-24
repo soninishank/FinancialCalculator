@@ -70,6 +70,15 @@ export const calculateXIRR = (cashFlows, guess = 0.1) => {
     return "#NUM! (Did not converge)";
 };
 
+const parseDateUTC = (dateStr) => {
+    if (!dateStr) return null;
+    const parts = dateStr.split('-');
+    const y = parseInt(parts[0]);
+    const m = parts.length > 1 ? parseInt(parts[1]) - 1 : 0;
+    const d = parts.length > 2 ? parseInt(parts[2]) : 1;
+    return new Date(Date.UTC(y, m, d, 12, 0, 0)); // Noon UTC to avoid boundary shifts
+};
+
 /**
  * Generates a series of cash flows based on start date, maturity date, and frequency.
  * @param {string} startDate - ISO string YYYY-MM-DD
@@ -81,11 +90,11 @@ export const calculateXIRR = (cashFlows, guess = 0.1) => {
  */
 export const generateSimpleFlows = (startDate, maturityDate, frequency, recurringAmount, maturityAmount) => {
     const flows = [];
-    let currentDate = new Date(startDate);
-    const end = new Date(maturityDate);
+    let currentDate = parseDateUTC(startDate);
+    const end = parseDateUTC(maturityDate);
     const amt = Number(recurringAmount);
 
-    if (isNaN(currentDate.getTime()) || isNaN(end.getTime()) || isNaN(amt) || isNaN(Number(maturityAmount))) {
+    if (!currentDate || !end || isNaN(currentDate.getTime()) || isNaN(end.getTime()) || isNaN(amt) || isNaN(Number(maturityAmount))) {
         return { error: "Invalid input values" };
     }
 
@@ -96,19 +105,19 @@ export const generateSimpleFlows = (startDate, maturityDate, frequency, recurrin
     // Generate Installments
     while (currentDate < end) {
         flows.push({
-            date: new Date(currentDate), // Clone
+            date: new Date(currentDate), // Clone UTC date
             amount: -Math.abs(amt) // Investment is outflow
         });
 
-        // Increment date
-        if (frequency === 'monthly') currentDate.setMonth(currentDate.getMonth() + 1);
-        else if (frequency === 'quarterly') currentDate.setMonth(currentDate.getMonth() + 3);
-        else if (frequency === 'yearly') currentDate.setFullYear(currentDate.getFullYear() + 1);
+        // Increment date using UTC methods to avoid DST/timezone shifts
+        if (frequency === 'monthly') currentDate.setUTCMonth(currentDate.getUTCMonth() + 1);
+        else if (frequency === 'quarterly') currentDate.setUTCMonth(currentDate.getUTCMonth() + 3);
+        else if (frequency === 'yearly') currentDate.setUTCFullYear(currentDate.getUTCFullYear() + 1);
     }
 
     // Add Maturity/Current Value
     flows.push({
-        date: end,
+        date: end, // end is already UTC
         amount: Math.abs(Number(maturityAmount)) // Inflow
     });
 

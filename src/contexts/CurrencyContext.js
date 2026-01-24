@@ -1,5 +1,6 @@
 // src/contexts/CurrencyContext.js
 import React, { createContext, useContext, useState } from 'react';
+import { useUrlState } from '../hooks/useUrlState';
 
 // Create context
 const CurrencyContext = createContext({
@@ -11,7 +12,7 @@ const CurrencyContext = createContext({
  * CurrencyProvider - wraps the app and provides currency state
  */
 export function CurrencyProvider({ children }) {
-  const [currency, setCurrency] = useState('INR');
+  const [currency, setCurrency] = useUrlState('curr', 'INR');
   const [isLocked, setIsLocked] = useState(false);
   return (
     <CurrencyContext.Provider value={{ currency, setCurrency, isLocked, setIsLocked }}>

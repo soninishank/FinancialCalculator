@@ -91,7 +91,9 @@ export default async function Page({ searchParams }) {
                     </h1>
                     <p className="text-gray-500 dark:text-slate-400 text-lg">Browse our complete list of free investment and loan tools.</p>
                 </div>
-                <CalculatorsList initialFiltered={initialFiltered} initialQ={q} />
+                <Suspense fallback={<div className="max-w-6xl mx-auto px-6 py-12 text-center text-gray-500">Loading calculators...</div>}>
+                    <CalculatorsList initialFiltered={initialFiltered} initialQ={q} />
+                </Suspense>
             </Providers>
         </>
     );

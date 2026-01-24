@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 /**
  * A hook that works like useState but syncs the value with a URL query parameter.
@@ -15,7 +15,6 @@ export function useUrlState(key, defaultValue, options = {}) {
 
     const router = useRouter();
     const pathname = usePathname();
-    const searchParams = useSearchParams();
     const isFirstRender = useRef(true);
 
     // Initial state from URL or default
