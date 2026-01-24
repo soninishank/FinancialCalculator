@@ -5,14 +5,14 @@ import { Providers } from '../providers';
 
 
 export const metadata = {
-    title: 'All SIP, EMI & Investment Calculators | FinCalc',
-    description: "Browse our free, accurate online financial tools. Calculate SIP returns, Home Loan EMIs, Income Tax, and Retirement goals. The complete investor's toolkit.",
+    title: 'FinCalc Calculator Directory - Browse All Financial Tools',
+    description: "Explore our comprehensive directory of free online financial tools. Find SIP, EMI, Income Tax, and Retirement calculators in one place. Accurate and easy to use.",
     alternates: {
         canonical: 'https://www.hashmatic.in/calculators',
     },
     openGraph: {
-        title: "All Financial Calculators | FinCalc",
-        description: "Browse our complete list of free investment and loan calculators. Plan your future with FinCalc's free online tools.",
+        title: "Financial Calculator Directory | FinCalc",
+        description: "Browse our complete directory of free investment and loan calculators. Plan your future with FinCalc's free online tools.",
         url: 'https://www.hashmatic.in/calculators',
         siteName: 'FinCalc',
         locale: 'en_IN',
@@ -20,7 +20,7 @@ export const metadata = {
     },
     twitter: {
         card: 'summary',
-        title: "Financial Calculators Catalog",
+        title: "FinCalc Calculator Directory",
         description: "Plan your future with FinCalc's free online tools.",
     },
 };
@@ -47,8 +47,8 @@ export default async function Page({ searchParams }) {
     const schema = {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
-        "name": "Financial Calculators Catalog",
-        "description": "A comprehensive list of free financial tools for SIP, EMI, and investment planning.",
+        "name": "FinCalc Calculator Directory",
+        "description": "A comprehensive directory of free financial tools for SIP, EMI, and investment planning.",
         "url": "https://www.hashmatic.in/calculators",
         "mainEntity": {
             "@type": "ItemList",

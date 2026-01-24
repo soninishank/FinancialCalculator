@@ -15,14 +15,25 @@ export async function generateMetadata({ params }) {
     const pageUrl = `${baseUrl}/calculators/${slug}`;
     const defaultImage = `${baseUrl}/logo192.png`; // Fallback image
 
+    // Enhanced keywords - combine manifest keywords with additional long-tail terms
+    const keywords = [
+        ...meta.keywords,
+        'free online calculator',
+        'financial planning tool',
+        meta.title.toLowerCase(),
+        `${meta.title.toLowerCase()} india`,
+        `${meta.title.toLowerCase()} online`
+    ].join(', ');
+
     return {
-        title: meta.title,
+        title: `${meta.title} - Free Online Tool`,
         description: meta.description,
+        keywords: keywords,
         alternates: {
             canonical: pageUrl,
         },
         openGraph: {
-            title: `${meta.title} | Financial Tools`,
+            title: `${meta.title} | FinCalc Financial Tools`,
             description: meta.description,
             url: pageUrl,
             siteName: 'FinCalc',
@@ -30,7 +41,6 @@ export async function generateMetadata({ params }) {
             type: 'website',
         },
         twitter: {
-            // card: 'summary_large_image', // Handled by Next.js automatically
             title: meta.title,
             description: meta.description,
         },
@@ -58,7 +68,8 @@ export default async function Page({ params }) {
         "@graph": [
             {
                 "@type": "SoftwareApplication",
-                "name": meta.title,
+                "name": `FinCalc ${meta.title}`,
+                "url": `https://www.hashmatic.in/calculators/${slug}`,
                 "description": meta.description,
                 "applicationCategory": "FinanceApplication",
                 "operatingSystem": "Web",
@@ -119,9 +130,6 @@ export default async function Page({ params }) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
             />
-            <div className="sr-only">
-                <h1>{meta.title} | Financial Calculator</h1>
-            </div>
             <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading calculator...</div>}>
                 <CalculatorPage />
             </Suspense>

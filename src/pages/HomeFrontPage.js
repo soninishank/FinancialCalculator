@@ -85,7 +85,15 @@ export default function HomeFrontPage() {
               { slug: 'pure-sip', title: 'SIP Calculator', desc: 'Plan your mutual fund wealth growth' },
               { slug: 'advanced-home-loan', title: 'Home Loan EMI', desc: 'Calculate EMIs with prepayments' },
               { slug: 'india-tax', title: 'Income Tax', desc: 'Compare Old vs New Tax Regimes' },
-              { slug: 'ultimate-fire-planner', title: 'FIRE Planner', desc: 'Track your path to early retirement' }
+              { slug: 'ultimate-fire-planner', title: 'FIRE Planner', desc: 'Track your path to early retirement' },
+              { slug: 'lump-sum', title: 'Lump Sum Calculator', desc: 'One-time investment growth calculator' },
+              { slug: 'step-up-sip', title: 'Step-Up SIP', desc: 'Increase SIP amount annually' },
+              { slug: 'swp-calculator', title: 'SWP Calculator', desc: 'Systematic withdrawal planning' },
+              { slug: 'ppf-calculator', title: 'PPF Calculator', desc: 'Public Provident Fund calculator' },
+              { slug: 'fixed-deposit', title: 'FD Calculator', desc: 'Fixed deposit maturity calculator' },
+              { slug: 'loan-emi', title: 'EMI Calculator', desc: 'All-in-one loan EMI calculator' },
+              { slug: 'cagr-calculator', title: 'CAGR Calculator', desc: 'Compound annual growth rate' },
+              { slug: 'gst-calculator', title: 'GST Calculator', desc: 'GST inclusive/exclusive calculator' }
             ].map((calc) => (
               <Link
                 key={calc.slug}

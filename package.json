@@ -56,7 +56,11 @@
   "eslintConfig": {
     "extends": [
       "next/core-web-vitals"
-    ]
+    ],
+    "rules": {
+      "no-unused-vars": "error",
+      "no-undef": "error"
+    }
   },
   "browserslist": {
     "production": [

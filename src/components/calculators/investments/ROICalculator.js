@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import CalculatorLayout from '../../common/CalculatorLayout';
 import InputWithSlider from '../../common/InputWithSlider';
 import { downloadPDF } from '../../../utils/export';
@@ -16,17 +16,17 @@ import { useCalculatorState } from '../../../hooks/useCalculatorState';
 import UnifiedSummary from '../../common/UnifiedSummary';
 
 export default function ROICalculator({ currency = 'INR' }) {
-    const [initialInvestment, setInitialInvestment] = React.useState(DEFAULT_ROI_INITIAL);
-    const [finalValue, setFinalValue] = React.useState(DEFAULT_ROI_FINAL);
-    const [absoluteProfit, setAbsoluteProfit] = React.useState(DEFAULT_ROI_FINAL - DEFAULT_ROI_INITIAL);
+    const [initialInvestment, setInitialInvestment] = useState(DEFAULT_ROI_INITIAL);
+    const [finalValue, setFinalValue] = useState(DEFAULT_ROI_FINAL);
+    const [absoluteProfit, setAbsoluteProfit] = useState(DEFAULT_ROI_FINAL - DEFAULT_ROI_INITIAL);
 
     // Duration State
-    const [years, setYears] = React.useState(DEFAULT_ROI_YEARS);
-    const [months, setMonths] = React.useState(DEFAULT_ROI_YEARS * 12);
+    const [years, setYears] = useState(DEFAULT_ROI_YEARS);
+    const [months, setMonths] = useState(DEFAULT_ROI_YEARS * 12);
 
     // Modes
-    const [inputMode, setInputMode] = React.useState('value'); // 'value' | 'profit'
-    const [timeMode, setTimeMode] = React.useState('years');   // 'years' | 'months'
+    const [inputMode, setInputMode] = useState('value'); // 'value' | 'profit'
+    const [timeMode, setTimeMode] = useState('years');   // 'years' | 'months'
 
     const {
         startDate, setStartDate,

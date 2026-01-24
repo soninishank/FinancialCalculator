@@ -12,3 +12,6 @@ description: Verify implementation by running linting, compilation, and standard
 5. Run build to check for compilation errors.
 // turbo
 6. npm run build
+7. Run comprehensive rendering tests for all calculators.
+// turbo
+8. npm test src/tests/CalculatorRendering.test.js

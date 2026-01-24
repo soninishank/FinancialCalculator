@@ -178,6 +178,38 @@ function checkNaNIssues(content, filePath) {
 }
 
 /**
+ * Check for missing React/Hook imports
+ */
+function checkMissingImports(content, filePath) {
+    const lines = content.split('\n');
+    const first50Lines = lines.slice(0, 50).join('\n');
+
+    const hooks = ['useState', 'useEffect', 'useMemo', 'useCallback', 'useRef', 'useContext'];
+    hooks.forEach(hook => {
+        // If hook is used but not in the first 50 lines (where imports usually are)
+        const isUsed = new RegExp(`\\b${hook}\\b`).test(content);
+        const isImported = new RegExp(`import.*\\b${hook}\\b.*from ['"]react['"]`).test(first50Lines);
+
+        if (isUsed && !isImported) {
+            ISSUES.push({
+                type: 'MISSING_IMPORT',
+                severity: 'ERROR',
+                file: path.relative(process.cwd(), filePath),
+                line: 1, // Reference first line for import errors
+                code: `hook: ${hook}`,
+                message: `React hook '${hook}' is used but not imported from 'react'`
+            });
+        }
+    });
+
+    // Check for React itself if JSX is used
+    if (content.includes('<') && content.includes('/>') && !first50Lines.includes("import React")) {
+        // Newer React allows no React import, but we've seen issues with some setups
+        // Let's at least check if some React components are used without React import
+    }
+}
+
+/**
  * Main linting function
  */
 function lintCalculators() {
@@ -193,6 +225,7 @@ function lintCalculators() {
         checkHardcodedCurrency(content, filePath);
         checkMissingDefaults(content, filePath);
         checkNaNIssues(content, filePath);
+        checkMissingImports(content, filePath);
     });
 
     // Print results

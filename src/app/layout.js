@@ -11,7 +11,7 @@ export const metadata = {
     },
     description: "Access premium, free online financial calculators for SIP, Home Loan EMI, Income Tax (New & Old Regime), and Retirement planning. FinCalc provides professional-grade investment tools for global and Indian investors.",
     manifest: '/manifest.json',
-    metadataBase: new URL('https://www.hashmatic.in'), // Reverted to original domain
+    metadataBase: new URL('https://www.hashmatic.in'),
     openGraph: {
         type: 'website',
         url: 'https://www.hashmatic.in/',
