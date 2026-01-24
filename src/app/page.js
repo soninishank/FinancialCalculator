@@ -17,7 +17,6 @@ export const metadata = {
         description: "Professional financial planning tools for everyone. SIP, EMI, Tax, and more.",
         url: 'https://www.hashmatic.in',
         siteName: 'FinCalc',
-        images: [{ url: 'https://www.hashmatic.in/logo192.png', width: 192, height: 192 }],
         locale: 'en_US',
         type: 'website',
     },

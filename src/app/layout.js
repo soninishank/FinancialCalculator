@@ -17,11 +17,20 @@ export const metadata = {
         url: 'https://www.hashmatic.in/',
         title: 'FinCalc - Free Financial & Investment Planning Tools',
         description: "Accurate financial calculators for SIP, Loans, Taxes, and Wealth planning. Simple, powerful, and ad-free.",
+        images: [
+            {
+                url: 'https://www.hashmatic.in/opengraph-image',
+                width: 1200,
+                height: 630,
+                alt: 'FinCalc - Financial Calculators',
+            },
+        ],
     },
     twitter: {
         card: 'summary_large_image',
         title: 'FinCalc - Professional Financial Calculators',
         description: "Plan your financial future with FinCalc's suite of investment and loan tools.",
+        images: ['https://www.hashmatic.in/opengraph-image'],
     },
 };
 

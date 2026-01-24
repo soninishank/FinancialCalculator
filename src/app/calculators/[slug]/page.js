@@ -39,20 +39,11 @@ export async function generateMetadata({ params }) {
             siteName: siteConfig.name,
             locale: 'en_IN',
             type: 'website',
-            images: [
-                {
-                    url: siteConfig.ogImage,
-                    width: 512,
-                    height: 512,
-                    alt: `${meta.title} Preview`,
-                },
-            ],
         },
         twitter: {
             card: 'summary_large_image',
             title: meta.title,
             description: meta.description,
-            images: [siteConfig.ogImage],
         },
     };
 }
