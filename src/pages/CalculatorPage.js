@@ -146,7 +146,7 @@ export default function CalculatorPage() {
 
             {/* SEO-optimized H1 - visible and keyword-rich */}
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-3 mt-6">
-              {meta.title} <span className="text-teal-600 dark:text-teal-400">-</span> <span className="text-2xl sm:text-3xl lg:text-4xl text-gray-700 dark:text-gray-300">Free Online Tool</span>
+              {meta.title}
             </h1>
 
             <p className="text-gray-500 dark:text-slate-400 text-base mb-8 max-w-3xl leading-relaxed">

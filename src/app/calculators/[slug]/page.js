@@ -26,7 +26,7 @@ export async function generateMetadata({ params }) {
     ].join(', ');
 
     return {
-        title: `${meta.title} - Free Online Tool`,
+        title: `${meta.title}`,
         description: meta.description,
         keywords: keywords,
         alternates: {

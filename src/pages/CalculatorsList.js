@@ -35,17 +35,39 @@ export default function CalculatorsList({ initialFiltered = [], initialQ = "" })
   const scrollToCategory = (cat) => {
     const element = document.getElementById(`cat-${cat}`);
     if (element) {
-      // Offset for sticky header (approx 80px) plus padding
+      // Offset for normal header plus padding
       const yOffset = -100;
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
 
+  // Track scroll position for floating buttons
+  const [showFloatingButtons, setShowFloatingButtons] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      // Show floating buttons after scrolling 300px
+      setShowFloatingButtons(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Focus search input after scrolling
+    setTimeout(() => {
+      document.querySelector('input[aria-label="Search calculators"]')?.focus();
+    }, 500);
+  };
+
   return (
     <Providers>
       <div className="p-6 pt-0 max-w-6xl mx-auto transition-colors duration-500">
 
+        {/* Normal Search Section */}
         <section className="mb-6">
           <div className="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-transparent dark:border-slate-800/50">
             <h2 className="text-lg font-semibold dark:text-white">Choose a calculator</h2>
@@ -99,6 +121,36 @@ export default function CalculatorsList({ initialFiltered = [], initialQ = "" })
         <section className="mt-12 pt-8 border-t border-gray-100 dark:border-slate-800/50">
           <CalculatorAdvisor />
         </section>
+
+        {/* Floating Action Buttons */}
+        {showFloatingButtons && (
+          <div className="fixed bottom-6 right-6 flex flex-col gap-3 z-50">
+            {/* Search Button */}
+            <button
+              onClick={scrollToTop}
+              className="group flex items-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105"
+              aria-label="Quick search"
+              title="Scroll to search"
+            >
+              <Search className="w-5 h-5" />
+              <span className="text-sm font-bold max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300">
+                Search
+              </span>
+            </button>
+
+            {/* Scroll to Top Button */}
+            <button
+              onClick={scrollToTop}
+              className="flex items-center justify-center w-12 h-12 bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 dark:hover:bg-slate-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105"
+              aria-label="Scroll to top"
+              title="Back to top"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
     </Providers>
   );

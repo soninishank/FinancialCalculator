@@ -178,6 +178,24 @@ export default function SIPWithLumpSum({ currency, setCurrency }) {
           setRate={setInflationRate}
         />
       </div>
+
+      {/* Warning: Inflation exceeds returns */}
+      {isInflationAdjusted && Number(inflationRate) >= Number(annualRate) && (
+        <div className="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
+          <div className="flex items-start gap-3">
+            <svg className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <div className="flex-1">
+              <h4 className="font-bold text-amber-800 dark:text-amber-300 text-sm">Inflation Exceeds Returns</h4>
+              <p className="text-xs text-amber-700 dark:text-amber-400 mt-1 leading-relaxed">
+                Your inflation rate ({inflationRate}%) is equal to or higher than your expected returns ({annualRate}%).
+                This means your <strong>real returns will be zero or negative</strong>. Consider investments with higher expected returns to maintain purchasing power.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 

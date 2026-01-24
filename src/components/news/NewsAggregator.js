@@ -123,24 +123,19 @@ const NewsAggregator = () => {
 
     return (
         <div className={`transition-colors duration-500 ${isDarkMode ? 'text-slate-200' : 'text-slate-900'}`}>
-            <div className="max-w-6xl mx-auto px-4">
-                {/* News Aggregator Control Hub - Portal */}
-                <div className={`relative mb-12 p-8 rounded-[2.5rem] border transition-all duration-500 ${isDarkMode
-                    ? 'bg-slate-900/60 border-slate-800/50 backdrop-blur-2xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.4)]'
-                    : 'bg-white/70 border-white/40 backdrop-blur-2xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)]'
-                    }`}>
-                    <div className="flex flex-col items-center space-y-8">
-
-                        {/* Financial News Header */}
-                        <div className="text-center">
-                            <h2 className={`text-2xl font-black uppercase tracking-wide ${isDarkMode ? 'text-slate-100' : 'text-slate-900'}`}>
-                                📈 Financial News
-                            </h2>
-                            <p className={`text-sm mt-2 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-                                Latest updates from top financial sources
-                            </p>
-                        </div>
+            <div className="max-w-6xl mx-auto">
+                {/* Financial News Header */}
+                <div className="text-center mb-12">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 mb-4">
+                        <span className="text-2xl">📈</span>
+                        <span className="text-sm font-bold text-blue-700 dark:text-blue-300">Live Updates</span>
                     </div>
+                    <h2 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-slate-100 mb-3">
+                        Financial News
+                    </h2>
+                    <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+                        Stay informed with real-time updates from WSJ, Bloomberg, Financial Times, and 12+ premium sources
+                    </p>
                 </div>
 
                 {/* Content Stream */}
