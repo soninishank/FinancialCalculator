@@ -29,7 +29,7 @@ const Footer = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-20 border-t border-slate-50 dark:border-slate-800/30 pt-16">
                     {/* Brand */}
                     <div className="col-span-2 md:col-span-1 space-y-6">
-                        <Link href="/" className="inline-flex items-center gap-2.5 group">
+                        <Link href="/" className="inline-flex items-center gap-2.5 group" aria-label="FinCalc Home">
                             <div className="w-7 h-7 bg-teal-600 rounded-lg flex items-center justify-center group-hover:rotate-12 transition-transform shadow-lg shadow-teal-600/20">
                                 <span className="text-white font-black text-base">F</span>
                             </div>

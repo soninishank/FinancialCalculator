@@ -3,39 +3,70 @@
 # Prevents pushing broken code to repository
 
 echo ""
-echo "🔍 Running pre-push checks..."
+echo "Running pre-push checks..."
 echo ""
 
 # Check if dev server is running
-if ! curl -s http://localhost:3000 > /dev/null; then
-  echo "❌ Dev server is not running!"
-  echo "   Please start it with: npm run dev"
+SERVER_STARTED_BY_HOOK=false
+if ! curl -s http://localhost:3001 > /dev/null; then
+  echo "Port 3001 is not responding. Building production bundle for testing..."
+  # Clean up any stale process first
+  lsof -ti:3001 | xargs kill -9 > /dev/null 2>&1
+  
+  npm run build
+  
+  echo "Starting production server on port 3001..."
+  npx next start -p 3001 > /dev/null 2>&1 &
+  SERVER_PID=$!
+  SERVER_STARTED_BY_HOOK=true
+  
+  # Wait for server to be ready
+  MAX_RETRIES=30
+  RETRY_COUNT=0
+  until curl -s http://localhost:3001 > /dev/null || [ "$RETRY_COUNT" -eq "$MAX_RETRIES" ]; do
+    sleep 2
+    RETRY_COUNT=$((RETRY_COUNT + 1))
+    printf "."
+  done
   echo ""
-  exit 1
+
+  if [ "$RETRY_COUNT" -eq "$MAX_RETRIES" ]; then
+    echo "Error: Failed to start dev server after 60 seconds."
+    kill $SERVER_PID
+    exit 1
+  fi
+  echo "Server is ready!"
 fi
 
 # Run Sync Script to include new calculators
-echo "🔄 Syncing test suite with latest manifest..."
-node scripts/sync-test-calculators.js
+echo "Syncing test suite with latest manifest..."
+node scripts/qa/sync-test-calculators.js
 
 # Run UI tests
-echo "🧪 Running UI tests on all calculators..."
+echo "Running UI tests on all calculators..."
 
-node scripts/test-all-calculators.js
+TEST_URL=http://localhost:3001 node scripts/qa/test-all-calculators.js
 
 # Capture exit code
 TEST_EXIT_CODE=$?
 
+# Cleanup if server was started by this hook
+if [ "$SERVER_STARTED_BY_HOOK" = true ]; then
+  echo "Stopping background dev server..."
+  # Use pkill -P to kill the process group or just kill the PID
+  pkill -P $SERVER_PID || kill $SERVER_PID
+fi
+
 if [ $TEST_EXIT_CODE -ne 0 ]; then
   echo ""
-  echo "❌ Tests failed! Push blocked."
-  echo "   Fix the issues and try again."
+  echo "Tests failed! Push blocked."
+  echo "Fix the issues and try again."
   echo ""
   exit 1
 fi
 
 echo ""
-echo "✅ All tests passed! Proceeding with push..."
+echo "All tests passed! Proceeding with push..."
 echo ""
 
 exit 0

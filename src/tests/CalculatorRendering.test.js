@@ -37,6 +37,29 @@ jest.mock('react-chartjs-2', () => {
     };
 });
 
+// Mock Recharts components to avoid "width/height is -1" warnings and handle dynamic imports
+jest.mock('recharts', () => {
+    const React = require('react');
+    const MockComponent = ({ children }) => <div>{children}</div>;
+    return {
+        ResponsiveContainer: ({ children }) => <div style={{ width: 800, height: 400 }}>{children}</div>,
+        LineChart: MockComponent,
+        BarChart: MockComponent,
+        AreaChart: MockComponent,
+        PieChart: MockComponent,
+        Line: MockComponent,
+        Bar: MockComponent,
+        Area: MockComponent,
+        Pie: MockComponent,
+        XAxis: MockComponent,
+        YAxis: MockComponent,
+        CartesianGrid: MockComponent,
+        Tooltip: MockComponent,
+        Legend: MockComponent,
+        Cell: MockComponent,
+    };
+});
+
 jest.mock('chart.js', () => ({
     Chart: { register: jest.fn() },
     registerables: [],

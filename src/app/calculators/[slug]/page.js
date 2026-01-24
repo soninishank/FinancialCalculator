@@ -1,6 +1,8 @@
 import { Suspense } from 'react';
 import CalculatorPage from '../../../pages/CalculatorPage';
 import manifest from '../../../utils/calculatorsManifest';
+import { calculatorFaqs } from '../../../data/seoMetadata';
+import { siteConfig } from '../../../config/site';
 
 export async function generateStaticParams() {
     return manifest.map((m) => ({ slug: m.slug }));
@@ -11,11 +13,9 @@ export async function generateMetadata({ params }) {
     const meta = manifest.find((m) => m.slug === slug);
     if (!meta) return {};
 
-    const baseUrl = 'https://www.hashmatic.in';
+    const baseUrl = siteConfig.url;
     const pageUrl = `${baseUrl}/calculators/${slug}`;
-    const defaultImage = `${baseUrl}/logo192.png`; // Fallback image
 
-    // Enhanced keywords - combine manifest keywords with additional long-tail terms
     const keywords = [
         ...meta.keywords,
         'free online calculator',
@@ -33,21 +33,29 @@ export async function generateMetadata({ params }) {
             canonical: pageUrl,
         },
         openGraph: {
-            title: `${meta.title} | FinCalc Financial Tools`,
+            title: `${meta.title} | ${siteConfig.name}`,
             description: meta.description,
             url: pageUrl,
-            siteName: 'FinCalc',
+            siteName: siteConfig.name,
             locale: 'en_IN',
             type: 'website',
+            images: [
+                {
+                    url: siteConfig.ogImage,
+                    width: 512,
+                    height: 512,
+                    alt: `${meta.title} Preview`,
+                },
+            ],
         },
         twitter: {
+            card: 'summary_large_image',
             title: meta.title,
             description: meta.description,
+            images: [siteConfig.ogImage],
         },
     };
 }
-
-import { calculatorFaqs } from '../../../data/seoMetadata';
 
 export default async function Page({ params }) {
     const { slug } = await params;
@@ -68,11 +76,12 @@ export default async function Page({ params }) {
         "@graph": [
             {
                 "@type": "SoftwareApplication",
-                "name": `FinCalc ${meta.title}`,
-                "url": `https://www.hashmatic.in/calculators/${slug}`,
+                "name": `${siteConfig.name} ${meta.title}`,
+                "url": `${siteConfig.url}/calculators/${slug}`,
                 "description": meta.description,
                 "applicationCategory": "FinanceApplication",
-                "operatingSystem": "Web",
+                "operatingSystem": "All",
+                "softwareVersion": "2.4.0",
                 "offers": {
                     "@type": "Offer",
                     "price": "0",
@@ -80,9 +89,20 @@ export default async function Page({ params }) {
                 },
                 "publisher": {
                     "@type": "Organization",
-                    "name": "FinCalc",
-                    "url": "https://www.hashmatic.in"
-                }
+                    "name": siteConfig.name,
+                    "url": siteConfig.url,
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": `${siteConfig.url}/logo192.png`
+                    }
+                },
+                "featureList": [
+                    "Real-time calculations",
+                    "Interactive charts",
+                    "Amortization tables",
+                    "PDF export",
+                    "Mobile responsive"
+                ]
             },
             {
                 "@type": "BreadcrumbList",
@@ -91,19 +111,19 @@ export default async function Page({ params }) {
                         "@type": "ListItem",
                         "position": 1,
                         "name": "Home",
-                        "item": "https://www.hashmatic.in"
+                        "item": siteConfig.url
                     },
                     {
                         "@type": "ListItem",
                         "position": 2,
                         "name": "Calculators",
-                        "item": "https://www.hashmatic.in/calculators"
+                        "item": `${siteConfig.url}/calculators`
                     },
                     {
                         "@type": "ListItem",
                         "position": 3,
                         "name": meta.title,
-                        "item": `https://www.hashmatic.in/calculators/${slug}`
+                        "item": `${siteConfig.url}/calculators/${slug}`
                     }
                 ]
             }

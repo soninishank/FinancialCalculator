@@ -162,7 +162,7 @@ rm .husky/pre-push
 
 ## Adding More Tests
 
-Edit `scripts/test-all-calculators.js`:
+Edit `scripts/qa/test-all-calculators.js`:
 
 ```javascript
 // Add new test function

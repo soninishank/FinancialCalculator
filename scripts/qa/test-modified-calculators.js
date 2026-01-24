@@ -4,7 +4,7 @@
 const puppeteer = require('puppeteer');
 
 // Configuration
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = process.env.TEST_URL || 'http://localhost:3000';
 const MODIFIED_CALCULATORS = [
     'break-even-calculator',
     'margin-calculator',

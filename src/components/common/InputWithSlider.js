@@ -146,6 +146,7 @@ export default function InputWithSlider({
           min={effectiveMin}
           max={effectiveMax}
           step={effectiveStep}
+          aria-label={`${label} slider`}
           value={sliderValue > effectiveMax ? effectiveMax : sliderValue}
           onChange={(e) => safeOnChange(Number(e.target.value))}
           className="

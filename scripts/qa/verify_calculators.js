@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const CALCULATORS_DIR = path.join(__dirname, '../src/components/calculators');
+const CALCULATORS_DIR = path.join(__dirname, '../../src/components/calculators');
 
 // Banned patterns and their suggested replacements
 const BANNED_PATTERNS = [
@@ -37,8 +37,7 @@ function scanDirectory(dir) {
         const stat = fs.statSync(filePath);
 
         if (stat.isDirectory()) {
-            // Recurse into subdirectories if necessary, though sticking to flat structure for now based on observe
-            scanDirectory(filePath);
+            if (scanDirectory(filePath)) hasErrors = true;
         } else if (file.endsWith('.js')) {
             const content = fs.readFileSync(filePath, 'utf8');
 

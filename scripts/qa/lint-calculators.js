@@ -12,7 +12,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const CALCULATORS_DIR = path.join(__dirname, '../src/components/calculators');
+const CALCULATORS_DIR = path.join(__dirname, '../../src/components/calculators');
 const ISSUES = [];
 
 // ANSI color codes

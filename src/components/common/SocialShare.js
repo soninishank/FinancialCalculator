@@ -76,19 +76,21 @@ const SocialShare = ({ title, url }) => {
                         rel="noopener noreferrer"
                         className={`p-2.5 rounded-xl transition-all ${link.color} hover:shadow-sm ${!shareUrl ? 'pointer-events-none opacity-50' : ''}`}
                         title={`Share on ${link.name}`}
+                        aria-label={`Share on ${link.name}`}
                         onClick={(e) => {
                             if (!shareUrl) e.preventDefault();
                         }}
                     >
-                        <link.icon size={20} />
+                        <link.icon size={20} aria-hidden="true" />
                     </a>
                 ))}
                 <button
                     onClick={copyToClipboard}
                     className={`p-2.5 rounded-xl transition-all text-indigo-600 bg-indigo-50 hover:bg-indigo-100 hover:shadow-sm ${!shareUrl ? 'pointer-events-none opacity-50' : ''}`}
                     title="Copy Link"
+                    aria-label="Copy page link to clipboard"
                 >
-                    <LinkIcon size={20} />
+                    <LinkIcon size={20} aria-hidden="true" />
                 </button>
             </div>
         </div>

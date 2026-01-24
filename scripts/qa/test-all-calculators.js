@@ -221,20 +221,6 @@ async function runAllTests() {
         });
     }
 
-    // Write report
-    const reportPath = path.join(__dirname, '../test-results.json');
-    fs.writeFileSync(reportPath, JSON.stringify({
-        timestamp: new Date().toISOString(),
-        duration: `${duration}s`,
-        total: CALCULATOR_SLUGS.length,
-        passed: results.passed.length,
-        failed: results.failed.length,
-        warnings: results.warnings.length,
-        failedTests: results.failed,
-        warningTests: results.warnings
-    }, null, 2));
-
-    console.log(`\n📄 Detailed report: test-results.json\n`);
 
     if (results.failed.length > 0) {
         console.log('❌ Tests failed! Fix issues before pushing.\n');

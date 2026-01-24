@@ -32,7 +32,7 @@ npm run sync:tests
 
 **If you prefer manual control:**
 
-1. Open `scripts/test-all-calculators.js`
+1. Open `scripts/qa/test-all-calculators.js`
 2. Find the `CALCULATOR_SLUGS` array (around line 9)
 3. Add your new calculator slug to the array:
 

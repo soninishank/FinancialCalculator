@@ -4,7 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const manifestPath = path.join(__dirname, '../src/utils/calculatorsManifest.js');
+const manifestPath = path.join(__dirname, '../../src/utils/calculatorsManifest.js');
 const testFilePath = path.join(__dirname, 'test-all-calculators.js');
 
 console.log('🔄 Syncing calculator tests with manifest...\n');
