@@ -1,50 +1,44 @@
 'use client';
 
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import {
-    Share2, Facebook, Twitter, Linkedin, Mail, Copy, Check, ExternalLink
+    Share2, Facebook, Twitter, Linkedin, Mail, Copy, Check
 } from 'lucide-react';
 
 const NewsAggregator = () => {
     const [news, setNews] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [searchQuery, setSearchQuery] = useState('');
     const { isDarkMode } = useTheme();
-    const [lastRefresh, setLastRefresh] = useState(Date.now());
     const [visibleCount, setVisibleCount] = useState(10);
     const [expandedClusters, setExpandedClusters] = useState(new Set());
-    const [selectedCategory, setSelectedCategory] = useState('All');
-    const [activeShareMenu, setActiveShareMenu] = useState(null); // stores cluster index
+    const [activeShareMenu, setActiveShareMenu] = useState(null);
     const [copiedUrl, setCopiedUrl] = useState(null);
 
-    const CATEGORIES = ['All', 'Finance', 'Technology', 'Sports', 'Science', 'Entertainment', 'World'];
-
-    const fetchNews = useCallback(async (category = selectedCategory, isAutoRefresh = false) => {
+    const fetchNews = useCallback(async (isAutoRefresh = false) => {
         if (!isAutoRefresh) setLoading(true);
         try {
-            const res = await fetch(`/api/news?category=${category}`);
+            const res = await fetch(`/api/news?category=Finance`);
             if (!res.ok) throw new Error('Failed to fetch news');
             const data = await res.json();
             setNews(data);
-            setLastRefresh(Date.now());
         } catch (err) {
             setError(err.message);
         } finally {
             if (!isAutoRefresh) setLoading(false);
         }
-    }, [selectedCategory]);
+    }, []);
 
     useEffect(() => {
         // Only fetch if we're not loading (to avoid double fetch on init)
         fetchNews();
 
         // Auto-refresh every 45 minutes
-        const interval = setInterval(() => fetchNews(selectedCategory, true), 2700000);
+        const interval = setInterval(() => fetchNews(true), 2700000);
 
         return () => clearInterval(interval);
-    }, [fetchNews, selectedCategory]);
+    }, [fetchNews]);
 
     // Click outside listener for share menu
     useEffect(() => {
@@ -52,18 +46,6 @@ const NewsAggregator = () => {
         window.addEventListener('click', handleClickOutside);
         return () => window.removeEventListener('click', handleClickOutside);
     }, []);
-
-    // Initial load from localStorage
-    useEffect(() => {
-        const savedCategory = localStorage.getItem('news-category');
-        if (savedCategory && CATEGORIES.includes(savedCategory)) {
-            setSelectedCategory(savedCategory);
-        }
-    }, []);
-
-    useEffect(() => {
-        localStorage.setItem('news-category', selectedCategory);
-    }, [selectedCategory]);
 
 
 
@@ -103,26 +85,6 @@ const NewsAggregator = () => {
     };
 
 
-    // Filter and Search Logic
-    const allFilteredClusters = useMemo(() => {
-        let clusters = news?.clusters || [];
-
-        if (selectedCategory !== 'All') {
-            clusters = clusters.filter(c => c.category === selectedCategory);
-        }
-
-        if (searchQuery) {
-            const query = searchQuery.toLowerCase();
-            clusters = clusters.filter(c =>
-                c.main.title.toLowerCase().includes(query) ||
-                c.main.description?.toLowerCase().includes(query) ||
-                c.main.source.toLowerCase().includes(query)
-            );
-        }
-
-        return clusters;
-    }, [news, selectedCategory, searchQuery]);
-
     if (loading) return (
         <div className={`flex flex-col items-center justify-center py-24 space-y-5 ${isDarkMode ? 'bg-[#0f172a] text-slate-100' : 'bg-white text-gray-900'}`}>
             <div className={`w-10 h-10 border-4 ${isDarkMode ? 'border-slate-800 border-t-blue-400' : 'border-slate-200 border-t-blue-600'} rounded-full animate-spin`}></div>
@@ -137,7 +99,7 @@ const NewsAggregator = () => {
         </div>
     );
 
-    const visibleClusters = allFilteredClusters.slice(0, visibleCount);
+    const visibleClusters = (news?.clusters || []).slice(0, visibleCount);
 
     const groupClustersByTime = (clusters) => {
         const now = Date.now();
@@ -168,26 +130,15 @@ const NewsAggregator = () => {
                     : 'bg-white/70 border-white/40 backdrop-blur-2xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)]'
                     }`}>
                     <div className="flex flex-col items-center space-y-8">
-                        {/* Mode Row */}
-                        <div className="flex flex-wrap items-center justify-center gap-4 w-full">
-                        </div>
 
-                        {/* Premium Category Selector */}
-                        <div className="flex flex-wrap items-center justify-center gap-2 max-w-4xl">
-                            {CATEGORIES.map(cat => (
-                                <button
-                                    key={cat}
-                                    onClick={() => { setSelectedCategory(cat); setVisibleCount(10); }}
-                                    className={`px-6 py-3 text-[11px] font-black rounded-xl transition-all uppercase tracking-[0.15em] border ${selectedCategory === cat
-                                        ? 'bg-blue-600 border-blue-600 text-white shadow-xl shadow-blue-600/30'
-                                        : isDarkMode
-                                            ? 'bg-slate-950/20 border-slate-800/40 text-slate-500 hover:text-slate-200 hover:bg-slate-900/50'
-                                            : 'bg-white/40 border-slate-200/60 text-slate-500 hover:border-slate-300 hover:text-slate-700 hover:bg-white/80'
-                                        }`}
-                                >
-                                    {cat}
-                                </button>
-                            ))}
+                        {/* Financial News Header */}
+                        <div className="text-center">
+                            <h2 className={`text-2xl font-black uppercase tracking-wide ${isDarkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+                                📈 Financial News
+                            </h2>
+                            <p className={`text-sm mt-2 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                                Latest updates from top financial sources
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -402,9 +353,8 @@ const NewsAggregator = () => {
                     ))}
                 </div>
 
-                {/* Intelligent Loading */}
-                {allFilteredClusters.length > 0 ? (
-                    visibleCount < allFilteredClusters.length && (
+                {(news?.clusters || []).length > 0 ? (
+                    visibleCount < (news?.clusters || []).length && (
                         <div className="mt-20 flex justify-center">
                             <button
                                 onClick={() => setVisibleCount(prev => prev + 10)}
