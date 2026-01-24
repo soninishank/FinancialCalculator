@@ -1,6 +1,5 @@
 // src/contexts/CurrencyContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useUrlState } from '../hooks/useUrlState';
 import { getCurrencyForCountry, guessCurrencyFromTimezone } from '../utils/geo';
 
 // Create context
@@ -22,31 +21,29 @@ export function CurrencyProvider({ children }) {
 
   // 1. Determine initial default stably to avoid hydration mismatch
   // We MUST use a constant value for the first render on both server/client
-  const [currency, setCurrency] = useUrlState('curr', 'INR');
+  const [currency, setCurrencyState] = useState('INR');
   const [isLocked, setIsLocked] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
 
-  // Still keep a sync effect but only if currency wasn't set by URL
   useEffect(() => {
     setHasMounted(true);
     const params = new URLSearchParams(window.location.search);
+    const urlCurr = params.get('curr');
+    const storedCurr = localStorage.getItem('app-currency');
 
-    if (!params.get('curr')) {
-      const currentGeo = getGeoDefault();
-      if (currentGeo !== currency) {
-        setCurrency(currentGeo);
-      }
+    if (urlCurr) {
+      setCurrencyState(urlCurr);
+    } else if (storedCurr) {
+      setCurrencyState(storedCurr);
+    } else {
+      setCurrencyState(getGeoDefault());
     }
-  }, []); // Only run once on mount
+  }, []);
 
-  // Sync with URL if it changes later (optional, usually handled by useUrlState)
-  useEffect(() => {
-    if (!hasMounted) return;
-    const params = new URLSearchParams(window.location.search);
-    if (!params.get('curr')) {
-      // Re-check geo if URL is cleared? Maybe redundant.
-    }
-  }, [currency, hasMounted]);
+  const setCurrency = (val) => {
+    setCurrencyState(val);
+    localStorage.setItem('app-currency', val);
+  };
 
   return (
     <CurrencyContext.Provider value={{ currency, setCurrency, isLocked, setIsLocked }}>
