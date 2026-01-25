@@ -29,12 +29,12 @@ export default function AssetAllocation({ currency }) {
 
     const inputs = (
         <>
-            <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm h-full">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm h-full">
                 <div className="flex items-center gap-2 mb-6 border-b pb-2">
                     <span className="bg-blue-100 text-blue-600 p-2 rounded-lg">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </span>
-                    <h3 className="text-xl font-bold text-gray-800">Current Portfolio</h3>
+                    <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">Current Portfolio</h3>
                 </div>
 
                 <InputWithSlider
@@ -51,22 +51,22 @@ export default function AssetAllocation({ currency }) {
                     min={0} max={MAX_AMOUNT} step={10000}
                     currency={currency}
                 />
-                <div className="mt-6 p-4 bg-gray-50 rounded-lg flex justify-between items-center">
+                <div className="mt-6 p-4 bg-gray-50 dark:bg-slate-900/50 rounded-lg flex justify-between items-center">
                     <span className="text-gray-600 font-medium">Total Portfolio</span>
-                    <span className="text-lg font-bold text-gray-900">{moneyFormat(equity + debt, currency)}</span>
+                    <span className="text-lg font-bold text-gray-900 dark:text-gray-100">{moneyFormat(equity + debt, currency)}</span>
                 </div>
             </div>
 
-            <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm h-full">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm h-full">
                 <div className="flex items-center gap-2 mb-6 border-b pb-2">
                     <span className="bg-amber-100 text-amber-600 p-2 rounded-lg">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                     </span>
-                    <h3 className="text-xl font-bold text-gray-800">Target Allocation</h3>
+                    <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">Target Allocation</h3>
                 </div>
 
                 <div className="mb-8">
-                    <label className="text-sm font-black text-slate-900 uppercase tracking-tight block mb-2">Desired Split</label>
+                    <label className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight block mb-2">Desired Split</label>
                     <div className="flex items-center gap-4">
                         <div className="flex-1 text-center p-3 bg-blue-50 border border-blue-100 rounded-lg">
                             <span className="block text-xl font-bold text-blue-700">{targetEquityPercent}%</span>
@@ -95,9 +95,9 @@ export default function AssetAllocation({ currency }) {
         <CalculatorLayout
             inputs={inputs}
             summary={
-                <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm mt-8">
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm mt-8">
                     <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
                             <span className="flex items-center justify-center w-8 h-8 rounded-full bg-teal-100 text-teal-600">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
                             </span>
@@ -130,7 +130,7 @@ export default function AssetAllocation({ currency }) {
                                     <span className={`text-3xl font-extrabold ${result.equityAction > 0 ? 'text-green-700' : 'text-red-700'}`}>
                                         {result.equityAction > 0 ? 'BUY' : 'SELL'}
                                     </span>
-                                    <span className="text-2xl font-bold text-gray-800">
+                                    <span className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                                         {moneyFormat(Math.abs(result.equityAction), currency)}
                                     </span>
                                 </div>
@@ -153,7 +153,7 @@ export default function AssetAllocation({ currency }) {
                                     <span className={`text-3xl font-extrabold ${result.debtAction > 0 ? 'text-green-700' : 'text-red-700'}`}>
                                         {result.debtAction > 0 ? 'BUY' : 'SELL'}
                                     </span>
-                                    <span className="text-2xl font-bold text-gray-800">
+                                    <span className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                                         {moneyFormat(Math.abs(result.debtAction), currency)}
                                     </span>
                                 </div>
@@ -168,7 +168,7 @@ export default function AssetAllocation({ currency }) {
                 </div>
             }
             pieChart={
-                <div className="h-full flex flex-col items-center justify-center p-6 bg-white rounded-xl border border-gray-100 shadow-sm">
+                <div className="h-full flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm">
                     <h4 className="text-gray-700 font-bold mb-4">Current Allocation</h4>
                     <div className="relative w-full h-48">
                         <FinancialDoughnutChart

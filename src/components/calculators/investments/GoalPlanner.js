@@ -260,20 +260,20 @@ export default function GoalPlanner({ currency, setCurrency }) {
       <div className="grid grid-cols-1 gap-4">
         <div className="bg-indigo-50 border-l-4 border-indigo-500 rounded-xl p-6 shadow-sm">
           <div className="text-xs font-bold text-indigo-600 uppercase">Option 1: Lumpsum investment</div>
-          <div className="text-3xl font-extrabold text-gray-900 mt-2">
+          <div className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mt-2">
             {moneyFormat(Math.round(requiredLump), currency)}
           </div>
         </div>
         <div className="bg-emerald-50 border-l-4 border-emerald-500 rounded-xl p-6 shadow-sm">
           <div className="text-xs font-bold text-emerald-600 uppercase">Option 2: Monthly SIP</div>
-          <div className="text-3xl font-extrabold text-gray-900 mt-2">
+          <div className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mt-2">
             {moneyFormat(Math.round(requiredSIP), currency)}
           </div>
         </div>
         {isStepUpEnabled && (
           <div className="bg-rose-50 border-l-4 border-rose-500 rounded-xl p-6 shadow-sm animate-fade-in">
             <div className="text-xs font-bold text-rose-600 uppercase">Option 3: Step-Up SIP</div>
-            <div className="text-3xl font-extrabold text-gray-900 mt-2">
+            <div className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mt-2">
               {moneyFormat(Math.round(requiredStepUp), currency)}
             </div>
             {stepUpPercent > 0 && (
@@ -290,8 +290,8 @@ export default function GoalPlanner({ currency, setCurrency }) {
       inputs={inputs}
       summary={summary}
       charts={
-        <div className="mt-12 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-          <h3 className="text-gray-800 font-bold text-lg mb-4">Investment Path Comparison</h3>
+        <div className="mt-12 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
+          <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4">Investment Path Comparison</h3>
           <FinancialLineChart
             data={{
               labels: lumpSumData.map(r => `Year ${r.year}`),
@@ -328,9 +328,9 @@ export default function GoalPlanner({ currency, setCurrency }) {
       table={
         <div className="mt-12 space-y-12">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-gray-800">Growth Schedules</h3>
+            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Growth Schedules</h3>
             <div className="flex items-center">
-              <label className="text-sm font-black text-slate-900 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
+              <label className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
               <div className="w-48">
                 <MonthYearPicker
                   value={startDate}

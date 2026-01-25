@@ -96,7 +96,7 @@ export default function SingaporeTaxCalculator({ currency = 'SGD' }) {
                 step={0.5}
                 symbol=" months"
             />
-            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700">
                 <p className="text-xs text-gray-500">
                     Includes <strong>CPF (20%)</strong> for employees under 55.
                     Calculates Personal Income Tax based on <strong>YA 2024</strong> resident rates.
@@ -137,7 +137,7 @@ export default function SingaporeTaxCalculator({ currency = 'SGD' }) {
                             ]}
                         />
 
-                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
                             <div className="flex justify-between text-sm py-1">
                                 <span className="text-gray-600">Annual Gross</span>
                                 <span className="font-semibold">{new Intl.NumberFormat('en-SG', { style: 'currency', currency }).format(result.annualGross)}</span>
@@ -150,8 +150,8 @@ export default function SingaporeTaxCalculator({ currency = 'SGD' }) {
                                 <span className="text-gray-600">Income Tax (Est)</span>
                                 <span className="font-semibold text-red-600">-{new Intl.NumberFormat('en-SG', { style: 'currency', currency }).format(result.incomeTax)}</span>
                             </div>
-                            <div className="flex justify-between text-sm py-2 mt-2 border-t border-gray-200 font-bold">
-                                <span className="text-gray-800">Employer CPF (17%)</span>
+                            <div className="flex justify-between text-sm py-2 mt-2 border-t border-gray-200 dark:border-slate-700 font-bold">
+                                <span className="text-gray-800 dark:text-gray-100">Employer CPF (17%)</span>
                                 <span className="text-teal-700">+{new Intl.NumberFormat('en-SG', { style: 'currency', currency }).format(result.employerCPF)}</span>
                             </div>
                         </div>
@@ -159,7 +159,7 @@ export default function SingaporeTaxCalculator({ currency = 'SGD' }) {
                 }
                 charts={
                     <div className="mt-8">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">Singapore Salary Breakdown</h3>
+                        <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">Singapore Salary Breakdown</h3>
                         <FinancialLoanPieChart
                             principal={result.netPay}
                             totalInterest={result.totalCPF}

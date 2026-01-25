@@ -151,13 +151,13 @@ const BreakEvenCalculator = ({ currency }) => {
     );
 
     const details = calculatorDetails['break-even-calculator']?.render() || (
-        <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">About Break-Even Analysis</h3>
+        <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">About Break-Even Analysis</h3>
             <div className="space-y-4 text-gray-600 leading-relaxed">
                 <p>
                     The <strong>Break-Even Point</strong> is the level of sales at which total revenue equals total costs, resulting in neither profit nor loss.
                 </p>
-                <h4 className="font-bold text-gray-800 mt-4">Key Concepts:</h4>
+                <h4 className="font-bold text-gray-800 dark:text-gray-100 mt-4">Key Concepts:</h4>
                 <ul className="list-disc pl-5 space-y-2">
                     <li>
                         <strong>Fixed Costs:</strong> Expenses that don't change with production volume (rent, salaries, insurance).

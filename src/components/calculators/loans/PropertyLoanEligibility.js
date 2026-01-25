@@ -77,13 +77,14 @@ export default function PropertyLoanEligibility({ currency }) {
             downpaymentNeeded,
             shortfall: maxIncomeLoan < maxLtvLoan ? (maxLtvLoan - maxIncomeLoan) : 0,
             eligibleEmi,
-            amortization
+            amortization,
+            isFundingPropLimited: maxIncomeLoan > maxLtvLoan
         };
     }, [propertyValue, selfIncome, coIncome, existingEmi, years, rate, foir, startDate]);
 
     const {
         propVal, ltvPercent, maxLtvLoan, maxIncomeLoan, finalLoan,
-        downpaymentNeeded, shortfall, eligibleEmi, amortization
+        downpaymentNeeded, shortfall, eligibleEmi, amortization, isFundingPropLimited
     } = results;
 
     // --- UI SECTIONS ---
@@ -134,7 +135,7 @@ export default function PropertyLoanEligibility({ currency }) {
                 />
             </div>
 
-            <div className="bg-gray-50/50 p-4 rounded-2xl border border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-gray-50 dark:bg-slate-900/50/50 p-4 rounded-2xl border border-gray-100 dark:border-slate-700 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <InputWithSlider
                     label="Rate (%)"
                     value={rate}
@@ -155,12 +156,12 @@ export default function PropertyLoanEligibility({ currency }) {
     const summarySection = (
         <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
                     <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Max Funding</div>
                     <div className="text-2xl font-black text-teal-600">{moneyFormat(finalLoan, currency)}</div>
                     <div className="text-[10px] text-gray-400 mt-1">Based on Min(Income, LTV)</div>
                 </div>
-                <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
                     <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Downpayment</div>
                     <div className="text-2xl font-black text-indigo-600">{moneyFormat(downpaymentNeeded, currency)}</div>
                     <div className="text-[10px] text-gray-400 mt-1">Total Cash Needed</div>
@@ -211,8 +212,8 @@ export default function PropertyLoanEligibility({ currency }) {
             inputs={inputsSection}
             summary={summarySection}
             charts={
-                <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm mt-8">
-                    <h3 className="text-gray-800 font-bold text-lg mb-8 italic text-center md:text-left">Eligibility Breakdown</h3>
+                <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-sm mt-8">
+                    <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-8 italic text-center md:text-left">Eligibility Breakdown</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                         <div className="h-64 relative flex items-center justify-center">
                             <div className="w-56 h-56">
@@ -234,7 +235,7 @@ export default function PropertyLoanEligibility({ currency }) {
                             </div>
                             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Loan %</span>
-                                <span className="text-xl font-black text-gray-800">{propVal !== 0 ? Math.round((finalLoan / propVal) * 100) : 0}%</span>
+                                <span className="text-xl font-black text-gray-800 dark:text-gray-100">{propVal !== 0 ? Math.round((finalLoan / propVal) * 100) : 0}%</span>
                             </div>
                         </div>
 
@@ -243,17 +244,17 @@ export default function PropertyLoanEligibility({ currency }) {
                                 <div className="w-4 h-4 rounded-full bg-teal-500 shadow-lg shadow-teal-500/20"></div>
                                 <div className="flex-1">
                                     <div className="text-xs text-gray-400 font-bold uppercase">Authorized Loan</div>
-                                    <div className="text-xl font-bold text-gray-800">{moneyFormat(finalLoan, currency)}</div>
+                                    <div className="text-xl font-bold text-gray-800 dark:text-gray-100">{moneyFormat(finalLoan, currency)}</div>
                                 </div>
                             </div>
                             <div className="flex items-center gap-4">
                                 <div className="w-4 h-4 rounded-full bg-indigo-500 shadow-lg shadow-indigo-500/20"></div>
                                 <div className="flex-1">
                                     <div className="text-xs text-gray-400 font-bold uppercase">Upfront Cash</div>
-                                    <div className="text-xl font-bold text-gray-800">{moneyFormat(downpaymentNeeded, currency)}</div>
+                                    <div className="text-xl font-bold text-gray-800 dark:text-gray-100">{moneyFormat(downpaymentNeeded, currency)}</div>
                                 </div>
                             </div>
-                            <div className="mt-8 pt-6 border-t border-gray-100">
+                            <div className="mt-8 pt-6 border-t border-gray-100 dark:border-slate-700">
                                 <div className="text-[10px] text-gray-400 font-bold uppercase mb-2">EMI Breakdown</div>
                                 <div className="text-2xl font-black text-teal-600 italic">
                                     {moneyFormat(eligibleEmi, currency)} <span className="text-xs font-normal text-gray-400">/ month</span>
@@ -264,8 +265,8 @@ export default function PropertyLoanEligibility({ currency }) {
                 </div>
             }
             table={
-                <div className="mt-10 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                    <h4 className="text-lg font-bold text-gray-800 mb-6">Repayment Schedule for Max Eligible Loan</h4>
+                <div className="mt-10 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
+                    <h4 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6">Repayment Schedule for Max Eligible Loan</h4>
                     <CollapsibleAmortizationTable
                         yearlyData={amortization.rows}
                         monthlyData={amortization.monthlyRows}

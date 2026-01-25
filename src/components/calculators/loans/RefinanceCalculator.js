@@ -185,9 +185,9 @@ export default function RefinanceCalculator({ currency }) {
             </div>
 
             {/* Break Even */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
                 <p className="text-gray-500 text-sm font-medium">Break-Even Point</p>
-                <p className="text-2xl font-bold text-gray-800 mt-1">
+                <p className="text-2xl font-bold text-gray-800 dark:text-gray-100 mt-1">
                     {result.monthlySavings > 0 ? (
                         result.breakEvenMonths < 12
                             ? `${Math.ceil(result.breakEvenMonths)} Months`
@@ -198,7 +198,7 @@ export default function RefinanceCalculator({ currency }) {
             </div>
 
             {/* Total Savings */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
                 <p className="text-gray-500 text-sm font-medium">Net Lifetime Savings</p>
                 <p className={`text-2xl font-bold mt-1 ${result.totalLifetimeSavings >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
                     {moneyFormat(result.totalLifetimeSavings, currency)}
@@ -213,7 +213,7 @@ export default function RefinanceCalculator({ currency }) {
             inputs={inputs}
             summary={summary}
             charts={
-                <div className="bg-white p-4 rounded-xl border mt-6">
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border mt-6">
                     <h3 className="text-lg font-semibold text-gray-700 mb-4 text-center">Cumulative Total Cost Over Time</h3>
                     <FinancialLineChart data={lineData} currency={currency} height={320} />
                 </div>
@@ -222,7 +222,7 @@ export default function RefinanceCalculator({ currency }) {
             table={
                 <div className="mt-8">
                     <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-bold text-gray-800">Cumulative Cost Comparison</h3>
+                        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Cumulative Cost Comparison</h3>
                         <button
                             onClick={() => {
                                 const data = result.yearlyData.map(r => [

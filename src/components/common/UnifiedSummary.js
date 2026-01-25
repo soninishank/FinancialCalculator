@@ -16,17 +16,17 @@ export default function UnifiedSummary({
 }) {
     // Default metrics if none provided
     let metrics = customMetrics.length > 0 ? customMetrics : [
-        { label: labels.invested || "Total Investment", value: invested, color: "text-gray-800", bgColor: "" },
-        { label: labels.gain || "Interest Earned", value: gain, color: "text-teal-700", bgColor: "bg-teal-50/30" },
-        { label: labels.total || "Maturity Value", value: total, color: "text-indigo-700", bgColor: "bg-indigo-50/30", subtext: labels.totalSubtext || `After ${years} Years` }
+        { label: labels.invested || "Total Investment", value: invested, color: "text-gray-800 dark:text-white", bgColor: "" },
+        { label: labels.gain || "Interest Earned", value: gain, color: "text-teal-700 dark:text-teal-400", bgColor: "bg-teal-50/30 dark:bg-teal-900/20" },
+        { label: labels.total || "Maturity Value", value: total, color: "text-indigo-700 dark:text-indigo-400", bgColor: "bg-indigo-50/30 dark:bg-indigo-900/20", subtext: labels.totalSubtext || `After ${years} Years` }
     ];
 
     if (tax && tax.applied) {
         metrics.push({
             label: "Post-Tax Value",
             value: tax.postTaxValue,
-            color: "text-rose-700",
-            bgColor: "bg-rose-50/30",
+            color: "text-rose-700 dark:text-rose-400",
+            bgColor: "bg-rose-50/30 dark:bg-rose-900/20",
             subtext: `Tax: ${moneyFormat(tax.taxDeducted, currency)}`
         });
     }
@@ -35,22 +35,22 @@ export default function UnifiedSummary({
         metrics.push({
             label: "Real Value",
             value: inflation.realValue,
-            color: "text-amber-700",
-            bgColor: "bg-amber-50/30",
+            color: "text-amber-700 dark:text-amber-400",
+            bgColor: "bg-amber-50/30 dark:bg-amber-900/20",
             subtext: `${inflation.inflationRate}% Inflation`
         });
     }
 
     return (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm mt-8 overflow-hidden">
-            <div className="grid grid-cols-1 lg:grid-cols-5 md:divide-x divide-gray-100">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm mt-8 overflow-hidden">
+            <div className="grid grid-cols-1 lg:grid-cols-5 md:divide-x divide-gray-100 dark:divide-slate-700">
                 {/* LEFT: METRICS (2/5 width) */}
-                <div className="lg:col-span-2 flex flex-col divide-y divide-gray-100">
+                <div className="lg:col-span-2 flex flex-col divide-y divide-gray-100 dark:divide-slate-700">
                     {metrics.map((m, idx) => (
                         <div key={idx} className={`p-6 text-center ${m.bgColor}`}>
-                            <p className="text-sm font-semibold text-gray-500 mb-1">{m.label}</p>
+                            <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1">{m.label}</p>
                             {m.subtext && (
-                                <p className="text-xs text-gray-400 mb-2 font-medium opacity-80">{m.subtext}</p>
+                                <p className="text-xs text-gray-400 dark:text-gray-500 mb-2 font-medium opacity-80">{m.subtext}</p>
                             )}
                             <p className={`text-2xl sm:text-3xl font-extrabold ${m.color} tracking-tight`}>
                                 {moneyFormat(m.value, currency, "word")}
@@ -60,8 +60,8 @@ export default function UnifiedSummary({
                 </div>
 
                 {/* RIGHT: PIE CHART (3/5 width) */}
-                <div className="lg:col-span-3 p-6 flex flex-col justify-center items-center bg-gray-50/30">
-                    <h4 className="text-sm font-bold text-gray-700 mb-4 self-start">{title}</h4>
+                <div className="lg:col-span-3 p-6 flex flex-col justify-center items-center bg-gray-50/30 dark:bg-slate-700/30">
+                    <h4 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-4 self-start">{title}</h4>
                     <div className="w-full h-80">
                         <FinancialInvestmentPieChart
                             invested={invested}

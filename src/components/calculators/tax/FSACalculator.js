@@ -78,7 +78,7 @@ export default function FSACalculator({ currency = 'USD' }) {
                             onClick={() => setFsaType(type.value)}
                             className={`px-4 py-3 rounded-lg text-left transition-all ${fsaType === type.value
                                 ? 'bg-teal-600 text-white shadow-md'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                : 'bg-gray-100 dark:bg-slate-800 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             <div className="font-medium text-sm">{type.label}</div>
@@ -148,21 +148,21 @@ export default function FSACalculator({ currency = 'USD' }) {
                         </div>
 
                         <div className="grid grid-cols-3 gap-3">
-                            <div className="bg-white border border-gray-200 p-3 rounded-xl text-center">
+                            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-3 rounded-xl text-center">
                                 <p className="text-[10px] text-gray-500 uppercase font-bold mb-1">Federal</p>
-                                <p className="text-base font-bold text-gray-900">
+                                <p className="text-base font-bold text-gray-900 dark:text-gray-100">
                                     {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.federalSavings)}
                                 </p>
                             </div>
-                            <div className="bg-white border border-gray-200 p-3 rounded-xl text-center">
+                            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-3 rounded-xl text-center">
                                 <p className="text-[10px] text-gray-500 uppercase font-bold mb-1">State</p>
-                                <p className="text-base font-bold text-gray-900">
+                                <p className="text-base font-bold text-gray-900 dark:text-gray-100">
                                     {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.stateSavings)}
                                 </p>
                             </div>
-                            <div className="bg-white border border-gray-200 p-3 rounded-xl text-center">
+                            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-3 rounded-xl text-center">
                                 <p className="text-[10px] text-gray-500 uppercase font-bold mb-1">FICA</p>
-                                <p className="text-base font-bold text-gray-900">
+                                <p className="text-base font-bold text-gray-900 dark:text-gray-100">
                                     {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.ficaSavings)}
                                 </p>
                             </div>
@@ -207,7 +207,7 @@ export default function FSACalculator({ currency = 'USD' }) {
                             </div>
                         )}
 
-                        <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded-lg">
+                        <div className="text-xs text-gray-500 bg-gray-50 dark:bg-slate-900/50 p-3 rounded-lg">
                             <p className="font-semibold mb-2">FSA Rules:</p>
                             <ul className="list-disc list-inside space-y-1">
                                 <li>Use-it-or-lose-it (except ${result.graceAmount} carryover for health FSA)</li>

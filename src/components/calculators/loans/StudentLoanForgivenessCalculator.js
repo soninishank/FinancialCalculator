@@ -103,7 +103,7 @@ export default function StudentLoanForgivenessCalculator({ currency = 'USD' }) {
                             onClick={() => setForgivenessType(program.value)}
                             className={`px-4 py-3 rounded-lg text-left transition-all ${forgivenessType === program.value
                                 ? 'bg-blue-600 text-white shadow-md'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                : 'bg-gray-100 dark:bg-slate-800 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             <div className="font-medium text-sm">{program.label}</div>
@@ -148,12 +148,12 @@ export default function StudentLoanForgivenessCalculator({ currency = 'USD' }) {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-white border border-gray-200 p-4 rounded-xl text-center">
+                            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-4 rounded-xl text-center">
                                 <p className="text-xs text-gray-500 uppercase font-bold mb-1">Payments Remaining</p>
-                                <p className="text-2xl font-bold text-gray-900">{result.paymentsRemaining}</p>
+                                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{result.paymentsRemaining}</p>
                                 <p className="text-[10px] text-gray-400 mt-1">{!isNaN(result.yearsTillForgiveness) ? result.yearsTillForgiveness.toFixed(1) : "0.0"} years</p>
                             </div>
-                            <div className="bg-white border border-gray-200 p-4 rounded-xl text-center">
+                            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-4 rounded-xl text-center">
                                 <p className="text-xs text-gray-500 uppercase font-bold mb-1">Progress</p>
                                 <p className="text-2xl font-bold text-blue-600">
                                     {(() => {

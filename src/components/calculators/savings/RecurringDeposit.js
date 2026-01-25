@@ -134,13 +134,13 @@ export default function RecurringDeposit({ currency }) {
                 max={tenureMode === 'Months' ? 120 : 10}
                 step={tenureMode === 'Months' ? 1 : 1}
                 rightElement={
-                    <div className="flex bg-gray-100 p-1 rounded-lg">
+                    <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-lg">
                         {['Years', 'Months'].map((mode) => (
                             <button
                                 key={mode}
                                 onClick={() => handleTenureModeChange(mode)}
                                 className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${tenureMode === mode
-                                    ? 'bg-white text-teal-700 shadow-sm'
+                                    ? 'bg-white dark:bg-slate-800 text-teal-700 shadow-sm'
                                     : 'text-gray-500 hover:text-gray-700'
                                     }`}
                             >
@@ -164,8 +164,8 @@ export default function RecurringDeposit({ currency }) {
     );
 
     const pieChart = (
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center">
-            <h4 className="text-gray-800 font-bold text-lg mb-6 self-start w-full">Break-up of Maturity Value</h4>
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm flex flex-col items-center">
+            <h4 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-6 self-start w-full">Break-up of Maturity Value</h4>
             <div className="w-full h-80 flex justify-center">
                 <FinancialInvestmentPieChart
                     invested={result.totalInvestment}
@@ -192,7 +192,7 @@ export default function RecurringDeposit({ currency }) {
             table={
                 <div className="mt-8">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-                        <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
+                        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Growth Schedule</h3>
                         <div className="flex items-center gap-4 w-full md:w-auto">
                             <button
                                 onClick={() => {
@@ -209,7 +209,7 @@ export default function RecurringDeposit({ currency }) {
                                 Export PDF
                             </button>
                             <div className="flex items-center">
-                                <label className="text-sm font-black text-slate-900 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
+                                <label className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
                                 <div className="w-48">
                                     <MonthYearPicker
                                         value={startDate}

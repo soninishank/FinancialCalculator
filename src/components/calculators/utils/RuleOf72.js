@@ -134,7 +134,7 @@ export default function RuleOf72({ currency }) {
     // --- SUMMARY ---
     const summary = (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col justify-center items-center text-center">
                 <p className="text-gray-500 text-sm font-medium uppercase tracking-wide">Time to Double</p>
                 <p className="text-4xl font-extrabold text-teal-600 mt-2">
                     {!isNaN(result.years) ? result.years.toFixed(1) : "0.0"} Years
@@ -144,9 +144,9 @@ export default function RuleOf72({ currency }) {
                 </p>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col justify-center items-center text-center">
                 <p className="text-gray-500 text-sm font-medium uppercase tracking-wide">Future Value</p>
-                <p className="text-3xl font-bold text-gray-800 mt-2">
+                <p className="text-3xl font-bold text-gray-800 dark:text-gray-100 mt-2">
                     {moneyFormat(principal * 2, currency)}
                     <span className="text-lg text-gray-500 font-normal ml-2">
                         ({moneyFormat(principal * 2, currency, true)})
@@ -164,7 +164,7 @@ export default function RuleOf72({ currency }) {
             inputs={inputs}
             summary={summary}
             charts={
-                <div className="bg-white p-4 rounded-xl border mt-6">
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border mt-6">
                     <FinancialLineChart data={lineData} currency={currency} height={320} />
                 </div>
             }

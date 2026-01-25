@@ -137,7 +137,7 @@ export default function EMIComparison({ currency }) {
         <div className="space-y-4">
             <div className={`grid grid-cols-1 ${profiles.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4`}>
                 {profiles.map((profile, index) => (
-                    <div key={profile.id} className="relative bg-white/50 p-4 rounded-xl border border-gray-100 shadow-sm">
+                    <div key={profile.id} className="relative bg-white dark:bg-slate-800/50 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm">
                         <div className={`absolute -left-2 -top-2 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md ${COLORS[index].bg.replace('bg-', 'bg-').replace('50', '500')}`}>
                             {index + 1}
                         </div>
@@ -185,7 +185,7 @@ export default function EMIComparison({ currency }) {
                                 <div>
                                     <label
                                         htmlFor={`emi-comp-tenure-${profile.id}`}
-                                        className="block text-sm font-black text-slate-900 uppercase tracking-tight mb-2"
+                                        className="block text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight mb-2"
                                     >
                                         Tenure
                                     </label>
@@ -199,14 +199,14 @@ export default function EMIComparison({ currency }) {
                                             max={30}
                                             hideLabel
                                         />
-                                        <div className="flex bg-gray-100 rounded-lg p-1 shrink-0 h-full">
+                                        <div className="flex bg-gray-100 dark:bg-slate-800 rounded-lg p-1 shrink-0 h-full">
                                             <button
                                                 onClick={() => updateProfile(profile.id, 'tenureType', 'years')}
-                                                className={`px-3 py-2 text-xs font-bold rounded-md transition-all ${profile.tenureType === 'years' ? 'bg-white shadow text-indigo-600' : 'text-gray-500 hover:bg-gray-200'}`}
+                                                className={`px-3 py-2 text-xs font-bold rounded-md transition-all ${profile.tenureType === 'years' ? 'bg-white dark:bg-slate-800 shadow text-indigo-600' : 'text-gray-500 hover:bg-gray-200'}`}
                                             >Yr</button>
                                             <button
                                                 onClick={() => updateProfile(profile.id, 'tenureType', 'months')}
-                                                className={`px-3 py-2 text-xs font-bold rounded-md transition-all ${profile.tenureType === 'months' ? 'bg-white shadow text-indigo-600' : 'text-gray-500 hover:bg-gray-200'}`}
+                                                className={`px-3 py-2 text-xs font-bold rounded-md transition-all ${profile.tenureType === 'months' ? 'bg-white dark:bg-slate-800 shadow text-indigo-600' : 'text-gray-500 hover:bg-gray-200'}`}
                                             >Mo</button>
                                         </div>
                                     </div>
@@ -214,7 +214,7 @@ export default function EMIComparison({ currency }) {
 
                                 <div>
                                     <label
-                                        className="block text-sm font-black text-slate-900 uppercase tracking-tight mb-2"
+                                        className="block text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight mb-2"
                                     >
                                         Start Date
                                     </label>
@@ -226,7 +226,7 @@ export default function EMIComparison({ currency }) {
                                                 const [y] = profile.startDate.split('-');
                                                 updateProfile(profile.id, 'startDate', `${y}-${e.target.value}`);
                                             }}
-                                            className="w-2/3 border-2 border-slate-200 rounded-xl p-3 text-lg font-medium text-slate-950 outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all bg-white"
+                                            className="w-2/3 border-2 border-slate-200 rounded-xl p-3 text-lg font-medium text-slate-950 outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all bg-white dark:bg-slate-800"
                                         >
                                             {Array.from({ length: 12 }, (_, i) => {
                                                 const m = String(i + 1).padStart(2, '0');
@@ -240,7 +240,7 @@ export default function EMIComparison({ currency }) {
                                                 const [, mStr] = profile.startDate.split('-');
                                                 updateProfile(profile.id, 'startDate', `${val}-${mStr}`);
                                             }}
-                                            className="w-1/3 border-2 border-slate-200 rounded-xl p-3 text-lg font-medium text-slate-950 outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all bg-white text-center"
+                                            className="w-1/3 border-2 border-slate-200 rounded-xl p-3 text-lg font-medium text-slate-950 outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all bg-white dark:bg-slate-800 text-center"
                                             placeholder="Year"
                                             min={new Date().getFullYear() - 50}
                                             max={new Date().getFullYear() + 50}
@@ -256,7 +256,7 @@ export default function EMIComparison({ currency }) {
             {profiles.length < 3 && (
                 <button
                     onClick={addProfile}
-                    className="w-full py-3 border-2 border-dashed border-gray-200 rounded-xl text-gray-500 font-medium hover:border-teal-500 hover:text-teal-600 transition-colors flex items-center justify-center gap-2"
+                    className="w-full py-3 border-2 border-dashed border-gray-200 dark:border-slate-700 rounded-xl text-gray-500 font-medium hover:border-teal-500 hover:text-teal-600 transition-colors flex items-center justify-center gap-2"
                 >
                     <span className="text-xl">+</span> Add Another Loan to Compare
                 </button>
@@ -336,8 +336,8 @@ export default function EMIComparison({ currency }) {
     );
 
     const charts = (
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mt-6">
-            <h3 className="text-lg font-bold text-gray-800 mb-6">Repayment Timeline (Outstanding Balance)</h3>
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-slate-700 mt-6">
+            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6">Repayment Timeline (Outstanding Balance)</h3>
             <div className="h-[300px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
@@ -380,8 +380,8 @@ export default function EMIComparison({ currency }) {
     const [activeTab, setActiveTab] = useState(0);
 
     const amortizationTable = (
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mt-6 overflow-hidden">
-            <h3 className="text-lg font-bold text-gray-800 mb-6">Amortization Schedule</h3>
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-slate-700 mt-6 overflow-hidden">
+            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6">Amortization Schedule</h3>
 
             {/* Tabs */}
             <div className="flex gap-2 overflow-x-auto pb-2 mb-4">
@@ -391,7 +391,7 @@ export default function EMIComparison({ currency }) {
                         onClick={() => setActiveTab(index)}
                         className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-colors ${activeTab === index
                             ? `${COLORS[index].bg.replace('50', '500')} text-white shadow-md`
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            : 'bg-gray-100 dark:bg-slate-800 text-gray-600 hover:bg-gray-200'
                             }`}
                     >
                         {res.name || `Loan ${index + 1}`}

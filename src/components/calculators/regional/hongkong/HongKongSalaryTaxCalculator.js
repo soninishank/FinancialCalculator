@@ -84,16 +84,16 @@ export default function HongKongSalaryTaxCalculator({ currency = 'HKD' }) {
 
             <div className="space-y-4">
                 <label className="text-sm font-semibold text-gray-700">Filing Status</label>
-                <div className="flex bg-gray-100 p-1 rounded-xl">
+                <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-xl">
                     <button
                         onClick={() => setIsMarried(false)}
-                        className={`flex-1 py-2 px-4 rounded-lg text-sm font-bold transition-all ${!isMarried ? 'bg-white shadow-sm text-teal-600' : 'text-gray-500'}`}
+                        className={`flex-1 py-2 px-4 rounded-lg text-sm font-bold transition-all ${!isMarried ? 'bg-white dark:bg-slate-800 shadow-sm text-teal-600' : 'text-gray-500'}`}
                     >
                         Single
                     </button>
                     <button
                         onClick={() => setIsMarried(true)}
-                        className={`flex-1 py-2 px-4 rounded-lg text-sm font-bold transition-all ${isMarried ? 'bg-white shadow-sm text-teal-600' : 'text-gray-500'}`}
+                        className={`flex-1 py-2 px-4 rounded-lg text-sm font-bold transition-all ${isMarried ? 'bg-white dark:bg-slate-800 shadow-sm text-teal-600' : 'text-gray-500'}`}
                     >
                         Married
                     </button>
@@ -101,7 +101,7 @@ export default function HongKongSalaryTaxCalculator({ currency = 'HKD' }) {
                 <p className="text-xs text-gray-400">Allowance: Single (HK$132k), Married (HK$264k)</p>
             </div>
 
-            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700">
                 <p className="text-xs text-gray-500">
                     Includes <strong>MPF (5%)</strong> deduction, <strong>Basic Allowance</strong>,
                     and compares <strong>Progressive vs. Standard Tax Rates</strong>.
@@ -141,12 +141,12 @@ export default function HongKongSalaryTaxCalculator({ currency = 'HKD' }) {
                             currency={currency}
                             customMetrics={[
                                 { label: "Salaries Tax", value: result.finalTax, color: "text-red-700", bgColor: "" },
-                                { label: "MPF Contribution", value: result.mpf, color: "text-gray-700", bgColor: "bg-gray-50/30" },
+                                { label: "MPF Contribution", value: result.mpf, color: "text-gray-700", bgColor: "bg-gray-50 dark:bg-slate-900/50/30" },
                                 { label: "Annual Net Pay", value: result.netPay, color: "text-teal-700", bgColor: "bg-teal-50/30" }
                             ]}
                         />
 
-                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
                             <div className="flex justify-between text-sm py-1">
                                 <span className="text-gray-600">Total Allowance</span>
                                 <span className="font-semibold text-teal-600">{new Intl.NumberFormat('zh-HK', { style: 'currency', currency }).format(result.allowance)}</span>
@@ -163,8 +163,8 @@ export default function HongKongSalaryTaxCalculator({ currency = 'HKD' }) {
                                 <span className="text-gray-600">MPF Contribution</span>
                                 <span className="font-semibold text-red-600">-{new Intl.NumberFormat('zh-HK', { style: 'currency', currency }).format(Math.round(result.mpf))}</span>
                             </div>
-                            <div className="flex justify-between text-sm py-2 mt-2 border-t border-gray-200 font-bold">
-                                <span className="text-gray-800">Annual Net Income</span>
+                            <div className="flex justify-between text-sm py-2 mt-2 border-t border-gray-200 dark:border-slate-700 font-bold">
+                                <span className="text-gray-800 dark:text-gray-100">Annual Net Income</span>
                                 <span className="text-teal-700">{new Intl.NumberFormat('zh-HK', { style: 'currency', currency }).format(Math.round(result.netPay))}</span>
                             </div>
                         </div>
@@ -172,7 +172,7 @@ export default function HongKongSalaryTaxCalculator({ currency = 'HKD' }) {
                 }
                 charts={
                     <div className="mt-8">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">Net Income Breakdown</h3>
+                        <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">Net Income Breakdown</h3>
                         <FinancialLoanPieChart
                             principal={result.netPay}
                             totalInterest={result.finalTax}

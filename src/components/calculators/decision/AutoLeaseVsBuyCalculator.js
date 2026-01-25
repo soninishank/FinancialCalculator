@@ -232,9 +232,9 @@ export default function AutoLeaseVsBuyCalculator({ currency = 'USD' }) {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-white border border-gray-200 p-4 rounded-xl text-center">
+                            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-4 rounded-xl text-center">
                                 <p className="text-xs text-gray-500 uppercase font-bold mb-1">Vehicle Value at {compareYears} Years</p>
-                                <p className="text-lg font-bold text-gray-900">
+                                <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
                                     {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.vehicleValueAtEnd)}
                                 </p>
                                 <p className="text-[10px] text-gray-400 mt-1">Your equity if bought</p>
@@ -249,7 +249,7 @@ export default function AutoLeaseVsBuyCalculator({ currency = 'USD' }) {
                             </div>
                         </div>
 
-                        <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded-lg">
+                        <div className="text-xs text-gray-500 bg-gray-50 dark:bg-slate-900/50 p-3 rounded-lg">
                             <p className="font-semibold mb-2">Consider Leasing If:</p>
                             <ul className="list-disc list-inside space-y-1">
                                 <li>You want latest features every few years</li>

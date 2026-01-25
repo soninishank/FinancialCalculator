@@ -174,7 +174,7 @@ export default function TimeDurationCalculator({ currency }) {
                 step={0.1}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-100">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-100 dark:border-slate-700">
                 {/* Strategy A */}
                 <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
                     <span className="text-xs font-bold text-indigo-500 uppercase tracking-widest block mb-3">Strategy A: Lumpsum</span>
@@ -206,7 +206,7 @@ export default function TimeDurationCalculator({ currency }) {
                         <select
                             value={frequency}
                             onChange={(e) => setFrequency(e.target.value)}
-                            className="w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-medium"
+                            className="w-full bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 py-2 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-medium"
                         >
                             <option value="monthly">Monthly</option>
                             <option value="quarterly">Quarterly</option>
@@ -222,13 +222,13 @@ export default function TimeDurationCalculator({ currency }) {
 
     const summary = (
         <div className="space-y-4">
-            <div className={`p-4 rounded-xl text-center border-2 ${results.lumpsum.totalYearsDec < results.sip.totalYearsDec ? 'bg-indigo-50 border-indigo-100' : 'bg-white border-gray-100'}`}>
+            <div className={`p-4 rounded-xl text-center border-2 ${results.lumpsum.totalYearsDec < results.sip.totalYearsDec ? 'bg-indigo-50 border-indigo-100' : 'bg-white dark:bg-slate-800 border-gray-100 dark:border-slate-700'}`}>
                 <div className="text-xs font-bold text-gray-400 uppercase">Strategy A (Lumpsum)</div>
                 <div className="text-2xl font-extrabold text-indigo-600 mt-1">
                     {results.lumpsum.totalYearsDec >= 999 ? "Goal Unreachable" : `${results.lumpsum.years}y ${results.lumpsum.months}m`}
                 </div>
             </div>
-            <div className={`p-4 rounded-xl text-center border-2 ${results.sip.totalYearsDec < results.lumpsum.totalYearsDec ? 'bg-emerald-50 border-emerald-100' : 'bg-white border-gray-100'}`}>
+            <div className={`p-4 rounded-xl text-center border-2 ${results.sip.totalYearsDec < results.lumpsum.totalYearsDec ? 'bg-emerald-50 border-emerald-100' : 'bg-white dark:bg-slate-800 border-gray-100 dark:border-slate-700'}`}>
                 <div className="text-xs font-bold text-gray-400 uppercase">Strategy B ({frequency} SIP)</div>
                 <div className="text-2xl font-extrabold text-emerald-600 mt-1">
                     {results.sip.totalYearsDec >= 999 ? "Goal Unreachable" : `${results.sip.years}y ${results.sip.months}m`}
@@ -248,8 +248,8 @@ export default function TimeDurationCalculator({ currency }) {
             inputs={inputs}
             summary={summary}
             charts={
-                <div className="mt-8 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                    <h3 className="text-lg font-bold text-gray-800 mb-4">Growth Comparison</h3>
+                <div className="mt-8 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Growth Comparison</h3>
                     <FinancialLineChart
                         data={{
                             labels: chartData.map(r => `Year ${r.year}`),

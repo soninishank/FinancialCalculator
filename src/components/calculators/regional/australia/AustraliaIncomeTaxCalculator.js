@@ -105,13 +105,13 @@ export default function AustraliaIncomeTaxCalculator({ currency = 'AUD' }) {
                 <div className="flex gap-4">
                     <button
                         onClick={() => setIsSuperIncluded(false)}
-                        className={`flex-1 py-2 px-4 rounded-lg border transition-all ${!isSuperIncluded ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-gray-600 border-gray-300'}`}
+                        className={`flex-1 py-2 px-4 rounded-lg border transition-all ${!isSuperIncluded ? 'bg-teal-600 text-white border-teal-600' : 'bg-white dark:bg-slate-800 text-gray-600 border-gray-300'}`}
                     >
                         Base + Super
                     </button>
                     <button
                         onClick={() => setIsSuperIncluded(true)}
-                        className={`flex-1 py-2 px-4 rounded-lg border transition-all ${isSuperIncluded ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-gray-600 border-gray-300'}`}
+                        className={`flex-1 py-2 px-4 rounded-lg border transition-all ${isSuperIncluded ? 'bg-teal-600 text-white border-teal-600' : 'bg-white dark:bg-slate-800 text-gray-600 border-gray-300'}`}
                     >
                         Inc. Super
                     </button>
@@ -129,7 +129,7 @@ export default function AustraliaIncomeTaxCalculator({ currency = 'AUD' }) {
                 isDecimal={true}
             />
 
-            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700">
                 <p className="text-xs text-gray-500">
                     Includes <strong>Stage 3 Tax Cuts</strong> (effective July 1, 2024) and <strong>2% Medicare Levy</strong>.
                     Low Income Tax Offset (LITO) not fully modeled for simplicity.
@@ -168,12 +168,12 @@ export default function AustraliaIncomeTaxCalculator({ currency = 'AUD' }) {
                             currency={currency}
                             customMetrics={[
                                 { label: "Income Tax", value: result.incomeTax, color: "text-red-700", bgColor: "" },
-                                { label: "Medicare Levy", value: result.medicareLevy, color: "text-gray-700", bgColor: "bg-gray-50/30" },
+                                { label: "Medicare Levy", value: result.medicareLevy, color: "text-gray-700", bgColor: "bg-gray-50 dark:bg-slate-900/50/30" },
                                 { label: "Annual Net Pay", value: result.netPay, color: "text-teal-700", bgColor: "bg-teal-50/30" }
                             ]}
                         />
 
-                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
                             <div className="flex justify-between text-sm py-1">
                                 <span className="text-gray-600">Taxable Income</span>
                                 <span className="font-semibold">{new Intl.NumberFormat('en-AU', { style: 'currency', currency }).format(result.annualGross)}</span>
@@ -190,8 +190,8 @@ export default function AustraliaIncomeTaxCalculator({ currency = 'AUD' }) {
                                 <span className="text-gray-600">Super (Paid by Employer)</span>
                                 <span className="font-semibold text-teal-600">+{new Intl.NumberFormat('en-AU', { style: 'currency', currency }).format(result.superAmount)}</span>
                             </div>
-                            <div className="flex justify-between text-sm py-2 mt-2 border-t border-gray-200 font-bold">
-                                <span className="text-gray-800">Annual Net Pay</span>
+                            <div className="flex justify-between text-sm py-2 mt-2 border-t border-gray-200 dark:border-slate-700 font-bold">
+                                <span className="text-gray-800 dark:text-gray-100">Annual Net Pay</span>
                                 <span className="text-teal-700">{new Intl.NumberFormat('en-AU', { style: 'currency', currency }).format(result.netPay)}</span>
                             </div>
                         </div>
@@ -199,7 +199,7 @@ export default function AustraliaIncomeTaxCalculator({ currency = 'AUD' }) {
                 }
                 charts={
                     <div className="mt-8">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">Income Distribution</h3>
+                        <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">Income Distribution</h3>
                         <FinancialLoanPieChart
                             principal={result.netPay}
                             totalInterest={result.incomeTax}

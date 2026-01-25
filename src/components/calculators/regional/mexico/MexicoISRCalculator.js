@@ -64,7 +64,7 @@ export default function MexicoISRCalculator({ currency = 'MXN' }) {
                 step={1000}
                 currency={currency}
             />
-            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700">
                 <p className="text-xs text-gray-500">
                     Calculates <strong>ISR</strong> based on 2024 monthly tables.
                     Includes an estimated <strong>2.5% IMSS</strong> social security deduction.
@@ -108,7 +108,7 @@ export default function MexicoISRCalculator({ currency = 'MXN' }) {
                 }
                 charts={
                     <div className="mt-8">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">Paycheck Breakdown</h3>
+                        <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">Paycheck Breakdown</h3>
                         <FinancialLoanPieChart
                             principal={result.netPay}
                             totalInterest={result.isr}

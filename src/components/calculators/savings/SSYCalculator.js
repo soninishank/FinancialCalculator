@@ -123,7 +123,7 @@ export default function SSYCalculator({ currency = 'INR' }) {
                 <select
                     value={startYear}
                     onChange={(e) => setStartYear(e.target.value)}
-                    className="w-full p-2 bg-white border border-gray-300 rounded-lg font-semibold text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full p-2 bg-white dark:bg-slate-800 border border-gray-300 rounded-lg font-semibold text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 >
                     {[0, 1, 2, 3, 4, 5].map(offset => {
                         const y = new Date().getFullYear() + offset;
@@ -156,10 +156,10 @@ export default function SSYCalculator({ currency = 'INR' }) {
                 charts={<FinancialCompoundingBarChart data={result.yearlyData} currency={currency} type="investment" />}
                 table={
                     <div className="mt-8">
-                        <h3 className="text-lg font-bold text-gray-800 mb-4">Maturity Year: {result.maturityYear}</h3>
-                        <div className="overflow-x-auto border border-gray-200 rounded-xl">
+                        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Maturity Year: {result.maturityYear}</h3>
+                        <div className="overflow-x-auto border border-gray-200 dark:border-slate-700 rounded-xl">
                             <table className="w-full text-sm text-left">
-                                <thead className="bg-gray-50 text-gray-700 font-bold uppercase text-xs">
+                                <thead className="bg-gray-50 dark:bg-slate-900/50 text-gray-700 font-bold uppercase text-xs">
                                     <tr>
                                         <th className="px-4 py-3">Year</th>
                                         <th className="px-4 py-3">Deposit</th>
@@ -169,15 +169,15 @@ export default function SSYCalculator({ currency = 'INR' }) {
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
                                     {result.yearlyData.map((row) => (
-                                        <tr key={row.year} className="hover:bg-gray-50 transition-colors">
-                                            <td className="px-4 py-3 font-medium text-gray-800">{row.year}</td>
+                                        <tr key={row.year} className="hover:bg-gray-50 dark:bg-slate-900/50 transition-colors">
+                                            <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">{row.year}</td>
                                             <td className="px-4 py-3 text-gray-600">
                                                 {new Intl.NumberFormat('en-IN', { style: 'currency', currency: currency, maximumFractionDigits: 0 }).format(row.yearlyDeposit)}
                                             </td>
                                             <td className="px-4 py-3 text-emerald-600">
                                                 +{new Intl.NumberFormat('en-IN', { style: 'currency', currency: currency, maximumFractionDigits: 0 }).format(row.interestEarned)}
                                             </td>
-                                            <td className="px-4 py-3 font-bold text-gray-900 text-right">
+                                            <td className="px-4 py-3 font-bold text-gray-900 dark:text-gray-100 text-right">
                                                 {new Intl.NumberFormat('en-IN', { style: 'currency', currency: currency, maximumFractionDigits: 0 }).format(row.balance)}
                                             </td>
                                         </tr>

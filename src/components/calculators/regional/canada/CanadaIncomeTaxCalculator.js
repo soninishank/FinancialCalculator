@@ -112,7 +112,7 @@ export default function CanadaIncomeTaxCalculator({ currency = 'CAD' }) {
                 currency={currency}
             />
 
-            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700">
                 <p className="text-xs text-gray-500">
                     Based on <strong>{CANADA_TAX_YEAR}</strong> Federal brackets.
                     Provincial taxes use an <strong>average estimated rate</strong> for simplicity.
@@ -152,12 +152,12 @@ export default function CanadaIncomeTaxCalculator({ currency = 'CAD' }) {
                             currency={currency}
                             customMetrics={[
                                 { label: "Total Income Tax", value: result.fedTax + result.provTax, color: "text-red-700", bgColor: "" },
-                                { label: "CPP + EI + RRSP", value: result.cpp + result.ei + result.rrspContribution, color: "text-gray-700", bgColor: "bg-gray-50/30" },
+                                { label: "CPP + EI + RRSP", value: result.cpp + result.ei + result.rrspContribution, color: "text-gray-700", bgColor: "bg-gray-50 dark:bg-slate-900/50/30" },
                                 { label: "Annual Net Pay", value: result.netPay, color: "text-teal-700", bgColor: "bg-teal-50/30" }
                             ]}
                         />
 
-                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
                             <div className="flex justify-between text-sm py-1">
                                 <span className="text-gray-600">Federal Tax</span>
                                 <span className="font-semibold text-red-600">-{new Intl.NumberFormat('en-CA', { style: 'currency', currency }).format(result.fedTax)}</span>
@@ -176,8 +176,8 @@ export default function CanadaIncomeTaxCalculator({ currency = 'CAD' }) {
                                     <span className="font-semibold text-teal-600">-{new Intl.NumberFormat('en-CA', { style: 'currency', currency }).format(result.rrspContribution)}</span>
                                 </div>
                             )}
-                            <div className="flex justify-between text-sm py-2 mt-2 border-t border-gray-200 font-bold">
-                                <span className="text-gray-800">Annual Net Pay</span>
+                            <div className="flex justify-between text-sm py-2 mt-2 border-t border-gray-200 dark:border-slate-700 font-bold">
+                                <span className="text-gray-800 dark:text-gray-100">Annual Net Pay</span>
                                 <span className="text-teal-700">{new Intl.NumberFormat('en-CA', { style: 'currency', currency }).format(result.netPay)}</span>
                             </div>
                         </div>
@@ -185,7 +185,7 @@ export default function CanadaIncomeTaxCalculator({ currency = 'CAD' }) {
                 }
                 charts={
                     <div className="mt-8">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">Deductions Breakdown</h3>
+                        <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">Deductions Breakdown</h3>
                         <FinancialLoanPieChart
                             principal={result.netPay}
                             totalInterest={result.fedTax + result.provTax}

@@ -165,16 +165,16 @@ export default function TimeToFIRE({ currency }) {
                         <h4 className="text-base font-black uppercase tracking-widest">Ultimate FIRE Planner</h4>
                         <p className="text-[10px] opacity-80 font-medium">Lean • Coast • Standard • Fat FIRE Analysis</p>
                     </div>
-                    <div className="bg-white/20 backdrop-blur-md p-1 rounded-xl flex items-center border border-white/20">
+                    <div className="bg-white dark:bg-slate-800/20 backdrop-blur-md p-1 rounded-xl flex items-center border border-white/20">
                         <button
                             onClick={() => setIsAdvancedMode(false)}
-                            className={`px-4 py-1.5 text-xs rounded-lg transition-all font-bold ${!isAdvancedMode ? 'bg-white text-teal-700 shadow-lg' : 'text-white hover:bg-white/10'}`}
+                            className={`px-4 py-1.5 text-xs rounded-lg transition-all font-bold ${!isAdvancedMode ? 'bg-white dark:bg-slate-800 text-teal-700 shadow-lg' : 'text-white hover:bg-white dark:bg-slate-800/10'}`}
                         >
                             Essentials
                         </button>
                         <button
                             onClick={() => setIsAdvancedMode(true)}
-                            className={`px-4 py-1.5 text-xs rounded-lg transition-all font-bold ${isAdvancedMode ? 'bg-white text-teal-700 shadow-lg' : 'text-white hover:bg-white/10'}`}
+                            className={`px-4 py-1.5 text-xs rounded-lg transition-all font-bold ${isAdvancedMode ? 'bg-white dark:bg-slate-800 text-teal-700 shadow-lg' : 'text-white hover:bg-white dark:bg-slate-800/10'}`}
                         >
                             Advanced
                         </button>
@@ -183,7 +183,7 @@ export default function TimeToFIRE({ currency }) {
             </div>
 
             <div className="md:col-span-2 border-b pb-4 mb-2">
-                <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <h4 className="text-[11px] font-black text-slate-900 dark:text-slate-100 uppercase tracking-widest mb-4 flex items-center gap-2">
                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                     Life & Retirement
                 </h4>
@@ -250,8 +250,8 @@ export default function TimeToFIRE({ currency }) {
                         </p>
                     </div>
                 ) : (
-                    <div className="mb-4 border p-5 rounded-2xl bg-gray-50/50 shadow-inner">
-                        <h4 className="text-sm font-black text-slate-900 mb-4 flex items-center gap-2">
+                    <div className="mb-4 border p-5 rounded-2xl bg-gray-50 dark:bg-slate-900/50/50 shadow-inner">
+                        <h4 className="text-sm font-black text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
                             <span className="w-2 h-2 bg-teal-500 rounded-full"></span>
                             Target Monthly Expenses Breakdown
                         </h4>
@@ -305,8 +305,8 @@ export default function TimeToFIRE({ currency }) {
                                 currency={currency}
                             />
                         </div>
-                        <div className="mt-5 pt-4 border-t border-gray-200 flex justify-between items-center">
-                            <span className="text-sm font-black text-slate-900 uppercase tracking-tight">Total Monthly:</span>
+                        <div className="mt-5 pt-4 border-t border-gray-200 dark:border-slate-700 flex justify-between items-center">
+                            <span className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight">Total Monthly:</span>
                             <span className="text-xl font-black text-teal-700">{moneyFormat(totalMonthlyExpenses, currency)}</span>
                         </div>
                     </div>
@@ -480,7 +480,7 @@ export default function TimeToFIRE({ currency }) {
 
 
                         {/* FIRE Milestones Card */}
-                        <div className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                        <div className="p-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm flex flex-col justify-between">
                             <h4 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-4">FIRE Milestones</h4>
                             <div className="space-y-4">
                                 {/* Barista FIRE */}
@@ -491,7 +491,7 @@ export default function TimeToFIRE({ currency }) {
                                         </span>
                                         <span className="text-[10px] text-gray-400">Cover Essentials ({moneyFormat(monthlyEssentials, currency)}/mo)</span>
                                     </div>
-                                    <div className={`px-2 py-1 rounded-lg text-xs font-bold ${isBarista ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-400'}`}>
+                                    <div className={`px-2 py-1 rounded-lg text-xs font-bold ${isBarista ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 dark:bg-slate-800 text-gray-400'}`}>
                                         {isBarista ? 'ACHIEVED' : moneyFormat(baristaNumber - Number(currentCorpus), currency) + ' left'}
                                     </div>
                                 </div>
@@ -504,7 +504,7 @@ export default function TimeToFIRE({ currency }) {
                                         </span>
                                         <span className="text-[10px] text-gray-400">Stop Saving Now</span>
                                     </div>
-                                    <div className={`px-2 py-1 rounded-lg text-xs font-bold ${isCoasted ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-400'}`}>
+                                    <div className={`px-2 py-1 rounded-lg text-xs font-bold ${isCoasted ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 dark:bg-slate-800 text-gray-400'}`}>
                                         {isCoasted ? 'ACHIEVED' : moneyFormat(coastResult.neededToday - Number(currentCorpus), currency) + ' left'}
                                     </div>
                                 </div>
@@ -518,13 +518,13 @@ export default function TimeToFIRE({ currency }) {
                         </div>
 
                         {/* Target Corpus */}
-                        <div className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden">
+                        <div className="p-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden">
                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 to-emerald-400"></div>
                             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-1">Target FIRE Corpus</h3>
-                            <div className="text-3xl font-extrabold text-gray-900">
+                            <div className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
                                 {moneyFormat(result.targetCorpus, currency, true)}
                             </div>
-                            <div className="flex items-center gap-1 mt-2 text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-full border border-gray-100">
+                            <div className="flex items-center gap-1 mt-2 text-xs text-gray-400 bg-gray-50 dark:bg-slate-900/50 px-2 py-1 rounded-full border border-gray-100 dark:border-slate-700">
                                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 <span>Annual Exp. ÷ {swr}% (SWR) (Real Terms)</span>
                             </div>
@@ -546,7 +546,7 @@ export default function TimeToFIRE({ currency }) {
                             )}
                             {showInfo && (
                                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-fade-in">
-                                    <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 relative animate-scale-in">
+                                    <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl max-w-md w-full p-8 relative animate-scale-in">
                                         <button
                                             onClick={() => setShowInfo(false)}
                                             className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 transition-colors"
@@ -562,7 +562,7 @@ export default function TimeToFIRE({ currency }) {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                 </svg>
                                             </div>
-                                            <h4 className="text-xl font-black text-gray-900">FIRE Level Definitions</h4>
+                                            <h4 className="text-xl font-black text-gray-900 dark:text-gray-100">FIRE Level Definitions</h4>
                                             <p className="text-sm text-gray-500 mt-2">
                                                 Based on the ratio of your <b>Essential Expenses</b> to your <b>Total Withdrawal Capacity (SWR)</b>.
                                             </p>
@@ -587,7 +587,7 @@ export default function TimeToFIRE({ currency }) {
                                                                     item.color === 'purple' ? 'text-purple-700' :
                                                                         'text-pink-700'
                                                                 }`}>{item.level}</span>
-                                                            <span className="text-[10px] font-bold bg-white/80 px-2 py-0.5 rounded-full border">{item.range}</span>
+                                                            <span className="text-[10px] font-bold bg-white dark:bg-slate-800/80 px-2 py-0.5 rounded-full border">{item.range}</span>
                                                         </div>
                                                         <p className="text-[11px] text-gray-500 leading-tight">{item.desc}</p>
                                                     </div>
@@ -626,8 +626,8 @@ export default function TimeToFIRE({ currency }) {
                     )}
 
                     {/* CHART */}
-                    <div className="mt-8 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hidden md:block">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4">Path to FIRE (Real Value)</h3>
+                    <div className="mt-8 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm hidden md:block">
+                        <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4">Path to FIRE (Real Value)</h3>
                         <FinancialLineChart
                             data={{
                                 labels: Array.from({ length: Math.ceil(Math.min(result.years, 50) + 2) }, (_, i) => `Year ${i}`),
@@ -704,7 +704,7 @@ function CategoryInput({ label, value, onChange, active, onToggle, ...props }) {
                         className={`w-8 h-4 rounded-full transition-colors relative flex items-center ${active ? 'bg-teal-500' : 'bg-gray-300'}`}
                         title={active ? "Deactivate this category" : "Activate this category"}
                     >
-                        <div className={`w-3 h-3 bg-white rounded-full shadow-sm transform transition-transform ${active ? 'translate-x-4' : 'translate-x-1'}`} />
+                        <div className={`w-3 h-3 bg-white dark:bg-slate-800 rounded-full shadow-sm transform transition-transform ${active ? 'translate-x-4' : 'translate-x-1'}`} />
                     </button>
                     <span className={`text-[11px] font-black uppercase tracking-wider ${active ? 'text-teal-700' : 'text-gray-400 line-through'}`}>
                         {label}

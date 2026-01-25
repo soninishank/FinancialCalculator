@@ -133,7 +133,7 @@ const RentalYieldCalculator = ({ currency }) => {
                                 <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">Gross Yield</span>
                                 <span className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{!isNaN(grossYield) ? grossYield.toFixed(2) : "0.00"}%</span>
                             </div>
-                            <div className="w-full bg-gray-100 rounded-full h-2.5 dark:bg-gray-700">
+                            <div className="w-full bg-gray-100 dark:bg-slate-800 rounded-full h-2.5 dark:bg-gray-700">
                                 <div className="bg-indigo-600 h-2.5 rounded-full" style={{ width: `${Math.min(grossYield * 5, 100)}%` }}></div>
                             </div>
                             <p className="text-xs text-gray-400 mt-2">Annual Rent ÷ Property Value</p>
@@ -144,7 +144,7 @@ const RentalYieldCalculator = ({ currency }) => {
                                 <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">Net Yield</span>
                                 <span className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">{!isNaN(netYield) ? netYield.toFixed(2) : "0.00"}%</span>
                             </div>
-                            <div className="w-full bg-gray-100 rounded-full h-2.5 dark:bg-gray-700">
+                            <div className="w-full bg-gray-100 dark:bg-slate-800 rounded-full h-2.5 dark:bg-gray-700">
                                 <div className="bg-emerald-600 h-2.5 rounded-full" style={{ width: `${Math.min(netYield * 5, 100)}%` }}></div>
                             </div>
                             <p className="text-xs text-gray-400 mt-2">(Annual Rent - Expenses) ÷ Property Value</p>

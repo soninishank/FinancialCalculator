@@ -74,7 +74,7 @@ export default function ChinaIncomeTaxCalculator({ currency = 'CNY' }) {
                 isDecimal={true}
             />
 
-            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700">
                 <p className="text-xs text-gray-500">
                     Includes <strong>5,000 RMB per month</strong> standard deduction.
                     Calculates Individual Income Tax (IIT) based on 2024 progressive brackets.
@@ -114,19 +114,19 @@ export default function ChinaIncomeTaxCalculator({ currency = 'CNY' }) {
                             currency={currency}
                             customMetrics={[
                                 { label: "Income Tax (IIT)", value: result.iit, color: "text-red-700", bgColor: "" },
-                                { label: "Social Insurance", value: result.socialInsuranceYearly, color: "text-gray-700", bgColor: "bg-gray-50/30" },
+                                { label: "Social Insurance", value: result.socialInsuranceYearly, color: "text-gray-700", bgColor: "bg-gray-50 dark:bg-slate-900/50/30" },
                                 { label: "Annual Take-Home", value: result.netAnnual, color: "text-teal-700", bgColor: "bg-teal-50/30" }
                             ]}
                         />
 
-                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
                             <div className="flex justify-between text-sm py-1">
                                 <span className="text-gray-600">Standard Deduction</span>
                                 <span className="font-semibold text-teal-600">{new Intl.NumberFormat('zh-CN', { style: 'currency', currency }).format(CHINA_STANDARD_DEDUCTION)}</span>
                             </div>
                             <div className="flex justify-between text-sm py-1">
                                 <span className="text-gray-600">Taxable Income</span>
-                                <span className="font-semibold text-gray-800">{new Intl.NumberFormat('zh-CN', { style: 'currency', currency }).format(Math.round(result.taxableIncome))}</span>
+                                <span className="font-semibold text-gray-800 dark:text-gray-100">{new Intl.NumberFormat('zh-CN', { style: 'currency', currency }).format(Math.round(result.taxableIncome))}</span>
                             </div>
                             <div className="flex justify-between text-sm py-1 border-t mt-2 pt-2">
                                 <span className="text-gray-600">Individual Income Tax</span>
@@ -136,8 +136,8 @@ export default function ChinaIncomeTaxCalculator({ currency = 'CNY' }) {
                                 <span className="text-gray-600">Social Insurance</span>
                                 <span className="font-semibold text-red-600">-{new Intl.NumberFormat('zh-CN', { style: 'currency', currency }).format(Math.round(result.socialInsuranceYearly))}</span>
                             </div>
-                            <div className="flex justify-between text-sm py-2 mt-2 border-t border-gray-200 font-bold">
-                                <span className="text-gray-800">Annual Net Income</span>
+                            <div className="flex justify-between text-sm py-2 mt-2 border-t border-gray-200 dark:border-slate-700 font-bold">
+                                <span className="text-gray-800 dark:text-gray-100">Annual Net Income</span>
                                 <span className="text-teal-700">{new Intl.NumberFormat('zh-CN', { style: 'currency', currency }).format(Math.round(result.netAnnual))}</span>
                             </div>
                         </div>
@@ -145,7 +145,7 @@ export default function ChinaIncomeTaxCalculator({ currency = 'CNY' }) {
                 }
                 charts={
                     <div className="mt-8">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">China Income Distribution</h3>
+                        <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">China Income Distribution</h3>
                         <FinancialLoanPieChart
                             principal={result.netAnnual}
                             totalInterest={result.iit}

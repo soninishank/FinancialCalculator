@@ -258,14 +258,14 @@ export default function HomeAffordabilityCalculator({ currency = 'USD' }) {
             <CalculatorLayout
                 inputs={inputs}
                 charts={
-                    <div className="flex flex-col items-center justify-center p-6 bg-white rounded-2xl border border-gray-100 dark:border-slate-700 h-full">
+                    <div className="flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 h-full">
                         <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-6">Payment Breakdown</h3>
                         <div className="w-64 h-64 relative">
                             <Doughnut data={chartData} options={chartOptions} />
                             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                 <div className="text-center">
                                     <p className="text-xs text-gray-400">Total</p>
-                                    <p className="text-lg font-bold text-gray-800">
+                                    <p className="text-lg font-bold text-gray-800 dark:text-gray-100">
                                         {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.totalMonthlyPayment)}
                                     </p>
                                 </div>
@@ -282,16 +282,16 @@ export default function HomeAffordabilityCalculator({ currency = 'USD' }) {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-white border border-gray-200 p-4 rounded-xl text-center">
+                            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-4 rounded-xl text-center">
                                 <p className="text-xs text-gray-500 uppercase font-bold mb-1">Down Payment</p>
-                                <p className="text-lg font-bold text-gray-900">
+                                <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
                                     {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.downPayment)}
                                 </p>
                                 <p className="text-[10px] text-gray-400 mt-1">{downPaymentPercent}% of home price</p>
                             </div>
-                            <div className="bg-white border border-gray-200 p-4 rounded-xl text-center">
+                            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-4 rounded-xl text-center">
                                 <p className="text-xs text-gray-500 uppercase font-bold mb-1">Loan Amount</p>
-                                <p className="text-lg font-bold text-gray-900">
+                                <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
                                     {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.loanAmount)}
                                 </p>
                                 <p className="text-[10px] text-gray-400 mt-1">{loanTerm}-year mortgage</p>

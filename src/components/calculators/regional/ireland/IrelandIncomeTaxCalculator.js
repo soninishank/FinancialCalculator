@@ -92,7 +92,7 @@ export default function IrelandIncomeTaxCalculator({ currency = 'EUR' }) {
                 step={1}
                 symbol="%"
             />
-            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700">
                 <p className="text-xs text-gray-500">
                     Includes <strong>PAYE</strong>, <strong>USC</strong>, and <strong>PRSI (4%)</strong> for 2024.
                     Standard credits for a single person (€3,750) applied.
@@ -128,12 +128,12 @@ export default function IrelandIncomeTaxCalculator({ currency = 'EUR' }) {
                             currency={currency}
                             customMetrics={[
                                 { label: "Income Tax (PAYE)", value: result.paye, color: "text-red-700", bgColor: "bg-red-50/30" },
-                                { label: "USC + PRSI + Pension", value: result.usc + result.prsi + result.pensionAmount, color: "text-gray-700", bgColor: "bg-gray-50/30" },
+                                { label: "USC + PRSI + Pension", value: result.usc + result.prsi + result.pensionAmount, color: "text-gray-700", bgColor: "bg-gray-50 dark:bg-slate-900/50/30" },
                                 { label: "Annual Net Pay", value: result.netPay, color: "text-teal-700", bgColor: "bg-teal-50/30" }
                             ]}
                         />
 
-                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
                             <div className="flex justify-between text-sm py-1">
                                 <span className="text-gray-600">PAYE Tax</span>
                                 <span className="font-semibold text-red-600">-{new Intl.NumberFormat('en-IE', { style: 'currency', currency }).format(result.paye)}</span>
@@ -151,7 +151,7 @@ export default function IrelandIncomeTaxCalculator({ currency = 'EUR' }) {
                 }
                 charts={
                     <div className="mt-8">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">Ireland Tax Breakdown</h3>
+                        <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">Ireland Tax Breakdown</h3>
                         <FinancialLoanPieChart
                             principal={result.netPay}
                             totalInterest={result.paye}

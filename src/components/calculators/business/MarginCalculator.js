@@ -129,8 +129,8 @@ const MarginCalculator = ({ currency }) => {
     );
 
     const details = calculatorDetails['margin-calculator']?.render() || (
-        <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Margin vs Markup Explained</h3>
+        <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Margin vs Markup Explained</h3>
             <div className="space-y-4 text-gray-600 leading-relaxed">
                 <p>
                     <strong>Margin</strong> and <strong>Markup</strong> are both profitability metrics, but they use different denominators:

@@ -180,7 +180,7 @@ export default function DebtAvalancheSnowballCalculator({ currency = 'USD' }) {
                 </div>
 
                 {debts.map((debt, index) => (
-                    <div key={debt.id} className="p-4 bg-gray-50 rounded-xl border border-gray-200 space-y-3">
+                    <div key={debt.id} className="p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-200 dark:border-slate-700 space-y-3">
                         <div className="flex justify-between items-center">
                             <input
                                 type="text"
@@ -241,19 +241,19 @@ export default function DebtAvalancheSnowballCalculator({ currency = 'USD' }) {
                 summary={
                     <div className="space-y-6">
                         <div className="bg-gradient-to-br from-red-500 to-pink-600 p-8 rounded-2xl text-white shadow-lg relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-white/20 transition-all duration-700"></div>
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-white dark:bg-slate-800/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-white dark:bg-slate-800/20 transition-all duration-700"></div>
                             <div className="relative z-10">
                                 <p className="text-xs font-bold uppercase tracking-widest mb-1 opacity-80">Total Debt Balance</p>
                                 <p className="text-5xl font-black">{moneyFormat(result.totalDebt, currency)}</p>
                                 <div className="flex gap-4 mt-4 text-[10px] font-bold uppercase tracking-wider opacity-90">
-                                    <span className="bg-white/20 px-2 py-0.5 rounded">{debts.length} active debts</span>
-                                    <span className="bg-white/20 px-2 py-0.5 rounded">{moneyFormat(result.extraPayment, currency)}/mo extra budget</span>
+                                    <span className="bg-white dark:bg-slate-800/20 px-2 py-0.5 rounded">{debts.length} active debts</span>
+                                    <span className="bg-white dark:bg-slate-800/20 px-2 py-0.5 rounded">{moneyFormat(result.extraPayment, currency)}/mo extra budget</span>
                                 </div>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className={`p-5 rounded-2xl border transition-all duration-300 ${result.interestSaved >= 0 ? 'bg-indigo-50 border-indigo-100 ring-4 ring-indigo-500/5' : 'bg-gray-50 border-gray-100'}`}>
+                            <div className={`p-5 rounded-2xl border transition-all duration-300 ${result.interestSaved >= 0 ? 'bg-indigo-50 border-indigo-100 ring-4 ring-indigo-500/5' : 'bg-gray-50 dark:bg-slate-900/50 border-gray-100 dark:border-slate-700'}`}>
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-2">
                                         <Zap className="w-5 h-5 text-indigo-600" />
@@ -273,7 +273,7 @@ export default function DebtAvalancheSnowballCalculator({ currency = 'USD' }) {
                                 </div>
                             </div>
 
-                            <div className={`p-5 rounded-2xl border transition-all duration-300 ${result.interestSaved < 0 ? 'bg-emerald-50 border-emerald-100 ring-4 ring-emerald-500/5' : 'bg-gray-50 border-gray-100'}`}>
+                            <div className={`p-5 rounded-2xl border transition-all duration-300 ${result.interestSaved < 0 ? 'bg-emerald-50 border-emerald-100 ring-4 ring-emerald-500/5' : 'bg-gray-50 dark:bg-slate-900/50 border-gray-100 dark:border-slate-700'}`}>
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-2">
                                         <TrendingDown className="w-5 h-5 text-emerald-600" />
@@ -311,7 +311,7 @@ export default function DebtAvalancheSnowballCalculator({ currency = 'USD' }) {
                     <div className="space-y-8">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             {/* Payoff visualization chart */}
-                            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
                                 <h4 className="text-sm font-bold text-gray-700 mb-6 uppercase tracking-wider flex items-center gap-2">
                                     <BarChart3 size={16} /> Payoff Duration Comparison
                                 </h4>
@@ -332,7 +332,7 @@ export default function DebtAvalancheSnowballCalculator({ currency = 'USD' }) {
                                 </div>
                             </div>
 
-                            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
                                 <h4 className="text-sm font-bold text-gray-700 mb-6 uppercase tracking-wider flex items-center gap-2">
                                     <DollarSign size={16} /> Total Interest Cost
                                 </h4>
@@ -362,12 +362,12 @@ export default function DebtAvalancheSnowballCalculator({ currency = 'USD' }) {
                                 </h3>
                                 <div className="space-y-3">
                                     {result.avalanche.payoffOrder.map((debt, idx) => (
-                                        <div key={debt.id} className="p-4 bg-indigo-50/50 rounded-xl border border-indigo-100 group hover:bg-white hover:shadow-md transition-all duration-300">
+                                        <div key={debt.id} className="p-4 bg-indigo-50/50 rounded-xl border border-indigo-100 group hover:bg-white dark:bg-slate-800 hover:shadow-md transition-all duration-300">
                                             <div className="flex justify-between items-center">
                                                 <div>
                                                     <div className="flex items-center gap-2 mb-1">
                                                         <span className="w-5 h-5 rounded-full bg-indigo-600 text-[10px] text-white flex items-center justify-center font-bold">{idx + 1}</span>
-                                                        <p className="font-bold text-sm text-gray-900">{debt.name}</p>
+                                                        <p className="font-bold text-sm text-gray-900 dark:text-gray-100">{debt.name}</p>
                                                     </div>
                                                     <p className="text-[10px] font-medium text-gray-500 ml-7">{moneyFormat(debt.balance, currency)} @ {debt.rate}%</p>
                                                 </div>
@@ -387,12 +387,12 @@ export default function DebtAvalancheSnowballCalculator({ currency = 'USD' }) {
                                 </h3>
                                 <div className="space-y-3">
                                     {result.snowball.payoffOrder.map((debt, idx) => (
-                                        <div key={debt.id} className="p-4 bg-emerald-50/50 rounded-xl border border-emerald-100 group hover:bg-white hover:shadow-md transition-all duration-300">
+                                        <div key={debt.id} className="p-4 bg-emerald-50/50 rounded-xl border border-emerald-100 group hover:bg-white dark:bg-slate-800 hover:shadow-md transition-all duration-300">
                                             <div className="flex justify-between items-center">
                                                 <div>
                                                     <div className="flex items-center gap-2 mb-1">
                                                         <span className="w-5 h-5 rounded-full bg-emerald-600 text-[10px] text-white flex items-center justify-center font-bold">{idx + 1}</span>
-                                                        <p className="font-bold text-sm text-gray-900">{debt.name}</p>
+                                                        <p className="font-bold text-sm text-gray-900 dark:text-gray-100">{debt.name}</p>
                                                     </div>
                                                     <p className="text-[10px] font-medium text-gray-500 ml-7">{moneyFormat(debt.balance, currency)} @ {debt.rate}%</p>
                                                 </div>
@@ -409,18 +409,18 @@ export default function DebtAvalancheSnowballCalculator({ currency = 'USD' }) {
                     </div>
                 }
                 table={
-                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mt-8">
-                        <div className="p-6 border-b border-gray-50 bg-gray-50/50">
-                            <h4 className="text-lg font-bold text-gray-800">Methods Side-by-Side</h4>
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden mt-8">
+                        <div className="p-6 border-b border-gray-50 bg-gray-50 dark:bg-slate-900/50/50">
+                            <h4 className="text-lg font-bold text-gray-800 dark:text-gray-100">Methods Side-by-Side</h4>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm text-left">
-                                <thead className="bg-white text-gray-500 font-bold uppercase text-[10px] tracking-widest border-b border-gray-100">
+                                <thead className="bg-white dark:bg-slate-800 text-gray-500 font-bold uppercase text-[10px] tracking-widest border-b border-gray-100 dark:border-slate-700">
                                     <tr>
                                         <th className="px-6 py-4">Strategy Metric</th>
                                         <th className="px-6 py-4 text-indigo-700">Avalanche</th>
                                         <th className="px-6 py-4 text-emerald-700">Snowball</th>
-                                        <th className="px-6 py-4 text-gray-900">Winner</th>
+                                        <th className="px-6 py-4 text-gray-900 dark:text-gray-100">Winner</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-50">
@@ -444,10 +444,10 @@ export default function DebtAvalancheSnowballCalculator({ currency = 'USD' }) {
                                             {result.avalanche.totalInterest < result.snowball.totalInterest ? 'Avalanche' : 'Snowball'}
                                         </td>
                                     </tr>
-                                    <tr className="bg-gray-50/30">
-                                        <td className="px-6 py-5 font-bold text-gray-900">Psychological Motivation</td>
+                                    <tr className="bg-gray-50 dark:bg-slate-900/50/30">
+                                        <td className="px-6 py-5 font-bold text-gray-900 dark:text-gray-100">Psychological Motivation</td>
                                         <td className="px-6 py-5 text-gray-500">Moderate</td>
-                                        <td className="px-6 py-5 text-gray-900 font-bold">High (Early Wins)</td>
+                                        <td className="px-6 py-5 text-gray-900 dark:text-gray-100 font-bold">High (Early Wins)</td>
                                         <td className="px-6 py-5">–</td>
                                     </tr>
                                 </tbody>

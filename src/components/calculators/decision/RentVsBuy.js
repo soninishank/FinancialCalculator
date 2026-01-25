@@ -108,10 +108,10 @@ export default function RentVsBuy({ currency }) {
 
     const inputs = (
         <>
-            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm mb-6">
+            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm mb-6">
                 <h4 className="text-teal-700 font-bold mb-4">🏠 Buying Scenario</h4>
                 <div className="mb-6">
-                    <label className="text-xs font-black text-slate-900 mb-2 block uppercase tracking-wide">Start Month & Year</label>
+                    <label className="text-xs font-black text-slate-900 dark:text-slate-100 mb-2 block uppercase tracking-wide">Start Month & Year</label>
                     <MonthYearPicker
                         value={startDate}
                         onChange={setStartDate}
@@ -153,7 +153,7 @@ export default function RentVsBuy({ currency }) {
                 />
             </div>
 
-            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm">
                 <h4 className="text-indigo-700 font-bold mb-4">💼 Renting Scenario</h4>
                 <InputWithSlider
                     label="Monthly Rent"
@@ -200,7 +200,7 @@ export default function RentVsBuy({ currency }) {
                 </div>
             }
             charts={
-                <div className="h-[350px] w-full bg-white p-4 rounded-xl border border-gray-100 shadow-sm mt-8">
+                <div className="h-[350px] w-full bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm mt-8">
                     <FinancialLineChart data={chartData} options={options} currency={currency} height={350} />
                 </div>
             }

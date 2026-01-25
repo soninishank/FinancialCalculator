@@ -201,7 +201,7 @@ export default function SocialSecurityCalculator({ currency = 'USD' }) {
                 }
                 charts={
                     <div className="mt-8">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">Monthly Benefit Comparison</h3>
+                        <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">Monthly Benefit Comparison</h3>
                         {/* We reuse the bar chart but repurpose keys */}
                         <FinancialCompoundingBarChart
                             data={monthlyData.map(d => ({

@@ -97,7 +97,7 @@ export default function SouthAfricaTaxCalculator({ currency = 'ZAR' }) {
                 step={1}
                 symbol=""
             />
-            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700">
                 <p className="text-xs text-gray-500">
                     Calculates <strong>SARS</strong> tax for 2024 ÷ 25.
                     Includes <strong>Primary Rebate</strong> and <strong>Medical Tax Credits</strong>.
@@ -134,7 +134,7 @@ export default function SouthAfricaTaxCalculator({ currency = 'ZAR' }) {
                             currency={currency}
                             customMetrics={[
                                 { label: "Income Tax (SARS)", value: result.tax, color: "text-red-700", bgColor: "bg-red-50/30" },
-                                { label: "UIF Contribution", value: result.uif, color: "text-gray-700", bgColor: "bg-gray-50/30" },
+                                { label: "UIF Contribution", value: result.uif, color: "text-gray-700", bgColor: "bg-gray-50 dark:bg-slate-900/50/30" },
                                 { label: "Annual Net Pay", value: result.netPay, color: "text-teal-700", bgColor: "bg-teal-50/30" }
                             ]}
                         />
@@ -149,7 +149,7 @@ export default function SouthAfricaTaxCalculator({ currency = 'ZAR' }) {
                 }
                 charts={
                     <div className="mt-8">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">SARS Tax Analysis</h3>
+                        <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">SARS Tax Analysis</h3>
                         <FinancialLoanPieChart
                             principal={result.netPay}
                             totalInterest={result.tax}

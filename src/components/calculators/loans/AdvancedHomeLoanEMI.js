@@ -247,8 +247,8 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
 
 
             {/* SECTION 1: LOAN DETAILS */}
-            <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-md">
-                <h3 className="text-xl font-black text-slate-900 mb-6 border-b-2 border-indigo-100 pb-3 flex items-center gap-2">
+            <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-md">
+                <h3 className="text-xl font-black text-slate-900 dark:text-slate-100 mb-6 border-b-2 border-indigo-100 pb-3 flex items-center gap-2">
                     <span className="w-2 h-6 bg-indigo-600 rounded-full"></span>
                     Home Loan Details
                 </h3>
@@ -325,17 +325,17 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                     {/* Loan Fees with Toggle */}
                     <div className="lg:col-span-1 flex flex-col justify-between">
                         <div className="flex items-center justify-between mb-4">
-                            <label className="text-xs font-black text-slate-900 uppercase tracking-widest">Bank Fees & Charges</label>
+                            <label className="text-xs font-black text-slate-900 dark:text-slate-100 uppercase tracking-widest">Bank Fees & Charges</label>
                             <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
                                 <button
                                     onClick={() => setLoanFeesMode('amount')}
-                                    className={`px-3 py-1 rounded-md transition-all text-[10px] font-black ${loanFeesMode === 'amount' ? 'bg-white shadow-sm text-indigo-700' : 'text-slate-400 hover:text-slate-600'}`}
+                                    className={`px-3 py-1 rounded-md transition-all text-[10px] font-black ${loanFeesMode === 'amount' ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-700' : 'text-slate-400 hover:text-slate-600'}`}
                                 >
                                     ₹ AMT
                                 </button>
                                 <button
                                     onClick={() => setLoanFeesMode('percent')}
-                                    className={`px-3 py-1 rounded-md transition-all text-[10px] font-black ${loanFeesMode === 'percent' ? 'bg-white shadow-sm text-indigo-700' : 'text-slate-400 hover:text-slate-600'}`}
+                                    className={`px-3 py-1 rounded-md transition-all text-[10px] font-black ${loanFeesMode === 'percent' ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-700' : 'text-slate-400 hover:text-slate-600'}`}
                                 >
                                     % AGE
                                 </button>
@@ -367,14 +367,14 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                 />
                             )}
                             <div className="mt-4 pt-3 border-t border-slate-200 flex justify-between items-center px-1">
-                                <span className="text-[10px] font-black text-slate-900 uppercase tracking-tighter">Effective Fee Cost</span>
+                                <span className="text-[10px] font-black text-slate-900 dark:text-slate-100 uppercase tracking-tighter">Effective Fee Cost</span>
                                 {finalLoanAmount > 0 ? moneyFormat(actualLoanFees, currency) : `${(!isNaN(finalLoanAmount) && finalLoanAmount > 0 ? (actualLoanFees / finalLoanAmount) * 100 : 0).toFixed(2)}% of Loan`}
                             </div>
                         </div>
                     </div>
 
                     <div className="lg:col-span-1">
-                        <label className="text-xs font-black text-slate-900 mb-4 block uppercase tracking-widest">Start Month & Year</label>
+                        <label className="text-xs font-black text-slate-900 dark:text-slate-100 mb-4 block uppercase tracking-widest">Start Month & Year</label>
                         <div className="p-1">
                             <MonthYearPicker value={startDate} onChange={setStartDate} />
                         </div>
@@ -382,10 +382,10 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                 </div>
 
                 {/* ADVANCED LOAN TOGGLE */}
-                <div className="mt-8 pt-6 border-t border-gray-100">
+                <div className="mt-8 pt-6 border-t border-gray-100 dark:border-slate-700">
                     <button
                         onClick={() => setShowAdvancedLoan(!showAdvancedLoan)}
-                        className={`group flex items-center w-full md:w-auto px-6 py-3 rounded-xl transition-all shadow-sm border-2 ${showAdvancedLoan ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-900 border-indigo-100 hover:border-indigo-300 hover:bg-indigo-50/30'}`}
+                        className={`group flex items-center w-full md:w-auto px-6 py-3 rounded-xl transition-all shadow-sm border-2 ${showAdvancedLoan ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border-indigo-100 hover:border-indigo-300 hover:bg-indigo-50/30'}`}
                     >
                         <div className={`transition-transform duration-300 ${showAdvancedLoan ? 'rotate-180' : ''}`}>
                             <ChevronDown />
@@ -399,7 +399,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div>
                                     <div className="flex items-center gap-1 mb-1">
-                                        <label className="block text-sm font-black text-slate-900 uppercase tracking-tighter">Annual EMI Step-Up %</label>
+                                        <label className="block text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tighter">Annual EMI Step-Up %</label>
                                     </div>
                                     <InputWithSlider label="" value={emiStepUp} onChange={setEmiStepUp} min={0} max={20} step={1} symbol="%" />
                                     <p className="text-[10px] text-gray-500 mt-1 italic">Example: A 5% increase every year helps combat inflation.</p>
@@ -410,10 +410,10 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                 <div className="bg-indigo-600 p-2.5 rounded-xl shadow-lg shadow-indigo-100">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
                                 </div>
-                                <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Variable Interest Rate</h4>
+                                <h4 className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-widest">Variable Interest Rate</h4>
                             </div>
 
-                            <div className="bg-white p-6 rounded-2xl border-2 border-indigo-100 mb-6 shadow-sm">
+                            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border-2 border-indigo-100 mb-6 shadow-sm">
                                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
                                     <div className="md:col-span-4">
                                         <label className="block text-[10px] font-black text-slate-950 uppercase mb-2 tracking-widest">Effective Date</label>
@@ -448,16 +448,16 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                 <div className="space-y-3">
                                     <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Planned Rate Changes:</h5>
                                     {rateChanges.sort((a, b) => a.date.localeCompare(b.date)).map((r, idx) => (
-                                        <div key={idx} className="flex items-center justify-between bg-white border-2 border-slate-200 p-4 rounded-2xl shadow-sm group hover:border-indigo-300 transition-all">
+                                        <div key={idx} className="flex items-center justify-between bg-white dark:bg-slate-800 border-2 border-slate-200 p-4 rounded-2xl shadow-sm group hover:border-indigo-300 transition-all">
                                             <div className="flex items-center gap-6">
                                                 <div className="flex flex-col">
-                                                    <span className="text-[10px] font-black text-slate-900 uppercase tracking-tighter">Effective Date</span>
+                                                    <span className="text-[10px] font-black text-slate-900 dark:text-slate-100 uppercase tracking-tighter">Effective Date</span>
                                                     <span className="text-lg font-black text-indigo-700">{r.date}</span>
                                                 </div>
                                                 <div className="w-px h-10 bg-slate-100"></div>
                                                 <div className="flex flex-col">
-                                                    <span className="text-[10px] font-black text-slate-900 uppercase tracking-tighter">New Interest Rate</span>
-                                                    <span className="text-2xl font-black text-slate-900">{r.rate}%</span>
+                                                    <span className="text-[10px] font-black text-slate-900 dark:text-slate-100 uppercase tracking-tighter">New Interest Rate</span>
+                                                    <span className="text-2xl font-black text-slate-900 dark:text-slate-100">{r.rate}%</span>
                                                 </div>
                                             </div>
                                             <button
@@ -478,17 +478,17 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
             </div>
 
             {/* SECTION 2: HOMEOWNER EXPENSES (Toggle) - Moved up as requested */}
-            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm">
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
                         <div className="bg-orange-600 p-3 rounded-xl shadow-lg shadow-orange-200">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
                         </div>
-                        <h3 className="text-2xl font-black text-slate-900 tracking-tight">Homeowner Expenses</h3>
+                        <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">Homeowner Expenses</h3>
                     </div>
                     <button
                         onClick={() => setShowExpenses(!showExpenses)}
-                        className={`text-xs font-black px-6 py-2.5 rounded-full transition-all shadow-md border-2 ${showExpenses ? 'bg-orange-600 text-white border-orange-600 shadow-orange-200' : 'bg-white text-orange-700 border-orange-100 hover:bg-orange-50 hover:border-orange-200'}`}
+                        className={`text-xs font-black px-6 py-2.5 rounded-full transition-all shadow-md border-2 ${showExpenses ? 'bg-orange-600 text-white border-orange-600 shadow-orange-200' : 'bg-white dark:bg-slate-800 text-orange-700 border-orange-100 hover:bg-orange-50 hover:border-orange-200'}`}
                     >
                         {showExpenses ? 'HIDE DETAILS' : 'ADD TAXES & INSURANCE'}
                     </button>
@@ -500,10 +500,10 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                             {/* One-time */}
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between mb-2">
-                                    <label className="text-xs font-black text-slate-900 tracking-widest uppercase">One-time Expenses</label>
+                                    <label className="text-xs font-black text-slate-900 dark:text-slate-100 tracking-widest uppercase">One-time Expenses</label>
                                     <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
-                                        <button onClick={() => setOneTimeMode('amount')} className={`px-2 py-0.5 rounded transition-all text-[10px] font-black ${oneTimeMode === 'amount' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}>AMT</button>
-                                        <button onClick={() => setOneTimeMode('percent')} className={`px-2 py-0.5 rounded transition-all text-[10px] font-black ${oneTimeMode === 'percent' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}>%</button>
+                                        <button onClick={() => setOneTimeMode('amount')} className={`px-2 py-0.5 rounded transition-all text-[10px] font-black ${oneTimeMode === 'amount' ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}>AMT</button>
+                                        <button onClick={() => setOneTimeMode('percent')} className={`px-2 py-0.5 rounded transition-all text-[10px] font-black ${oneTimeMode === 'percent' ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}>%</button>
                                     </div>
                                 </div>
                                 <InputWithSlider
@@ -517,7 +517,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                     currency={oneTimeMode === 'amount' ? currency : null}
                                     hideLabel
                                 />
-                                <p className="text-[10px] font-black text-slate-900 border-l-2 border-slate-300 pl-2">
+                                <p className="text-[10px] font-black text-slate-900 dark:text-slate-100 border-l-2 border-slate-300 pl-2">
                                     {homeValue > 0 ? (oneTimeMode === 'percent' ? `Amount: ${moneyFormat(actualOneTimeExpenses, currency)}` : `${(!isNaN(actualOneTimeExpenses) && homeValue > 0 ? ((actualOneTimeExpenses / homeValue) * 100) : 0).toFixed(2)}% of Value`) : "0.00%"}
                                 </p>
                             </div>
@@ -525,10 +525,10 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                             {/* Property Tax */}
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between mb-2">
-                                    <label className="text-xs font-black text-slate-900 tracking-widest uppercase">Property Taxes (Yearly)</label>
+                                    <label className="text-xs font-black text-slate-900 dark:text-slate-100 tracking-widest uppercase">Property Taxes (Yearly)</label>
                                     <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
-                                        <button onClick={() => setPropertyTaxMode('amount')} className={`px-2 py-0.5 rounded transition-all text-[10px] font-black ${propertyTaxMode === 'amount' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}>AMT</button>
-                                        <button onClick={() => setPropertyTaxMode('percent')} className={`px-2 py-0.5 rounded transition-all text-[10px] font-black ${propertyTaxMode === 'percent' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}>%</button>
+                                        <button onClick={() => setPropertyTaxMode('amount')} className={`px-2 py-0.5 rounded transition-all text-[10px] font-black ${propertyTaxMode === 'amount' ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}>AMT</button>
+                                        <button onClick={() => setPropertyTaxMode('percent')} className={`px-2 py-0.5 rounded transition-all text-[10px] font-black ${propertyTaxMode === 'percent' ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}>%</button>
                                     </div>
                                 </div>
                                 <InputWithSlider
@@ -543,7 +543,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                     isDecimal={propertyTaxMode === 'percent'}
                                     hideLabel
                                 />
-                                <p className="text-[10px] font-black text-slate-900 border-l-2 border-slate-300 pl-2">
+                                <p className="text-[10px] font-black text-slate-900 dark:text-slate-100 border-l-2 border-slate-300 pl-2">
                                     {homeValue > 0 ? (propertyTaxMode === 'percent' ? `Amount: ${moneyFormat(actualPropertyTaxYearly, currency)}` : `${(!isNaN(actualPropertyTaxYearly) && homeValue > 0 ? ((actualPropertyTaxYearly / homeValue) * 100) : 0).toFixed(2)}% of Value`) : "0.00%"}
                                 </p>
                             </div>
@@ -551,10 +551,10 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                             {/* Home Insurance */}
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between mb-2">
-                                    <label className="text-xs font-black text-slate-900 tracking-widest uppercase">Home Insurance (Yearly)</label>
+                                    <label className="text-xs font-black text-slate-900 dark:text-slate-100 tracking-widest uppercase">Home Insurance (Yearly)</label>
                                     <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
-                                        <button onClick={() => setHomeInsuranceMode('amount')} className={`px-2 py-0.5 rounded transition-all text-[10px] font-black ${homeInsuranceMode === 'amount' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}>AMT</button>
-                                        <button onClick={() => setHomeInsuranceMode('percent')} className={`px-2 py-0.5 rounded transition-all text-[10px] font-black ${homeInsuranceMode === 'percent' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}>%</button>
+                                        <button onClick={() => setHomeInsuranceMode('amount')} className={`px-2 py-0.5 rounded transition-all text-[10px] font-black ${homeInsuranceMode === 'amount' ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}>AMT</button>
+                                        <button onClick={() => setHomeInsuranceMode('percent')} className={`px-2 py-0.5 rounded transition-all text-[10px] font-black ${homeInsuranceMode === 'percent' ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}>%</button>
                                     </div>
                                 </div>
                                 <InputWithSlider
@@ -569,7 +569,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                     isDecimal={homeInsuranceMode === 'percent'}
                                     hideLabel
                                 />
-                                <p className="text-[10px] font-black text-slate-900 border-l-2 border-slate-300 pl-2">
+                                <p className="text-[10px] font-black text-slate-900 dark:text-slate-100 border-l-2 border-slate-300 pl-2">
                                     {homeValue !== 0 ? (homeInsuranceMode === 'percent' ? `Amount: ${moneyFormat(actualHomeInsuranceYearly, currency)}` : `${!isNaN(actualHomeInsuranceYearly / homeValue) ? ((actualHomeInsuranceYearly / homeValue) * 100).toFixed(2) : "0.00"}% of Value`) : "0.00%"}
                                 </p>
                             </div>
@@ -577,10 +577,10 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                             {/* Maintenance */}
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between mb-2">
-                                    <label className="text-xs font-black text-slate-900 tracking-widest uppercase">Maintenance (Monthly)</label>
+                                    <label className="text-xs font-black text-slate-900 dark:text-slate-100 tracking-widest uppercase">Maintenance (Monthly)</label>
                                     <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
-                                        <button onClick={() => setMaintenanceMode('amount')} className={`px-2 py-0.5 rounded transition-all text-[10px] font-black ${maintenanceMode === 'amount' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}>AMT</button>
-                                        <button onClick={() => setMaintenanceMode('percent')} className={`px-2 py-0.5 rounded transition-all text-[10px] font-black ${maintenanceMode === 'percent' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}>%</button>
+                                        <button onClick={() => setMaintenanceMode('amount')} className={`px-2 py-0.5 rounded transition-all text-[10px] font-black ${maintenanceMode === 'amount' ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}>AMT</button>
+                                        <button onClick={() => setMaintenanceMode('percent')} className={`px-2 py-0.5 rounded transition-all text-[10px] font-black ${maintenanceMode === 'percent' ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}>%</button>
                                     </div>
                                 </div>
                                 <InputWithSlider
@@ -595,7 +595,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                     isDecimal={maintenanceMode === 'percent'}
                                     hideLabel
                                 />
-                                <p className="text-[10px] font-black text-slate-900 border-l-2 border-slate-300 pl-2">
+                                <p className="text-[10px] font-black text-slate-900 dark:text-slate-100 border-l-2 border-slate-300 pl-2">
                                     {homeValue !== 0 ? (maintenanceMode === 'percent' ? `Amount: ${moneyFormat(actualMaintenanceMonthly, currency)}` : `${!isNaN(actualMaintenanceMonthly / (homeValue / 12)) ? ((actualMaintenanceMonthly / (homeValue / 12)) * 100).toFixed(2) : "0.00"}% of Value`) : "0.00%"}
                                 </p>
                             </div>
@@ -605,7 +605,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
             </div>
 
             {/* SECTION 2: PREPAYMENTS (Toggle) */}
-            <div className="bg-white p-6 rounded-2xl border-2 border-emerald-100 shadow-xl relative z-20">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border-2 border-emerald-100 shadow-xl relative z-20">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full -mr-16 -mt-16 opacity-30"></div>
 
                 <div className="flex items-center justify-between mb-8">
@@ -613,11 +613,11 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                         <div className="bg-emerald-600 p-3 rounded-xl shadow-lg shadow-emerald-200">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         </div>
-                        <h3 className="text-2xl font-black text-slate-900 tracking-tight">Extra Part-Payments</h3>
+                        <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">Extra Part-Payments</h3>
                     </div>
                     <button
                         onClick={() => setShowPrepayments(!showPrepayments)}
-                        className={`text-xs font-black px-6 py-2.5 rounded-full transition-all shadow-md border-2 ${showPrepayments ? 'bg-emerald-600 text-white border-emerald-600 shadow-emerald-200' : 'bg-white text-emerald-700 border-emerald-100 hover:bg-emerald-50 hover:border-emerald-200'}`}
+                        className={`text-xs font-black px-6 py-2.5 rounded-full transition-all shadow-md border-2 ${showPrepayments ? 'bg-emerald-600 text-white border-emerald-600 shadow-emerald-200' : 'bg-white dark:bg-slate-800 text-emerald-700 border-emerald-100 hover:bg-emerald-50 hover:border-emerald-200'}`}
                     >
                         {showPrepayments ? 'HIDE OPTIONS' : 'ADD PREPAYMENTS'}
                     </button>
@@ -637,10 +637,10 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                 {/* Strategy Selector */}
                                 <div className="flex-1">
                                     <div className="flex items-center gap-1 mb-3">
-                                        <label className="text-xs font-black text-slate-900 uppercase tracking-widest">Prepayment Strategy</label>
+                                        <label className="text-xs font-black text-slate-900 dark:text-slate-100 uppercase tracking-widest">Prepayment Strategy</label>
                                         <InfoIcon tooltip="Reduce Tenure: Keeps EMI same, finishes loan earlier (Recommended). Reduce EMI: Recalculates EMI to be smaller, keeps original tenure." />
                                     </div>
-                                    <div className="flex bg-white p-1.5 rounded-xl border border-teal-100 shadow-sm max-w-md relative">
+                                    <div className="flex bg-white dark:bg-slate-800 p-1.5 rounded-xl border border-teal-100 shadow-sm max-w-md relative">
                                         <button
                                             onClick={() => setPrepaymentStrategy('reduce_tenure')}
                                             className={`flex-1 py-2 text-xs font-black rounded-lg transition-all flex items-center justify-center gap-2 ${prepaymentStrategy === 'reduce_tenure' ? 'bg-teal-600 text-white shadow-md' : 'text-gray-500 hover:bg-teal-50'}`}
@@ -667,7 +667,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                             className={`relative inline-block w-12 h-6 rounded-full border border-gray-300 transition-colors duration-200 ease-in-out cursor-pointer ${isComparisonMode ? 'bg-teal-600 border-teal-600' : 'bg-gray-200'}`}
                                         >
                                             <span
-                                                className={`absolute left-0 top-0 bottom-0 w-6 h-6 rounded-full bg-white shadow transform transition-transform duration-200 ease-in-out ${isComparisonMode ? 'translate-x-6' : 'translate-x-0'}`}
+                                                className={`absolute left-0 top-0 bottom-0 w-6 h-6 rounded-full bg-white dark:bg-slate-800 shadow transform transition-transform duration-200 ease-in-out ${isComparisonMode ? 'translate-x-6' : 'translate-x-0'}`}
                                             />
                                         </div>
                                         <span
@@ -679,9 +679,9 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                     </label>
 
                                     {monthlyPrepayment > 0 && (
-                                        <div className="flex items-center gap-4 bg-white p-3 rounded-xl border border-teal-100 shadow-sm">
+                                        <div className="flex items-center gap-4 bg-white dark:bg-slate-800 p-3 rounded-xl border border-teal-100 shadow-sm">
                                             <div className="flex-1">
-                                                <label className="block text-[10px] font-black text-slate-900 uppercase mb-1">Annual Prepayment Step-Up %</label>
+                                                <label className="block text-[10px] font-black text-slate-900 dark:text-slate-100 uppercase mb-1">Annual Prepayment Step-Up %</label>
                                                 <InputWithSlider label="" value={prepaymentStepUp} onChange={setPrepaymentStepUp} min={0} max={50} symbol="%" />
                                             </div>
                                             <div className="text-[10px] text-gray-400 w-24 leading-tight italic">
@@ -694,20 +694,20 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                         </div>
 
                         {/* VARIABLE / ONE-TIME PREPAYMENTS */}
-                        <div className="pt-8 border-t border-gray-100">
+                        <div className="pt-8 border-t border-gray-100 dark:border-slate-700">
                             <div className="bg-emerald-50 border-2 border-emerald-100 p-6 rounded-2xl">
                                 <h4 className="text-sm font-black text-emerald-900 uppercase tracking-widest mb-4 flex items-center gap-2">
                                     <span className="w-2 h-4 bg-emerald-600 rounded-sm"></span>
                                     Step-Up Part-Payments
                                 </h4>
-                                <div className="bg-white p-5 rounded-2xl border border-gray-200 mb-6 shadow-sm">
+                                <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-gray-200 dark:border-slate-700 mb-6 shadow-sm">
                                     <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-end">
                                         <div className="md:col-span-5">
-                                            <label className="text-xs font-black text-slate-900 mb-2 block uppercase tracking-wide">Payment Month</label>
+                                            <label className="text-xs font-black text-slate-900 dark:text-slate-100 mb-2 block uppercase tracking-wide">Payment Month</label>
                                             <MonthYearPicker value={newPrepaymentDate} onChange={setNewPrepaymentDate} minDate={startDate} />
                                         </div>
                                         <div className="md:col-span-5">
-                                            <label className="text-xs font-black text-slate-900 mb-2 block uppercase tracking-wide">Lump-Sum Amount</label>
+                                            <label className="text-xs font-black text-slate-900 dark:text-slate-100 mb-2 block uppercase tracking-wide">Lump-Sum Amount</label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                                     <span className="text-slate-400 font-bold text-sm">₹</span>
@@ -716,7 +716,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                                     value={newPrepaymentAmount}
                                                     onChange={setNewPrepaymentAmount}
                                                     currency={currency}
-                                                    className="w-full bg-white border-2 border-slate-200 pl-8 pr-3 py-3 rounded-xl focus:border-teal-500 outline-none font-bold text-slate-900 transition-all text-sm"
+                                                    className="w-full bg-white dark:bg-slate-800 border-2 border-slate-200 pl-8 pr-3 py-3 rounded-xl focus:border-teal-500 outline-none font-bold text-slate-900 dark:text-slate-100 transition-all text-sm"
                                                     max={100000000}
                                                 />
                                             </div>
@@ -738,16 +738,16 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                     <div className="space-y-3">
                                         <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Planned Extra Payments:</h5>
                                         {customPrepayments.sort((a, b) => a.date.localeCompare(b.date)).map((p, idx) => (
-                                            <div key={idx} className="flex items-center justify-between bg-white border-2 border-slate-200 p-4 rounded-2xl shadow-sm group hover:border-teal-300 transition-all">
+                                            <div key={idx} className="flex items-center justify-between bg-white dark:bg-slate-800 border-2 border-slate-200 p-4 rounded-2xl shadow-sm group hover:border-teal-300 transition-all">
                                                 <div className="flex items-center gap-6">
                                                     <div className="flex flex-col">
-                                                        <span className="text-[10px] font-black text-slate-900 uppercase tracking-tighter">Payment Month</span>
+                                                        <span className="text-[10px] font-black text-slate-900 dark:text-slate-100 uppercase tracking-tighter">Payment Month</span>
                                                         <span className="text-lg font-black text-teal-700 italic">{p.date}</span>
                                                     </div>
                                                     <div className="w-px h-10 bg-slate-100"></div>
                                                     <div className="flex flex-col">
-                                                        <span className="text-[10px] font-black text-slate-900 uppercase tracking-tighter">Lump-Sum Amount</span>
-                                                        <span className="text-2xl font-black text-slate-900">{moneyFormat(Number(p.amount), currency)}</span>
+                                                        <span className="text-[10px] font-black text-slate-900 dark:text-slate-100 uppercase tracking-tighter">Lump-Sum Amount</span>
+                                                        <span className="text-2xl font-black text-slate-900 dark:text-slate-100">{moneyFormat(Number(p.amount), currency)}</span>
                                                     </div>
                                                 </div>
                                                 <button
@@ -771,39 +771,39 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
             </div>
 
             {/* SECTION 4: HOW IT WORKS / EDUCATIONAL */}
-            <div className="bg-white p-10 rounded-3xl border-2 border-slate-100 shadow-2xl relative overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 p-10 rounded-3xl border-2 border-slate-100 shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full -mr-32 -mt-32 opacity-20"></div>
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-50 rounded-full -ml-24 -mb-24 opacity-20"></div>
 
                 <div className="relative z-10">
-                    <h3 className="text-2xl font-black text-slate-900 mb-8 flex items-center gap-4">
+                    <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-8 flex items-center gap-4">
                         <span className="w-2 h-8 bg-indigo-600 rounded-full"></span>
                         Mastering Your Home Loan
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                        <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1">
+                        <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white dark:bg-slate-800 hover:shadow-xl hover:-translate-y-1">
                             <div className="bg-indigo-600 w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-xl mb-6 shadow-lg shadow-indigo-100 italic">01</div>
-                            <h4 className="font-black text-slate-900 mb-3 text-lg">Initial Payment</h4>
-                            <p className="text-sm text-slate-900 leading-relaxed font-black">This is your out-of-pocket cash. It includes the <strong>Down Payment (Margin Money)</strong> and bank processing <strong>Fees & Charges</strong>. Higher DP means lower loan EMI.</p>
+                            <h4 className="font-black text-slate-900 dark:text-slate-100 mb-3 text-lg">Initial Payment</h4>
+                            <p className="text-sm text-slate-900 dark:text-slate-100 leading-relaxed font-black">This is your out-of-pocket cash. It includes the <strong>Down Payment (Margin Money)</strong> and bank processing <strong>Fees & Charges</strong>. Higher DP means lower loan EMI.</p>
                         </div>
-                        <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1">
+                        <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white dark:bg-slate-800 hover:shadow-xl hover:-translate-y-1">
                             <div className="bg-emerald-600 w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-xl mb-6 shadow-lg shadow-emerald-100 italic">02</div>
-                            <h4 className="font-black text-slate-900 mb-3 text-lg">Impact of Prepayments</h4>
-                            <p className="text-sm text-slate-900 leading-relaxed font-black">Making small <strong>Extra Payments</strong> early in the tenure drastically reduces the total <strong>Interest</strong> paid and shortens the loan period significantly.</p>
+                            <h4 className="font-black text-slate-900 dark:text-slate-100 mb-3 text-lg">Impact of Prepayments</h4>
+                            <p className="text-sm text-slate-900 dark:text-slate-100 leading-relaxed font-black">Making small <strong>Extra Payments</strong> early in the tenure drastically reduces the total <strong>Interest</strong> paid and shortens the loan period significantly.</p>
                         </div>
-                        <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1">
+                        <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white dark:bg-slate-800 hover:shadow-xl hover:-translate-y-1">
                             <div className="bg-amber-600 w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-xl mb-6 shadow-lg shadow-amber-100 italic">03</div>
-                            <h4 className="font-black text-slate-900 mb-3 text-lg">Recurring Costs</h4>
-                            <p className="text-sm text-slate-900 leading-relaxed font-black">Don't forget <strong>Taxes, Insurance, and Maintenance</strong>. These are ongoing monthly/yearly expenses that contribute to the "True Cost" of ownership.</p>
+                            <h4 className="font-black text-slate-900 dark:text-slate-100 mb-3 text-lg">Recurring Costs</h4>
+                            <p className="text-sm text-slate-900 dark:text-slate-100 leading-relaxed font-black">Don't forget <strong>Taxes, Insurance, and Maintenance</strong>. These are ongoing monthly/yearly expenses that contribute to the "True Cost" of ownership.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* AMORTIZATION TABLE */}
-            <div className="mt-8 bg-white rounded-xl border border-gray-200 shadow-sm p-6 overflow-hidden">
+            <div className="mt-8 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm p-6 overflow-hidden">
                 <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-xl font-black text-slate-900">Detailed Amortization Schedule</h3>
+                    <h3 className="text-xl font-black text-slate-900 dark:text-slate-100">Detailed Amortization Schedule</h3>
                     <button
                         onClick={() => {
                             const data = yearlyRows.map(r => [
@@ -832,7 +832,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
 
             {/* Disclaimer */}
             <div className="mt-10 mb-20 text-center">
-                <p className="text-xs text-slate-900 font-bold leading-relaxed max-w-2xl mx-auto px-6 py-4 bg-slate-50 rounded-2xl border border-slate-200 border-dashed italic">
+                <p className="text-xs text-slate-900 dark:text-slate-100 font-bold leading-relaxed max-w-2xl mx-auto px-6 py-4 bg-slate-50 rounded-2xl border border-slate-200 border-dashed italic">
                     Disclaimer: This calculator is for estimation only. Actual bank interest rates, processing fees, and tax implications may vary. Consult with your financial advisor or bank representative before making decisions.
                 </p>
             </div>
@@ -842,7 +842,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                 {/* Summary Cards */}
                 <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6 content-start">
                     {/* 1. Initial Payment (Upfront) */}
-                    <div className="bg-white p-6 rounded-2xl border-l-4 border-slate-700 shadow-xl ring-1 ring-slate-100">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border-l-4 border-slate-700 shadow-xl ring-1 ring-slate-100">
                         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Initial Payment (DP + Fees)</p>
                         <p className="text-2xl font-black text-slate-800 leading-none truncate" title={moneyFormat(Math.round(downPaymentAmount + actualLoanFees + (showExpenses ? actualOneTimeExpenses : 0)), currency)}>
                             {moneyFormat(Math.round(downPaymentAmount + actualLoanFees + (showExpenses ? actualOneTimeExpenses : 0)), currency, true)}
@@ -850,13 +850,13 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                     </div>
 
                     {/* 2. Regular Monthly EMI (Recurring Base) */}
-                    <div className="bg-white p-6 rounded-2xl border-l-4 border-indigo-600 shadow-xl ring-1 ring-indigo-50">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border-l-4 border-indigo-600 shadow-xl ring-1 ring-indigo-50">
                         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Regular Monthly EMI</p>
                         <p className="text-2xl font-black text-indigo-700 leading-none truncate" title={moneyFormat(Math.round(summary.baseEMI), currency)}>{moneyFormat(Math.round(summary.baseEMI), currency, true)}</p>
                     </div>
 
                     {/* 3. Monthly Breakdown (Recurring Detail) */}
-                    <div className="bg-white p-6 rounded-2xl border-l-4 border-emerald-500 shadow-sm relative overflow-hidden">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border-l-4 border-emerald-500 shadow-sm relative overflow-hidden">
                         <div className="flex flex-col">
                             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Total Monthly Payment</p>
                             <p className="text-2xl font-black text-emerald-700 leading-none truncate mb-4" title={moneyFormat(Math.round(summary.baseEMI + monthlyPrepayment + (showExpenses ? (actualPropertyTaxYearly / 12 + actualHomeInsuranceYearly / 12 + actualMaintenanceMonthly) : 0)), currency)}>
@@ -890,13 +890,13 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                     </div>
 
                     {/* 4. Extra Part-Payments (Strategy) */}
-                    <div className="bg-white p-6 rounded-2xl border-l-4 border-emerald-600 shadow-xl ring-1 ring-emerald-50">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border-l-4 border-emerald-600 shadow-xl ring-1 ring-emerald-50">
                         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Extra Part-Payments</p>
                         <p className="text-2xl font-black text-emerald-700 leading-none truncate" title={moneyFormat(Math.round(summary.totalPrepayments), currency)}>{moneyFormat(Math.round(summary.totalPrepayments), currency, true)}</p>
                     </div>
 
                     {/* 5. Effective Tenure (Outcome Time) */}
-                    <div className="bg-white p-6 rounded-2xl border-l-4 border-indigo-600 shadow-xl ring-1 ring-indigo-50 flex justify-between items-center">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border-l-4 border-indigo-600 shadow-xl ring-1 ring-indigo-50 flex justify-between items-center">
                         <div>
                             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Effective Tenure</p>
                             <p className="text-2xl font-black text-indigo-700 leading-none">
@@ -910,7 +910,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                     </div>
 
                     {/* 6. Total Interest (Outcome Cost) */}
-                    <div className="bg-white p-6 rounded-2xl border-l-4 border-amber-500 shadow-xl ring-1 ring-amber-50">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border-l-4 border-amber-500 shadow-xl ring-1 ring-amber-50">
                         <div className="flex justify-between items-start mb-1">
                             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Total Interest Paid</p>
                             {summary.savedInterest > 0 && (
@@ -923,7 +923,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                     </div>
 
                     {/* 7. Loan End Date */}
-                    <div className="bg-white p-6 rounded-2xl border-l-4 border-cyan-500 shadow-xl ring-1 ring-cyan-50">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border-l-4 border-cyan-500 shadow-xl ring-1 ring-cyan-50">
                         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Loan Ends In</p>
                         <p className="text-2xl font-black text-cyan-700 leading-none">
                             {closingDateDisplay}
@@ -934,9 +934,9 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
 
 
                 {/* Doughnut Chart */}
-                <div className="md:col-span-2 bg-white p-8 rounded-3xl border-2 border-slate-100 shadow-xl transition-all hover:shadow-2xl">
+                <div className="md:col-span-2 bg-white dark:bg-slate-800 p-8 rounded-3xl border-2 border-slate-100 shadow-xl transition-all hover:shadow-2xl">
                     <div className="flex items-center justify-between mb-4">
-                        <h4 className="text-base font-black text-slate-900 uppercase tracking-widest flex items-center gap-3">
+                        <h4 className="text-base font-black text-slate-900 dark:text-slate-100 uppercase tracking-widest flex items-center gap-3">
                             <span className="w-1.5 h-6 bg-indigo-600 rounded-full"></span>
                             Total Outflow Breakdown
                         </h4>
@@ -966,14 +966,14 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                                         <div className="w-3 h-3 rounded-full bg-[#94a3b8] ring-2 ring-white shadow-sm"></div>
                                         <span className="text-[10px] font-bold text-slate-500 uppercase">Initial Payment (DP + Fees)</span>
                                     </div>
-                                    <span className="text-xs font-bold text-slate-900 text-right">{moneyFormat(downPaymentAmount + actualLoanFees + (showExpenses ? actualOneTimeExpenses : 0), currency, true)}</span>
+                                    <span className="text-xs font-bold text-slate-900 dark:text-slate-100 text-right">{moneyFormat(downPaymentAmount + actualLoanFees + (showExpenses ? actualOneTimeExpenses : 0), currency, true)}</span>
                                 </div>
                                 <div className="flex justify-between items-center group">
                                     <div className="flex items-center gap-2">
                                         <div className="w-3 h-3 rounded-full bg-[#6366f1] ring-2 ring-white shadow-sm"></div>
                                         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Principal Amount</span>
                                     </div>
-                                    <span className="text-xs font-bold text-slate-900 text-right">{moneyFormat(finalLoanAmount, currency, true)}</span>
+                                    <span className="text-xs font-bold text-slate-900 dark:text-slate-100 text-right">{moneyFormat(finalLoanAmount, currency, true)}</span>
                                 </div>
                                 <div className="flex justify-between items-center group">
                                     <div className="flex items-center gap-2">
@@ -1045,7 +1045,7 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
                             </div>
 
                             {/* Comparison Strategy */}
-                            <div className="bg-white/10 p-4 rounded-lg border border-white/10 relative overflow-hidden">
+                            <div className="bg-white dark:bg-slate-800/10 p-4 rounded-lg border border-white/10 relative overflow-hidden">
                                 <div className="absolute top-0 right-0 bg-yellow-500 text-indigo-900 text-[10px] font-bold px-2 py-0.5 rounded-bl-lg">ALTERNATIVE</div>
                                 <p className="text-xs uppercase font-bold text-yellow-300 mb-2">Option: {prepaymentStrategy === 'reduce_tenure' ? 'Reduce EMI' : 'Reduce Tenure'}</p>
                                 <div className="space-y-2">
@@ -1080,24 +1080,24 @@ export default function AdvancedHomeLoanEMI({ currency = 'INR' }) {
             </div>
 
             {/* SECTION 5: SCHEDULE & PROJECTION */}
-            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                    <h3 className="text-lg font-bold text-gray-800">Schedule & Loan Projection</h3>
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Schedule & Loan Projection</h3>
                     <div className="flex flex-col md:flex-row gap-4 items-center">
-                        <div className="flex bg-gray-100 p-1 rounded-lg">
+                        <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-lg">
                             <div className="flex items-center gap-2 px-2">
-                                <span className="text-xs font-black text-slate-900 uppercase">View:</span>
+                                <span className="text-xs font-black text-slate-900 dark:text-slate-100 uppercase">View:</span>
                                 <InfoIcon tooltip="Calendar Year: Jan to Dec. Financial Year: Apr to Mar (standard for Indian tax reporting)." />
                             </div>
                             <button
                                 onClick={() => setViewMode('calendar')}
-                                className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${viewMode === 'calendar' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                                className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${viewMode === 'calendar' ? 'bg-white dark:bg-slate-800 text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                             >
                                 Calendar
                             </button>
                             <button
                                 onClick={() => setViewMode('financial')}
-                                className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${viewMode === 'financial' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                                className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${viewMode === 'financial' ? 'bg-white dark:bg-slate-800 text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                             >
                                 Financial
                             </button>

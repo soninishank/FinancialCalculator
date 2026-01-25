@@ -132,8 +132,8 @@ export default function FixedDeposit({ currency = 'INR' }) {
             {/* Tenure */}
             <div>
                 <div className="flex justify-between items-center mb-2">
-                    <label className="text-sm font-black text-slate-900 uppercase tracking-tight">Tenure</label>
-                    <div className="flex bg-gray-100 p-1 rounded-lg">
+                    <label className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight">Tenure</label>
+                    <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-lg">
                         {['Years', 'Months', 'Days'].map((m) => (
                             <button
                                 key={m}
@@ -144,8 +144,8 @@ export default function FixedDeposit({ currency = 'INR' }) {
                                     else setTenureValue(1);
                                 }}
                                 className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${tenureMode === m
-                                    ? 'bg-white text-indigo-700 shadow-sm'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                    ? 'bg-white dark:bg-indigo-600 text-indigo-700 dark:text-white shadow-sm'
+                                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                                     }`}
                             >
                                 {m}
@@ -167,15 +167,15 @@ export default function FixedDeposit({ currency = 'INR' }) {
 
             {/* Payout Type */}
             <div>
-                <label className="text-sm font-black text-slate-900 uppercase tracking-tight mb-2 block">Deposit Type ÷ Payout</label>
+                <label className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight mb-2 block">Deposit Type ÷ Payout</label>
                 <div className="grid grid-cols-3 gap-2">
                     {['cumulative', 'monthly', 'quarterly', 'half-yearly', 'yearly'].map((type) => (
                         <button
                             key={type}
                             onClick={() => setPayoutType(type)}
                             className={`p-3 rounded-lg border text-sm font-medium transition-all ${payoutType === type
-                                ? 'bg-indigo-50 border-indigo-500 text-indigo-700'
-                                : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                                ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-500 dark:border-indigo-400 text-indigo-700 dark:text-indigo-300'
+                                : 'border-gray-200 dark:border-slate-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800'
                                 }`}
                         >
                             <span className="capitalize">{type === 'cumulative' ? 'Cumulative' : type}</span>
@@ -187,15 +187,15 @@ export default function FixedDeposit({ currency = 'INR' }) {
                 </div>
 
                 {/* Payout Info */}
-                <div className="mt-3 p-3 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-700">
+                <div className="mt-3 p-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg text-xs text-gray-700 dark:text-gray-300">
                     {payoutType === 'cumulative' && (
                         <>
-                            <strong className="text-gray-900">Cumulative FD:</strong> Interest is compounded quarterly and paid at maturity along with principal. Maximum returns.
+                            <strong className="text-gray-900 dark:text-white">Cumulative FD:</strong> Interest is compounded quarterly and paid at maturity along with principal. Maximum returns.
                         </>
                     )}
                     {payoutType !== 'cumulative' && (
                         <>
-                            <strong className="text-gray-900 capitalize">{payoutType} Payout:</strong> Interest is paid every {payoutType === 'monthly' ? 'month' : payoutType === 'quarterly' ? '3 months' : payoutType === 'half-yearly' ? '6 months' : 'year'}. Principal returned at maturity.
+                            <strong className="text-gray-900 dark:text-gray-100 capitalize">{payoutType} Payout:</strong> Interest is paid every {payoutType === 'monthly' ? 'month' : payoutType === 'quarterly' ? '3 months' : payoutType === 'half-yearly' ? '6 months' : 'year'}. Principal returned at maturity.
                         </>
                     )}
                 </div>
@@ -206,11 +206,11 @@ export default function FixedDeposit({ currency = 'INR' }) {
     return (
         <div className="animate-fade-in">
             {/* INFO BANNER */}
-            <div className="bg-indigo-50 border border-indigo-100 p-4 rounded-xl mb-6">
-                <h2 className="text-lg font-bold text-indigo-900 flex items-center gap-2">
+            <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/50 p-4 rounded-xl mb-6">
+                <h2 className="text-lg font-bold text-indigo-900 dark:text-indigo-100 flex items-center gap-2">
                     <PiggyBank className="w-5 h-5" /> Fixed Deposit (FD) Calculator
                 </h2>
-                <p className="text-sm text-indigo-700 mt-1">Calculate FD returns with flexible options: <strong>Cumulative</strong> (reinvestment with compounding), <strong>Regular Payouts</strong> (monthly, quarterly, half-yearly, yearly income), or <strong>Short-Term</strong> (days-based simple interest). Compare maturity values and periodic payouts instantly.</p>
+                <p className="text-sm text-indigo-700 dark:text-indigo-300 mt-1">Calculate FD returns with flexible options: <strong>Cumulative</strong> (reinvestment with compounding), <strong>Regular Payouts</strong> (monthly, quarterly, half-yearly, yearly income), or <strong>Short-Term</strong> (days-based simple interest). Compare maturity values and periodic payouts instantly.</p>
             </div>
 
             <CalculatorLayout
@@ -227,11 +227,11 @@ export default function FixedDeposit({ currency = 'INR' }) {
                                 : (!isNaN(tenureValue) ? (tenureValue / 12).toFixed(1) : "0.0")}
                         />
                         {result.payoutAmount > 0 && (
-                            <div className="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded-r-xl">
-                                <p className="text-xs text-indigo-600 font-bold uppercase tracking-wider mb-1">
+                            <div className="bg-indigo-50 dark:bg-indigo-900/20 border-l-4 border-indigo-500 p-4 rounded-r-xl">
+                                <p className="text-xs text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-wider mb-1">
                                     Estimated {payoutType} Payout
                                 </p>
-                                <p className="text-2xl font-black text-indigo-700">
+                                <p className="text-2xl font-black text-indigo-700 dark:text-indigo-300">
                                     {moneyFormat(result.payoutAmount, currency)}
                                 </p>
                             </div>
@@ -242,7 +242,7 @@ export default function FixedDeposit({ currency = 'INR' }) {
                 table={
                     <div className="mt-8">
                         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-                            <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Growth Schedule</h3>
                             <div className="flex items-center gap-4 w-full md:w-auto">
                                 <button
                                     onClick={() => {
@@ -259,7 +259,7 @@ export default function FixedDeposit({ currency = 'INR' }) {
                                     Export PDF
                                 </button>
                                 <div className="flex items-center">
-                                    <label className="text-sm font-black text-slate-900 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
+                                    <label className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
                                     <div className="w-48">
                                         <MonthYearPicker
                                             value={startDate}

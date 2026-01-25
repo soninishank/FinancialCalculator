@@ -170,7 +170,7 @@ export default function RMDCalculator({ currency = 'USD' }) {
                 charts={
                     age >= 73 && (
                         <div className="mt-8">
-                            <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">20-Year Projection</h3>
+                            <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">20-Year Projection</h3>
                             <FinancialCompoundingBarChart
                                 data={chartData}
                                 currency={currency}

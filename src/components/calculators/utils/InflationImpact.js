@@ -108,7 +108,7 @@ export default function InflationImpact({ currency }) {
                 </div>
             }
             charts={
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm mt-8">
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm mt-8">
                     <h3 className="text-gray-700 font-bold text-lg mb-2">Purchasing Power Erosion</h3>
                     <FinancialLineChart data={chartData} options={chartOptions} currency={currency} height={300} />
                 </div>

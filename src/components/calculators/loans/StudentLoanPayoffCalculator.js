@@ -6,6 +6,7 @@ import CollapsibleAmortizationTable from '../../common/CollapsibleAmortizationTa
 import { FinancialLoanDoughnutChart } from '../../common/FinancialCharts';
 import { calculatorDetails } from '../../../data/calculatorDetails';
 import { GraduationCap, TrendingDown } from 'lucide-react';
+import { moneyFormat } from '../../../utils/formatting';
 
 export default function StudentLoanPayoffCalculator({ currency = 'USD' }) {
     const [loanAmount, setLoanAmount] = useState(35000);
@@ -134,7 +135,7 @@ export default function StudentLoanPayoffCalculator({ currency = 'USD' }) {
                             onClick={() => setPaymentPlan(plan.value)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${paymentPlan === plan.value
                                 ? 'bg-blue-600 text-white shadow-md'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                : 'bg-gray-100 dark:bg-slate-800 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             {plan.label}
@@ -215,7 +216,7 @@ export default function StudentLoanPayoffCalculator({ currency = 'USD' }) {
                 charts={
                     <div className="mt-8 space-y-8">
                         <div>
-                            <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">Payment Breakdown</h3>
+                            <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">Payment Breakdown</h3>
                             <FinancialLoanDoughnutChart
                                 principal={loanAmount}
                                 interest={result.totalInterest}

@@ -113,7 +113,7 @@ export default function MedicareCostEstimator({ currency = 'USD' }) {
                             onClick={() => setFilingStatus(status.value)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filingStatus === status.value
                                     ? 'bg-blue-600 text-white shadow-md'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    : 'bg-gray-100 dark:bg-slate-800 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             {status.label}
@@ -142,7 +142,7 @@ export default function MedicareCostEstimator({ currency = 'USD' }) {
                             onClick={() => setMedigapPlan(plan)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${medigapPlan === plan
                                     ? 'bg-teal-600 text-white shadow-md'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    : 'bg-gray-100 dark:bg-slate-800 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             Plan {plan}
@@ -184,17 +184,17 @@ export default function MedicareCostEstimator({ currency = 'USD' }) {
                         </div>
 
                         <div className="grid grid-cols-3 gap-3">
-                            <div className="bg-white border border-gray-200 p-3 rounded-xl text-center">
+                            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-3 rounded-xl text-center">
                                 <p className="text-[10px] text-gray-500 uppercase font-bold mb-1">Part B</p>
-                                <p className="text-lg font-bold text-gray-900">{new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(result.monthlyPartB)}</p>
+                                <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(result.monthlyPartB)}</p>
                             </div>
-                            <div className="bg-white border border-gray-200 p-3 rounded-xl text-center">
+                            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-3 rounded-xl text-center">
                                 <p className="text-[10px] text-gray-500 uppercase font-bold mb-1">Part D</p>
-                                <p className="text-lg font-bold text-gray-900">{new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(result.monthlyPartD)}</p>
+                                <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(result.monthlyPartD)}</p>
                             </div>
-                            <div className="bg-white border border-gray-200 p-3 rounded-xl text-center">
+                            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-3 rounded-xl text-center">
                                 <p className="text-[10px] text-gray-500 uppercase font-bold mb-1">Medigap</p>
-                                <p className="text-lg font-bold text-gray-900">{new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(result.monthlyMedigap)}</p>
+                                <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(result.monthlyMedigap)}</p>
                             </div>
                         </div>
 
@@ -222,7 +222,7 @@ export default function MedicareCostEstimator({ currency = 'USD' }) {
                 charts={
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
-                            <thead className="bg-gray-50">
+                            <thead className="bg-gray-50 dark:bg-slate-900/50">
                                 <tr>
                                     <th className="px-4 py-2 text-left font-semibold text-gray-700">Year</th>
                                     <th className="px-4 py-2 text-left font-semibold text-gray-700">Age</th>
@@ -232,7 +232,7 @@ export default function MedicareCostEstimator({ currency = 'USD' }) {
                             </thead>
                             <tbody className="divide-y divide-gray-200">
                                 {result.yearlyBreakdown.map(row => (
-                                    <tr key={row.year} className="hover:bg-gray-50">
+                                    <tr key={row.year} className="hover:bg-gray-50 dark:bg-slate-900/50">
                                         <td className="px-4 py-2">{row.year}</td>
                                         <td className="px-4 py-2">{row.age}</td>
                                         <td className="px-4 py-2 text-right font-medium">

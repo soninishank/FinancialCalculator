@@ -144,7 +144,7 @@ export default function HSACalculator({ currency = 'USD' }) {
                 }
                 charts={
                     <div className="mt-8">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">HSA Growth Projection</h3>
+                        <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">HSA Growth Projection</h3>
                         <FinancialCompoundingBarChart
                             data={result.yearlyData}
                             currency={currency}

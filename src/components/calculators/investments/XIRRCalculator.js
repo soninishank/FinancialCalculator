@@ -251,10 +251,10 @@ export default function XIRRCalculator({ currency = 'INR' }) {
     const inputsSection = (
         <div className="space-y-6">
             {/* Mode Toggle */}
-            <div className="flex p-1 bg-gray-100 rounded-lg">
+            <div className="flex p-1 bg-gray-100 dark:bg-slate-800 rounded-lg">
                 <button
                     onClick={() => setMode('simple')}
-                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all flex items-center justify-center gap-2 ${mode === 'simple' ? 'bg-white text-teal-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all flex items-center justify-center gap-2 ${mode === 'simple' ? 'bg-white dark:bg-slate-800 text-teal-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'
                         }`}
                 >
                     <Calendar className="w-4 h-4" />
@@ -262,7 +262,7 @@ export default function XIRRCalculator({ currency = 'INR' }) {
                 </button>
                 <button
                     onClick={() => setMode('advanced')}
-                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all flex items-center justify-center gap-2 ${mode === 'advanced' ? 'bg-white text-teal-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all flex items-center justify-center gap-2 ${mode === 'advanced' ? 'bg-white dark:bg-slate-800 text-teal-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'
                         }`}
                 >
                     <List className="w-4 h-4" />
@@ -280,13 +280,13 @@ export default function XIRRCalculator({ currency = 'INR' }) {
                     </div>
 
                     <div>
-                        <label htmlFor="investment-frequency" className="block text-sm font-black text-slate-900 uppercase tracking-tight mb-1">Investment Frequency</label>
+                        <label htmlFor="investment-frequency" className="block text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight mb-1">Investment Frequency</label>
                         <p className="text-xs text-gray-500 mb-2">How often do you invest?</p>
                         <select
                             id="investment-frequency"
                             value={frequency}
                             onChange={(e) => setFrequency(e.target.value)}
-                            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all font-bold text-slate-900"
+                            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all font-bold text-slate-900 dark:text-slate-100"
                         >
                             <option value="monthly">Monthly</option>
                             <option value="quarterly">Quarterly</option>
@@ -295,7 +295,7 @@ export default function XIRRCalculator({ currency = 'INR' }) {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-black text-slate-900 uppercase tracking-tight mb-1">Start Date</label>
+                        <label className="block text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight mb-1">Start Date</label>
                         <p className="text-xs text-gray-500 mb-2">When did you start investing?</p>
                         <DateInput
                             value={startDate}
@@ -303,7 +303,7 @@ export default function XIRRCalculator({ currency = 'INR' }) {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-black text-slate-900 uppercase tracking-tight mb-1">Maturity Date</label>
+                        <label className="block text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight mb-1">Maturity Date</label>
                         <p className="text-xs text-gray-500 mb-2">Current date or redemption date</p>
                         <DateInput
                             value={maturityDate}
@@ -368,14 +368,14 @@ export default function XIRRCalculator({ currency = 'INR' }) {
                             </div>
                             <div className="flex-1">
                                 <div className="relative">
-                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 bg-gray-50 border border-r-0 border-gray-300 rounded-l-lg z-10">
+                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center px-3 bg-gray-50 dark:bg-slate-900/50 border border-r-0 border-gray-300 rounded-l-lg z-10">
                                         <span className="text-gray-500 sm:text-sm font-bold">{getCurrencySymbol(currency)}</span>
                                     </div>
                                     <FormattedInput
                                         value={flow.amount}
                                         onChange={(val) => handleChange(index, 'amount', val)}
                                         currency={currency}
-                                        className="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-gray-900"
+                                        className="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-gray-900 dark:text-gray-100"
                                         placeholder="Amount"
                                     />
                                 </div>
@@ -398,7 +398,7 @@ export default function XIRRCalculator({ currency = 'INR' }) {
                 </div>
             )}
 
-            <div className="pt-4 border-t border-gray-100">
+            <div className="pt-4 border-t border-gray-100 dark:border-slate-700">
                 {error && (
                     <div className="mt-3 text-red-600 text-sm flex items-center gap-2 bg-red-50 p-3 rounded-lg border border-red-100 animate-pulse">
                         <span className="font-bold">Error:</span> {error}
@@ -407,13 +407,13 @@ export default function XIRRCalculator({ currency = 'INR' }) {
             </div>
 
             <div className="grid grid-cols-2 gap-4 mt-4">
-                <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
+                <div className="p-3 bg-gray-50 dark:bg-slate-900/50 rounded-lg border border-gray-100 dark:border-slate-700">
                     <p className="text-xs text-gray-500">Total Invested</p>
-                    <p className="text-lg font-bold text-gray-800">{currency} {stats.totalInvested.toLocaleString()}</p>
+                    <p className="text-lg font-bold text-gray-800 dark:text-gray-100">{currency} {stats.totalInvested.toLocaleString()}</p>
                 </div>
-                <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
+                <div className="p-3 bg-gray-50 dark:bg-slate-900/50 rounded-lg border border-gray-100 dark:border-slate-700">
                     <p className="text-xs text-gray-500">Total Value</p>
-                    <p className="text-lg font-bold text-gray-800">{currency} {stats.totalReturned.toLocaleString()}</p>
+                    <p className="text-lg font-bold text-gray-800 dark:text-gray-100">{currency} {stats.totalReturned.toLocaleString()}</p>
                 </div>
             </div>
         </div>
@@ -451,15 +451,15 @@ export default function XIRRCalculator({ currency = 'INR' }) {
                     />
 
                     {/* Analysis Block */}
-                    <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-                        <h4 className="text-md font-bold text-gray-900 mb-3 flex items-center gap-2">
+                    <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
+                        <h4 className="text-md font-bold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
                             💡 What This Means
                         </h4>
                         <p className="text-sm text-gray-600 leading-relaxed mb-3">
                             Your strategy acts like a bank account giving you <strong className="text-teal-700 bg-teal-50 px-1 rounded">{!isNaN(result) ? (result * 100).toFixed(2) : "0.00"}% interest per year</strong>.
                             You invested a total of <strong>{currency}{stats.totalInvested.toLocaleString()}</strong> and your current value is <strong>{currency}{stats.totalReturned.toLocaleString()}</strong>.
                         </p>
-                        <div className="bg-gray-50 p-3 rounded-lg text-xs text-gray-600">
+                        <div className="bg-gray-50 dark:bg-slate-900/50 p-3 rounded-lg text-xs text-gray-600">
                             <p className="font-semibold mb-1">💰 Future Value Example:</p>
                             <p>If you invest {currency}10,000 today at this rate, it would grow to <strong className="text-teal-700">{currency}{(10000 * Math.pow(1 + result, 10)).toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong> in 10 years.</p>
                         </div>
@@ -477,7 +477,7 @@ export default function XIRRCalculator({ currency = 'INR' }) {
                     {/* Breakdown Table with PDF Export */}
                     <div className="mt-8">
                         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-                            <h3 className="text-lg font-bold text-gray-800">Transaction Breakdown</h3>
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Transaction Breakdown</h3>
                             <button
                                 onClick={() => {
                                     // Use standardized yearlyData/monthlyData for PDF if possible, or raw flows
@@ -525,7 +525,7 @@ export default function XIRRCalculator({ currency = 'INR' }) {
                 </>
             ) : (
                 <div className="h-full flex flex-col items-center justify-center text-center p-8 text-gray-400">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400">
+                    <div className="w-16 h-16 bg-gray-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4 text-gray-400">
                         <TrendingUp className="w-8 h-8" />
                     </div>
                     <p className="text-lg font-medium text-gray-500">Result will appear here</p>

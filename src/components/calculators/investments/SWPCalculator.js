@@ -125,7 +125,7 @@ export default function SWPCalculator({ currency = 'INR' }) {
               aria-label="Compounding Frequency"
               value={compoundingFrequency}
               onChange={(e) => setCompoundingFrequency(e.target.value)}
-              className="appearance-none bg-gray-50 border border-gray-200 text-gray-700 text-xs font-semibold py-1 px-3 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-teal-500"
+              className="appearance-none bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 text-gray-700 text-xs font-semibold py-1 px-3 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white dark:bg-slate-800 focus:border-teal-500"
             >
               <option value="monthly">Monthly</option>
               <option value="quarterly">Quarterly</option>
@@ -197,8 +197,8 @@ export default function SWPCalculator({ currency = 'INR' }) {
       inputs={inputs}
       summary={summary}
       charts={
-        <div className="mb-12 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-          <h3 className="text-gray-800 font-bold text-lg mb-4">Balance Depletion Projection</h3>
+        <div className="mb-12 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
+          <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4">Balance Depletion Projection</h3>
           <FinancialLineChart
             data={{
               labels: yearlyRows.map(r => r.year),
@@ -221,7 +221,7 @@ export default function SWPCalculator({ currency = 'INR' }) {
       table={
         <div className="mt-12">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-            <h3 className="text-lg font-bold text-gray-800">Withdrawal Schedule</h3>
+            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Withdrawal Schedule</h3>
             <div className="flex items-center gap-4 w-full md:w-auto">
               <button
                 onClick={() => {
@@ -238,7 +238,7 @@ export default function SWPCalculator({ currency = 'INR' }) {
                 Export PDF
               </button>
               <div className="flex items-center">
-                <label className="text-sm font-black text-slate-900 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
+                <label className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
                 <div className="w-48">
                   <MonthYearPicker
                     value={startDate}

@@ -176,7 +176,7 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
 
       {/* MODE TOGGLE */}
       <div className="flex justify-center mb-8">
-        <div className="bg-white p-2 rounded-2xl inline-flex flex-wrap justify-center gap-4 shadow-sm border border-gray-100">
+        <div className="bg-white dark:bg-slate-800 p-2 rounded-2xl inline-flex flex-wrap justify-center gap-4 shadow-sm border border-gray-100 dark:border-slate-700">
           {[
             { id: 'EMI', label: 'EMI Calculator', icon: Coins, color: 'text-indigo-600', bg: 'bg-indigo-50' },
             { id: 'LOAN', label: 'Loan Amount', icon: Wallet, color: 'text-emerald-600', bg: 'bg-emerald-50' },
@@ -190,14 +190,14 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
                 key={mode.id}
                 onClick={() => setCalculationMode(mode.id)}
                 className={`flex flex-col items-center justify-center w-32 h-24 rounded-xl transition-all duration-200 border-2 ${isActive
-                  ? `bg-gray-50 border-${mode.color.split('-')[1]}-500 shadow-md transform scale-105`
-                  : 'bg-white border-transparent hover:bg-gray-50 hover:border-gray-200'
+                  ? `bg-gray-50 dark:bg-slate-900/50 border-${mode.color.split('-')[1]}-500 shadow-md transform scale-105`
+                  : 'bg-white dark:bg-slate-800 border-transparent hover:bg-gray-50 dark:bg-slate-900/50 hover:border-gray-200 dark:border-slate-700'
                   }`}
               >
-                <div className={`p-2 rounded-full mb-2 ${isActive ? mode.bg : 'bg-gray-100'} ${isActive ? mode.color : 'text-gray-500'}`}>
+                <div className={`p-2 rounded-full mb-2 ${isActive ? mode.bg : 'bg-gray-100 dark:bg-slate-800'} ${isActive ? mode.color : 'text-gray-500'}`}>
                   <Icon size={24} />
                 </div>
-                <span className={`text-xs font-bold text-center ${isActive ? 'text-gray-900' : 'text-gray-500'}`}>
+                <span className={`text-xs font-bold text-center ${isActive ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}`}>
                   {mode.label}
                 </span>
               </button>
@@ -242,13 +242,13 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
             step={tenureMode === 'Months' ? 1 : 0.5}
             isDecimal={tenureMode === 'Years'} // Allow 1.5 years
             rightElement={
-              <div className="flex bg-gray-100 p-1 rounded-lg">
+              <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-lg">
                 {['Years', 'Months'].map((mode) => (
                   <button
                     key={mode}
                     onClick={() => handleTenureModeChange(mode)}
                     className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${tenureMode === mode
-                      ? 'bg-white text-teal-700 shadow-sm'
+                      ? 'bg-white dark:bg-slate-800 text-teal-700 shadow-sm'
                       : 'text-gray-500 hover:text-gray-700'
                       }`}
                   >
@@ -282,8 +282,8 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
                 onChange={setProcessingFeePercent}
                 min={0} max={MAX_PROCESSING_FEE_PERCENT} step={STEP_PROCESSING_FEE_PERCENT} symbol="%"
                 rightElement={
-                  <div className="flex bg-gray-100 p-0.5 rounded-lg h-7 self-center">
-                    <button onClick={() => setFeeMode('percent')} className="px-3 text-xs font-bold rounded-md bg-white shadow-sm text-teal-700 transition-all">%</button>
+                  <div className="flex bg-gray-100 dark:bg-slate-800 p-0.5 rounded-lg h-7 self-center">
+                    <button onClick={() => setFeeMode('percent')} className="px-3 text-xs font-bold rounded-md bg-white dark:bg-slate-800 shadow-sm text-teal-700 transition-all">%</button>
                     <button onClick={() => setFeeMode('flat')} className="px-3 text-xs font-medium rounded-md text-gray-400 hover:text-gray-600 transition-all">₹</button>
                   </div>
                 }
@@ -300,9 +300,9 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
               min={0} max={MAX_FEE_AMOUNT} step={1000}
               currency={currency}
               rightElement={
-                <div className="flex bg-gray-100 p-0.5 rounded-lg h-7 self-center">
+                <div className="flex bg-gray-100 dark:bg-slate-800 p-0.5 rounded-lg h-7 self-center">
                   <button onClick={() => setFeeMode('percent')} className="px-3 text-xs font-medium rounded-md text-gray-400 hover:text-gray-600 transition-all">%</button>
-                  <button onClick={() => setFeeMode('flat')} className="px-3 text-xs font-bold rounded-md bg-white shadow-sm text-teal-700 transition-all">₹</button>
+                  <button onClick={() => setFeeMode('flat')} className="px-3 text-xs font-bold rounded-md bg-white dark:bg-slate-800 shadow-sm text-teal-700 transition-all">₹</button>
                 </div>
               }
             />
@@ -312,9 +312,9 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
 
       {/* EMI SCHEME TOGGLE */}
       <div className="flex justify-center mt-6 mb-10">
-        <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-xl border border-gray-200">
+        <div className="flex items-center gap-4 bg-gray-50 dark:bg-slate-900/50 p-2 rounded-xl border border-gray-200 dark:border-slate-700">
           <div className="flex items-center gap-1.5 pl-2">
-            <span className="text-slate-900 text-sm font-black tracking-tight uppercase">EMI Scheme</span>
+            <span className="text-slate-900 dark:text-slate-100 text-sm font-black tracking-tight uppercase">EMI Scheme</span>
             <div className="group relative flex items-center">
               <Info className="w-4 h-4 text-gray-400 cursor-pointer hover:text-gray-600 transition-colors" />
 
@@ -336,7 +336,7 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
             </div>
           </div>
 
-          <div className="flex bg-white rounded-lg border border-gray-200 p-1">
+          <div className="flex bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-1">
             {['advance', 'arrears'].map((scheme) => (
               <button
                 key={scheme}
@@ -345,7 +345,7 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
                         px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all flex items-center gap-2
                         ${emiScheme === scheme
                     ? 'bg-slate-800 text-white shadow-md'
-                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+                    : 'text-gray-500 hover:text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:bg-slate-900/50'
                   }
                     `}
               >
@@ -362,7 +362,7 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
       </div>
 
       {/* NEW SUMMARY SECTION & PIE CHART */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm mt-8 overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm mt-8 overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-5 md:divide-x divide-gray-100">
 
           {/* LEFT: METRICS (2/5 width) */}
@@ -370,7 +370,7 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
             {/* 1. Interest Rate */}
             <div className="p-6 text-center">
               <p className="text-sm font-semibold text-gray-500 mb-1">Loan Interest Rate</p>
-              <p className="text-3xl font-extrabold text-gray-800">
+              <p className="text-3xl font-extrabold text-gray-800 dark:text-gray-100">
                 {calculationMode === 'RATE'
                   ? (!isNaN(finalAmortizationRate) ? Number(finalAmortizationRate).toFixed(2) : "0.00")
                   : (!isNaN(annualRate) ? Number(annualRate).toFixed(2) : "0.00")} %
@@ -401,7 +401,7 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
             {/* 3. Total Interest */}
             <div className="p-6 text-center">
               <p className="text-sm font-semibold text-gray-500 mb-1">Total Interest Payable</p>
-              <p className="text-2xl font-bold text-gray-800 tracking-tight">
+              <p className="text-2xl font-bold text-gray-800 dark:text-gray-100 tracking-tight">
                 {moneyFormat(Math.round(finalTotalInterest), currency)}
               </p>
             </div>
@@ -425,7 +425,7 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
           </div>
 
           {/* RIGHT: PIE CHART (3/5 width) */}
-          <div className="lg:col-span-3 p-6 flex flex-col justify-center items-center bg-gray-50/30">
+          <div className="lg:col-span-3 p-6 flex flex-col justify-center items-center bg-gray-50 dark:bg-slate-900/50/30">
             <h4 className="text-sm font-bold text-gray-700 mb-4 self-start">Break-up of Total Payment</h4>
             <div className="w-full h-80">
               <FinancialLoanPieChart
@@ -483,9 +483,9 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
         <div className="mt-12">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div>
-              <h3 className="text-lg font-bold text-gray-800">Amortization Schedule</h3>
+              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Amortization Schedule</h3>
               <div className="flex items-center mt-2 w-full sm:w-auto">
-                <label className="text-sm font-black text-slate-900 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
+                <label className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
                 <div className="w-48">
                   <MonthYearPicker
                     value={startDate}

@@ -111,7 +111,7 @@ export default function CostOfDelay({ currency }) {
                 </div>
             }
             charts={
-                <div className="h-[300px] w-full bg-white p-4 rounded-xl border border-gray-100 shadow-sm mt-8">
+                <div className="h-[300px] w-full bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm mt-8">
                     <FinancialBarChart data={chartData} options={options} currency={currency} height={300} />
                 </div>
             }

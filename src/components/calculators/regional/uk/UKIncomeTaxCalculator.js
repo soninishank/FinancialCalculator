@@ -108,7 +108,7 @@ export default function UKIncomeTaxCalculator({ currency = 'GBP' }) {
                 symbol="%"
             />
 
-            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700">
                 <p className="text-xs text-gray-500">
                     Calculations based on <strong>{UK_TAX_YEAR}</strong> tax year rules for England, Wales, and NI.
                     Includes Personal Allowance tapering and 8% NI rate.
@@ -147,12 +147,12 @@ export default function UKIncomeTaxCalculator({ currency = 'GBP' }) {
                             currency={currency}
                             customMetrics={[
                                 { label: "Income Tax", value: result.incomeTax, color: "text-red-700", bgColor: "" },
-                                { label: "NI + Pension", value: result.ni + result.pensionAmount, color: "text-gray-700", bgColor: "bg-gray-50/30" },
+                                { label: "NI + Pension", value: result.ni + result.pensionAmount, color: "text-gray-700", bgColor: "bg-gray-50 dark:bg-slate-900/50/30" },
                                 { label: "Annual Take-Home", value: result.takeHomePay, color: "text-teal-700", bgColor: "bg-teal-50/30" }
                             ]}
                         />
 
-                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
                             <div className="flex justify-between text-sm py-1">
                                 <span className="text-gray-600">Annual Gross</span>
                                 <span className="font-semibold">{new Intl.NumberFormat('en-GB', { style: 'currency', currency }).format(result.annualGross)}</span>
@@ -169,8 +169,8 @@ export default function UKIncomeTaxCalculator({ currency = 'GBP' }) {
                                 <span className="text-gray-600">Pension Contribution</span>
                                 <span className="font-semibold text-red-600">-{new Intl.NumberFormat('en-GB', { style: 'currency', currency }).format(result.pensionAmount)}</span>
                             </div>
-                            <div className="flex justify-between text-sm py-2 mt-2 border-t border-gray-200 font-bold">
-                                <span className="text-gray-800">Total Deductions</span>
+                            <div className="flex justify-between text-sm py-2 mt-2 border-t border-gray-200 dark:border-slate-700 font-bold">
+                                <span className="text-gray-800 dark:text-gray-100">Total Deductions</span>
                                 <span className="text-red-700">-{new Intl.NumberFormat('en-GB', { style: 'currency', currency }).format(result.totalDeductions)}</span>
                             </div>
                         </div>
@@ -178,7 +178,7 @@ export default function UKIncomeTaxCalculator({ currency = 'GBP' }) {
                 }
                 charts={
                     <div className="mt-8">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">Gross Pay Distribution</h3>
+                        <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">Gross Pay Distribution</h3>
                         <FinancialLoanPieChart
                             principal={result.takeHomePay}
                             totalInterest={result.incomeTax}

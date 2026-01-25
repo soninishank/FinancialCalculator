@@ -105,7 +105,7 @@ const CarAffordabilityCalculator = ({ currency }) => {
     const summary = (
         <div className="space-y-6">
             <div className="bg-gradient-to-br from-indigo-600 to-purple-700 p-8 rounded-3xl text-white shadow-xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-white/20 transition-all duration-700"></div>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white dark:bg-slate-800/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-white dark:bg-slate-800/20 transition-all duration-700"></div>
 
                 <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 divide-y md:divide-y-0 md:divide-x divide-white/20">
                     <div className="pb-6 md:pb-0">
@@ -135,7 +135,7 @@ const CarAffordabilityCalculator = ({ currency }) => {
             summary={summary}
             charts={
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-4">
-                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
                         <h4 className="text-sm font-bold text-gray-700 mb-6 uppercase tracking-wider">Purchase Funding Breakdown</h4>
                         <div className="h-[300px]">
                             <FinancialLoanPieChart
@@ -151,7 +151,7 @@ const CarAffordabilityCalculator = ({ currency }) => {
                             />
                         </div>
                     </div>
-                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
                         <h4 className="text-sm font-bold text-gray-700 mb-6 uppercase tracking-wider">Projected Loan Repayment</h4>
                         <div className="h-[300px]">
                             <FinancialCompoundingBarChart
@@ -164,8 +164,8 @@ const CarAffordabilityCalculator = ({ currency }) => {
                 </div>
             }
             table={
-                <div className="mt-8 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                    <h4 className="text-lg font-bold text-gray-800 mb-6">Estimated Amortization Schedule (Max Loan)</h4>
+                <div className="mt-8 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
+                    <h4 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6">Estimated Amortization Schedule (Max Loan)</h4>
                     <CollapsibleAmortizationTable
                         yearlyData={amortization.rows}
                         monthlyData={amortization.monthlyRows}

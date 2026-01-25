@@ -82,13 +82,13 @@ const CAGRCalculator = ({ currency }) => {
       {calculationMode === 'duration' ? (
         <div>
           <div className="flex justify-between items-center mb-2">
-            <label className="text-sm font-black text-slate-900 uppercase tracking-tight">Investment Period</label>
-            <div className="flex bg-gray-100 p-1 rounded-lg">
+            <label className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight">Investment Period</label>
+            <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-lg">
               {['years', 'months', 'days'].map((u) => (
                 <button
                   key={u}
                   onClick={() => setTimeUnit(u)}
-                  className={`px-3 py-1 text-[10px] md:text-xs font-semibold rounded-md transition-all capitalize ${timeUnit === u ? 'bg-white text-teal-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                  className={`px-3 py-1 text-[10px] md:text-xs font-semibold rounded-md transition-all capitalize ${timeUnit === u ? 'bg-white dark:bg-slate-800 text-teal-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'
                     }`}
                 >
                   {u}
@@ -129,7 +129,7 @@ const CAGRCalculator = ({ currency }) => {
       inputs={inputs}
       summary={
         <div className="space-y-8">
-          <div className="bg-white border-l-8 border-teal-500 rounded-2xl p-6 shadow-sm relative overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 border-l-8 border-teal-500 rounded-2xl p-6 shadow-sm relative overflow-hidden">
             {isExtreme && (
               <div className="absolute top-0 right-0 bg-amber-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg tracking-wider animate-pulse uppercase">
                 High Annualized Rate
@@ -167,7 +167,7 @@ const CAGRCalculator = ({ currency }) => {
       table={
         <div className="mt-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-            <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
+            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Growth Schedule</h3>
             <div className="flex items-center gap-4 w-full md:w-auto">
               <button
                 onClick={() => {
@@ -184,7 +184,7 @@ const CAGRCalculator = ({ currency }) => {
                 Export PDF
               </button>
               <div className="flex items-center">
-                <label className="text-sm font-black text-slate-900 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
+                <label className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
                 <div className="w-48 relative">
                   <MonthYearPicker
                     value={effectiveScheduleStartDate}
@@ -192,7 +192,7 @@ const CAGRCalculator = ({ currency }) => {
                   />
                   {calculationMode === 'dates' && (
                     <div
-                      className="absolute inset-0 bg-gray-50/50 cursor-not-allowed rounded-lg"
+                      className="absolute inset-0 bg-gray-50 dark:bg-slate-900/50/50 cursor-not-allowed rounded-lg"
                       title="Starts from selected Start Date"
                     />
                   )}

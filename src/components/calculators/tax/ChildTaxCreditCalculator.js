@@ -75,7 +75,7 @@ export default function ChildTaxCreditCalculator({ currency = 'USD' }) {
                             onClick={() => setFilingStatus(status.value)}
                             className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${filingStatus === status.value
                                     ? 'bg-pink-600 text-white shadow-md'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    : 'bg-gray-100 dark:bg-slate-800 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             {status.label}
@@ -194,9 +194,9 @@ export default function ChildTaxCreditCalculator({ currency = 'USD' }) {
                             </div>
                         )}
 
-                        <div className="text-center p-4 bg-gray-50 rounded-xl">
+                        <div className="text-center p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl">
                             <p className="text-xs text-gray-600 mb-1">Tax Liability After CTC</p>
-                            <p className="text-xl font-bold text-gray-900">
+                            <p className="text-xl font-bold text-gray-900 dark:text-gray-100">
                                 {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(Math.max(0, taxLiability - result.nonRefundableCredit))}
                             </p>
                         </div>

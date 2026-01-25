@@ -162,7 +162,7 @@ export default function TraditionalIRACalculator({ currency = 'USD' }) {
                             onClick={() => setFilingStatus(status.value)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filingStatus === status.value
                                 ? 'bg-indigo-600 text-white shadow-md'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                : 'bg-gray-100 dark:bg-slate-800 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             {status.label}
@@ -229,7 +229,7 @@ export default function TraditionalIRACalculator({ currency = 'USD' }) {
                 }
                 charts={
                     <div className="mt-8">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">IRA Growth Projection</h3>
+                        <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">IRA Growth Projection</h3>
                         <FinancialCompoundingBarChart
                             data={result.yearlyData}
                             currency={currency}

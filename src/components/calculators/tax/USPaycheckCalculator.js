@@ -172,7 +172,7 @@ export default function USPaycheckCalculator({ currency = 'USD' }) {
                             labels={{ invested: "Federal Tax", gain: "FICA + State Tax", total: "Annual Net Pay" }}
                         />
 
-                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
                             <div className="flex justify-between text-sm py-1">
                                 <span className="text-gray-600">Federal Tax</span>
                                 <span className="font-semibold text-red-600">-{new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(result.federalTax)}</span>
@@ -185,8 +185,8 @@ export default function USPaycheckCalculator({ currency = 'USD' }) {
                                 <span className="text-gray-600">State Tax</span>
                                 <span className="font-semibold text-red-600">-{new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(result.stateTax)}</span>
                             </div>
-                            <div className="flex justify-between text-sm py-2 mt-2 border-t border-gray-200 font-bold">
-                                <span className="text-gray-800">Total Taxes</span>
+                            <div className="flex justify-between text-sm py-2 mt-2 border-t border-gray-200 dark:border-slate-700 font-bold">
+                                <span className="text-gray-800 dark:text-gray-100">Total Taxes</span>
                                 <span className="text-red-700">-{new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(result.totalTax)}</span>
                             </div>
                         </div>
@@ -194,7 +194,7 @@ export default function USPaycheckCalculator({ currency = 'USD' }) {
                 }
                 charts={
                     <div className="mt-8">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">Where Your Money Goes</h3>
+                        <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">Where Your Money Goes</h3>
                         <FinancialLoanPieChart
                             principal={result.netPayAnnual}
                             totalInterest={result.federalTax}

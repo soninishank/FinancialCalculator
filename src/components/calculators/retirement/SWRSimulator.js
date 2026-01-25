@@ -128,7 +128,7 @@ export default function SWRSimulator({ currency }) {
                                 <div className="text-sm text-gray-600 mb-1">
                                     Start Monthly: <span className="font-semibold">{moneyFormat(corpus * (res.rate / 100) / 12, currency)}</span>
                                 </div>
-                                <div className={`text-lg font-bold ${isDepleted ? 'text-red-600' : 'text-gray-800'}`}>
+                                <div className={`text-lg font-bold ${isDepleted ? 'text-red-600' : 'text-gray-800 dark:text-gray-100'}`}>
                                     {isDepleted
                                         ? `Depleted in Year ${res.data.depletionYear}`
                                         : `Lasts > ${years} Years`}
@@ -144,7 +144,7 @@ export default function SWRSimulator({ currency }) {
                 </div>
             }
             charts={
-                <div className="h-[350px] w-full bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                <div className="h-[350px] w-full bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm">
                     <FinancialLineChart data={chartData} options={options} currency={currency} height={350} />
                 </div>
             }

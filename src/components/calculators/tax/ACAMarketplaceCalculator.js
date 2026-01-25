@@ -120,7 +120,7 @@ export default function ACAMarketplaceCalculator({ currency = 'USD' }) {
                             onClick={() => setMetalTier(tier.value)}
                             className={`px-4 py-3 rounded-lg text-left transition-all ${metalTier === tier.value
                                 ? 'bg-blue-600 text-white shadow-md'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                : 'bg-gray-100 dark:bg-slate-800 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             <div className="font-medium text-sm">{tier.label}</div>
@@ -154,12 +154,12 @@ export default function ACAMarketplaceCalculator({ currency = 'USD' }) {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-white border border-gray-200 p-4 rounded-xl text-center">
+                            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-4 rounded-xl text-center">
                                 <p className="text-xs text-gray-500 uppercase font-bold mb-1">Income % of FPL</p>
-                                <p className="text-2xl font-bold text-gray-900">{!isNaN(result.fplPercentage) ? result.fplPercentage.toFixed(0) : "0"}%</p>
+                                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{!isNaN(result.fplPercentage) ? result.fplPercentage.toFixed(0) : "0"}%</p>
                                 <p className="text-[10px] text-gray-400 mt-1">FPL: {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.fpl)}</p>
                             </div>
-                            <div className={`border p-4 rounded-xl text-center ${result.isEligibleForSubsidy ? 'bg-emerald-50 border-emerald-100' : 'bg-gray-50 border-gray-200'}`}>
+                            <div className={`border p-4 rounded-xl text-center ${result.isEligibleForSubsidy ? 'bg-emerald-50 border-emerald-100' : 'bg-gray-50 dark:bg-slate-900/50 border-gray-200 dark:border-slate-700'}`}>
                                 <p className="text-xs uppercase font-bold mb-1" style={{ color: result.isEligibleForSubsidy ? '#059669' : '#6b7280' }}>
                                     Subsidy Status
                                 </p>
@@ -196,15 +196,15 @@ export default function ACAMarketplaceCalculator({ currency = 'USD' }) {
                         )}
 
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-white border border-gray-200 p-4 rounded-xl text-center">
+                            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-4 rounded-xl text-center">
                                 <p className="text-xs text-gray-500 uppercase font-bold mb-1">Full Premium</p>
                                 <p className="text-lg font-bold text-gray-500 line-through">
                                     {new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(result.fullMonthlyPremium)}
                                 </p>
                             </div>
-                            <div className="bg-white border border-gray-200 p-4 rounded-xl text-center">
+                            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-4 rounded-xl text-center">
                                 <p className="text-xs text-gray-500 uppercase font-bold mb-1">Out-of-Pocket Max</p>
-                                <p className="text-lg font-bold text-gray-900">
+                                <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
                                     {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.oopMax)}
                                 </p>
                             </div>
@@ -212,8 +212,8 @@ export default function ACAMarketplaceCalculator({ currency = 'USD' }) {
                     </div>
                 }
                 charts={
-                    <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mt-6">
-                        <h3 className="text-lg font-bold text-gray-800 mb-6">Premium Cost Breakdown</h3>
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-100 dark:border-slate-700 shadow-sm mt-6">
+                        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6">Premium Cost Breakdown</h3>
                         <FinancialBarChart
                             data={{
                                 labels: ['Full Premium', 'Your Cost'],

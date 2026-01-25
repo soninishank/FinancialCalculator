@@ -11,22 +11,22 @@ import { FinancialCompoundingBarChart, FinancialLoanDoughnutChart, FinancialLine
 import { Info, IndianRupee, CreditCard, ShieldCheck, Settings2, Wallet, Table, ChartPie, TrendingDown, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
 
 const CollapsibleSection = ({ icon: Icon, title, children, isOpen, onToggle, isMandatory = false }) => (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm mb-6 overflow-hidden">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm mb-6 overflow-hidden">
         <button
             onClick={onToggle}
-            className="w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors"
+            className="w-full flex items-center justify-between p-6 hover:bg-gray-50 dark:bg-slate-900/50 transition-colors"
         >
             <div className="flex items-center gap-3 text-left">
                 <div className={`p-2 rounded-xl ${isMandatory ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-50 text-slate-600'}`}>
                     <Icon size={24} />
                 </div>
                 <div>
-                    <h3 className="text-xl font-bold text-gray-800">{title}</h3>
+                    <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">{title}</h3>
                     {!isMandatory && !isOpen && <p className="text-xs text-slate-400 font-medium tracking-wide">CLICK TO CONFIGURE</p>}
                 </div>
             </div>
             {!isMandatory && (
-                <div className={`p-2 rounded-full ${isOpen ? 'bg-indigo-50 text-indigo-600' : 'bg-gray-100 text-gray-400'}`}>
+                <div className={`p-2 rounded-full ${isOpen ? 'bg-indigo-50 text-indigo-600' : 'bg-gray-100 dark:bg-slate-800 text-gray-400'}`}>
                     {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </div>
             )}
@@ -174,7 +174,7 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <InputWithSlider label="Loan Term (months)" value={loanTerm} onChange={setLoanTerm} min={12} max={120} step={1} />
                                 <div className="space-y-2">
-                                    <label className="text-xs font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
+                                    <label className="text-xs font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight flex items-center gap-2">
                                         <Calendar size={14} /> Start Date
                                     </label>
                                     <MonthYearPicker value={startDate} onChange={setStartDate} />
@@ -194,10 +194,10 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                         <div className="space-y-6">
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <label className="text-xs font-black text-slate-900 uppercase tracking-tight">Processing Fee</label>
-                                    <div className="flex bg-gray-100 p-1 rounded-lg">
-                                        <button onClick={() => setProcessingFeeMode('flat')} className={`px-4 py-2 text-xs font-bold rounded-md transition-all ${processingFeeMode === 'flat' ? 'bg-white shadow-sm text-indigo-700' : 'text-gray-400'}`}>FIXED</button>
-                                        <button onClick={() => setProcessingFeeMode('percent')} className={`px-4 py-2 text-xs font-bold rounded-md transition-all ${processingFeeMode === 'percent' ? 'bg-white shadow-sm text-indigo-700' : 'text-gray-400'}`}>%</button>
+                                    <label className="text-xs font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight">Processing Fee</label>
+                                    <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-lg">
+                                        <button onClick={() => setProcessingFeeMode('flat')} className={`px-4 py-2 text-xs font-bold rounded-md transition-all ${processingFeeMode === 'flat' ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-700' : 'text-gray-400'}`}>FIXED</button>
+                                        <button onClick={() => setProcessingFeeMode('percent')} className={`px-4 py-2 text-xs font-bold rounded-md transition-all ${processingFeeMode === 'percent' ? 'bg-white dark:bg-slate-800 shadow-sm text-indigo-700' : 'text-gray-400'}`}>%</button>
                                     </div>
                                 </div>
                                 {processingFeeMode === 'flat' ?
@@ -221,7 +221,7 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                     >
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <label htmlFor="credit-score-select" className="text-xs font-black text-slate-900 uppercase tracking-tight">Credit Score Range</label>
+                                <label htmlFor="credit-score-select" className="text-xs font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight">Credit Score Range</label>
                                 <select
                                     id="credit-score-select"
                                     value={creditScoreRange}
@@ -238,7 +238,7 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                                             setAnnualRate(rateMap[range]);
                                         }
                                     }}
-                                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-medium"
+                                    className="w-full p-3 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-medium"
                                 >
                                     <option>Excellent (740-850)</option>
                                     <option>Good (670-739)</option>
@@ -246,16 +246,16 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                                     <option>Poor (300-579)</option>
                                 </select>
                             </div>
-                            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700">
                                 <div className="pr-4">
-                                    <p className="text-sm font-bold text-gray-800">Fixed Rate Mode</p>
+                                    <p className="text-sm font-bold text-gray-800 dark:text-gray-100">Fixed Rate Mode</p>
                                     <p className="text-[10px] text-gray-500">Lock the interest rate and ignore credit score suggestions.</p>
                                 </div>
                                 <button
                                     onClick={() => setManualRateEnabled(!manualRateEnabled)}
                                     className={`w-12 h-6 rounded-full transition-colors relative shrink-0 ${manualRateEnabled ? 'bg-indigo-600' : 'bg-gray-300'}`}
                                 >
-                                    <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${manualRateEnabled ? 'translate-x-6' : ''}`} />
+                                    <div className={`absolute top-1 left-1 w-4 h-4 bg-white dark:bg-slate-800 rounded-full transition-transform ${manualRateEnabled ? 'translate-x-6' : ''}`} />
                                 </button>
                             </div>
                         </div>
@@ -289,19 +289,19 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                     </CollapsibleSection>
 
                     {/* AFFORDABILITY CHECK */}
-                    <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm">
                         <div className="flex items-center gap-3 mb-6">
                             <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
                                 <Wallet size={24} />
                             </div>
-                            <h3 className="text-xl font-bold text-gray-800">Affordability Check</h3>
+                            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">Affordability Check</h3>
                         </div>
                         <div className="space-y-6">
                             <InputWithSlider label="Monthly Take-Home Income" value={monthlyIncome} onChange={setMonthlyIncome} min={0} max={1000000} step={5000} currency={currency} />
                             {monthlyIncome > 0 && (
                                 <div className={`p-4 rounded-xl border ${emi > monthlyIncome * 0.4 ? 'bg-rose-50 border-rose-100' : 'bg-emerald-50 border-emerald-100'}`}>
                                     <div className="flex justify-between items-center mb-2">
-                                        <span className="text-xs font-black text-slate-900 uppercase tracking-tight">EMI to Income Ratio</span>
+                                        <span className="text-xs font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight">EMI to Income Ratio</span>
                                         <span className={`text-sm font-black ${emi > monthlyIncome * 0.4 ? 'text-rose-600' : 'text-emerald-600'}`}>
                                             {monthlyIncome !== 0 && !isNaN(emi / monthlyIncome) ? ((emi / monthlyIncome) * 100).toFixed(1) : "0.0"}%
                                         </span>
@@ -321,12 +321,12 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                 {/* RIGHT COL: RESULTS */}
                 <div className="space-y-6 lg:sticky lg:top-8 h-fit">
                     {/* 1. PAYMENT SUMMARY */}
-                    <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                        <div className="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm">
+                        <div className="flex items-center gap-3 mb-6 border-b border-gray-100 dark:border-slate-700 pb-4">
                             <div className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
                                 <ChartPie size={24} />
                             </div>
-                            <h3 className="text-xl font-bold text-gray-800">Payment Summary</h3>
+                            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">Payment Summary</h3>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
@@ -343,15 +343,15 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                         <div className="space-y-4">
                             <div className="flex justify-between items-center py-2 border-b border-gray-50">
                                 <span className="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Interest</span>
-                                <span className="text-lg font-black text-gray-900">{moneyFormat(Math.round(totalInterest), currency)}</span>
+                                <span className="text-lg font-black text-gray-900 dark:text-gray-100">{moneyFormat(Math.round(totalInterest), currency)}</span>
                             </div>
                             <div className="flex justify-between items-center py-2 border-b border-gray-50">
                                 <span className="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Fees</span>
-                                <span className="text-lg font-black text-gray-900">{moneyFormat(Math.round(totalFees), currency)}</span>
+                                <span className="text-lg font-black text-gray-900 dark:text-gray-100">{moneyFormat(Math.round(totalFees), currency)}</span>
                             </div>
                             <div className="flex justify-between items-center py-2 border-b border-gray-50">
                                 <span className="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Amount Paid</span>
-                                <span className="text-lg font-black text-gray-900">{moneyFormat(Math.round(totalPaid), currency)}</span>
+                                <span className="text-lg font-black text-gray-900 dark:text-gray-100">{moneyFormat(Math.round(totalPaid), currency)}</span>
                             </div>
                             <div className="flex justify-between items-center py-2 bg-emerald-50 p-4 rounded-xl border border-emerald-100">
                                 <span className="text-sm font-black text-emerald-600 uppercase">Total Cost Of Ownership</span>
@@ -361,12 +361,12 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                     </div>
 
                     {/* 2. BREAKDOWN | DOUGHNUT CHART */}
-                    <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                        <div className="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm">
+                        <div className="flex items-center gap-3 mb-6 border-b border-gray-100 dark:border-slate-700 pb-4">
                             <div className="p-2 bg-rose-50 text-rose-600 rounded-xl">
                                 <ChartPie size={24} />
                             </div>
-                            <h3 className="text-xl font-bold text-gray-800">Cost Breakdown</h3>
+                            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">Cost Breakdown</h3>
                         </div>
                         <div className="h-[400px]">
                             <FinancialLoanDoughnutChart
@@ -383,12 +383,12 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                     </div>
 
                     {/* 3. PRINCIPAL VS INTEREST REPAYMENT */}
-                    <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                        <div className="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm">
+                        <div className="flex items-center gap-3 mb-6 border-b border-gray-100 dark:border-slate-700 pb-4">
                             <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
                                 <TrendingDown size={24} />
                             </div>
-                            <h3 className="text-xl font-bold text-gray-800">Repayment Structure</h3>
+                            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">Repayment Structure</h3>
                         </div>
                         <FinancialCompoundingBarChart data={yearlyRows} currency={currency} type="loan" />
                     </div>
@@ -396,12 +396,12 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
             </div>
 
             {/* EQUITY TREND CHART */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                <div className="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm">
+                <div className="flex items-center gap-3 mb-6 border-b border-gray-100 dark:border-slate-700 pb-4">
                     <div className="p-2 bg-purple-50 text-purple-600 rounded-xl">
                         <TrendingDown size={24} />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-800">Vehicle Equity Trend</h3>
+                    <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">Vehicle Equity Trend</h3>
                     <p className="text-xs text-slate-400 font-medium ml-auto">CAR VALUE VS. LOAN BALANCE</p>
                 </div>
                 <div className="h-[350px]">
@@ -410,13 +410,13 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
             </div>
 
             {/* 4. AMORTIZATION SCHEDULE */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                <div className="flex items-center justify-between mb-6 border-b border-gray-100 pb-4">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm">
+                <div className="flex items-center justify-between mb-6 border-b border-gray-100 dark:border-slate-700 pb-4">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-slate-100 text-slate-800 rounded-xl">
                             <Table size={24} />
                         </div>
-                        <h3 className="text-xl font-bold text-gray-800">Amortization Schedule</h3>
+                        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">Amortization Schedule</h3>
                     </div>
                     <button
                         onClick={handleExport}
@@ -449,13 +449,13 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                             Maximizing Your Advanced Car Loan EMI
                         </h3>
                         <div className="space-y-6">
-                            <div className="p-5 bg-white/5 rounded-2xl border border-white/10">
+                            <div className="p-5 bg-white dark:bg-slate-800/5 rounded-2xl border border-white/10">
                                 <h4 className="text-indigo-400 font-bold mb-2 uppercase text-xs tracking-widest">The "Underwater" Risk</h4>
                                 <p className="text-sm text-slate-300 leading-relaxed">
                                     Vehicles are depreciating assets. If your loan balance is higher than the car's market value (negative equity), you are "underwater". Our **Vehicle Equity Trend** chart helps you visualize when you'll reach positive equity. This is critical for long-term financial health, as selling a car while underwater requires you to pay the bank the difference out of pocket.
                                 </p>
                             </div>
-                            <div className="p-5 bg-white/5 rounded-2xl border border-white/10">
+                            <div className="p-5 bg-white dark:bg-slate-800/5 rounded-2xl border border-white/10">
                                 <h4 className="text-emerald-400 font-bold mb-2 uppercase text-xs tracking-widest">Down Payment Strategy</h4>
                                 <p className="text-sm text-slate-300 leading-relaxed">
                                     A higher down payment reduces the capitalized loan amount, which significantly lowers the interest burden over 5-7 years. Aim for at least 20% to stay ahead of the depreciation curve. By reducing the principal from day one, you also lower your monthly EMI, giving you more breathing room in your monthly budget for maintenance and insurance.
@@ -465,7 +465,7 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                     </div>
                     <div className="flex flex-col justify-center">
                         <div className="bg-gradient-to-br from-indigo-600 to-purple-700 p-8 rounded-3xl shadow-xl relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-white/20 transition-all duration-700"></div>
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-white dark:bg-slate-800/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-white dark:bg-slate-800/20 transition-all duration-700"></div>
                             <h4 className="text-white font-black text-lg mb-4 flex items-center gap-2">
                                 <ShieldCheck size={20} /> Smart Protection Tip
                             </h4>
@@ -510,7 +510,7 @@ export default function AdvancedCarLoanEMI({ currency = 'INR' }) {
                     </div>
                 </div>
 
-                <div className="mt-12 p-8 bg-white/5 rounded-3xl border border-white/10 text-slate-300">
+                <div className="mt-12 p-8 bg-white dark:bg-slate-800/5 rounded-3xl border border-white/10 text-slate-300">
                     <h4 className="text-white font-bold mb-4 text-center">Frequently Asked Questions (FAQ)</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>

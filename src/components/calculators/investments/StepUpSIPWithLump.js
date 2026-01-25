@@ -129,7 +129,7 @@ export default function StepUpSIPWithLump({ currency = 'INR' }) {
         onChange={handleTotalYearsChange}
         min={MIN_YEARS} max={MAX_YEARS}
       />
-      <div className="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-100 transition-all duration-300">
+      <div className="mt-4 p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700 transition-all duration-300">
         <div className="flex items-start gap-3">
           <div className="flex items-center h-6">
             <ToggleSwitch
@@ -138,7 +138,7 @@ export default function StepUpSIPWithLump({ currency = 'INR' }) {
             />
           </div>
           <div className="flex-1 w-full min-w-0">
-            <label className="font-black text-slate-900 uppercase tracking-tight text-sm block mb-1 cursor-pointer" onClick={handleLimitedPayToggle}>
+            <label className="font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight text-sm block mb-1 cursor-pointer" onClick={handleLimitedPayToggle}>
               Stop SIP early? (Limited Pay)
             </label>
             <p className="text-gray-500 text-xs mt-1">
@@ -146,7 +146,7 @@ export default function StepUpSIPWithLump({ currency = 'INR' }) {
             </p>
             <LimitedPayTip show={isLimitedPay} />
             {isLimitedPay && (
-              <div className="mt-6 pt-6 border-t border-gray-100 animate-slide-down">
+              <div className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700 animate-slide-down">
                 <InputWithSlider
                   label="SIP Contribution Period (Years)"
                   value={sipYears}
@@ -236,7 +236,7 @@ export default function StepUpSIPWithLump({ currency = 'INR' }) {
       table={
         <div className="mt-8">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
+            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Growth Schedule</h3>
             <div className="flex items-center gap-4 w-full md:w-auto">
               <button
                 onClick={() => {
@@ -253,7 +253,7 @@ export default function StepUpSIPWithLump({ currency = 'INR' }) {
                 Export PDF
               </button>
               <div className="flex items-center">
-                <label className="text-sm font-black text-slate-900 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
+                <label className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
                 <div className="w-48">
                   <MonthYearPicker
                     value={startDate}

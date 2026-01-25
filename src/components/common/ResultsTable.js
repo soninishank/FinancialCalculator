@@ -16,10 +16,10 @@ export default function ResultsTable({ data, currency, onExport, columns, title 
   ];
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col h-full overflow-hidden">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm flex flex-col h-full overflow-hidden">
       {/* Header with Export Button */}
-      <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-        <h3 className="font-semibold text-gray-700">{title || "Yearly Breakdown"}</h3>
+      <div className="p-5 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-gray-50/50 dark:bg-slate-900/50">
+        <h3 className="font-semibold text-gray-700 dark:text-gray-200">{title || "Yearly Breakdown"}</h3>
         <button
           onClick={onExport}
           className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-2"
@@ -32,7 +32,7 @@ export default function ResultsTable({ data, currency, onExport, columns, title 
       {/* Scrollable Table Container */}
       <div className="overflow-auto flex-grow max-h-[400px]">
         <table className="w-full text-left border-collapse min-w-max">
-          <thead className="bg-white sticky top-0 z-10 shadow-sm">
+          <thead className="bg-white dark:bg-slate-800 sticky top-0 z-10 shadow-sm">
             <tr>
               {displayColumns.map((col, idx) => {
                 // Dynamic Header Colors based on column content
@@ -42,17 +42,17 @@ export default function ResultsTable({ data, currency, onExport, columns, title 
                 const label = (col.label || '').toLowerCase();
 
                 if (key === 'year' || key === 'month' || label.includes('year')) {
-                  headerClass += "bg-indigo-100 text-indigo-900 border-indigo-200 ";
+                  headerClass += "bg-indigo-100 dark:bg-indigo-900/50 text-indigo-900 dark:text-indigo-100 border-indigo-200 dark:border-indigo-800 ";
                 } else if (key.includes('invest') || key.includes('principal')) {
-                  headerClass += "bg-emerald-100 text-emerald-900 border-emerald-200 ";
+                  headerClass += "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-900 dark:text-emerald-100 border-emerald-200 dark:border-emerald-800 ";
                 } else if (key.includes('growth') || key.includes('interest') || key.includes('return')) {
-                  headerClass += "bg-amber-100 text-amber-900 border-amber-200 ";
+                  headerClass += "bg-amber-100 dark:bg-amber-900/50 text-amber-900 dark:text-amber-100 border-amber-200 dark:border-amber-800 ";
                 } else if (key.includes('value') || key.includes('total') || key.includes('maturity')) {
-                  headerClass += "bg-blue-100 text-blue-900 border-blue-200 ";
+                  headerClass += "bg-blue-100 dark:bg-blue-900/50 text-blue-900 dark:text-blue-100 border-blue-200 dark:border-blue-800 ";
                 } else if (key.includes('balance') || key.includes('outcome')) {
-                  headerClass += "bg-rose-100 text-rose-900 border-rose-200 ";
+                  headerClass += "bg-rose-100 dark:bg-rose-900/50 text-rose-900 dark:text-rose-100 border-rose-200 dark:border-rose-800 ";
                 } else {
-                  headerClass += "bg-gray-100 text-gray-700 border-gray-200 ";
+                  headerClass += "bg-gray-100 dark:bg-slate-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-slate-700 ";
                 }
 
                 return (
@@ -66,25 +66,25 @@ export default function ResultsTable({ data, currency, onExport, columns, title 
               })}
             </tr>
           </thead>
-          <tbody className="text-sm divide-y divide-gray-100">
+          <tbody className="text-sm divide-y divide-gray-100 dark:divide-slate-700">
             {data.map((row, rIdx) => (
-              <tr key={row.year || rIdx} className="hover:bg-indigo-50/30 transition-colors group border-b border-gray-100 last:border-0">
+              <tr key={row.year || rIdx} className="hover:bg-indigo-50/30 dark:hover:bg-indigo-900/20 transition-colors group border-b border-gray-100 dark:border-slate-700 last:border-0">
                 {displayColumns.map((col, cIdx) => {
                   const val = row[col.key];
 
                   // Styling Logic
-                  let cellClass = "py-3 px-4 whitespace-nowrap tabular-nums border-r border-gray-300 last:border-r-0 ";
+                  let cellClass = "py-3 px-4 whitespace-nowrap tabular-nums border-r border-gray-300 dark:border-slate-700 last:border-r-0 ";
                   cellClass += col.align === 'right' ? 'text-right ' : 'text-left ';
 
                   // Match body text color to header feel but darker
                   if (col.highlight) {
-                    cellClass += "text-gray-900 font-bold bg-teal-50/20 group-hover:bg-teal-50/40 ";
+                    cellClass += "text-gray-900 dark:text-white font-bold bg-teal-50/20 dark:bg-teal-900/20 group-hover:bg-teal-50/40 ";
                   } else if (col.color === 'green' || /invested|principal/i.test(col.key)) {
-                    cellClass += "text-gray-700 font-medium ";
+                    cellClass += "text-gray-700 dark:text-gray-300 font-medium ";
                   } else if (/growth|interest/i.test(col.key)) {
-                    cellClass += "text-gray-700 font-medium ";
+                    cellClass += "text-gray-700 dark:text-gray-300 font-medium ";
                   } else {
-                    cellClass += "text-gray-800 font-bold "; // Years/Totals
+                    cellClass += "text-gray-800 dark:text-gray-200 font-bold "; // Years/Totals
                   }
 
                   // Formatting Logic

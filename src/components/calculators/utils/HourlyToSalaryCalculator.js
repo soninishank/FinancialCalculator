@@ -88,28 +88,28 @@ export default function HourlyToSalaryCalculator({ currency = 'USD' }) {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
+                            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm text-center">
                                 <p className="text-gray-500 text-xs mb-1 uppercase">Monthly</p>
-                                <p className="text-xl font-bold text-gray-800">{formatCurrency(result.monthlySalary)}</p>
+                                <p className="text-xl font-bold text-gray-800 dark:text-gray-100">{formatCurrency(result.monthlySalary)}</p>
                             </div>
-                            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
+                            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm text-center">
                                 <p className="text-gray-500 text-xs mb-1 uppercase">Bi-Weekly</p>
-                                <p className="text-xl font-bold text-gray-800">{formatCurrency(result.biWeeklySalary)}</p>
+                                <p className="text-xl font-bold text-gray-800 dark:text-gray-100">{formatCurrency(result.biWeeklySalary)}</p>
                             </div>
-                            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
+                            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm text-center">
                                 <p className="text-gray-500 text-xs mb-1 uppercase">Weekly</p>
-                                <p className="text-xl font-bold text-gray-800">{formatCurrency(result.weeklySalary)}</p>
+                                <p className="text-xl font-bold text-gray-800 dark:text-gray-100">{formatCurrency(result.weeklySalary)}</p>
                             </div>
-                            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
+                            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm text-center">
                                 <p className="text-gray-500 text-xs mb-1 uppercase">Daily</p>
-                                <p className="text-xl font-bold text-gray-800">{formatCurrency(result.dailySalary)}</p>
+                                <p className="text-xl font-bold text-gray-800 dark:text-gray-100">{formatCurrency(result.dailySalary)}</p>
                             </div>
                         </div>
 
-                        <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="mt-4 p-4 bg-gray-50 dark:bg-slate-900/50 rounded-lg border border-gray-200 dark:border-slate-700">
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-600">Total Hours per Year</span>
-                                <span className="font-bold text-gray-800">{result.totalHours.toLocaleString()}</span>
+                                <span className="font-bold text-gray-800 dark:text-gray-100">{result.totalHours.toLocaleString()}</span>
                             </div>
                         </div>
                     </div>

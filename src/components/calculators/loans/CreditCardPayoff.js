@@ -187,14 +187,14 @@ export default function CreditCardPayoff({ currency }) {
     // Custom summary because the standard "Investment Value" ones don't fit "Debt" 
     const summary = (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
                 <p className="text-gray-500 text-sm font-medium">Time to Payoff</p>
-                <p className="text-2xl font-bold text-gray-800 mt-1">
+                <p className="text-2xl font-bold text-gray-800 dark:text-gray-100 mt-1">
                     {Math.floor(result.months / 12)} Years {result.months % 12} Months
                 </p>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
                 <p className="text-gray-500 text-sm font-medium">Total Interest</p>
                 <p className="text-2xl font-bold text-rose-600 mt-1">
                     {moneyFormat(result.totalInterest, currency)}
@@ -204,9 +204,9 @@ export default function CreditCardPayoff({ currency }) {
                 </p>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
                 <p className="text-gray-500 text-sm font-medium">Total Amount Payable</p>
-                <p className="text-2xl font-bold text-gray-800 mt-1">
+                <p className="text-2xl font-bold text-gray-800 dark:text-gray-100 mt-1">
                     {moneyFormat(result.totalPaid, currency)}
                 </p>
             </div>
@@ -219,7 +219,7 @@ export default function CreditCardPayoff({ currency }) {
             summary={summary}
             charts={
                 !result.error ? (
-                    <div className="h-80 bg-white p-4 rounded-xl border mt-6">
+                    <div className="h-80 bg-white dark:bg-slate-800 p-4 rounded-xl border mt-6">
                         <FinancialLineChart data={lineData} currency={currency} height={320} />
                     </div>
                 ) : null
@@ -230,7 +230,7 @@ export default function CreditCardPayoff({ currency }) {
                 !result.error ? (
                     <div className="mt-8">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-bold text-gray-800">Payoff Schedule</h3>
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Payoff Schedule</h3>
                             <button
                                 onClick={() => {
                                     const data = result.monthlyData.map(r => [

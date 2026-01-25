@@ -84,7 +84,7 @@ export default function NZPaycheckCalculator({ currency = 'NZD' }) {
                         <button
                             key={rate}
                             onClick={() => setKiwiSaverRate(rate)}
-                            className={`px-4 py-2 rounded-lg border text-sm transition-all shrink-0 ${kiwiSaverRate === rate ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-gray-600 border-gray-300'}`}
+                            className={`px-4 py-2 rounded-lg border text-sm transition-all shrink-0 ${kiwiSaverRate === rate ? 'bg-teal-600 text-white border-teal-600' : 'bg-white dark:bg-slate-800 text-gray-600 border-gray-300'}`}
                         >
                             {rate}%
                         </button>
@@ -92,7 +92,7 @@ export default function NZPaycheckCalculator({ currency = 'NZD' }) {
                 </div>
             </div>
 
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700">
                 <div className="flex flex-col">
                     <span className="text-sm font-semibold text-gray-700">Student Loan</span>
                     <span className="text-xs text-gray-400">12% over $24,128</span>
@@ -101,11 +101,11 @@ export default function NZPaycheckCalculator({ currency = 'NZD' }) {
                     onClick={() => setStudentLoan(!studentLoan)}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${studentLoan ? 'bg-teal-600' : 'bg-gray-200'}`}
                 >
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${studentLoan ? 'translate-x-6' : 'translate-x-1'}`} />
+                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-slate-800 transition-transform ${studentLoan ? 'translate-x-6' : 'translate-x-1'}`} />
                 </button>
             </div>
 
-            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700">
                 <p className="text-xs text-gray-500">
                     Calculations based on <strong>2024/25</strong> PAYE tax rates.
                     Includes <strong>1.6% ACC Levy</strong>.
@@ -141,12 +141,12 @@ export default function NZPaycheckCalculator({ currency = 'NZD' }) {
                             currency={currency}
                             customMetrics={[
                                 { label: "Income Tax", value: result.incomeTax, color: "text-red-700", bgColor: "bg-red-50/30" },
-                                { label: "Deductions", value: result.accLevy + result.kiwiSaverAmount + result.studentLoanRepayment, color: "text-gray-700", bgColor: "bg-gray-50/30" },
+                                { label: "Deductions", value: result.accLevy + result.kiwiSaverAmount + result.studentLoanRepayment, color: "text-gray-700", bgColor: "bg-gray-50 dark:bg-slate-900/50/30" },
                                 { label: "Annual Net Pay", value: result.netPay, color: "text-teal-700", bgColor: "bg-teal-50/30" }
                             ]}
                         />
 
-                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
                             <div className="flex justify-between text-sm py-1">
                                 <span className="text-gray-600">PAYE Income Tax</span>
                                 <span className="font-semibold text-red-600">-{new Intl.NumberFormat('en-NZ', { style: 'currency', currency }).format(result.incomeTax)}</span>
@@ -165,8 +165,8 @@ export default function NZPaycheckCalculator({ currency = 'NZD' }) {
                                     <span className="font-semibold text-red-600">-{new Intl.NumberFormat('en-NZ', { style: 'currency', currency }).format(result.studentLoanRepayment)}</span>
                                 </div>
                             )}
-                            <div className="flex justify-between text-sm py-2 mt-2 border-t border-gray-200 font-bold">
-                                <span className="text-gray-800">Total Deductions</span>
+                            <div className="flex justify-between text-sm py-2 mt-2 border-t border-gray-200 dark:border-slate-700 font-bold">
+                                <span className="text-gray-800 dark:text-gray-100">Total Deductions</span>
                                 <span className="text-red-700">-{new Intl.NumberFormat('en-NZ', { style: 'currency', currency }).format(result.totalDeductions)}</span>
                             </div>
                         </div>
@@ -174,7 +174,7 @@ export default function NZPaycheckCalculator({ currency = 'NZD' }) {
                 }
                 charts={
                     <div className="mt-8">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">NZ Pay Distribution</h3>
+                        <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">NZ Pay Distribution</h3>
                         <FinancialLoanPieChart
                             principal={result.netPay}
                             totalInterest={result.incomeTax}

@@ -90,16 +90,16 @@ export default function USCapitalGainsCalculator({ currency = 'USD' }) {
 
     const inputs = (
         <div className="space-y-6">
-            <div className="flex bg-gray-100 p-1 rounded-lg">
+            <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-lg">
                 <button
                     onClick={() => setIsLongTerm(false)}
-                    className={`flex-1 py-2 rounded-md text-sm font-semibold transition-all ${!isLongTerm ? 'bg-white shadow text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                    className={`flex-1 py-2 rounded-md text-sm font-semibold transition-all ${!isLongTerm ? 'bg-white dark:bg-slate-800 shadow text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
                 >
                     Short Term (&lt; 1 Year)
                 </button>
                 <button
                     onClick={() => setIsLongTerm(true)}
-                    className={`flex-1 py-2 rounded-md text-sm font-semibold transition-all ${isLongTerm ? 'bg-white shadow text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                    className={`flex-1 py-2 rounded-md text-sm font-semibold transition-all ${isLongTerm ? 'bg-white dark:bg-slate-800 shadow text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
                 >
                     Long Term (&gt; 1 Year)
                 </button>
@@ -210,7 +210,7 @@ export default function USCapitalGainsCalculator({ currency = 'USD' }) {
                 charts={
                     result.gain > 0 && (
                         <div className="mt-8">
-                            <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">Proceeds Breakdown</h3>
+                            <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">Proceeds Breakdown</h3>
                             {/* Map data for visualizer: 
                                  Principal = Cost Basis (Purchase Price)
                                  Interest = Net Profit

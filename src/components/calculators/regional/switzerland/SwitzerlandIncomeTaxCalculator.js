@@ -97,7 +97,7 @@ export default function SwitzerlandIncomeTaxCalculator({ currency = 'CHF' }) {
                 <p className="text-xs text-gray-400">Tax rates vary significantly between cantons.</p>
             </div>
 
-            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700">
                 <p className="text-xs text-gray-500">
                     Includes <strong>Federal Tax</strong>, estimated <strong>Cantonal & Communal Tax</strong>,
                     and <strong>AHV & IV & EO & ALV</strong> social security.
@@ -137,12 +137,12 @@ export default function SwitzerlandIncomeTaxCalculator({ currency = 'CHF' }) {
                             currency={currency}
                             customMetrics={[
                                 { label: "Total Income Tax", value: result.totalTax, color: "text-red-700", bgColor: "" },
-                                { label: "Social Security", value: result.socialSecurity, color: "text-gray-700", bgColor: "bg-gray-50/30" },
+                                { label: "Social Security", value: result.socialSecurity, color: "text-gray-700", bgColor: "bg-gray-50 dark:bg-slate-900/50/30" },
                                 { label: "Annual Net Pay", value: result.netPay, color: "text-teal-700", bgColor: "bg-teal-50/30" }
                             ]}
                         />
 
-                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
                             <div className="flex justify-between text-sm py-1">
                                 <span className="text-gray-600">Federal Tax</span>
                                 <span className="font-semibold text-red-600">-{new Intl.NumberFormat('de-CH', { style: 'currency', currency }).format(Math.round(result.fedTax))}</span>
@@ -155,8 +155,8 @@ export default function SwitzerlandIncomeTaxCalculator({ currency = 'CHF' }) {
                                 <span className="text-gray-600">Social Security (AHV etc.)</span>
                                 <span className="font-semibold text-red-600">-{new Intl.NumberFormat('de-CH', { style: 'currency', currency }).format(Math.round(result.socialSecurity))}</span>
                             </div>
-                            <div className="flex justify-between text-sm py-2 mt-2 border-t border-gray-200 font-bold">
-                                <span className="text-gray-800">Annual Net Income</span>
+                            <div className="flex justify-between text-sm py-2 mt-2 border-t border-gray-200 dark:border-slate-700 font-bold">
+                                <span className="text-gray-800 dark:text-gray-100">Annual Net Income</span>
                                 <span className="text-teal-700">{new Intl.NumberFormat('de-CH', { style: 'currency', currency }).format(Math.round(result.netPay))}</span>
                             </div>
                         </div>
@@ -164,7 +164,7 @@ export default function SwitzerlandIncomeTaxCalculator({ currency = 'CHF' }) {
                 }
                 charts={
                     <div className="mt-8">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">Swiss Tax Breakdown</h3>
+                        <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">Swiss Tax Breakdown</h3>
                         <FinancialLoanPieChart
                             principal={result.netPay}
                             totalInterest={result.totalTax}

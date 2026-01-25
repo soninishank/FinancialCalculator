@@ -127,8 +127,8 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
                 {/* INPUTS */}
                 <div className="space-y-6">
                     {/* 1. Base Loan */}
-                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                        <h3 className="text-md font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm">
+                        <h3 className="text-md font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2">
                             <Banknote className="w-5 h-5 text-teal-600" /> Loan Details
                         </h3>
                         <InputWithSlider label="Loan Amount" value={principal} onChange={setPrincipal} min={100000} max={50000000} step={50000} currency={currency} />
@@ -141,13 +141,13 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
                             max={tenureMode === 'Months' ? 360 : 30}
                             step={tenureMode === 'Months' ? 1 : 0.5}
                             rightElement={
-                                <div className="flex bg-gray-100 p-1 rounded-lg">
+                                <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-lg">
                                     {['Years', 'Months'].map((mode) => (
                                         <button
                                             key={mode}
                                             onClick={() => handleTenureModeChange(mode)}
                                             className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${tenureMode === mode
-                                                ? 'bg-white text-teal-700 shadow-sm'
+                                                ? 'bg-white dark:bg-slate-800 text-teal-700 shadow-sm'
                                                 : 'text-gray-500 hover:text-gray-700'
                                                 }`}
                                         >
@@ -160,20 +160,20 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
 
 
                         <div className="mt-4">
-                            <label className="text-xs font-black text-slate-900 uppercase tracking-tight block mb-2">Loan Start Date</label>
+                            <label className="text-xs font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight block mb-2">Loan Start Date</label>
                             <MonthYearPicker value={startDate} onChange={setStartDate} />
                         </div>
                     </div>
 
                     {/* 2. Step Up */}
-                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                        <h3 className="text-md font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm">
+                        <h3 className="text-md font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2">
                             <TrendingDown className="w-5 h-5 text-emerald-600" /> Annual Step-Up Strategy
                         </h3>
 
-                        <div className="flex bg-gray-100 p-1 rounded-lg mb-4 w-fit">
-                            <button onClick={() => setStepUpType('percent')} className={`px-3 py-1 text-sm font-semibold rounded-md transition-all ${stepUpType === 'percent' ? 'bg-white shadow text-emerald-700' : 'text-gray-500'}`}>% Percentage</button>
-                            <button onClick={() => setStepUpType('amount')} className={`px-3 py-1 text-sm font-semibold rounded-md transition-all ${stepUpType === 'amount' ? 'bg-white shadow text-emerald-700' : 'text-gray-500'}`}>₹ Fixed Amount</button>
+                        <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-lg mb-4 w-fit">
+                            <button onClick={() => setStepUpType('percent')} className={`px-3 py-1 text-sm font-semibold rounded-md transition-all ${stepUpType === 'percent' ? 'bg-white dark:bg-slate-800 shadow text-emerald-700' : 'text-gray-500'}`}>% Percentage</button>
+                            <button onClick={() => setStepUpType('amount')} className={`px-3 py-1 text-sm font-semibold rounded-md transition-all ${stepUpType === 'amount' ? 'bg-white dark:bg-slate-800 shadow text-emerald-700' : 'text-gray-500'}`}>₹ Fixed Amount</button>
                         </div>
 
                         {stepUpType === 'percent' ? (
@@ -184,9 +184,9 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
                     </div>
 
                     {/* 3. Rate Change (Optional) */}
-                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-md font-bold text-gray-800 flex items-center gap-2">
+                            <h3 className="text-md font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
                                 <Percent className="w-5 h-5 text-indigo-600" /> Interest Rate Drop?
                             </h3>
                             <label className="relative inline-flex items-center cursor-pointer">
@@ -195,7 +195,7 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
                                     onClick={() => setEnableRateChange(!enableRateChange)}
                                     className={`w-11 h-6 rounded-full transition-colors duration-200 ease-in-out ${enableRateChange ? 'bg-indigo-600' : 'bg-gray-200'}`}
                                 >
-                                    <div className={`absolute top-[2px] left-[2px] bg-white rounded-full h-5 w-5 transition-transform duration-200 ease-in-out shadow-sm ${enableRateChange ? 'translate-x-5' : 'translate-x-0'}`}></div>
+                                    <div className={`absolute top-[2px] left-[2px] bg-white dark:bg-slate-800 rounded-full h-5 w-5 transition-transform duration-200 ease-in-out shadow-sm ${enableRateChange ? 'translate-x-5' : 'translate-x-0'}`}></div>
                                 </div>
                             </label>
                         </div>
@@ -221,16 +221,16 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
                             </p>
                         </div>
                         {/* Decorative Circle */}
-                        <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white opacity-5 rounded-full blur-2xl"></div>
+                        <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white dark:bg-slate-800 opacity-5 rounded-full blur-2xl"></div>
                     </div>
 
                     {/* COMPARISON GRID */}
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-xl border border-gray-200 dark:border-slate-700">
                             <p className="text-xs text-gray-500 font-bold uppercase mb-1">Regular Total Interest</p>
                             <p className="text-lg font-bold text-gray-700">{moneyFormat(regular.finalTotalInterest, currency)}</p>
 
-                            <div className="flex justify-between items-center mt-2 border-t border-gray-200 pt-2">
+                            <div className="flex justify-between items-center mt-2 border-t border-gray-200 dark:border-slate-700 pt-2">
                                 <p className="text-xs text-gray-400">Tenure: {effectiveTenureYears} Years</p>
                                 <p className="text-xs font-bold text-gray-500">Ends: {regularEndDate}</p>
                             </div>
@@ -246,14 +246,14 @@ export default function StepUpLoanEMI({ currency = 'INR' }) {
                     </div>
 
                     {/* CHART */}
-                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm h-80">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm h-80">
                         <h4 className="text-sm font-bold text-gray-700 mb-4">Loan Balance Projection</h4>
                         <FinancialLineChart data={chartData} currency={currency} height={280} />
                     </div>
 
                     {/* AMORTIZATION TABLE (Smart Strategy) */}
-                    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                        <div className="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                        <div className="p-4 border-b border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-900/50 flex justify-between items-center">
                             <h4 className="text-sm font-bold text-gray-700">Detailed Schedule (Smart Strategy)</h4>
                             <div className="flex gap-2">
                                 <button

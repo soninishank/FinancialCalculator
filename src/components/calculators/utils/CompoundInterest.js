@@ -115,7 +115,7 @@ const CompoundInterest = ({ currency }) => {
                 />
                 <div className="flex flex-col mb-4">
                     <div className="flex justify-between items-end mb-2">
-                        <label htmlFor="compounding-frequency" className="text-sm font-black text-slate-900 uppercase tracking-tight cursor-pointer">Compounding Frequency</label>
+                        <label htmlFor="compounding-frequency" className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight cursor-pointer">Compounding Frequency</label>
                         {/* Invisible spacer to match InputWithSlider's badge height for alignment */}
                         <span className="text-xs font-black px-3 py-1 border border-transparent opacity-0 select-none">Spacer</span>
                     </div>
@@ -124,7 +124,7 @@ const CompoundInterest = ({ currency }) => {
                             id="compounding-frequency"
                             value={compoundingFrequency}
                             onChange={(e) => setCompoundingFrequency(Number(e.target.value))}
-                            className="w-full py-3 px-4 border-2 border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all font-black text-slate-950 text-lg appearance-none cursor-pointer bg-white"
+                            className="w-full py-3 px-4 border-2 border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all font-black text-slate-950 text-lg appearance-none cursor-pointer bg-white dark:bg-slate-800"
                         >
                             {COMPOUND_FREQUENCIES.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
                         </select>
@@ -140,13 +140,13 @@ const CompoundInterest = ({ currency }) => {
             {calculationMode === 'duration' ? (
                 <div>
                     <div className="flex justify-between items-center mb-2">
-                        <label className="text-sm font-black text-slate-900 uppercase tracking-tight">Time Period</label>
-                        <div className="flex bg-gray-100 p-1 rounded-lg">
+                        <label className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight">Time Period</label>
+                        <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-lg">
                             {['years', 'months', 'days'].map((u) => (
                                 <button
                                     key={u}
                                     onClick={() => setTimeUnit(u)}
-                                    className={`px-4 py-2.5 text-xs font-semibold rounded-md transition-all capitalize ${timeUnit === u ? 'bg-white text-teal-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                                    className={`px-4 py-2.5 text-xs font-semibold rounded-md transition-all capitalize ${timeUnit === u ? 'bg-white dark:bg-slate-800 text-teal-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'
                                         }`}
                                 >
                                     {u}
@@ -218,7 +218,7 @@ const CompoundInterest = ({ currency }) => {
             table={
                 <div className="mt-8">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-                        <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
+                        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Growth Schedule</h3>
                         <div className="flex items-center gap-4 w-full md:w-auto">
                             <button
                                 onClick={() => {
@@ -243,7 +243,7 @@ const CompoundInterest = ({ currency }) => {
                                     />
                                     {calculationMode === 'dates' && (
                                         <div
-                                            className="absolute inset-0 bg-gray-50/50 cursor-not-allowed rounded-lg"
+                                            className="absolute inset-0 bg-gray-50 dark:bg-slate-900/50/50 cursor-not-allowed rounded-lg"
                                             title="Starts from selected Start Date"
                                         />
                                     )}

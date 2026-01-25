@@ -92,13 +92,13 @@ export default function EuropeVATCalculator({ currency = 'EUR' }) {
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => setIsReduced(false)}
-                        className={`flex-1 py-2 px-3 rounded-lg border text-sm transition-all ${!isReduced ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-gray-600 border-gray-300'}`}
+                        className={`flex-1 py-2 px-3 rounded-lg border text-sm transition-all ${!isReduced ? 'bg-teal-600 text-white border-teal-600' : 'bg-white dark:bg-slate-800 text-gray-600 border-gray-300'}`}
                     >
                         Standard ({VAT_RATES.find(r => r.country === selectedCountry).standard}%)
                     </button>
                     <button
                         onClick={() => setIsReduced(true)}
-                        className={`flex-1 py-2 px-3 rounded-lg border text-sm transition-all ${isReduced ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-gray-600 border-gray-300'}`}
+                        className={`flex-1 py-2 px-3 rounded-lg border text-sm transition-all ${isReduced ? 'bg-teal-600 text-white border-teal-600' : 'bg-white dark:bg-slate-800 text-gray-600 border-gray-300'}`}
                     >
                         Reduced ({VAT_RATES.find(r => r.country === selectedCountry).reduced}%)
                     </button>
@@ -110,13 +110,13 @@ export default function EuropeVATCalculator({ currency = 'EUR' }) {
                 <div className="flex gap-4">
                     <button
                         onClick={() => setIsInclusive(false)}
-                        className={`flex-1 py-2 px-4 rounded-lg border transition-all ${!isInclusive ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600 border-gray-300'}`}
+                        className={`flex-1 py-2 px-4 rounded-lg border transition-all ${!isInclusive ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-slate-800 text-gray-600 border-gray-300'}`}
                     >
                         Add VAT
                     </button>
                     <button
                         onClick={() => setIsInclusive(true)}
-                        className={`flex-1 py-2 px-4 rounded-lg border transition-all ${isInclusive ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600 border-gray-300'}`}
+                        className={`flex-1 py-2 px-4 rounded-lg border transition-all ${isInclusive ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-slate-800 text-gray-600 border-gray-300'}`}
                     >
                         Remove VAT
                     </button>
@@ -146,9 +146,9 @@ export default function EuropeVATCalculator({ currency = 'EUR' }) {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-xl border border-gray-200 dark:border-slate-700">
                                 <p className="text-xs text-gray-500 uppercase font-bold mb-1">Net (Excl. VAT)</p>
-                                <p className="text-xl font-bold text-gray-800">
+                                <p className="text-xl font-bold text-gray-800 dark:text-gray-100">
                                     {new Intl.NumberFormat('de-DE', { style: 'currency', currency }).format(result.netAmount)}
                                 </p>
                             </div>
@@ -160,7 +160,7 @@ export default function EuropeVATCalculator({ currency = 'EUR' }) {
                             </div>
                         </div>
 
-                        <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm mt-4">
+                        <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm mt-4">
                             <h4 className="text-sm font-bold text-gray-700 mb-3 underline decoration-teal-500 underline-offset-4">Reverse Calculation Proof</h4>
                             <div className="space-y-2 text-sm">
                                 <div className="flex justify-between">
@@ -171,7 +171,7 @@ export default function EuropeVATCalculator({ currency = 'EUR' }) {
                                     <span className="text-gray-500">VAT ({result.rate}%)</span>
                                     <span className="font-medium text-teal-600">+{new Intl.NumberFormat('de-DE', { style: 'currency', currency }).format(result.vatAmount)}</span>
                                 </div>
-                                <div className="flex justify-between border-t pt-2 font-bold text-gray-800">
+                                <div className="flex justify-between border-t pt-2 font-bold text-gray-800 dark:text-gray-100">
                                     <span>Total</span>
                                     <span>{new Intl.NumberFormat('de-DE', { style: 'currency', currency }).format(result.grossAmount)}</span>
                                 </div>
@@ -180,9 +180,9 @@ export default function EuropeVATCalculator({ currency = 'EUR' }) {
                     </div>
                 }
                 charts={
-                    <div className="flex items-center justify-center p-8 bg-gray-50 rounded-2xl border border-dashed border-gray-300">
+                    <div className="flex items-center justify-center p-8 bg-gray-50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-gray-300">
                         <div className="text-center">
-                            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-gray-100 font-bold text-teal-600 text-xl">
+                            <div className="w-16 h-16 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-gray-100 dark:border-slate-700 font-bold text-teal-600 text-xl">
                                 %
                             </div>
                             <p className="text-gray-500 text-sm italic">

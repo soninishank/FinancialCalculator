@@ -90,8 +90,8 @@ export default function TopUpLoanEMI({ currency }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-8">
 
         {/* --- BLOCK 1: BASE LOAN (LEFT) --- */}
-        <div className="md:col-span-1 border-r border-gray-100 pr-6">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Base Loan (Original)</h3>
+        <div className="md:col-span-1 border-r border-gray-100 dark:border-slate-700 pr-6">
+          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Base Loan (Original)</h3>
 
           <InputWithSlider
             label="Original Principal"
@@ -112,7 +112,7 @@ export default function TopUpLoanEMI({ currency }) {
 
         {/* --- BLOCK 2: TOP-UP LOAN (RIGHT) --- */}
         <div className="md:col-span-1">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Top-Up Loan (New)</h3>
+          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Top-Up Loan (New)</h3>
 
           <InputWithSlider
             label="Top-Up Amount"
@@ -142,15 +142,15 @@ export default function TopUpLoanEMI({ currency }) {
 
       {/* SUMMARY CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
-        <div className="bg-white border-l-4 border-violet-500 rounded-xl p-6 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 border-l-4 border-violet-500 rounded-xl p-6 shadow-sm">
           <div className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Combined Monthly EMI</div>
-          <div className="text-3xl font-extrabold text-gray-900 mt-2">
+          <div className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mt-2">
             {moneyFormat(Math.round(monthlyEMI), currency)}
           </div>
           <p className="text-xs text-gray-400 mt-2">After top-up is taken</p>
         </div>
 
-        <div className="bg-white border-l-4 border-rose-500 rounded-xl p-6 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 border-l-4 border-rose-500 rounded-xl p-6 shadow-sm">
           <div className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Total Interest Paid</div>
           <div className="text-2xl font-extrabold text-rose-600 mt-2">
             {moneyFormat(Math.round(finalTotalInterest), currency)}
@@ -158,9 +158,9 @@ export default function TopUpLoanEMI({ currency }) {
           <p className="text-xs text-gray-400 mt-2">Base loan + Top-up combined</p>
         </div>
 
-        <div className="bg-white border-l-4 border-indigo-500 rounded-xl p-6 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 border-l-4 border-indigo-500 rounded-xl p-6 shadow-sm">
           <div className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Total Payment</div>
-          <div className="text-3xl font-extrabold text-gray-900 mt-2">
+          <div className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mt-2">
             {moneyFormat(Math.round(finalTotalPaid), currency)}
           </div>
           <p className="text-xs text-gray-400 mt-2">Principal + Interest combined</p>
@@ -188,7 +188,7 @@ export default function TopUpLoanEMI({ currency }) {
       {/* AMORTIZATION TABLE */}
       <div className="mt-12">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-          <h3 className="text-lg font-bold text-gray-800">Amortization Schedule</h3>
+          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Amortization Schedule</h3>
           <button
             onClick={handleExport}
             className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors w-full md:w-auto"

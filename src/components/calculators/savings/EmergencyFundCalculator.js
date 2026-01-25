@@ -138,15 +138,15 @@ const EmergencyFundCalculator = ({ currency }) => {
     );
 
     const details = calculatorDetails['emergency-fund-calculator']?.render() || (
-        <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Why You Need an Emergency Fund</h3>
+        <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Why You Need an Emergency Fund</h3>
             <div className="space-y-4 text-gray-600 leading-relaxed">
                 <p>
                     An <strong>Emergency Fund</strong> is money set aside to cover unexpected expenses or financial emergencies,
                     such as job loss, medical bills, or urgent home repairs.
                 </p>
 
-                <h4 className="font-bold text-gray-800 mt-6">Recommended Coverage:</h4>
+                <h4 className="font-bold text-gray-800 dark:text-gray-100 mt-6">Recommended Coverage:</h4>
                 <ul className="list-disc pl-5 space-y-2">
                     <li>
                         <strong>3 Months:</strong> Minimum for dual-income households with stable jobs

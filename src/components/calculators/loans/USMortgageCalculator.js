@@ -165,7 +165,7 @@ export default function USMortgageCalculator({ currency = 'USD' }) {
 
             <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-2">
-                    <label className="text-xs font-black text-slate-900 uppercase tracking-widest">Loan Start Date</label>
+                    <label className="text-xs font-black text-slate-900 dark:text-slate-100 uppercase tracking-widest">Loan Start Date</label>
                     <MonthYearPicker value={startDate} onChange={setStartDate} />
                 </div>
             </div>
@@ -186,13 +186,13 @@ export default function USMortgageCalculator({ currency = 'USD' }) {
                 summary={
                     <div className="space-y-8 mt-10">
                         {/* TOTAL LOAN SUMMARY SECTION */}
-                        <div className="bg-white rounded-3xl border-2 border-slate-100 shadow-2xl overflow-hidden relative group transition-all hover:shadow-indigo-100/50">
+                        <div className="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-100 shadow-2xl overflow-hidden relative group transition-all hover:shadow-indigo-100/50">
                             <div className="grid grid-cols-1 lg:grid-cols-5 md:divide-x divide-slate-100">
                                 {/* METRICS (2/5) */}
                                 <div className="lg:col-span-2 flex flex-col divide-y divide-slate-50">
-                                    <div className="p-8 text-center bg-white transition-colors hover:bg-slate-50/50">
+                                    <div className="p-8 text-center bg-white dark:bg-slate-800 transition-colors hover:bg-slate-50/50">
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Loan Amount (Principal)</p>
-                                        <p className="text-3xl font-black text-slate-900 tracking-tighter">
+                                        <p className="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tighter">
                                             {moneyFormat(result.loanAmount, currency)}
                                         </p>
                                     </div>
@@ -230,7 +230,7 @@ export default function USMortgageCalculator({ currency = 'USD' }) {
 
                         {/* MONTHLY PAYMENT BANNER */}
                         <div className="bg-indigo-600 p-10 rounded-3xl text-center shadow-2xl shadow-indigo-100 border-b-[10px] border-indigo-800 transform hover:scale-[1.005] transition-all group overflow-hidden relative">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl transition-transform group-hover:scale-110"></div>
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-white dark:bg-slate-800/5 rounded-full -mr-32 -mt-32 blur-3xl transition-transform group-hover:scale-110"></div>
 
                             <p className="text-[10px] text-indigo-100 font-black uppercase tracking-[0.3em] mb-3 opacity-90">Estimated Monthly Payment</p>
                             <p className="text-6xl font-black text-white tracking-tighter mb-6 drop-shadow-lg">
@@ -238,20 +238,20 @@ export default function USMortgageCalculator({ currency = 'USD' }) {
                             </p>
 
                             <div className="flex flex-wrap justify-center gap-y-3 gap-x-8 px-4">
-                                <span className="flex items-center gap-2 text-[10px] font-bold text-indigo-100 bg-white/10 px-3 py-1.5 rounded-full border border-white/5">
+                                <span className="flex items-center gap-2 text-[10px] font-bold text-indigo-100 bg-white dark:bg-slate-800/10 px-3 py-1.5 rounded-full border border-white/5">
                                     <span className="w-1.5 h-1.5 bg-indigo-300 rounded-full"></span>
                                     P&I: {moneyFormat(summary.baseEMI, currency)}
                                 </span>
-                                <span className="flex items-center gap-2 text-[10px] font-bold text-indigo-100 bg-white/10 px-3 py-1.5 rounded-full border border-white/5">
+                                <span className="flex items-center gap-2 text-[10px] font-bold text-indigo-100 bg-white dark:bg-slate-800/10 px-3 py-1.5 rounded-full border border-white/5">
                                     <span className="w-1.5 h-1.5 bg-sky-300 rounded-full"></span>
                                     Taxes: {moneyFormat((homeValue * (propertyTaxRate / 100) / 12), currency)}
                                 </span>
-                                <span className="flex items-center gap-2 text-[10px] font-bold text-indigo-100 bg-white/10 px-3 py-1.5 rounded-full border border-white/5">
+                                <span className="flex items-center gap-2 text-[10px] font-bold text-indigo-100 bg-white dark:bg-slate-800/10 px-3 py-1.5 rounded-full border border-white/5">
                                     <span className="w-1.5 h-1.5 bg-emerald-300 rounded-full"></span>
                                     Ins: {moneyFormat((homeInsurance / 12), currency)}
                                 </span>
                                 {(result.monthlyPMI > 0 || hoaFees > 0) && (
-                                    <span className="flex items-center gap-2 text-[10px] font-bold text-indigo-100 bg-white/10 px-3 py-1.5 rounded-full border border-white/5">
+                                    <span className="flex items-center gap-2 text-[10px] font-bold text-indigo-100 bg-white dark:bg-slate-800/10 px-3 py-1.5 rounded-full border border-white/5">
                                         <span className="w-1.5 h-1.5 bg-amber-300 rounded-full"></span>
                                         PMI & HOA: {moneyFormat(result.monthlyPMI + hoaFees, currency)}
                                     </span>
@@ -261,9 +261,9 @@ export default function USMortgageCalculator({ currency = 'USD' }) {
                     </div>
                 }
                 charts={
-                    <div className="mt-16 bg-white p-10 rounded-3xl border border-slate-100 shadow-sm relative overflow-hidden">
+                    <div className="mt-16 bg-white dark:bg-slate-800 p-10 rounded-3xl border border-slate-100 shadow-sm relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50/30 rounded-full -mr-16 -mt-16"></div>
-                        <h3 className="text-slate-900 font-black text-2xl mb-10 flex items-center gap-4 relative z-10">
+                        <h3 className="text-slate-900 dark:text-slate-100 font-black text-2xl mb-10 flex items-center gap-4 relative z-10">
                             <span className="w-2 h-8 bg-indigo-600 rounded-full"></span>
                             Monthly Payment Breakdown
                         </h3>
@@ -276,7 +276,7 @@ export default function USMortgageCalculator({ currency = 'USD' }) {
                     <div className="mt-16">
                         <div className="flex items-center gap-4 mb-8">
                             <span className="w-2 h-8 bg-slate-800 rounded-full"></span>
-                            <h3 className="text-slate-900 font-black text-2xl">Detailed Amortization Schedule</h3>
+                            <h3 className="text-slate-900 dark:text-slate-100 font-black text-2xl">Detailed Amortization Schedule</h3>
                         </div>
                         <CollapsibleAmortizationTable
                             yearlyData={yearlyRows}

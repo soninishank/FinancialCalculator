@@ -182,8 +182,8 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
                         />
 
                         <div className="flex items-center justify-between mt-2">
-                            <span className="text-xs font-black text-slate-900 uppercase tracking-tight">Frequency</span>
-                            <div className="flex bg-white rounded-lg p-1 border border-slate-200">
+                            <span className="text-xs font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight">Frequency</span>
+                            <div className="flex bg-white dark:bg-slate-800 rounded-lg p-1 border border-slate-200">
                                 <button
                                     onClick={() => setIsYearlyContribution(false)}
                                     className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${!isYearlyContribution ? 'bg-teal-100 text-teal-700' : 'text-slate-500 hover:bg-slate-50'}`}
@@ -293,7 +293,7 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
             }
 
             charts={
-                <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm mt-6">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 shadow-sm mt-6">
                     <h3 className="text-lg font-bold text-slate-800 mb-6">Growth Over Time</h3>
                     <FinancialBarChart
                         data={{
@@ -336,7 +336,7 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
                                 ]);
                                 downloadPDF(data, ['Year', 'Invested', 'Without Expense', 'With Expense', 'Cost'], 'expense_ratio_impact.pdf');
                             }}
-                            className="text-xs font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 px-3 py-1.5 rounded-lg transition-colors shadow-sm"
+                            className="text-xs font-medium text-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 border border-slate-300 px-3 py-1.5 rounded-lg transition-colors shadow-sm"
                         >
                             Export PDF
                         </button>
@@ -360,34 +360,34 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
             }
 
             details={
-                <div className="bg-white p-10 rounded-3xl border-2 border-slate-100 shadow-xl relative overflow-hidden mt-12">
+                <div className="bg-white dark:bg-slate-800 p-10 rounded-3xl border-2 border-slate-100 shadow-xl relative overflow-hidden mt-12">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full -mr-32 -mt-32 opacity-20"></div>
                     <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-50 rounded-full -ml-24 -mb-24 opacity-20"></div>
 
                     <div className="relative z-10">
-                        <h3 className="text-2xl font-black text-slate-900 mb-8 flex items-center gap-4">
+                        <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-8 flex items-center gap-4">
                             <span className="w-2 h-8 bg-indigo-600 rounded-full"></span>
                             About Expense Ratio
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                            <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1">
+                            <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white dark:bg-slate-800 hover:shadow-xl hover:-translate-y-1">
                                 <div className="bg-indigo-600 w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-xl mb-6 shadow-lg shadow-indigo-100 italic">01</div>
-                                <h4 className="font-black text-slate-900 mb-3 text-lg">Daily Deduction</h4>
-                                <p className="text-sm text-slate-900 leading-relaxed font-medium text-justify">
+                                <h4 className="font-black text-slate-900 dark:text-slate-100 mb-3 text-lg">Daily Deduction</h4>
+                                <p className="text-sm text-slate-900 dark:text-slate-100 leading-relaxed font-medium text-justify">
                                     Expense Ratio is charged on your <strong>total fund value daily</strong>, not just on your contributions. It reduces your effective NAV (Net Asset Value) every single day, silently eating into your returns.
                                 </p>
                             </div>
-                            <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1">
+                            <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white dark:bg-slate-800 hover:shadow-xl hover:-translate-y-1">
                                 <div className="bg-emerald-600 w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-xl mb-6 shadow-lg shadow-emerald-100 italic">02</div>
-                                <h4 className="font-black text-slate-900 mb-3 text-lg">Direct vs Regular</h4>
-                                <p className="text-sm text-slate-900 leading-relaxed font-medium text-justify">
+                                <h4 className="font-black text-slate-900 dark:text-slate-100 mb-3 text-lg">Direct vs Regular</h4>
+                                <p className="text-sm text-slate-900 dark:text-slate-100 leading-relaxed font-medium text-justify">
                                     <strong>Direct Plans</strong> have lower expense ratios as they don't pay distributor commissions. <strong>Regular Plans</strong> charge higher fees (often 1-1.5% more), which goes to the agent/broker.
                                 </p>
                             </div>
-                            <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1">
+                            <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white dark:bg-slate-800 hover:shadow-xl hover:-translate-y-1">
                                 <div className="bg-amber-600 w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-xl mb-6 shadow-lg shadow-amber-100 italic">03</div>
-                                <h4 className="font-black text-slate-900 mb-3 text-lg">Impact of Compounding</h4>
-                                <p className="text-sm text-slate-900 leading-relaxed font-medium text-justify">
+                                <h4 className="font-black text-slate-900 dark:text-slate-100 mb-3 text-lg">Impact of Compounding</h4>
+                                <p className="text-sm text-slate-900 dark:text-slate-100 leading-relaxed font-medium text-justify">
                                     A small 1% fee difference might seem trivial, but over 10-20 years, it can reduce your total wealth by <strong>20-30%</strong> due to the reverse compounding effect of fees.
                                 </p>
                             </div>
@@ -395,24 +395,24 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
 
                         {/* Row 2 */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-10">
-                            <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1">
+                            <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white dark:bg-slate-800 hover:shadow-xl hover:-translate-y-1">
                                 <div className="bg-blue-600 w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-xl mb-6 shadow-lg shadow-blue-100 italic">04</div>
-                                <h4 className="font-black text-slate-900 mb-3 text-lg">Active vs Passive</h4>
-                                <p className="text-sm text-slate-900 leading-relaxed font-medium text-justify">
+                                <h4 className="font-black text-slate-900 dark:text-slate-100 mb-3 text-lg">Active vs Passive</h4>
+                                <p className="text-sm text-slate-900 dark:text-slate-100 leading-relaxed font-medium text-justify">
                                     <strong>Index Funds (Passive)</strong> typically have very low charges (0.1% - 0.5%). <strong>Active Funds</strong> charge higher (1.5% - 2.5%) to cover fund management expertise and research.
                                 </p>
                             </div>
-                            <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1">
+                            <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white dark:bg-slate-800 hover:shadow-xl hover:-translate-y-1">
                                 <div className="bg-purple-600 w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-xl mb-6 shadow-lg shadow-purple-100 italic">05</div>
-                                <h4 className="font-black text-slate-900 mb-3 text-lg">Checking Your Ratio</h4>
-                                <p className="text-sm text-slate-900 leading-relaxed font-medium text-justify">
+                                <h4 className="font-black text-slate-900 dark:text-slate-100 mb-3 text-lg">Checking Your Ratio</h4>
+                                <p className="text-sm text-slate-900 dark:text-slate-100 leading-relaxed font-medium text-justify">
                                     You can find the <strong>Total Expense Ratio (TER)</strong> in your mutual fund's monthly fact sheet or on the AMC website. It is updated periodically based on AUM size.
                                 </p>
                             </div>
-                            <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1">
+                            <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 transition-all hover:bg-white dark:bg-slate-800 hover:shadow-xl hover:-translate-y-1">
                                 <div className="bg-teal-600 w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-xl mb-6 shadow-lg shadow-teal-100 italic">06</div>
-                                <h4 className="font-black text-slate-900 mb-3 text-lg">Smart Move</h4>
-                                <p className="text-sm text-slate-900 leading-relaxed font-medium text-justify">
+                                <h4 className="font-black text-slate-900 dark:text-slate-100 mb-3 text-lg">Smart Move</h4>
+                                <p className="text-sm text-slate-900 dark:text-slate-100 leading-relaxed font-medium text-justify">
                                     Switching from a <strong>Regular Plan to a Direct Plan</strong> is often the easiest, risk-free way to boost your long-term portfolio returns by 1-1.5% annually.
                                 </p>
                             </div>

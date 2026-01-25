@@ -146,17 +146,17 @@ export default function ROICalculator({ currency = 'INR' }) {
     const inputs = (
         <>
             <div className="md:col-span-2 mb-2">
-                <div className="flex bg-gray-100 p-1 rounded-xl w-fit">
+                <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-xl w-fit">
                     <button
                         onClick={() => handleModeChange('value')}
-                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${inputMode === 'value' ? 'bg-white shadow-sm text-teal-600' : 'text-gray-500 hover:text-gray-700'
+                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${inputMode === 'value' ? 'bg-white dark:bg-slate-800 shadow-sm text-teal-600' : 'text-gray-500 hover:text-gray-700'
                             }`}
                     >
                         Final Value Mode
                     </button>
                     <button
                         onClick={() => handleModeChange('profit')}
-                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${inputMode === 'profit' ? 'bg-white shadow-sm text-teal-600' : 'text-gray-500 hover:text-gray-700'
+                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${inputMode === 'profit' ? 'bg-white dark:bg-slate-800 shadow-sm text-teal-600' : 'text-gray-500 hover:text-gray-700'
                             }`}
                     >
                         Profit Mode
@@ -197,17 +197,17 @@ export default function ROICalculator({ currency = 'INR' }) {
             )}
 
             <div className="md:col-span-2">
-                <div className="flex bg-gray-100 p-1 rounded-xl w-fit mb-4">
+                <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-xl w-fit mb-4">
                     <button
                         onClick={() => handleTimeModeChange('years')}
-                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${timeMode === 'years' ? 'bg-white shadow-sm text-teal-600' : 'text-gray-500 hover:text-gray-700'
+                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${timeMode === 'years' ? 'bg-white dark:bg-slate-800 shadow-sm text-teal-600' : 'text-gray-500 hover:text-gray-700'
                             }`}
                     >
                         Years
                     </button>
                     <button
                         onClick={() => handleTimeModeChange('months')}
-                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${timeMode === 'months' ? 'bg-white shadow-sm text-teal-600' : 'text-gray-500 hover:text-gray-700'
+                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${timeMode === 'months' ? 'bg-white dark:bg-slate-800 shadow-sm text-teal-600' : 'text-gray-500 hover:text-gray-700'
                             }`}
                     >
                         Months
@@ -257,8 +257,8 @@ export default function ROICalculator({ currency = 'INR' }) {
     );
 
     const details = (
-        <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-            <h3 className="text-xl font-bold text-gray-800">Confused between ROI and CAGR?</h3>
+        <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm space-y-6">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">Confused between ROI and CAGR?</h3>
 
             <div className="space-y-4 text-gray-600 leading-relaxed">
                 <p>
@@ -301,8 +301,8 @@ export default function ROICalculator({ currency = 'INR' }) {
             inputs={inputs}
             summary={summarySection}
             charts={
-                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mt-6">
-                    <h3 className="text-lg font-bold text-gray-800 mb-6">Return Analysis</h3>
+                <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-100 dark:border-slate-700 shadow-sm mt-6">
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6">Return Analysis</h3>
                     <div className="h-64 flex justify-center">
                         <Doughnut
                             data={{
@@ -338,7 +338,7 @@ export default function ROICalculator({ currency = 'INR' }) {
             table={
                 <div className="mt-8">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-                        <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
+                        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Growth Schedule</h3>
                         <div className="flex items-center gap-4 w-full md:w-auto">
                             <button
                                 onClick={() => {
@@ -355,7 +355,7 @@ export default function ROICalculator({ currency = 'INR' }) {
                                 Export PDF
                             </button>
                             <div className="flex items-center">
-                                <label className="text-sm font-black text-slate-900 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
+                                <label className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
                                 <div className="w-48">
                                     <MonthYearPicker
                                         value={startDate}

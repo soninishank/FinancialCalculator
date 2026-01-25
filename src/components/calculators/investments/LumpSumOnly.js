@@ -195,7 +195,7 @@ export default function LumpSumOnly({ currency, setCurrency }) {
       table={
         <div className="mt-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-            <h3 className="text-lg font-bold text-gray-800">Growth Schedule</h3>
+            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Growth Schedule</h3>
             <div className="flex items-center gap-4 w-full md:w-auto">
               <button
                 onClick={() => {
@@ -212,7 +212,7 @@ export default function LumpSumOnly({ currency, setCurrency }) {
                 Export PDF
               </button>
               <div className="flex items-center">
-                <label className="text-sm font-black text-slate-900 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
+                <label className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight mr-2 whitespace-nowrap">Schedule starts:</label>
                 <div className="w-48">
                   <MonthYearPicker
                     value={startDate}

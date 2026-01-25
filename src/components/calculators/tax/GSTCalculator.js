@@ -43,11 +43,11 @@ export default function GSTCalculator({ currency = 'INR' }) {
     const inputs = (
         <div className="space-y-6">
             {/* Calculation Mode Toggle */}
-            <div className="flex bg-gray-100 p-1 rounded-xl w-full mb-6">
+            <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-xl w-full mb-6">
                 <button
                     onClick={() => setIsInclusive(false)}
                     className={`flex-1 py-3 text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 ${!isInclusive
-                        ? 'bg-white text-indigo-700 shadow-sm'
+                        ? 'bg-white dark:bg-slate-800 text-indigo-700 shadow-sm'
                         : 'text-gray-500 hover:text-gray-700'
                         }`}
                 >
@@ -56,7 +56,7 @@ export default function GSTCalculator({ currency = 'INR' }) {
                 <button
                     onClick={() => setIsInclusive(true)}
                     className={`flex-1 py-3 text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 ${isInclusive
-                        ? 'bg-white text-indigo-700 shadow-sm'
+                        ? 'bg-white dark:bg-slate-800 text-indigo-700 shadow-sm'
                         : 'text-gray-500 hover:text-gray-700'
                         }`}
                 >
@@ -85,7 +85,7 @@ export default function GSTCalculator({ currency = 'INR' }) {
                             onClick={() => setGstRate(rate)}
                             className={`py-2 px-1 rounded-lg text-sm font-bold border transition-colors ${gstRate === rate
                                 ? 'bg-indigo-600 text-white border-indigo-600'
-                                : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
+                                : 'bg-white dark:bg-slate-800 text-gray-600 border-gray-200 dark:border-slate-700 hover:border-gray-300'
                                 }`}
                         >
                             {rate}%
@@ -96,7 +96,7 @@ export default function GSTCalculator({ currency = 'INR' }) {
                             value={gstRate}
                             onChange={(val) => setGstRate(Number(val))}
                             className={`w-full py-2 pl-2 pr-8 rounded-lg text-sm font-bold border text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${[5, 12, 18, 28].includes(gstRate)
-                                ? 'bg-gray-50 text-gray-500 border-gray-200'
+                                ? 'bg-gray-50 dark:bg-slate-900/50 text-gray-500 border-gray-200 dark:border-slate-700'
                                 : 'bg-indigo-50 text-indigo-700 border-indigo-200'
                                 }`}
                         />
@@ -132,8 +132,8 @@ export default function GSTCalculator({ currency = 'INR' }) {
                                 total: "Total Amount"
                             }}
                         />
-                        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mt-6">
-                            <h3 className="text-lg font-bold text-gray-800 mb-6">GST Breakdown</h3>
+                        <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-100 dark:border-slate-700 shadow-sm mt-6">
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6">GST Breakdown</h3>
                             <div className="h-64 flex justify-center">
                                 <Doughnut
                                     data={{

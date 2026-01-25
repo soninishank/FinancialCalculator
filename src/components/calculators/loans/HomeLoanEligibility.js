@@ -199,8 +199,8 @@ export default function HomeLoanEligibility({ currency, setCurrency }) {
             inputs={inputsSection}
             summary={summarySection}
             charts={
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm mt-8">
-                    <h3 className="text-gray-800 font-bold text-lg mb-6">Repayment Schedule</h3>
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm mt-8">
+                    <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-6">Repayment Schedule</h3>
                     <FinancialBarChart
                         data={growthData}
                         currency={currency}
@@ -214,7 +214,7 @@ export default function HomeLoanEligibility({ currency, setCurrency }) {
                 </div>
             }
             pieChart={
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center">
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm flex flex-col items-center">
                     <h3 className="text-gray-500 font-medium mb-6 text-sm uppercase tracking-wide self-start pl-2">
                         Income Allocation
                     </h3>
@@ -248,21 +248,21 @@ export default function HomeLoanEligibility({ currency, setCurrency }) {
                             <div className="w-3 h-3 rounded-full bg-[#14B8A6]"></div>
                             <div className="flex-1 flex justify-between text-sm">
                                 <span className="text-gray-500">Eligible EMI</span>
-                                <span className="font-bold text-gray-800">{moneyFormat(eligibleEmi, currency)}</span>
+                                <span className="font-bold text-gray-800 dark:text-gray-100">{moneyFormat(eligibleEmi, currency)}</span>
                             </div>
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="w-3 h-3 rounded-full bg-[#F43F5E]"></div>
                             <div className="flex-1 flex justify-between text-sm">
                                 <span className="text-gray-500">Existing EMIs</span>
-                                <span className="font-bold text-gray-800">{moneyFormat(numExistingEmi, currency)}</span>
+                                <span className="font-bold text-gray-800 dark:text-gray-100">{moneyFormat(numExistingEmi, currency)}</span>
                             </div>
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="w-3 h-3 rounded-full bg-[#FBBF24]"></div>
                             <div className="flex-1 flex justify-between text-sm">
                                 <span className="text-gray-500">Remaining</span>
-                                <span className="font-bold text-gray-800">{moneyFormat(Math.max(0, numSalary - eligibleEmi - numExistingEmi), currency)}</span>
+                                <span className="font-bold text-gray-800 dark:text-gray-100">{moneyFormat(Math.max(0, numSalary - eligibleEmi - numExistingEmi), currency)}</span>
                             </div>
                         </div>
                     </div>

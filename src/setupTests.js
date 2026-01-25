@@ -1,4 +1,10 @@
 // Mock HTMLCanvasElement.getContext to prevent Chart.js warnings in tests
+// Mock HTMLCanvasElement.getContext to prevent Chart.js warnings in tests
+global.fetch = jest.fn(() => Promise.resolve({
+    json: () => Promise.resolve({}),
+    ok: true
+}));
+
 HTMLCanvasElement.prototype.getContext = jest.fn(() => ({
     fillRect: jest.fn(),
     clearRect: jest.fn(),

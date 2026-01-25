@@ -93,7 +93,7 @@ export default function BrazilCLTCalculator({ currency = 'BRL' }) {
                 step={1}
                 symbol=""
             />
-            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700">
                 <p className="text-xs text-gray-500">
                     Calculates <strong>INSS</strong> and <strong>IRRF</strong> based on 2024 tables.
                     Includes <strong>FGTS (8%)</strong> employer contribution estimation.
@@ -134,9 +134,9 @@ export default function BrazilCLTCalculator({ currency = 'BRL' }) {
                             ]}
                         />
 
-                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
                             <div className="flex justify-between text-sm py-1 font-bold">
-                                <span className="text-gray-800">Employer Benefit: FGTS</span>
+                                <span className="text-gray-800 dark:text-gray-100">Employer Benefit: FGTS</span>
                                 <span className="text-blue-700">+{new Intl.NumberFormat('pt-BR', { style: 'currency', currency }).format(result.fgts)}</span>
                             </div>
                             <p className="text-center text-[10px] text-gray-400 mt-1">Paid by employer to your retirement fund.</p>
@@ -145,7 +145,7 @@ export default function BrazilCLTCalculator({ currency = 'BRL' }) {
                 }
                 charts={
                     <div className="mt-8">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">Salário Breakdown</h3>
+                        <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">Salário Breakdown</h3>
                         <FinancialLoanPieChart
                             principal={result.netPay}
                             totalInterest={result.inss}

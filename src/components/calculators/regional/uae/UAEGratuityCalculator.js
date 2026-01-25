@@ -70,20 +70,20 @@ export default function UAEGratuityCalculator({ currency = 'AED' }) {
                 <div className="grid grid-cols-2 gap-4">
                     <button
                         onClick={() => setIsLimited(true)}
-                        className={`py-2 px-4 rounded-lg border transition-all ${isLimited ? 'bg-amber-600 text-white border-amber-600' : 'bg-white text-gray-600 border-gray-300'}`}
+                        className={`py-2 px-4 rounded-lg border transition-all ${isLimited ? 'bg-amber-600 text-white border-amber-600' : 'bg-white dark:bg-slate-800 text-gray-600 border-gray-300'}`}
                     >
                         Fixed Term
                     </button>
                     <button
                         onClick={() => setIsLimited(false)}
-                        className={`py-2 px-4 rounded-lg border transition-all ${!isLimited ? 'bg-amber-600 text-white border-amber-600' : 'bg-white text-gray-600 border-gray-300'}`}
+                        className={`py-2 px-4 rounded-lg border transition-all ${!isLimited ? 'bg-amber-600 text-white border-amber-600' : 'bg-white dark:bg-slate-800 text-gray-600 border-gray-300'}`}
                     >
                         Unlimited
                     </button>
                 </div>
             </div>
 
-            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700">
                 <p className="text-xs text-gray-500">
                     Based on <strong>UAE Federal Decree-Law No. 33 of 2021</strong>.
                     Gratuity is calculated on <strong>Basic Salary</strong> only (excluding allowances).
@@ -112,8 +112,8 @@ export default function UAEGratuityCalculator({ currency = 'AED' }) {
                             </p>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                            <h4 className="text-sm font-bold text-gray-800 mb-4">Entitlement Summary</h4>
+                        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm">
+                            <h4 className="text-sm font-bold text-gray-800 dark:text-gray-100 mb-4">Entitlement Summary</h4>
                             <div className="space-y-3">
                                 <div className="flex justify-between text-sm">
                                     <span className="text-gray-500">Daily Basic Rate</span>
@@ -124,7 +124,7 @@ export default function UAEGratuityCalculator({ currency = 'AED' }) {
                                     <span className="font-medium">{yearsOfService} Years ({result.totalDays} Days)</span>
                                 </div>
                                 <div className="border-t pt-2 mt-2">
-                                    <div className="flex justify-between font-bold text-gray-900">
+                                    <div className="flex justify-between font-bold text-gray-900 dark:text-gray-100">
                                         <span>Total Gratuity</span>
                                         <span className="text-teal-700">{new Intl.NumberFormat('ar-AE', { style: 'currency', currency }).format(Math.round(result.gratuity))}</span>
                                     </div>

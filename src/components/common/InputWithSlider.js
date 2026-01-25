@@ -95,11 +95,11 @@ export default function InputWithSlider({
     <div className="mb-4">
       {/* Label and Badge Container */}
       <div className="flex justify-between items-end mb-2">
-        <label htmlFor={id} className="text-sm font-black text-slate-900 uppercase tracking-tight cursor-pointer">{label}</label>
+        <label htmlFor={id} className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight cursor-pointer">{label}</label>
         {rightElement ? (
           rightElement
         ) : (
-          <span className="text-xs font-black text-indigo-700 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-lg shadow-sm">
+          <span className="text-xs font-black text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 px-3 py-1 rounded-lg shadow-sm">
             {currency
               ? moneyFormat(sliderValue, currency, true)
               : `${sliderValue.toLocaleString('en-IN')}${symbol === "%" ? "%" : ""}`
@@ -111,8 +111,8 @@ export default function InputWithSlider({
       {/* Input Box Container */}
       <div className="relative">
         {prefix && (
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center px-4 sm:px-5 rounded-l-xl bg-slate-100 border border-r-0 border-slate-300 h-full">
-            <span className="text-slate-900 font-black text-sm">{prefix}</span>
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center px-4 sm:px-5 rounded-l-xl bg-slate-100 dark:bg-slate-800 border border-r-0 border-slate-300 dark:border-slate-600 h-full">
+            <span className="text-slate-900 dark:text-slate-200 font-black text-sm">{prefix}</span>
           </div>
         )}
 
@@ -125,9 +125,9 @@ export default function InputWithSlider({
           min={effectiveMin}
           max={effectiveMax}
           className={`
-            w-full py-3 pr-4 border-2 border-slate-200 rounded-xl outline-none 
-            focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all
-            font-black text-slate-950
+            w-full py-3 pr-4 border-2 border-slate-200 dark:border-slate-700 rounded-xl outline-none 
+            focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-900/30 focus:border-indigo-600 dark:focus:border-indigo-500 transition-all
+            font-black text-slate-950 dark:text-white bg-white dark:bg-slate-900
             text-lg
             ${prefix ? "pl-16 sm:pl-20" : "pl-5"} 
           `}
@@ -137,7 +137,7 @@ export default function InputWithSlider({
       {/* Slider and Min/Max Labels */}
       <div className="mt-4 flex items-center gap-4">
         {/* Min Label */}
-        <span className="text-[10px] text-slate-900 font-black min-w-[30px]">
+        <span className="text-[10px] text-slate-900 dark:text-slate-400 font-black min-w-[30px]">
           {formatRangeLabel(effectiveMin)}
         </span>
 
@@ -150,12 +150,12 @@ export default function InputWithSlider({
           value={sliderValue > effectiveMax ? effectiveMax : sliderValue}
           onChange={(e) => safeOnChange(Number(e.target.value))}
           className="
-            w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer 
-            accent-indigo-600 hover:accent-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-300
+            w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer 
+            accent-indigo-600 dark:accent-indigo-500 hover:accent-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-300
           "
         />
         {/* Max Label */}
-        <span className="text-[10px] text-slate-900 font-black min-w-[30px] text-right">
+        <span className="text-[10px] text-slate-900 dark:text-slate-400 font-black min-w-[30px] text-right">
           {formatRangeLabel(effectiveMax)}
         </span>
       </div>

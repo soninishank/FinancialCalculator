@@ -82,12 +82,12 @@ export default function PropertyTaxEstimator({ currency = 'USD' }) {
 
             <div className="space-y-3">
                 <label className="block text-sm font-semibold text-gray-700">State Presets (Quick Select)</label>
-                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 bg-gray-50 rounded-lg">
+                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 bg-gray-50 dark:bg-slate-900/50 rounded-lg">
                     {statePresets.map(state => (
                         <button
                             key={state.name}
                             onClick={() => setTaxRate(state.rate)}
-                            className="px-3 py-2 rounded-lg text-left transition-all bg-white hover:bg-blue-50 border border-gray-200 text-xs"
+                            className="px-3 py-2 rounded-lg text-left transition-all bg-white dark:bg-slate-800 hover:bg-blue-50 border border-gray-200 dark:border-slate-700 text-xs"
                         >
                             <div className="font-medium">{state.name}</div>
                             <div className="text-gray-500">{state.rate}%</div>
@@ -176,15 +176,15 @@ export default function PropertyTaxEstimator({ currency = 'USD' }) {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-white border border-gray-200 p-4 rounded-xl text-center">
+                            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-4 rounded-xl text-center">
                                 <p className="text-xs text-gray-500 uppercase font-bold mb-1">Market Value</p>
-                                <p className="text-lg font-bold text-gray-900">
+                                <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
                                     {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(homeValue)}
                                 </p>
                             </div>
-                            <div className="bg-white border border-gray-200 p-4 rounded-xl text-center">
+                            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-4 rounded-xl text-center">
                                 <p className="text-xs text-gray-500 uppercase font-bold mb-1">Assessed Value</p>
-                                <p className="text-lg font-bold text-gray-900">
+                                <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
                                     {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.assessedValue)}
                                 </p>
                             </div>
@@ -228,8 +228,8 @@ export default function PropertyTaxEstimator({ currency = 'USD' }) {
                     </div>
                 }
                 charts={
-                    <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mt-6">
-                        <h3 className="text-lg font-bold text-gray-800 mb-4">Property Tax Projection</h3>
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-gray-100 dark:border-slate-700 shadow-sm mt-6">
+                        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Property Tax Projection</h3>
                         <FinancialLineChart
                             data={{
                                 labels: result.projection.map(row => `Year ${row.year}`),
@@ -259,7 +259,7 @@ export default function PropertyTaxEstimator({ currency = 'USD' }) {
                 table={
                     <div className="overflow-x-auto mt-6">
                         <table className="w-full text-sm">
-                            <thead className="bg-gray-50">
+                            <thead className="bg-gray-50 dark:bg-slate-900/50">
                                 <tr>
                                     <th className="px-4 py-2 text-left font-semibold text-gray-700">Year</th>
                                     <th className="px-4 py-2 text-right font-semibold text-gray-700">Annual Tax</th>
@@ -269,7 +269,7 @@ export default function PropertyTaxEstimator({ currency = 'USD' }) {
                             </thead>
                             <tbody className="divide-y divide-gray-200">
                                 {result.projection.map(row => (
-                                    <tr key={row.year} className="hover:bg-gray-50">
+                                    <tr key={row.year} className="hover:bg-gray-50 dark:bg-slate-900/50">
                                         <td className="px-4 py-2">{row.year}</td>
                                         <td className="px-4 py-2 text-right font-medium">
                                             {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(row.annualTax)}

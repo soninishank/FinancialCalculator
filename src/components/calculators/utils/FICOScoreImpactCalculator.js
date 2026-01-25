@@ -298,7 +298,7 @@ export default function FICOScoreImpactCalculator({ currency = 'USD' }) {
                         </div>
 
                         <div className="space-y-3">
-                            <h3 className="font-bold text-sm text-gray-900">Scenario Impacts</h3>
+                            <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100">Scenario Impacts</h3>
 
                             <div className="p-3 bg-blue-50 border border-blue-100 rounded-lg">
                                 <div className="flex justify-between items-center">
@@ -356,7 +356,7 @@ export default function FICOScoreImpactCalculator({ currency = 'USD' }) {
                                     {result.recommendations.slice(0, 3).map((rec, idx) => (
                                         <div key={idx} className="flex justify-between items-center text-sm">
                                             <div>
-                                                <p className="font-semibold text-gray-900">{rec.action}</p>
+                                                <p className="font-semibold text-gray-900 dark:text-gray-100">{rec.action}</p>
                                                 <p className="text-xs text-gray-600">{rec.priority} Priority</p>
                                             </div>
                                             <p className="text-green-700 font-bold">{rec.impact}</p>
@@ -369,7 +369,7 @@ export default function FICOScoreImpactCalculator({ currency = 'USD' }) {
                 }
                 charts={
                     <div className="space-y-4">
-                        <h3 className="font-bold text-sm text-gray-900">FICO Score Composition</h3>
+                        <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100">FICO Score Composition</h3>
                         <div className="space-y-2">
                             {[
                                 { label: 'Payment History', weight: 35, desc: `${onTimePayments}% on-time` },
@@ -378,9 +378,9 @@ export default function FICOScoreImpactCalculator({ currency = 'USD' }) {
                                 { label: 'New Credit Inquiries', weight: 10, desc: `${newInquiries} inquiries` },
                                 { label: 'Credit Mix', weight: 10, desc: `${accountTypes} account types` }
                             ].map(factor => (
-                                <div key={factor.label} className="p-3 bg-gray-50 rounded-lg">
+                                <div key={factor.label} className="p-3 bg-gray-50 dark:bg-slate-900/50 rounded-lg">
                                     <div className="flex justify-between mb-1">
-                                        <span className="text-sm font-semibold text-gray-900">{factor.label}</span>
+                                        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{factor.label}</span>
                                         <span className="text-sm font-bold text-blue-600">{factor.weight}%</span>
                                     </div>
                                     <p className="text-xs text-gray-600">{factor.desc}</p>

@@ -248,7 +248,7 @@ export default function StepDownWithdrawal({ currency }) {
 
             <div className="my-6 pt-4 border-t">
                 <div className="flex justify-between mb-2">
-                    <span className="text-sm font-black text-slate-900 uppercase tracking-tight">
+                    <span className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight">
                         How long should this last?
                     </span>
                     <span className="font-bold text-blue-600">
@@ -265,7 +265,7 @@ export default function StepDownWithdrawal({ currency }) {
                 />
             </div>
 
-            <div className="p-4 rounded-xl bg-gray-50 border">
+            <div className="p-4 rounded-xl bg-gray-50 dark:bg-slate-900/50 border">
                 <InputWithSlider
                     label="Monthly Expense"
                     value={phase1Expense}
@@ -277,10 +277,10 @@ export default function StepDownWithdrawal({ currency }) {
                 />
 
                 <div className="flex items-center mt-4 cursor-pointer" onClick={() => setIsStepDownEnabled(!isStepDownEnabled)}>
-                    <div className={`w-5 h-5 rounded border flex items-center justify-center mr-2 transition-colors ${isStepDownEnabled ? 'bg-indigo-600 border-indigo-600' : 'bg-white border-gray-300'}`}>
+                    <div className={`w-5 h-5 rounded border flex items-center justify-center mr-2 transition-colors ${isStepDownEnabled ? 'bg-indigo-600 border-indigo-600' : 'bg-white dark:bg-slate-800 border-gray-300'}`}>
                         {isStepDownEnabled && <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                     </div>
-                    <label className="text-sm font-black text-slate-900 uppercase tracking-tight cursor-pointer select-none">
+                    <label className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight cursor-pointer select-none">
                         I anticipate expenses dropping later
                     </label>
                 </div>
@@ -347,7 +347,7 @@ export default function StepDownWithdrawal({ currency }) {
             }
             charts={
                 <div className="space-y-8">
-                    <div className="h-[400px] bg-white p-4 rounded-xl border">
+                    <div className="h-[400px] bg-white dark:bg-slate-800 p-4 rounded-xl border">
                         <FinancialBarChart
                             data={chartData}
                             options={chartOptions}
@@ -357,9 +357,9 @@ export default function StepDownWithdrawal({ currency }) {
                     </div>
 
                     {/* TABLE */}
-                    <div className="mt-8 bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                        <div className="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-                            <h3 className="text-lg font-bold text-gray-800">Withdrawal Schedule</h3>
+                    <div className="mt-8 bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 overflow-hidden">
+                        <div className="p-4 bg-gray-50 dark:bg-slate-900/50 border-b border-gray-200 dark:border-slate-700 flex justify-between items-center">
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Withdrawal Schedule</h3>
                             <button
                                 onClick={() => {
                                     const data = result.yearlyData.slice(1).map(r => [

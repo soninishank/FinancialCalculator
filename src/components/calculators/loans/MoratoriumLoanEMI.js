@@ -58,26 +58,26 @@ export default function MoratoriumLoanEMI({ currency = 'INR' }) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* INPUTS */}
                 <div className="space-y-6">
-                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                        <h3 className="text-md font-bold text-gray-800 mb-4">Loan Details</h3>
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm">
+                        <h3 className="text-md font-bold text-gray-800 dark:text-gray-100 mb-4">Loan Details</h3>
                         <InputWithSlider label="Loan Amount" value={principal} onChange={setPrincipal} min={100000} max={10000000} step={50000} currency={currency} />
                         <InputWithSlider label="Interest Rate (%)" value={rate} onChange={setRate} min={1} max={20} step={0.1} symbol="%" />
                         <InputWithSlider label="Total Tenure (Years)" value={tenure} onChange={setTenure} min={1} max={30} />
                     </div>
 
-                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm border-l-4 border-l-amber-500">
-                        <h3 className="text-md font-bold text-gray-800 mb-4">Moratorium Period</h3>
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm border-l-4 border-l-amber-500">
+                        <h3 className="text-md font-bold text-gray-800 dark:text-gray-100 mb-4">Moratorium Period</h3>
                         <InputWithSlider label="Moratorium Months" value={moratoriumMonths} onChange={setMoratoriumMonths} min={0} max={36} suffix="Months" />
 
-                        <div className="flex items-center justify-between mt-4 bg-gray-50 p-3 rounded-lg">
-                            <span className="text-sm font-black text-slate-900 uppercase tracking-tight">Pay Interest during Moratorium?</span>
+                        <div className="flex items-center justify-between mt-4 bg-gray-50 dark:bg-slate-900/50 p-3 rounded-lg">
+                            <span className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight">Pay Interest during Moratorium?</span>
                             <label className="relative inline-flex items-center cursor-pointer">
                                 <span className="sr-only">Pay Interest</span>
                                 <div
                                     onClick={() => setPayInterest(!payInterest)}
                                     className={`w-11 h-6 rounded-full transition-colors duration-200 ease-in-out ${payInterest ? 'bg-teal-600' : 'bg-gray-200'}`}
                                 >
-                                    <div className={`absolute top-[2px] left-[2px] bg-white rounded-full h-5 w-5 transition-transform duration-200 ease-in-out ${payInterest ? 'translate-x-full' : 'translate-x-0'}`}></div>
+                                    <div className={`absolute top-[2px] left-[2px] bg-white dark:bg-slate-800 rounded-full h-5 w-5 transition-transform duration-200 ease-in-out ${payInterest ? 'translate-x-full' : 'translate-x-0'}`}></div>
                                 </div>
                             </label>
                         </div>
@@ -92,11 +92,11 @@ export default function MoratoriumLoanEMI({ currency = 'INR' }) {
                 {/* RESULTS */}
                 <div className="space-y-6">
                     {/* HIGHLIGHT CARD */}
-                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-xl relative overflow-hidden">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-200 dark:border-slate-700 shadow-xl relative overflow-hidden">
                         <div className="grid grid-cols-2 gap-6 relative z-10">
                             <div>
                                 <p className="text-xs font-bold text-gray-400 uppercase">Original EMI</p>
-                                <p className="text-2xl font-bold text-gray-800">{moneyFormat(results.emiBefore, currency)}</p>
+                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{moneyFormat(results.emiBefore, currency)}</p>
                             </div>
                             <div>
                                 <p className="text-xs font-bold text-amber-600 uppercase">New EMI (Post-Moratorium)</p>
@@ -104,7 +104,7 @@ export default function MoratoriumLoanEMI({ currency = 'INR' }) {
                             </div>
                         </div>
 
-                        <div className="mt-6 pt-6 border-t border-gray-100">
+                        <div className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700">
                             <div className="flex items-start gap-3">
                                 <AlertTriangle className="w-6 h-6 text-red-500 shrink-0" />
                                 <div>
@@ -119,7 +119,7 @@ export default function MoratoriumLoanEMI({ currency = 'INR' }) {
                     </div>
 
                     {/* CHART */}
-                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm h-72">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm h-72">
                         <FinancialLineChart
                             data={chartData}
                             currency={currency}
@@ -131,7 +131,7 @@ export default function MoratoriumLoanEMI({ currency = 'INR' }) {
                 {/* TABLE */}
                 <div className="md:col-span-2 mt-8">
                     <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-bold text-gray-800">Amortization Schedule</h3>
+                        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Amortization Schedule</h3>
                         <button
                             onClick={() => {
                                 const data = results.monthlyRows.map(r => [

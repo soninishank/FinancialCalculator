@@ -87,7 +87,7 @@ export default function IndiaIncomeTaxCalculator({ currency = 'INR' }) {
                 currency={currency}
             />
 
-            <div className="p-4 bg-gray-50 rounded-xl border border-teal-100">
+            <div className="p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-teal-100">
                 <p className="text-sm font-bold text-teal-800 mb-2">Old Regime Only:</p>
                 <div className="space-y-4">
                     <InputWithSlider
@@ -111,7 +111,7 @@ export default function IndiaIncomeTaxCalculator({ currency = 'INR' }) {
                 </div>
             </div>
 
-            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div className="p-4 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700">
                 <p className="text-xs text-gray-500">
                     Calculations based on <strong>FY 2024-25 & AY 2025-26</strong>.
                     Includes <strong>Standard Deduction</strong> (New: 75k, Old: 50k) and <strong>4% Cess</strong>.
@@ -134,17 +134,17 @@ export default function IndiaIncomeTaxCalculator({ currency = 'INR' }) {
                 summary={
                     <div className="space-y-6">
                         <div className="grid grid-cols-2 gap-4">
-                            <div className={`p-4 rounded-xl border transition-all ${result.newRegime.tax <= result.oldRegime.tax ? 'bg-teal-50 border-teal-200' : 'bg-gray-50 border-gray-200'}`}>
+                            <div className={`p-4 rounded-xl border transition-all ${result.newRegime.tax <= result.oldRegime.tax ? 'bg-teal-50 border-teal-200' : 'bg-gray-50 dark:bg-slate-900/50 border-gray-200 dark:border-slate-700'}`}>
                                 <p className="text-xs font-bold text-gray-500 uppercase">New Regime</p>
-                                <p className="text-2xl font-bold text-gray-800">
+                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                                     {new Intl.NumberFormat('en-IN', { style: 'currency', currency }).format(Math.round(result.newRegime.netPay / 12))}
                                     <span className="text-xs block font-normal text-gray-400">/ month</span>
                                 </p>
                                 {result.newRegime.tax <= result.oldRegime.tax && <span className="text-[10px] bg-teal-600 text-white px-2 py-0.5 rounded-full">Recommended</span>}
                             </div>
-                            <div className={`p-4 rounded-xl border transition-all ${result.oldRegime.tax < result.newRegime.tax ? 'bg-teal-50 border-teal-200' : 'bg-gray-50 border-gray-200'}`}>
+                            <div className={`p-4 rounded-xl border transition-all ${result.oldRegime.tax < result.newRegime.tax ? 'bg-teal-50 border-teal-200' : 'bg-gray-50 dark:bg-slate-900/50 border-gray-200 dark:border-slate-700'}`}>
                                 <p className="text-xs font-bold text-gray-500 uppercase">Old Regime</p>
-                                <p className="text-2xl font-bold text-gray-800">
+                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                                     {new Intl.NumberFormat('en-IN', { style: 'currency', currency }).format(Math.round(result.oldRegime.netPay / 12))}
                                     <span className="text-xs block font-normal text-gray-400">/ month</span>
                                 </p>
@@ -176,8 +176,8 @@ export default function IndiaIncomeTaxCalculator({ currency = 'INR' }) {
                 }
                 charts={
                     <div className="mt-8">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">Taxes: New vs Old</h3>
-                        <div className="flex items-end justify-center gap-8 h-48 bg-gray-50 rounded-2xl p-6">
+                        <h3 className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-4 text-center">Taxes: New vs Old</h3>
+                        <div className="flex items-end justify-center gap-8 h-48 bg-gray-50 dark:bg-slate-900/50 rounded-2xl p-6">
                             <div className="flex flex-col items-center gap-2">
                                 <div
                                     className="bg-red-500 w-12 rounded-t-lg transition-all duration-1000"
