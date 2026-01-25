@@ -1,10 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import InputWithSlider from '../../common/InputWithSlider';
 import CalculatorLayout from '../../common/CalculatorLayout';
-import UnifiedSummary from '../../common/UnifiedSummary';
-import { FinancialPieChart } from '../../common/FinancialCharts';
+import { FinancialPieChart, FinancialLoanPieChart } from '../../common/FinancialCharts';
 import { calculatorDetails } from '../../../data/calculatorDetails';
 import { Home } from 'lucide-react';
+import MonthYearPicker from '../../common/MonthYearPicker';
+import CollapsibleAmortizationTable from '../../common/CollapsibleAmortizationTable';
+import { computeAdvancedLoanAmortization } from '../../../utils/finance';
+import { moneyFormat } from '../../../utils/formatting';
 
 export default function USMortgageCalculator({ currency = 'USD' }) {
     const [homeValue, setHomeValue] = useState(400000);
@@ -15,58 +18,47 @@ export default function USMortgageCalculator({ currency = 'USD' }) {
     const [homeInsurance, setHomeInsurance] = useState(1200); // Annual Amount
     const [pmiRate, setPmiRate] = useState(0.5); // Annual PMI rate if LTV < 80% (actually LTV > 80%)
     const [hoaFees, setHoaFees] = useState(0); // Monthly
+    const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM
 
     const result = useMemo(() => {
         const principal = homeValue - downPayment;
-        const monthlyRate = interestRate / 100 / 12;
-        const numberOfPayments = loanTerm * 12;
-
-        // Principal & Interest (P&I)
-        let monthlyPI = 0;
-        if (monthlyRate === 0) {
-            monthlyPI = numberOfPayments > 0 ? principal / numberOfPayments : 0;
-        } else {
-            monthlyPI = principal * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
-        }
-
-        // Property Tax (Monthly)
-        const monthlyPropertyTax = (homeValue * (propertyTaxRate / 100)) / 12;
-
-        // Home Insurance (Monthly)
-        const monthlyInsurance = homeInsurance / 12;
+        const propertyTaxYearly = (homeValue * propertyTaxRate) / 100;
 
         // PMI (Monthly) - typically applies if Down Payment < 20%
         const ltv = (homeValue > 0) ? ((principal / homeValue) * 100) : 0;
         let monthlyPMI = 0;
         if (ltv > 80) {
-            // Simple PMI calculation: (Loan Amount * PMI Rate) / 12
             monthlyPMI = (principal * (pmiRate / 100)) / 12;
         }
 
-        const totalMonthlyPayment = monthlyPI + monthlyPropertyTax + monthlyInsurance + monthlyPMI + hoaFees;
+        const res = computeAdvancedLoanAmortization({
+            principal,
+            annualRate: interestRate,
+            years: loanTerm,
+            startDate,
+            propertyTaxYearly,
+            homeInsuranceYearly: homeInsurance,
+            maintenanceMonthly: monthlyPMI + hoaFees
+        });
 
         return {
-            principal,
-            monthlyPI,
-            monthlyPropertyTax,
-            monthlyInsurance,
-            monthlyPMI,
-            hoaFees,
-            totalMonthlyPayment,
-            totalInterest: (monthlyPI * numberOfPayments) - principal,
-            totalPaymentOverTerm: totalMonthlyPayment * numberOfPayments
+            ...res,
+            loanAmount: principal,
+            monthlyPMI // For chart breakdown
         };
-    }, [homeValue, downPayment, interestRate, loanTerm, propertyTaxRate, homeInsurance, pmiRate, hoaFees]);
+    }, [homeValue, downPayment, interestRate, loanTerm, propertyTaxRate, homeInsurance, pmiRate, hoaFees, startDate]);
+
+    const { summary, monthlyRows, yearlyRows } = result;
 
     const chartData = {
         labels: ['Principal & Interest', 'Property Tax', 'Home Insurance', 'PMI', 'HOA'],
         datasets: [{
             data: [
-                result.monthlyPI,
-                result.monthlyPropertyTax,
-                result.monthlyInsurance,
+                summary?.baseEMI || 0,
+                (homeValue * (propertyTaxRate / 100)) / 12,
+                homeInsurance / 12,
                 result.monthlyPMI,
-                result.hoaFees
+                hoaFees
             ],
             backgroundColor: [
                 '#6366f1', // Indigo (P&I)
@@ -170,6 +162,13 @@ export default function USMortgageCalculator({ currency = 'USD' }) {
                     currency={currency}
                 />
             </div>
+
+            <div className="grid grid-cols-1 gap-4">
+                <div className="space-y-2">
+                    <label className="text-xs font-black text-slate-900 uppercase tracking-widest">Loan Start Date</label>
+                    <MonthYearPicker value={startDate} onChange={setStartDate} />
+                </div>
+            </div>
         </div>
     );
 
@@ -185,26 +184,105 @@ export default function USMortgageCalculator({ currency = 'USD' }) {
             <CalculatorLayout
                 inputs={inputs}
                 summary={
-                    <div className="space-y-6">
-                        <UnifiedSummary
-                            invested={result.principal} // Reusing "invested" for Loan Amount
-                            gain={result.totalInterest} // Reusing "gain" for Total Interest
-                            total={result.totalPaymentOverTerm} // Total Cost
-                            currency={currency}
-                            labels={{ invested: "Loan Amount", gain: "Total Interest", total: "Total Cost" }}
-                        />
-                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100 text-center">
-                            <p className="text-xs text-indigo-600 font-bold uppercase mb-1">Monthly Payment</p>
-                            <p className="text-2xl font-bold text-indigo-700">
-                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(result.totalMonthlyPayment)}
+                    <div className="space-y-8 mt-10">
+                        {/* TOTAL LOAN SUMMARY SECTION */}
+                        <div className="bg-white rounded-3xl border-2 border-slate-100 shadow-2xl overflow-hidden relative group transition-all hover:shadow-indigo-100/50">
+                            <div className="grid grid-cols-1 lg:grid-cols-5 md:divide-x divide-slate-100">
+                                {/* METRICS (2/5) */}
+                                <div className="lg:col-span-2 flex flex-col divide-y divide-slate-50">
+                                    <div className="p-8 text-center bg-white transition-colors hover:bg-slate-50/50">
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Loan Amount (Principal)</p>
+                                        <p className="text-3xl font-black text-slate-900 tracking-tighter">
+                                            {moneyFormat(result.loanAmount, currency)}
+                                        </p>
+                                    </div>
+                                    <div className="p-8 text-center bg-teal-50/20 transition-colors hover:bg-teal-50/40">
+                                        <p className="text-[10px] font-black text-teal-600 uppercase tracking-widest mb-1">Total Interest Paid</p>
+                                        <p className="text-3xl font-black text-teal-700 tracking-tighter">
+                                            {moneyFormat(summary.totalInterest, currency)}
+                                        </p>
+                                    </div>
+                                    <div className="p-8 text-center bg-indigo-50/30 transition-colors hover:bg-indigo-50/50">
+                                        <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-1">Total Cost of Loan</p>
+                                        <p className="text-3xl font-black text-indigo-700 tracking-tighter">
+                                            {moneyFormat(summary.totalAmountPaid, currency)}
+                                        </p>
+                                        <p className="text-[10px] font-bold text-indigo-400 mt-2 uppercase tracking-wide italic">Over {loanTerm} Years</p>
+                                    </div>
+                                </div>
+
+                                {/* CHART (3/5) */}
+                                <div className="lg:col-span-3 p-10 flex flex-col justify-center items-center bg-slate-50/20 relative">
+                                    <div className="absolute top-6 left-10 flex items-center gap-2">
+                                        <span className="w-1.5 h-4 bg-slate-400 rounded-full"></span>
+                                        <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Principal vs Interest</h4>
+                                    </div>
+                                    <div className="w-full h-80">
+                                        <FinancialLoanPieChart
+                                            principal={result.loanAmount}
+                                            totalInterest={summary.totalInterest}
+                                            currency={currency}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* MONTHLY PAYMENT BANNER */}
+                        <div className="bg-indigo-600 p-10 rounded-3xl text-center shadow-2xl shadow-indigo-100 border-b-[10px] border-indigo-800 transform hover:scale-[1.005] transition-all group overflow-hidden relative">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl transition-transform group-hover:scale-110"></div>
+
+                            <p className="text-[10px] text-indigo-100 font-black uppercase tracking-[0.3em] mb-3 opacity-90">Estimated Monthly Payment</p>
+                            <p className="text-6xl font-black text-white tracking-tighter mb-6 drop-shadow-lg">
+                                {moneyFormat(summary.baseEMI + (homeValue * (propertyTaxRate / 100) / 12) + (homeInsurance / 12) + result.monthlyPMI + hoaFees, currency)}
                             </p>
+
+                            <div className="flex flex-wrap justify-center gap-y-3 gap-x-8 px-4">
+                                <span className="flex items-center gap-2 text-[10px] font-bold text-indigo-100 bg-white/10 px-3 py-1.5 rounded-full border border-white/5">
+                                    <span className="w-1.5 h-1.5 bg-indigo-300 rounded-full"></span>
+                                    P&I: {moneyFormat(summary.baseEMI, currency)}
+                                </span>
+                                <span className="flex items-center gap-2 text-[10px] font-bold text-indigo-100 bg-white/10 px-3 py-1.5 rounded-full border border-white/5">
+                                    <span className="w-1.5 h-1.5 bg-sky-300 rounded-full"></span>
+                                    Taxes: {moneyFormat((homeValue * (propertyTaxRate / 100) / 12), currency)}
+                                </span>
+                                <span className="flex items-center gap-2 text-[10px] font-bold text-indigo-100 bg-white/10 px-3 py-1.5 rounded-full border border-white/5">
+                                    <span className="w-1.5 h-1.5 bg-emerald-300 rounded-full"></span>
+                                    Ins: {moneyFormat((homeInsurance / 12), currency)}
+                                </span>
+                                {(result.monthlyPMI > 0 || hoaFees > 0) && (
+                                    <span className="flex items-center gap-2 text-[10px] font-bold text-indigo-100 bg-white/10 px-3 py-1.5 rounded-full border border-white/5">
+                                        <span className="w-1.5 h-1.5 bg-amber-300 rounded-full"></span>
+                                        PMI & HOA: {moneyFormat(result.monthlyPMI + hoaFees, currency)}
+                                    </span>
+                                )}
+                            </div>
                         </div>
                     </div>
                 }
                 charts={
-                    <div className="mt-8">
-                        <h3 className="text-gray-800 font-bold text-lg mb-4 text-center">Monthly Breakdown</h3>
-                        <FinancialPieChart data={chartData} currency={currency} />
+                    <div className="mt-16 bg-white p-10 rounded-3xl border border-slate-100 shadow-sm relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50/30 rounded-full -mr-16 -mt-16"></div>
+                        <h3 className="text-slate-900 font-black text-2xl mb-10 flex items-center gap-4 relative z-10">
+                            <span className="w-2 h-8 bg-indigo-600 rounded-full"></span>
+                            Monthly Payment Breakdown
+                        </h3>
+                        <div className="h-[450px] relative z-10">
+                            <FinancialPieChart data={chartData} currency={currency} />
+                        </div>
+                    </div>
+                }
+                table={
+                    <div className="mt-16">
+                        <div className="flex items-center gap-4 mb-8">
+                            <span className="w-2 h-8 bg-slate-800 rounded-full"></span>
+                            <h3 className="text-slate-900 font-black text-2xl">Detailed Amortization Schedule</h3>
+                        </div>
+                        <CollapsibleAmortizationTable
+                            yearlyData={yearlyRows}
+                            monthlyData={monthlyRows}
+                            currency={currency}
+                        />
                     </div>
                 }
                 details={calculatorDetails['us-mortgage-calculator']?.render() || <div className="p-6 text-center text-gray-500">Details coming soon...</div>}

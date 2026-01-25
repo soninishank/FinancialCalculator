@@ -3,7 +3,9 @@ import InputWithSlider from '../../common/InputWithSlider';
 import FormattedInput from '../../common/FormattedInput';
 import CalculatorLayout from '../../common/CalculatorLayout';
 import { calculatorDetails } from '../../../data/calculatorDetails';
-import { CreditCard, TrendingDown, Zap } from 'lucide-react';
+import { CreditCard, TrendingDown, Zap, BarChart3, Clock, DollarSign, Info } from 'lucide-react';
+import { FinancialCompoundingBarChart } from '../../common/FinancialCharts';
+import { moneyFormat } from '../../../utils/formatting';
 
 export default function DebtAvalancheSnowballCalculator({ currency = 'USD' }) {
     const [monthlyBudget, setMonthlyBudget] = useState(1500);
@@ -238,109 +240,218 @@ export default function DebtAvalancheSnowballCalculator({ currency = 'USD' }) {
                 inputs={inputs}
                 summary={
                     <div className="space-y-6">
-                        <div className="bg-gradient-to-br from-red-500 to-pink-600 p-6 rounded-xl text-white shadow-lg">
-                            <p className="text-xs font-bold uppercase mb-1 opacity-80">Total Debt</p>
-                            <p className="text-3xl font-bold">{new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.totalDebt)}</p>
-                            <p className="text-xs mt-2 opacity-90">{debts.length} debts • ${!isNaN(result.extraPayment) ? result.extraPayment.toFixed(0) : "0"}/mo extra payment</p>
+                        <div className="bg-gradient-to-br from-red-500 to-pink-600 p-8 rounded-2xl text-white shadow-lg relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-white/20 transition-all duration-700"></div>
+                            <div className="relative z-10">
+                                <p className="text-xs font-bold uppercase tracking-widest mb-1 opacity-80">Total Debt Balance</p>
+                                <p className="text-5xl font-black">{moneyFormat(result.totalDebt, currency)}</p>
+                                <div className="flex gap-4 mt-4 text-[10px] font-bold uppercase tracking-wider opacity-90">
+                                    <span className="bg-white/20 px-2 py-0.5 rounded">{debts.length} active debts</span>
+                                    <span className="bg-white/20 px-2 py-0.5 rounded">{moneyFormat(result.extraPayment, currency)}/mo extra budget</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <Zap className="w-4 h-4 text-blue-600" />
-                                    <p className="text-xs text-blue-900 font-bold uppercase">Avalanche Method</p>
-                                </div>
-                                <p className="text-sm text-gray-600 mb-3">Highest interest first (saves most money)</p>
-                                <div className="space-y-2">
-                                    <div>
-                                        <p className="text-[10px] text-blue-600">Debt-Free In</p>
-                                        <p className="text-xl font-bold text-blue-700">{result.avalanche.years} years</p>
-                                        <p className="text-[9px] text-gray-500">{result.avalanche.months} months</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className={`p-5 rounded-2xl border transition-all duration-300 ${result.interestSaved >= 0 ? 'bg-indigo-50 border-indigo-100 ring-4 ring-indigo-500/5' : 'bg-gray-50 border-gray-100'}`}>
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <Zap className="w-5 h-5 text-indigo-600" />
+                                        <h4 className="text-xs font-black text-indigo-900 uppercase tracking-widest">Avalanche</h4>
                                     </div>
+                                    <span className="text-[10px] font-bold bg-indigo-600 text-white px-2 py-0.5 rounded uppercase tracking-tighter">Mathematical Opt.</span>
+                                </div>
+                                <div className="space-y-4">
                                     <div>
-                                        <p className="text-[10px] text-blue-600">Total Interest</p>
-                                        <p className="text-lg font-bold text-blue-700">
-                                            {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.avalanche.totalInterest)}
-                                        </p>
+                                        <p className="text-[10px] text-indigo-600 font-bold uppercase mb-1">Debt-Free In</p>
+                                        <p className="text-3xl font-black text-indigo-900">{result.avalanche.years} <span className="text-sm font-medium opacity-60">Years</span></p>
+                                    </div>
+                                    <div className="flex justify-between items-end border-t border-indigo-100 pt-3">
+                                        <p className="text-[10px] text-indigo-600 font-bold">Total Interest</p>
+                                        <p className="font-bold text-indigo-900">{moneyFormat(result.avalanche.totalInterest, currency)}</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <TrendingDown className="w-4 h-4 text-emerald-600" />
-                                    <p className="text-xs text-emerald-900 font-bold uppercase">Snowball Method</p>
-                                </div>
-                                <p className="text-sm text-gray-600 mb-3">Smallest balance first (builds momentum)</p>
-                                <div className="space-y-2">
-                                    <div>
-                                        <p className="text-[10px] text-emerald-600">Debt-Free In</p>
-                                        <p className="text-xl font-bold text-emerald-700">{result.snowball.years} years</p>
-                                        <p className="text-[9px] text-gray-500">{result.snowball.months} months</p>
+                            <div className={`p-5 rounded-2xl border transition-all duration-300 ${result.interestSaved < 0 ? 'bg-emerald-50 border-emerald-100 ring-4 ring-emerald-500/5' : 'bg-gray-50 border-gray-100'}`}>
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <TrendingDown className="w-5 h-5 text-emerald-600" />
+                                        <h4 className="text-xs font-black text-emerald-900 uppercase tracking-widest">Snowball</h4>
                                     </div>
+                                    <span className="text-[10px] font-bold bg-emerald-600 text-white px-2 py-0.5 rounded uppercase tracking-tighter">Psychological Win</span>
+                                </div>
+                                <div className="space-y-4">
                                     <div>
-                                        <p className="text-[10px] text-emerald-600">Total Interest</p>
-                                        <p className="text-lg font-bold text-emerald-700">
-                                            {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.snowball.totalInterest)}
-                                        </p>
+                                        <p className="text-[10px] text-emerald-600 font-bold uppercase mb-1">Debt-Free In</p>
+                                        <p className="text-3xl font-black text-emerald-900">{result.snowball.years} <span className="text-sm font-medium opacity-60">Years</span></p>
+                                    </div>
+                                    <div className="flex justify-between items-end border-t border-emerald-100 pt-3">
+                                        <p className="text-[10px] text-emerald-600 font-bold">Total Interest</p>
+                                        <p className="font-bold text-emerald-900">{moneyFormat(result.snowball.totalInterest, currency)}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         {result.interestSaved > 0 && (
-                            <div className="p-4 bg-purple-50 border border-purple-100 rounded-xl text-center">
-                                <p className="text-xs text-purple-600 font-bold uppercase mb-1">Avalanche Advantage</p>
-                                <p className="text-2xl font-bold text-purple-700">
-                                    {new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(result.interestSaved)}
-                                </p>
-                                <p className="text-xs text-purple-600 mt-1">
-                                    Interest saved • {Math.abs(result.monthsSaved)} months faster
-                                </p>
+                            <div className="p-4 bg-purple-50 border border-purple-100 rounded-2xl flex items-center gap-4">
+                                <div className="p-3 bg-purple-100 rounded-xl text-purple-700 shadow-sm"><Info size={20} /></div>
+                                <div>
+                                    <p className="text-xs font-bold text-purple-900 uppercase tracking-wider mb-0.5">Avalanche Advantage</p>
+                                    <p className="text-sm text-purple-700 leading-relaxed">
+                                        Using the Avalanche method will save you <strong className="text-purple-900">{moneyFormat(result.interestSaved, currency)}</strong> in interest and get you debt-free <strong className="text-purple-900">{Math.abs(result.monthsSaved)} months</strong> sooner.
+                                    </p>
+                                </div>
                             </div>
                         )}
                     </div>
                 }
                 charts={
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h3 className="font-bold text-sm text-blue-900 mb-3">🔵 Avalanche Payoff Order</h3>
-                            <div className="space-y-2">
-                                {result.avalanche.payoffOrder.map((debt, idx) => (
-                                    <div key={debt.id} className="p-3 bg-blue-50 rounded-lg border border-blue-100">
-                                        <div className="flex justify-between items-center">
-                                            <div>
-                                                <p className="font-semibold text-sm text-gray-900">{idx + 1}. {debt.name}</p>
-                                                <p className="text-xs text-gray-600">${debt.balance.toLocaleString()} @ {debt.rate}%</p>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className="text-xs text-blue-600">Month {debt.payoffMonth}</p>
-                                                <p className="text-[10px] text-gray-500">{!isNaN(debt.payoffMonth) ? (debt.payoffMonth / 12).toFixed(1) : "0.0"} yrs</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
+                    <div className="space-y-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            {/* Payoff visualization chart */}
+                            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                                <h4 className="text-sm font-bold text-gray-700 mb-6 uppercase tracking-wider flex items-center gap-2">
+                                    <BarChart3 size={16} /> Payoff Duration Comparison
+                                </h4>
+                                <div className="h-[300px]">
+                                    <FinancialCompoundingBarChart
+                                        data={[
+                                            { year: "Avalanche", balance: result.avalanche.months },
+                                            { year: "Snowball", balance: result.snowball.months }
+                                        ]}
+                                        currency={currency}
+                                        type="investment" // Using this type to avoid loan-specific formatting if needed
+                                        customData={[
+                                            { name: "Avalanche", value: result.avalanche.months, color: "#4f46e5" },
+                                            { name: "Snowball", value: result.snowball.months, color: "#10b981" }
+                                        ]}
+                                    />
+                                    <p className="text-[10px] text-center text-gray-400 mt-2 uppercase tracking-widest font-bold">(Total Months to Payoff)</p>
+                                </div>
+                            </div>
+
+                            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                                <h4 className="text-sm font-bold text-gray-700 mb-6 uppercase tracking-wider flex items-center gap-2">
+                                    <DollarSign size={16} /> Total Interest Cost
+                                </h4>
+                                <div className="h-[300px]">
+                                    <FinancialCompoundingBarChart
+                                        data={[
+                                            { year: "Avalanche", balance: result.avalanche.totalInterest },
+                                            { year: "Snowball", balance: result.snowball.totalInterest }
+                                        ]}
+                                        currency={currency}
+                                        type="loan"
+                                        customData={[
+                                            { name: "Avalanche", value: result.avalanche.totalInterest, color: "#4f46e5" },
+                                            { name: "Snowball", value: result.snowball.totalInterest, color: "#10b981" }
+                                        ]}
+                                    />
+                                    <p className="text-[10px] text-center text-gray-400 mt-2 uppercase tracking-widest font-bold">(Lower is better)</p>
+                                </div>
                             </div>
                         </div>
 
-                        <div>
-                            <h3 className="font-bold text-sm text-emerald-900 mb-3">🟢 Snowball Payoff Order</h3>
-                            <div className="space-y-2">
-                                {result.snowball.payoffOrder.map((debt, idx) => (
-                                    <div key={debt.id} className="p-3 bg-emerald-50 rounded-lg border border-emerald-100">
-                                        <div className="flex justify-between items-center">
-                                            <div>
-                                                <p className="font-semibold text-sm text-gray-900">{idx + 1}. {debt.name}</p>
-                                                <p className="text-xs text-gray-600">${debt.balance.toLocaleString()} @ {debt.rate}%</p>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className="text-xs text-emerald-600">Month {debt.payoffMonth}</p>
-                                                <p className="text-[10px] text-gray-500">{!isNaN(debt.payoffMonth) ? (debt.payoffMonth / 12).toFixed(1) : "0.0"} yrs</p>
+                        {/* Payoff Order Sections */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="space-y-4">
+                                <h3 className="font-black text-xs text-indigo-900 uppercase tracking-widest flex items-center gap-2">
+                                    <Zap size={14} className="fill-indigo-500 text-indigo-500" /> Avalanche Strategy
+                                </h3>
+                                <div className="space-y-3">
+                                    {result.avalanche.payoffOrder.map((debt, idx) => (
+                                        <div key={debt.id} className="p-4 bg-indigo-50/50 rounded-xl border border-indigo-100 group hover:bg-white hover:shadow-md transition-all duration-300">
+                                            <div className="flex justify-between items-center">
+                                                <div>
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <span className="w-5 h-5 rounded-full bg-indigo-600 text-[10px] text-white flex items-center justify-center font-bold">{idx + 1}</span>
+                                                        <p className="font-bold text-sm text-gray-900">{debt.name}</p>
+                                                    </div>
+                                                    <p className="text-[10px] font-medium text-gray-500 ml-7">{moneyFormat(debt.balance, currency)} @ {debt.rate}%</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-[10px] font-black text-indigo-600 uppercase">Month {debt.payoffMonth}</p>
+                                                    <p className="text-[9px] text-gray-400">{!isNaN(debt.payoffMonth) ? (debt.payoffMonth / 12).toFixed(1) : "0.0"} Years</p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
+
+                            <div className="space-y-4">
+                                <h3 className="font-black text-xs text-emerald-900 uppercase tracking-widest flex items-center gap-2">
+                                    <TrendingDown size={14} className="text-emerald-500" /> Snowball Strategy
+                                </h3>
+                                <div className="space-y-3">
+                                    {result.snowball.payoffOrder.map((debt, idx) => (
+                                        <div key={debt.id} className="p-4 bg-emerald-50/50 rounded-xl border border-emerald-100 group hover:bg-white hover:shadow-md transition-all duration-300">
+                                            <div className="flex justify-between items-center">
+                                                <div>
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <span className="w-5 h-5 rounded-full bg-emerald-600 text-[10px] text-white flex items-center justify-center font-bold">{idx + 1}</span>
+                                                        <p className="font-bold text-sm text-gray-900">{debt.name}</p>
+                                                    </div>
+                                                    <p className="text-[10px] font-medium text-gray-500 ml-7">{moneyFormat(debt.balance, currency)} @ {debt.rate}%</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-[10px] font-black text-emerald-600 uppercase">Month {debt.payoffMonth}</p>
+                                                    <p className="text-[9px] text-gray-400">{!isNaN(debt.payoffMonth) ? (debt.payoffMonth / 12).toFixed(1) : "0.0"} Years</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                table={
+                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mt-8">
+                        <div className="p-6 border-b border-gray-50 bg-gray-50/50">
+                            <h4 className="text-lg font-bold text-gray-800">Methods Side-by-Side</h4>
+                        </div>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm text-left">
+                                <thead className="bg-white text-gray-500 font-bold uppercase text-[10px] tracking-widest border-b border-gray-100">
+                                    <tr>
+                                        <th className="px-6 py-4">Strategy Metric</th>
+                                        <th className="px-6 py-4 text-indigo-700">Avalanche</th>
+                                        <th className="px-6 py-4 text-emerald-700">Snowball</th>
+                                        <th className="px-6 py-4 text-gray-900">Winner</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-50">
+                                    <tr>
+                                        <td className="px-6 py-5 font-bold text-gray-700 flex items-center gap-2">
+                                            <Clock size={14} className="text-gray-400" /> Payoff Duration
+                                        </td>
+                                        <td className="px-6 py-5 font-black text-indigo-900">{result.avalanche.years} Years</td>
+                                        <td className="px-6 py-5 font-black text-emerald-900">{result.snowball.years} Years</td>
+                                        <td className="px-6 py-5 italic font-bold text-purple-600">
+                                            {result.monthsSaved > 0 ? 'Snowball' : result.monthsSaved < 0 ? 'Avalanche' : 'Tie'}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-6 py-5 font-bold text-gray-700 flex items-center gap-2">
+                                            <DollarSign size={14} className="text-gray-400" /> Total Interest Paid
+                                        </td>
+                                        <td className="px-6 py-5 font-bold font-mono text-indigo-900">{moneyFormat(result.avalanche.totalInterest, currency)}</td>
+                                        <td className="px-6 py-5 font-bold font-mono text-emerald-900">{moneyFormat(result.snowball.totalInterest, currency)}</td>
+                                        <td className="px-6 py-5 italic font-bold text-indigo-600">
+                                            {result.avalanche.totalInterest < result.snowball.totalInterest ? 'Avalanche' : 'Snowball'}
+                                        </td>
+                                    </tr>
+                                    <tr className="bg-gray-50/30">
+                                        <td className="px-6 py-5 font-bold text-gray-900">Psychological Motivation</td>
+                                        <td className="px-6 py-5 text-gray-500">Moderate</td>
+                                        <td className="px-6 py-5 text-gray-900 font-bold">High (Early Wins)</td>
+                                        <td className="px-6 py-5">–</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 }

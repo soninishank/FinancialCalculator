@@ -92,6 +92,39 @@ const RentalYieldCalculator = ({ currency }) => {
 
             <div className="flex-1 space-y-6">
                 <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-6">Cash Flow Breakdown</h3>
+                    <div className="h-64 flex justify-center">
+                        <Doughnut
+                            data={{
+                                labels: ['Net Income', 'Maintenance', 'Property Tax', 'Other Costs'],
+                                datasets: [{
+                                    data: [annualCashFlow, annualMaintenance, propertyTax, otherExpenses],
+                                    backgroundColor: ['#10B981', '#F59E0B', '#EF4444', '#6366F1'],
+                                    borderWidth: 0,
+                                    hoverOffset: 4
+                                }]
+                            }}
+                            options={{
+                                plugins: {
+                                    legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function (context) {
+                                                let value = context.raw;
+                                                let total = context.chart._metasets[context.datasetIndex].total;
+                                                let percentage = (value / total * 100).toFixed(1) + '%';
+                                                return ` ${context.label}: ${moneyFormat(value, currency)} (${percentage})`;
+                                            }
+                                        }
+                                    }
+                                },
+                                cutout: '70%'
+                            }}
+                        />
+                    </div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
                     <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-6">Yield Analysis</h3>
 
                     <div className="space-y-6">

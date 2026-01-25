@@ -171,7 +171,7 @@ export default function StudentLoanPayoffCalculator({ currency = 'USD' }) {
                     <div className="space-y-6">
                         <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-6 rounded-xl text-white shadow-lg">
                             <p className="text-xs font-bold uppercase mb-1 opacity-80">Monthly Payment</p>
-                            <p className="text-3xl font-bold">{new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(result.monthlyPayment)}</p>
+                            <p className="text-3xl font-bold">{moneyFormat(result.monthlyPayment, currency)}</p>
                             <p className="text-xs mt-2 opacity-90">Debt-free in {result.payoffYears} years ({result.payoffMonths} months)</p>
                         </div>
 
@@ -180,7 +180,14 @@ export default function StudentLoanPayoffCalculator({ currency = 'USD' }) {
                             gain={result.totalInterest}
                             total={result.totalPayment}
                             currency={currency}
-                            labels={{ invested: "Principal", gain: "Total Interest", total: "Total Payment" }}
+                            years={result.payoffYears}
+                            title="Loan Structure Breakdown"
+                            labels={{
+                                invested: "Loan Principal",
+                                gain: "Total Interest",
+                                total: "Total Payment",
+                                totalSubtext: `Payoff in ${result.payoffYears} Years`
+                            }}
                         />
 
                         {extraPayment > 0 && (
@@ -193,7 +200,7 @@ export default function StudentLoanPayoffCalculator({ currency = 'USD' }) {
                                     <div>
                                         <p className="text-xs text-emerald-600">Interest Saved</p>
                                         <p className="text-lg font-bold text-emerald-700">
-                                            {new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(result.interestSaved)}
+                                            {moneyFormat(result.interestSaved, currency)}
                                         </p>
                                     </div>
                                     <div>

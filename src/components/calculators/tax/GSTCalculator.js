@@ -5,6 +5,11 @@ import CalculatorLayout from '../../common/CalculatorLayout';
 import UnifiedSummary from '../../common/UnifiedSummary';
 import { calculatorDetails } from '../../../data/calculatorDetails';
 import { Receipt, ArrowRightLeft } from 'lucide-react';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Doughnut } from 'react-chartjs-2';
+import { moneyFormat } from '../../../utils/formatting';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function GSTCalculator({ currency = 'INR' }) {
     const [amount, setAmount] = useState(10000);
@@ -115,17 +120,51 @@ export default function GSTCalculator({ currency = 'INR' }) {
             <CalculatorLayout
                 inputs={inputs}
                 summary={
-                    <UnifiedSummary
-                        invested={result.netAmount}
-                        gain={result.gstAmount}
-                        total={result.totalAmount}
-                        currency={currency}
-                        labels={{
-                            invested: "Net Amount",
-                            gain: "GST Amount",
-                            total: "Total Amount"
-                        }}
-                    />
+                    <div className="space-y-6">
+                        <UnifiedSummary
+                            invested={result.netAmount}
+                            gain={result.gstAmount}
+                            total={result.totalAmount}
+                            currency={currency}
+                            labels={{
+                                invested: "Net Amount",
+                                gain: "GST Amount",
+                                total: "Total Amount"
+                            }}
+                        />
+                        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mt-6">
+                            <h3 className="text-lg font-bold text-gray-800 mb-6">GST Breakdown</h3>
+                            <div className="h-64 flex justify-center">
+                                <Doughnut
+                                    data={{
+                                        labels: ['Net Amount', 'GST Amount'],
+                                        datasets: [{
+                                            data: [result.netAmount, result.gstAmount],
+                                            backgroundColor: ['#4F46E5', '#EF4444'],
+                                            borderWidth: 0,
+                                            hoverOffset: 4
+                                        }]
+                                    }}
+                                    options={{
+                                        plugins: {
+                                            legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } },
+                                            tooltip: {
+                                                callbacks: {
+                                                    label: function (context) {
+                                                        let value = context.raw;
+                                                        let total = context.chart._metasets[context.datasetIndex].total;
+                                                        let percentage = (value / total * 100).toFixed(1) + '%';
+                                                        return ` ${context.label}: ${moneyFormat(value, currency)} (${percentage})`;
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        cutout: '70%'
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
                 }
                 details={calculatorDetails['gst-calculator']?.render() || <div className="p-6 text-center text-gray-500">Details coming soon...</div>}
             />

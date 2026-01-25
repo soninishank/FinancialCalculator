@@ -12,6 +12,9 @@ import {
     MAX_RATE,
     MAX_LOAN
 } from "../../../utils/constants";
+import { computeLoanAmortization, calculateEMI } from "../../../utils/finance";
+import CollapsibleAmortizationTable from "../../common/CollapsibleAmortizationTable";
+import { Building2, Users, Receipt, Calendar, Percent } from "lucide-react";
 
 export default function PropertyLoanEligibility({ currency }) {
     // --- INPUT STATES ---
@@ -22,6 +25,7 @@ export default function PropertyLoanEligibility({ currency }) {
     const [years, setYears] = useState(DEFAULT_LOAN_TENURE);
     const [rate, setRate] = useState(DEFAULT_LOAN_RATE);
     const [foir] = useState(50);
+    const [startDate] = useState(new Date().toISOString().slice(0, 7));
 
     // --- CALCULATIONS ---
     const results = useMemo(() => {
@@ -33,7 +37,6 @@ export default function PropertyLoanEligibility({ currency }) {
         const n = Number(years) * 12;
 
         // 1. LTV Limit (Bank Rule)
-        // < 30L: 90%, 30-75: 80%, > 75: 75%
         let ltvPercent = 75;
         if (propVal <= 3000000) ltvPercent = 90;
         else if (propVal <= 7500000) ltvPercent = 80;
@@ -55,9 +58,15 @@ export default function PropertyLoanEligibility({ currency }) {
         const finalLoan = Math.min(maxLtvLoan, maxIncomeLoan);
         const downpaymentNeeded = propVal - finalLoan;
 
-        // 4. Analysis
-        const isFundingPropLimited = maxLtvLoan < maxIncomeLoan;
-        const shortfall = maxIncomeLoan < maxLtvLoan ? (maxLtvLoan - maxIncomeLoan) : 0;
+        // 4. Amortization for Final Loan
+        const finalEmi = calculateEMI(finalLoan, R, n);
+        const amortization = computeLoanAmortization({
+            principal: finalLoan,
+            annualRate: Number(rate),
+            years: Number(years),
+            emi: finalEmi,
+            startDate
+        });
 
         return {
             propVal,
@@ -66,15 +75,15 @@ export default function PropertyLoanEligibility({ currency }) {
             maxIncomeLoan,
             finalLoan,
             downpaymentNeeded,
-            isFundingPropLimited,
-            shortfall,
-            eligibleEmi
+            shortfall: maxIncomeLoan < maxLtvLoan ? (maxLtvLoan - maxIncomeLoan) : 0,
+            eligibleEmi,
+            amortization
         };
-    }, [propertyValue, selfIncome, coIncome, existingEmi, years, rate, foir]);
+    }, [propertyValue, selfIncome, coIncome, existingEmi, years, rate, foir, startDate]);
 
     const {
         propVal, ltvPercent, maxLtvLoan, maxIncomeLoan, finalLoan,
-        downpaymentNeeded, isFundingPropLimited, shortfall, eligibleEmi
+        downpaymentNeeded, shortfall, eligibleEmi, amortization
     } = results;
 
     // --- UI SECTIONS ---
@@ -203,7 +212,7 @@ export default function PropertyLoanEligibility({ currency }) {
             summary={summarySection}
             charts={
                 <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm mt-8">
-                    <h3 className="text-gray-800 font-bold text-lg mb-8 italic">Eligibility Factors</h3>
+                    <h3 className="text-gray-800 font-bold text-lg mb-8 italic text-center md:text-left">Eligibility Breakdown</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                         <div className="h-64 relative flex items-center justify-center">
                             <div className="w-56 h-56">
@@ -252,6 +261,16 @@ export default function PropertyLoanEligibility({ currency }) {
                             </div>
                         </div>
                     </div>
+                </div>
+            }
+            table={
+                <div className="mt-10 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <h4 className="text-lg font-bold text-gray-800 mb-6">Repayment Schedule for Max Eligible Loan</h4>
+                    <CollapsibleAmortizationTable
+                        yearlyData={amortization.rows}
+                        monthlyData={amortization.monthlyRows}
+                        currency={currency}
+                    />
                 </div>
             }
         />

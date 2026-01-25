@@ -5,6 +5,9 @@ import { downloadPDF } from '../../../utils/export';
 // FinancialInvestmentPieChart removed
 import MonthYearPicker from '../../common/MonthYearPicker';
 import CollapsibleInvestmentTable from '../../common/CollapsibleInvestmentTable';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Doughnut } from 'react-chartjs-2';
+import { moneyFormat } from '../../../utils/formatting';
 import {
     MAX_AMOUNT,
     MAX_YEARS,
@@ -12,6 +15,8 @@ import {
     DEFAULT_ROI_FINAL,
     DEFAULT_ROI_YEARS
 } from '../../../utils/constants';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 import { useCalculatorState } from '../../../hooks/useCalculatorState';
 import UnifiedSummary from '../../common/UnifiedSummary';
 
@@ -295,6 +300,40 @@ export default function ROICalculator({ currency = 'INR' }) {
         <CalculatorLayout
             inputs={inputs}
             summary={summarySection}
+            charts={
+                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mt-6">
+                    <h3 className="text-lg font-bold text-gray-800 mb-6">Return Analysis</h3>
+                    <div className="h-64 flex justify-center">
+                        <Doughnut
+                            data={{
+                                labels: ['Invested Amount', 'Total Profit'],
+                                datasets: [{
+                                    data: [result.start, result.gain],
+                                    backgroundColor: ['#4F46E5', '#10B981'],
+                                    borderWidth: 0,
+                                    hoverOffset: 4
+                                }]
+                            }}
+                            options={{
+                                plugins: {
+                                    legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function (context) {
+                                                let value = context.raw;
+                                                let total = context.chart._metasets[context.datasetIndex].total;
+                                                let percentage = (value / total * 100).toFixed(1) + '%';
+                                                return ` ${context.label}: ${moneyFormat(value, currency)} (${percentage})`;
+                                            }
+                                        }
+                                    }
+                                },
+                                cutout: '70%'
+                            }}
+                        />
+                    </div>
+                </div>
+            }
 
             table={
                 <div className="mt-8">

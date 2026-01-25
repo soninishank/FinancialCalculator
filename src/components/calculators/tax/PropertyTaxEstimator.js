@@ -3,6 +3,7 @@ import InputWithSlider from '../../common/InputWithSlider';
 import CalculatorLayout from '../../common/CalculatorLayout';
 import { calculatorDetails } from '../../../data/calculatorDetails';
 import { Home, DollarSign } from 'lucide-react';
+import { FinancialLineChart } from '../../common/FinancialCharts';
 
 export default function PropertyTaxEstimator({ currency = 'USD' }) {
     const [homeValue, setHomeValue] = useState(400000);
@@ -227,7 +228,36 @@ export default function PropertyTaxEstimator({ currency = 'USD' }) {
                     </div>
                 }
                 charts={
-                    <div className="overflow-x-auto">
+                    <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mt-6">
+                        <h3 className="text-lg font-bold text-gray-800 mb-4">Property Tax Projection</h3>
+                        <FinancialLineChart
+                            data={{
+                                labels: result.projection.map(row => `Year ${row.year}`),
+                                datasets: [
+                                    {
+                                        label: 'Annual Tax',
+                                        data: result.projection.map(row => row.annualTax),
+                                        borderColor: '#ea580c', // Orange-600
+                                        backgroundColor: '#ea580c',
+                                        tension: 0.4
+                                    },
+                                    {
+                                        label: 'Cumulative Tax',
+                                        data: result.projection.map(row => row.cumulativeTax),
+                                        borderColor: '#9333ea', // Purple-600
+                                        backgroundColor: '#9333ea',
+                                        tension: 0.4,
+                                        borderDash: [5, 5]
+                                    }
+                                ]
+                            }}
+                            currency={currency}
+                            height={300}
+                        />
+                    </div>
+                }
+                table={
+                    <div className="overflow-x-auto mt-6">
                         <table className="w-full text-sm">
                             <thead className="bg-gray-50">
                                 <tr>

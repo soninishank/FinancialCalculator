@@ -113,15 +113,78 @@ const StockAverageCalculator = ({ currency }) => {
                 </div>
             </div>
 
-            <div className="flex-1 p-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 h-fit">
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Why Average Down?</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-                    Stock averaging (or averaging down) is a strategy where you buy more shares of a stock as the price drops. This lowers your average cost per share, meaning the stock price doesn't need to rise as much for you to break even or make a profit.
-                </p>
-                <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-100 dark:border-amber-800/30">
-                    <p className="text-xs text-amber-800 dark:text-amber-300">
-                        <strong>Tip:</strong> Always ensure the fundamentals of the company are still strong before averaging down.
+            <div className="flex-1 space-y-6">
+                <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 h-fit">
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-6">Investment Distribution</h4>
+                    <div className="h-64 flex justify-center">
+                        {totalAmount > 0 ? (
+                            <Doughnut
+                                data={{
+                                    labels: entries.map((_, i) => `Trade ${i + 1}`),
+                                    datasets: [{
+                                        data: entries.map(e => (parseFloat(e.quantity) || 0) * (parseFloat(e.price) || 0)),
+                                        backgroundColor: [
+                                            '#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'
+                                        ],
+                                        borderWidth: 0
+                                    }]
+                                }}
+                                options={{
+                                    plugins: {
+                                        legend: { position: 'bottom' },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function (context) {
+                                                    let value = context.raw;
+                                                    let percentage = (value / totalAmount * 100).toFixed(1) + '%';
+                                                    return ` ${context.label}: ${moneyFormat(value, currency)} (${percentage})`;
+                                                }
+                                            }
+                                        }
+                                    },
+                                    cutout: '70%'
+                                }}
+                            />
+                        ) : (
+                            <div className="flex items-center justify-center text-gray-400 text-sm">
+                                Add trades to see distribution
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="bg-indigo-50 dark:bg-indigo-900/20 p-6 rounded-2xl border border-indigo-100 dark:border-indigo-800/30">
+                    <h3 className="text-lg font-bold text-indigo-900 dark:text-indigo-100 mb-4">Summary</h3>
+                    <div className="space-y-3">
+                        <div className="flex justify-between text-sm">
+                            <span className="text-gray-600 dark:text-gray-300">Total Units</span>
+                            <span className="font-semibold text-gray-900 dark:text-white">{totalUnits}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                            <span className="text-gray-600 dark:text-gray-300">Total Investment</span>
+                            <span className="font-semibold text-gray-900 dark:text-white">
+                                {moneyFormat(totalAmount, currency)}
+                            </span>
+                        </div>
+                        <div className="pt-3 border-t border-indigo-200 dark:border-indigo-700 flex justify-between items-center">
+                            <span className="text-indigo-900 dark:text-indigo-100 font-bold">Average Price</span>
+                            <span className="text-2xl font-bold text-indigo-700 dark:text-indigo-300">
+                                {moneyFormat(averagePrice, currency)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="p-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 h-fit">
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Why Average Down?</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                        Stock averaging (or averaging down) is a strategy where you buy more shares of a stock as the price drops. This lowers your average cost per share, meaning the stock price doesn't need to rise as much for you to break even or make a profit.
                     </p>
+                    <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-100 dark:border-amber-800/30">
+                        <p className="text-xs text-amber-800 dark:text-amber-300">
+                            <strong>Tip:</strong> Always ensure the fundamentals of the company are still strong before averaging down.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

@@ -38,7 +38,7 @@ const GA_MEASUREMENT_ID = 'G-N9ZGWK9DNG';
 
 export default function RootLayout({ children }) {
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <head>
                 {/* Icons are handled automatically by file convention (src/app/icon.png) */}
                 <link rel="preconnect" href="https://www.googletagmanager.com" />

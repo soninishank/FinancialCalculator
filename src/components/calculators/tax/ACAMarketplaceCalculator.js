@@ -3,6 +3,7 @@ import InputWithSlider from '../../common/InputWithSlider';
 import CalculatorLayout from '../../common/CalculatorLayout';
 import { calculatorDetails } from '../../../data/calculatorDetails';
 import { Heart, DollarSign } from 'lucide-react';
+import { FinancialBarChart } from '../../common/FinancialCharts';
 
 export default function ACAMarketplaceCalculator({ currency = 'USD' }) {
     const [householdIncome, setHouseholdIncome] = useState(55000);
@@ -208,6 +209,43 @@ export default function ACAMarketplaceCalculator({ currency = 'USD' }) {
                                 </p>
                             </div>
                         </div>
+                    </div>
+                }
+                charts={
+                    <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mt-6">
+                        <h3 className="text-lg font-bold text-gray-800 mb-6">Premium Cost Breakdown</h3>
+                        <FinancialBarChart
+                            data={{
+                                labels: ['Full Premium', 'Your Cost'],
+                                datasets: [
+                                    {
+                                        label: 'Subsidy Covered',
+                                        data: [0, result.subsidyAmount],
+                                        backgroundColor: '#10B981', // Emerald
+                                        stack: 'Stack 0',
+                                    },
+                                    {
+                                        label: 'You Pay',
+                                        data: [result.fullMonthlyPremium, result.monthlyPremiumAfterSubsidy],
+                                        backgroundColor: '#3B82F6', // Blue
+                                        stack: 'Stack 0',
+                                    }
+                                ]
+                            }}
+                            currency={currency}
+                            options={{
+                                plugins: {
+                                    title: { display: true, text: 'Monthly Premium Split' },
+                                },
+                                scales: {
+                                    x: { stacked: true },
+                                    y: { stacked: true }
+                                }
+                            }}
+                        />
+                        <p className="text-xs text-gray-400 mt-4 text-center">
+                            Comparison of total premium vs what you actually pay after subsidies.
+                        </p>
                     </div>
                 }
                 details={calculatorDetails['aca-marketplace-calculator']?.render() || <div className="p-6 text-center text-gray-500">Details coming soon...</div>}

@@ -1,58 +1,62 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import InputWithSlider from '../../common/InputWithSlider';
 import { moneyFormat } from '../../../utils/formatting';
+import CalculatorLayout from '../../common/CalculatorLayout';
+import UnifiedSummary from '../../common/UnifiedSummary';
+import { FinancialCompoundingBarChart, FinancialLoanPieChart } from '../../common/FinancialCharts';
+import CollapsibleAmortizationTable from '../../common/CollapsibleAmortizationTable';
+import { computeLoanAmortization } from '../../../utils/finance';
+import { calculatorDetails } from '../../../data/calculatorDetails';
+import { Calculator, Wallet, Percent, Calendar, Info } from 'lucide-react';
 
 const CarAffordabilityCalculator = ({ currency }) => {
     const [monthlyIncome, setMonthlyIncome] = useState(100000);
-    const [monthlyExpenses, setMonthlyExpenses] = useState(40000);
     const [downPayment, setDownPayment] = useState(200000);
     const [interestRate, setInterestRate] = useState(9);
     const [loanTerm, setLoanTerm] = useState(5); // years
+    const [startDate] = useState(new Date().toISOString().slice(0, 7));
 
-    const [affordableEMI, setAffordableEMI] = useState(0);
-    const [maxCarPrice, setMaxCarPrice] = useState(0);
+    // Rule of thumb: Maximum recommended EMI is 20% of net income
+    const affordableEMI = useMemo(() => monthlyIncome * 0.20, [monthlyIncome]);
 
-    useEffect(() => {
-        const income = parseFloat(monthlyIncome) || 0;
-        const expenses = parseFloat(monthlyExpenses) || 0;
-        const dp = parseFloat(downPayment) || 0;
+    const results = useMemo(() => {
         const rate = parseFloat(interestRate) || 0;
         const term = parseFloat(loanTerm) || 0;
+        const dp = parseFloat(downPayment) || 0;
 
-        // Rule of thumb: EMI should not exceed 15-20% of net income
-        // Or surplus - buffer. Let's use 20% of income as a safe heuristic or (Income - Expenses) * 0.5
-        // Let's use 15% rule (20/4/10 rule uses 20% down, 4 years, <10% income)
+        const r = rate / 12 / 100;
+        const n = term * 12;
 
-        // Let's allow user to see what they "can" afford based on disposable income.
-        // Disposable = Income - Expenses.
-        // Safe EMI = Disposable * 0.5 (Conservative)
-
-        // Let's use 20% of gross income as maximum recommended EMI. 
-        const maxEMI = income * 0.20;
-
-        setAffordableEMI(maxEMI);
-
-        // Calculate Loan Amount from EMI
-        // EMI = [P x R x (1+R)^N]/[(1+R)^N-1]
-        // P = [EMI * ((1+R)^N - 1)] / [R * (1+R)^N]
-
+        let loanAmount = 0;
         if (rate > 0 && term > 0) {
-            const r = rate / 12 / 100;
-            const n = term * 12;
-            const loanAmount = (maxEMI * (Math.pow(1 + r, n) - 1)) / (r * Math.pow(1 + r, n));
-            setMaxCarPrice(loanAmount + dp);
+            loanAmount = (affordableEMI * (Math.pow(1 + r, n) - 1)) / (r * Math.pow(1 + r, n));
         } else if (term > 0) {
-            const loanAmount = maxEMI * term * 12;
-            setMaxCarPrice(loanAmount + dp);
-        } else {
-            setMaxCarPrice(dp);
+            loanAmount = affordableEMI * n;
         }
 
-    }, [monthlyIncome, monthlyExpenses, downPayment, interestRate, loanTerm]);
+        const maxCarPrice = loanAmount + dp;
 
-    return (
-        <div className="flex flex-col md:flex-row gap-8">
-            <div className="flex-1 space-y-6">
+        // Compute a sample amortization schedule for this affordable loan
+        const amortization = computeLoanAmortization({
+            principal: loanAmount,
+            annualRate: rate,
+            years: term,
+            emi: affordableEMI,
+            startDate
+        });
+
+        return {
+            maxCarPrice,
+            loanAmount,
+            amortization
+        };
+    }, [affordableEMI, downPayment, interestRate, loanTerm, startDate]);
+
+    const { maxCarPrice, loanAmount, amortization } = results;
+
+    const inputs = (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-6">
                 <InputWithSlider
                     label="Monthly Net Income"
                     value={monthlyIncome}
@@ -61,6 +65,7 @@ const CarAffordabilityCalculator = ({ currency }) => {
                     max={1000000}
                     step={5000}
                     currency={currency}
+                    icon={Wallet}
                 />
                 <InputWithSlider
                     label="Down Payment Saving"
@@ -70,53 +75,106 @@ const CarAffordabilityCalculator = ({ currency }) => {
                     max={2000000}
                     step={10000}
                     currency={currency}
+                    icon={Calculator}
                 />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <InputWithSlider
-                        label="Interest Rate"
-                        value={interestRate}
-                        onChange={setInterestRate}
-                        min={1}
-                        max={15}
-                        step={0.1}
-                        symbol="%"
-                    />
-                    <InputWithSlider
-                        label="Loan Term (Years)"
-                        value={loanTerm}
-                        onChange={setLoanTerm}
-                        min={1}
-                        max={10}
-                        step={1}
-                    />
+            </div>
+            <div className="space-y-6">
+                <InputWithSlider
+                    label="Interest Rate"
+                    value={interestRate}
+                    onChange={setInterestRate}
+                    min={1}
+                    max={15}
+                    step={0.1}
+                    symbol="%"
+                    icon={Percent}
+                />
+                <InputWithSlider
+                    label="Loan Term (Years)"
+                    value={loanTerm}
+                    onChange={setLoanTerm}
+                    min={1}
+                    max={10}
+                    step={1}
+                    icon={Calendar}
+                />
+            </div>
+        </div>
+    );
+
+    const summary = (
+        <div className="space-y-6">
+            <div className="bg-gradient-to-br from-indigo-600 to-purple-700 p-8 rounded-3xl text-white shadow-xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-white/20 transition-all duration-700"></div>
+
+                <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 divide-y md:divide-y-0 md:divide-x divide-white/20">
+                    <div className="pb-6 md:pb-0">
+                        <p className="text-sm font-bold text-indigo-100 uppercase tracking-widest mb-2">Max Affordable Car Price</p>
+                        <p className="text-5xl font-black">{moneyFormat(maxCarPrice, currency)}</p>
+                    </div>
+                    <div className="pt-6 md:pt-0 md:pl-8">
+                        <p className="text-sm font-bold text-indigo-100 uppercase tracking-widest mb-2">Recommended Max EMI</p>
+                        <p className="text-3xl font-bold">{moneyFormat(affordableEMI, currency)} <span className="text-lg opacity-60">/mo</span></p>
+                        <p className="text-xs text-indigo-200 mt-2 font-medium opacity-80">(Based on 20% rule of thumb)</p>
+                    </div>
                 </div>
             </div>
 
-            <div className="flex-1 space-y-6">
-                <div className="bg-gradient-to-br from-indigo-600 to-purple-700 p-6 rounded-2xl text-white shadow-lg">
-                    <h3 className="text-lg font-medium text-indigo-100 mb-4">Affordability Check</h3>
-                    <div className="space-y-6">
-                        <div>
-                            <p className="text-sm text-indigo-200 mb-1">Max Affordable Car Price</p>
-                            <p className="text-4xl font-bold">
-                                {moneyFormat(maxCarPrice, currency)}
-                            </p>
+            <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 text-sm text-blue-800 flex gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg h-fit"><Info size={16} /></div>
+                <p className="leading-relaxed">
+                    <strong>Financial Wisdom:</strong> Experts recommend the 20/4/10 rule: put <strong>20%</strong> down, finance for no more than <strong>4 years</strong>, and keep total car costs under <strong>10%</strong> of your gross income. This tool uses a more flexible 20% net income limit.
+                </p>
+            </div>
+        </div>
+    );
+
+    return (
+        <CalculatorLayout
+            inputs={inputs}
+            summary={summary}
+            charts={
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-4">
+                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                        <h4 className="text-sm font-bold text-gray-700 mb-6 uppercase tracking-wider">Purchase Funding Breakdown</h4>
+                        <div className="h-[300px]">
+                            <FinancialLoanPieChart
+                                principal={loanAmount}
+                                totalInterest={amortization.finalTotalInterest}
+                                fees={0}
+                                currency={currency}
+                                labels={{ invested: "Loan Amount", gain: "Down Payment" }}
+                                customData={[
+                                    { name: "Down Payment", value: downPayment, color: "#10b981" },
+                                    { name: "Loan Amount", value: loanAmount, color: "#6366f1" }
+                                ]}
+                            />
                         </div>
-                        <div className="pt-6 border-t border-indigo-500/30">
-                            <p className="text-sm text-indigo-200 mb-1">Recommended Max EMI (20% rule)</p>
-                            <p className="text-2xl font-semibold">
-                                {moneyFormat(affordableEMI, currency)} /mo
-                            </p>
+                    </div>
+                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                        <h4 className="text-sm font-bold text-gray-700 mb-6 uppercase tracking-wider">Projected Loan Repayment</h4>
+                        <div className="h-[300px]">
+                            <FinancialCompoundingBarChart
+                                data={amortization.rows}
+                                currency={currency}
+                                type="loan"
+                            />
                         </div>
                     </div>
                 </div>
-                <div className="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-xl border border-blue-100 dark:border-blue-800/20 text-sm text-blue-800 dark:text-blue-300">
-                    <p>
-                        <strong>Note:</strong> This calculation assumes you shouldn't spend more than 20% of your net income on car payments.
-                    </p>
+            }
+            table={
+                <div className="mt-8 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <h4 className="text-lg font-bold text-gray-800 mb-6">Estimated Amortization Schedule (Max Loan)</h4>
+                    <CollapsibleAmortizationTable
+                        yearlyData={amortization.rows}
+                        monthlyData={amortization.monthlyRows}
+                        currency={currency}
+                    />
                 </div>
-            </div>
-        </div>
+            }
+            details={calculatorDetails['car-affordability-calculator']?.render() || <div className="text-gray-500 italic">Affordability guidelines help you avoid being "car poor" by ensuring your vehicle expenses don't consume too much of your monthly budget.</div>}
+        />
     );
 };
 

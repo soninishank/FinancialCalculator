@@ -329,7 +329,7 @@ export const FinancialCompoundingBarChart = ({ data, currency, type = 'investmen
     );
 };
 
-export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, years }) => {
+export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, years, customLabels = {} }) => {
     // --- COLORS ---
     const COLOR_INVESTED = CHART_COLORS.SECONDARY; // Blue/Indigo
     const COLOR_RETURNS = CHART_COLORS.PRIMARY;  // Teal
@@ -345,22 +345,22 @@ export const FinancialInvestmentPieChart = ({ invested, gain, total, currency, y
 
     // Configuration based on Profit vs Loss
     const chartConfig = isLoss ? {
-        labels: ["Remaining Value", "Loss"],
+        labels: [customLabels.total || "Remaining Value", customLabels.loss || "Loss"],
         data: [total, lossAmount], // Total (Remaining) + Loss = Initial Invested
         backgroundColor: [COLOR_INVESTED, COLOR_LOSS],
         hoverBackgroundColor: [HOVER_INVESTED, HOVER_LOSS],
         legendLabels: [
-            { label: "Remaining Value", val: total, color: COLOR_INVESTED },
-            { label: "Loss", val: lossAmount, color: COLOR_LOSS }
+            { label: customLabels.total || "Remaining Value", val: total, color: COLOR_INVESTED },
+            { label: customLabels.loss || "Loss", val: lossAmount, color: COLOR_LOSS }
         ]
     } : {
-        labels: ["Invested Amount", "Est. Returns"],
+        labels: [customLabels.invested || "Invested Amount", customLabels.gain || "Est. Returns"],
         data: [invested, gain],
         backgroundColor: [COLOR_INVESTED, COLOR_RETURNS],
         hoverBackgroundColor: [HOVER_INVESTED, HOVER_RETURNS],
         legendLabels: [
-            { label: "Invested Amount", val: invested, color: COLOR_INVESTED },
-            { label: "Est. Returns", val: gain, color: COLOR_RETURNS }
+            { label: customLabels.invested || "Invested Amount", val: invested, color: COLOR_INVESTED },
+            { label: customLabels.gain || "Est. Returns", val: gain, color: COLOR_RETURNS }
         ]
     };
 

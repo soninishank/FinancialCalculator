@@ -11,13 +11,14 @@ export default function UnifiedSummary({
     title = "Break-up of Maturity Value",
     customMetrics = [],
     tax = null,
-    inflation = null
+    inflation = null,
+    labels = {} // { invested: "Principal", gain: "Total Interest", total: "Total Payment" }
 }) {
     // Default metrics if none provided
     let metrics = customMetrics.length > 0 ? customMetrics : [
-        { label: "Total Investment", value: invested, color: "text-gray-800", bgColor: "" },
-        { label: "Interest Earned", value: gain, color: "text-teal-700", bgColor: "bg-teal-50/30" },
-        { label: "Maturity Value", value: total, color: "text-indigo-700", bgColor: "bg-indigo-50/30", subtext: `After ${years} Years` }
+        { label: labels.invested || "Total Investment", value: invested, color: "text-gray-800", bgColor: "" },
+        { label: labels.gain || "Interest Earned", value: gain, color: "text-teal-700", bgColor: "bg-teal-50/30" },
+        { label: labels.total || "Maturity Value", value: total, color: "text-indigo-700", bgColor: "bg-indigo-50/30", subtext: labels.totalSubtext || `After ${years} Years` }
     ];
 
     if (tax && tax.applied) {
@@ -68,6 +69,7 @@ export default function UnifiedSummary({
                             total={total}
                             currency={currency}
                             years={years}
+                            customLabels={labels}
                         />
                     </div>
                 </div>
