@@ -7,16 +7,16 @@ import Script from 'next/script';
 export const metadata = {
     title: {
         template: '%s | FinCalc',
-        default: 'FinCalc - Premium Financial Calculators (SIP, EMI, Tax)',
+        default: 'FinCalc - Personal Finance Workspace',
     },
-    description: "Access premium, free online financial calculators for SIP, Home Loan EMI, Income Tax (New & Old Regime), and Retirement planning. FinCalc provides professional-grade investment tools for global and Indian investors.",
+    description: "FinCalc is a personal finance workspace for planning, tracking, decision support, and modeling. Use dashboards, saved tools, workflows, and targeted calculators in one product.",
     manifest: '/manifest.json',
     metadataBase: new URL('https://www.hashmatic.in'),
     openGraph: {
         type: 'website',
         url: 'https://www.hashmatic.in/',
-        title: 'FinCalc - Free Financial & Investment Planning Tools',
-        description: "Accurate financial calculators for SIP, Loans, Taxes, and Wealth planning. Simple, powerful, and ad-free.",
+        title: 'FinCalc - Personal Finance Workspace',
+        description: "Plan, track, and model money decisions with dashboards, workflows, saved tools, and finance calculators.",
         images: [
             {
                 url: 'https://www.hashmatic.in/opengraph-image',
@@ -28,8 +28,8 @@ export const metadata = {
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'FinCalc - Professional Financial Calculators',
-        description: "Plan your financial future with FinCalc's suite of investment and loan tools.",
+        title: 'FinCalc - Personal Finance Workspace',
+        description: "Use a broader finance workspace for planning, tracking, and modeling key money decisions.",
         images: ['https://www.hashmatic.in/opengraph-image'],
     },
 };
@@ -84,31 +84,43 @@ export default function RootLayout({ children }) {
                             {
                                 "@type": "SiteNavigationElement",
                                 "position": 1,
-                                "name": "SIP Calculator",
-                                "url": "https://www.hashmatic.in/calculators/pure-sip"
+                                "name": "Dashboard",
+                                "url": "https://www.hashmatic.in/hub"
                             },
                             {
                                 "@type": "SiteNavigationElement",
                                 "position": 2,
-                                "name": "Income Tax Calculator",
-                                "url": "https://www.hashmatic.in/calculators/india-tax"
+                                "name": "Track",
+                                "url": "https://www.hashmatic.in/track"
                             },
                             {
                                 "@type": "SiteNavigationElement",
                                 "position": 3,
-                                "name": "Home Loan EMI Calculator",
-                                "url": "https://www.hashmatic.in/calculators/advanced-home-loan"
+                                "name": "Learn",
+                                "url": "https://www.hashmatic.in/learn"
                             },
                             {
                                 "@type": "SiteNavigationElement",
                                 "position": 4,
-                                "name": "FIRE Planner",
-                                "url": "https://www.hashmatic.in/calculators/ultimate-fire-planner"
+                                "name": "My Tools",
+                                "url": "https://www.hashmatic.in/my-tools"
                             },
                             {
                                 "@type": "SiteNavigationElement",
                                 "position": 5,
-                                "name": "All Calculators",
+                                "name": "Money Tools",
+                                "url": "https://www.hashmatic.in/calculators"
+                            },
+                            {
+                                "@type": "SiteNavigationElement",
+                                "position": 6,
+                                "name": "FinCalc Pro",
+                                "url": "https://www.hashmatic.in/pro"
+                            },
+                            {
+                                "@type": "SiteNavigationElement",
+                                "position": 7,
+                                "name": "All Money Tools",
                                 "url": "https://www.hashmatic.in/calculators"
                             }
                         ]

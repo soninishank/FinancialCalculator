@@ -14,6 +14,7 @@ const path = require('path');
 
 const CALCULATORS_DIR = path.join(__dirname, '../../src/components/calculators');
 const ISSUES = [];
+const SHOULD_FIX = process.argv.includes('--fix');
 
 // ANSI color codes
 const RED = '\x1b[31m';
@@ -47,30 +48,29 @@ function findJSFiles(dir, fileList = []) {
  */
 function checkUnsafeDivision(content, filePath) {
     const lines = content.split('\n');
+    let modified = false;
 
     lines.forEach((line, index) => {
         // Skip comments
         if (line.trim().startsWith('//') || line.trim().startsWith('*')) return;
 
         // Pattern: variable / variable (not in comments)
-        // Matches things like: a / b, obj.prop / obj.prop, result.newRegime.tax / Math.max(...)
         const divisionPattern = /([\w]+(?:\.[\w]+)*)\s*\/\s*([\w]+(?:\.[\w]+)*)/g;
         let match;
 
         while ((match = divisionPattern.exec(line)) !== null) {
+            const fullMatch = match[0];
             const divisor = match[2];
 
-            // Skip if it's clearly a constant number (integer or decimal)
+            // Skip if it's clearly a constant number
             if (/^\d+(\.\d+)?$/.test(divisor)) continue;
 
-            // Skip if it's in a string or comment
             const beforeMatch = line.substring(0, match.index);
             if (beforeMatch.includes('//') || beforeMatch.includes('/*')) continue;
             if (beforeMatch.split('"').length % 2 === 0) continue; // Inside string
             if (beforeMatch.split("'").length % 2 === 0) continue; // Inside string
             if (beforeMatch.split('`').length % 2 === 0) continue; // Inside template literal
 
-            // Check if there's a zero check nearby (within 5 lines before)
             const contextStart = Math.max(0, index - 5);
             const contextLines = lines.slice(contextStart, index + 1).join('\n');
 
@@ -96,9 +96,17 @@ function checkUnsafeDivision(content, filePath) {
                     code: line.trim(),
                     message: `Division by '${divisor}' without zero check`
                 });
+
+                if (SHOULD_FIX) {
+                    const fixedLine = line.replace(fullMatch, `(${divisor} !== 0 ? ${fullMatch} : 0)`);
+                    lines[index] = fixedLine;
+                    modified = true;
+                }
             }
         }
     });
+
+    return { content: lines.join('\n'), modified };
 }
 
 /**
@@ -156,14 +164,19 @@ function checkMissingDefaults(content, filePath) {
  */
 function checkNaNIssues(content, filePath) {
     const lines = content.split('\n');
+    let modified = false;
 
     lines.forEach((line, index) => {
-        // Check for .toFixed() without NaN check
-        if (line.includes('.toFixed(') && !line.includes('isNaN')) {
+        if (line.includes('.toFixed(')) {
             const contextStart = Math.max(0, index - 3);
             const contextLines = lines.slice(contextStart, index + 1).join('\n');
 
-            if (!contextLines.includes('isNaN') && !contextLines.includes('> 0 ?')) {
+            const hasGuard = contextLines.includes('isNaN') ||
+                contextLines.includes('isFinite') ||
+                contextLines.includes('> 0 ?') ||
+                contextLines.includes('?');
+
+            if (!hasGuard) {
                 ISSUES.push({
                     type: 'POTENTIAL_NAN',
                     severity: 'WARNING',
@@ -172,9 +185,23 @@ function checkNaNIssues(content, filePath) {
                     code: line.trim(),
                     message: 'Using .toFixed() without NaN check - could display "NaN"'
                 });
+
+                if (SHOULD_FIX) {
+                    const toFixedRegex = /([\w\d\.]+(?:\?\.[\w\d]+)*)\.toFixed\((\d+)\)/g;
+                    const newLine = line.replace(toFixedRegex, (match, variable, decimals) => {
+                        return `Number.isFinite(${variable}) ? ${match} : "0.${'0'.repeat(parseInt(decimals))}"`;
+                    });
+
+                    if (newLine !== line) {
+                        lines[index] = newLine;
+                        modified = true;
+                    }
+                }
             }
         }
     });
+
+    return { content: lines.join('\n'), modified };
 }
 
 /**
@@ -184,18 +211,25 @@ function checkMissingImports(content, filePath) {
     const lines = content.split('\n');
     const first50Lines = lines.slice(0, 50).join('\n');
 
+    // If the file has a default React import, React.useState etc. are all covered
+    const hasDefaultReactImport = /import\s+React\b/.test(first50Lines);
+
     const hooks = ['useState', 'useEffect', 'useMemo', 'useCallback', 'useRef', 'useContext'];
     hooks.forEach(hook => {
-        // If hook is used but not in the first 50 lines (where imports usually are)
-        const isUsed = new RegExp(`\\b${hook}\\b`).test(content);
-        const isImported = new RegExp(`import.*\\b${hook}\\b.*from ['"]react['"]`).test(first50Lines);
+        // Check if the hook is used as a bare call (not React.hook)
+        const isUsedBare = new RegExp(`(?<!React\\.)\\b${hook}\\s*\\(`).test(content);
+        if (!isUsedBare) return; // Only React.hook() usage — no bare import needed
 
-        if (isUsed && !isImported) {
+        const isImported =
+            hasDefaultReactImport ||
+            new RegExp(`import.*\\b${hook}\\b.*from ['"]react['"]`).test(first50Lines);
+
+        if (!isImported) {
             ISSUES.push({
                 type: 'MISSING_IMPORT',
                 severity: 'ERROR',
                 file: path.relative(process.cwd(), filePath),
-                line: 1, // Reference first line for import errors
+                line: 1,
                 code: `hook: ${hook}`,
                 message: `React hook '${hook}' is used but not imported from 'react'`
             });
@@ -219,22 +253,37 @@ function lintCalculators() {
     console.log(`Found ${files.length} calculator files\n`);
 
     files.forEach(filePath => {
-        const content = fs.readFileSync(filePath, 'utf8');
+        let content = fs.readFileSync(filePath, 'utf8');
+        let fileModified = false;
 
-        checkUnsafeDivision(content, filePath);
+        const divRes = checkUnsafeDivision(content, filePath);
+        if (divRes.modified) {
+            content = divRes.content;
+            fileModified = true;
+        }
+
         checkHardcodedCurrency(content, filePath);
         checkMissingDefaults(content, filePath);
-        checkNaNIssues(content, filePath);
+
+        const nanRes = checkNaNIssues(content, filePath);
+        if (nanRes.modified) {
+            content = nanRes.content;
+            fileModified = true;
+        }
+
         checkMissingImports(content, filePath);
+
+        if (fileModified && SHOULD_FIX) {
+            fs.writeFileSync(filePath, content);
+            console.log(`${GREEN}FIXED:${RESET} ${path.relative(process.cwd(), filePath)}`);
+        }
     });
 
-    // Print results
     if (ISSUES.length === 0) {
         console.log(`${GREEN}✅ No issues found! All calculators pass linting.${RESET}\n`);
         process.exit(0);
     }
 
-    // Group by severity
     const errors = ISSUES.filter(i => i.severity === 'ERROR');
     const warnings = ISSUES.filter(i => i.severity === 'WARNING');
 
@@ -256,17 +305,19 @@ function lintCalculators() {
         });
     }
 
-    // Summary
     console.log(`\n${'='.repeat(60)}`);
     console.log(`${RED}Errors: ${errors.length}${RESET} | ${YELLOW}Warnings: ${warnings.length}${RESET}`);
     console.log(`${'='.repeat(60)}\n`);
 
-    // Exit with error code if there are errors
-    if (errors.length > 0) {
+    if (SHOULD_FIX) {
+        console.log(`${GREEN}Autofix complete. Please review the changes.${RESET}\n`);
+    }
+
+    if (errors.length > 0 && !SHOULD_FIX) {
         console.log(`${RED}❌ Linting failed. Please fix the errors above.${RESET}\n`);
         process.exit(1);
     } else {
-        console.log(`${GREEN}✅ Linting passed with warnings.${RESET}\n`);
+        console.log(`${GREEN}✅ Linting passed (or fixes applied).${RESET}\n`);
         process.exit(0);
     }
 }

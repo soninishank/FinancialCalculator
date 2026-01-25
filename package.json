@@ -33,6 +33,7 @@
     "react-chartjs-2": "^5.3.1",
     "react-dom": "^18.3.1",
     "recharts": "^3.6.0",
+    "tesseract.js": "^7.0.0",
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5"
   },
@@ -43,6 +44,7 @@
     "test:watch": "jest --watch",
     "dev": "concurrently -k -c \"bgBlue.bold,bgMagenta.bold\" \"npm run test:watch\" \"next dev\"",
     "lint": "next lint",
+    "verify": "npm run build && npm test -- --runInBand",
     "lint:calculators": "node scripts/qa/lint-calculators.js",
     "scraper": "node server/app.js",
     "dev:scraper": "NODE_NO_WARNINGS=1 nodemon -q server/app.js",

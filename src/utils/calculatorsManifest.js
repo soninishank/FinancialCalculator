@@ -716,6 +716,14 @@ const calculators = [
     keywords: 'sa tax calculator, sars tax calculator, paye calculator sa, take home pay south africa, tax rebate sa',
     category: 'Regional',
     component: 'SouthAfricaTaxCalculator'
+  },
+  {
+    slug: 'net-worth-tracker',
+    title: 'Net Worth Tracker',
+    description: 'Track your Net Worth over time. Add your assets and liabilities to calculate your total net worth and visualize your financial progress without linking accounts.',
+    keywords: 'net worth calculator, net worth tracker, asset liability, financial wealth tracking, manual net worth, csv upload net worth',
+    category: 'Wealth',
+    component: 'NetWorthTracker'
   }
 ];
 

@@ -2,19 +2,14 @@
 
 // Default values (decimal for rates)
 export const DEFAULT_LTCG_TAX_RATE_DECIMAL = 0.10; // 10%
-export const DEFAULT_LTCG_EXEMPTION = 100000; // ₹1,00,000 fallback
+export const DEFAULT_LTCG_EXEMPTION = 0;
 
 // Hard limits (change if product rules differ)
 export const MAX_LTCG_TAX_RATE_DECIMAL = 0.35; // 35% maximum enforced
-export const MAX_LTCG_EXEMPTION_FALLBACK = 200000; // ₹2,00,000 maximum exemption by default
+export const MAX_LTCG_EXEMPTION_FALLBACK = null;
 
-// Per-currency default exemptions (used as FALLBACKS and as max per currency if not overridden)
-export const LTCG_EXEMPTION_BY_CURRENCY = {
-  INR: 200000, // ₹2,00,000
-  USD: 100000,
-  EUR: 100000,
-  GBP: 100000
-};
+// Shared calculators are jurisdiction-agnostic, so there is no currency-based exemption default.
+export const LTCG_EXEMPTION_BY_CURRENCY = {};
 
 // Helper: get configured/currency exemption fallback
 export function getLTCGExemption(currency) {
@@ -80,19 +75,18 @@ export function calculateLTCG(
   taxRateDecimal = clamp(taxRateDecimal, 0, maxTaxRateDecimal);
 
   // Determine maximum allowed exemption (per-currency or override)
-  const perCurrencyExemption = getLTCGExemption(currency);
   const maxExemptionAllowed = typeof optMaxExemption === 'number'
-    ? optMaxExemption
-    : perCurrencyExemption ?? MAX_LTCG_EXEMPTION_FALLBACK;
+    ? Math.max(0, optMaxExemption)
+    : MAX_LTCG_EXEMPTION_FALLBACK;
 
   // Exemption used only if exemptionApplied is true
   let exemptionUsed = 0;
   if (exemptionApplied) {
     let candidate = Number(rawExemptionLimit) || 0;
-    // Enforce non-negative
     candidate = Math.max(0, candidate);
-    // Clamp to maximum allowed
-    exemptionUsed = clamp(candidate, 0, maxExemptionAllowed);
+    exemptionUsed = maxExemptionAllowed === null
+      ? candidate
+      : clamp(candidate, 0, maxExemptionAllowed);
   }
 
   // Taxable gain after exemption

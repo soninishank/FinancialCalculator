@@ -62,6 +62,7 @@ export const importCalculatorBySlug = (slug) => {
         case 'car-affordability-calculator': return import('../components/calculators/loans/CarAffordabilityCalculator');
         case 'emergency-fund-calculator': return import('../components/calculators/savings/EmergencyFundCalculator');
         case 'hourly-to-salary': return import('../components/calculators/utils/HourlyToSalaryCalculator');
+        case 'net-worth-tracker': return import('../components/calculators/savings/NetWorthTracker');
 
         // High Traffic / Daily Use
         case 'salary-hike': return import('../components/calculators/income/SalaryHikeCalculator');

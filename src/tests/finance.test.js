@@ -541,7 +541,7 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
 
         test('calculateRealRate with return < inflation', () => {
             // Return 4%, Inflation 5%
-            expect(calculateRealRate(4, 5)).toBe(0); // App standard currently
+            expect(calculateRealRate(4, 5)).toBeCloseTo(-0.95, 2);
         });
     });
 });

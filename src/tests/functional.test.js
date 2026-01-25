@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, act } from '@testing-library/react';
+import { render, screen, act, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { TextEncoder, TextDecoder } from 'util';
 
@@ -7,6 +7,8 @@ import { TextEncoder, TextDecoder } from 'util';
 import RecurringDeposit from '../components/calculators/savings/RecurringDeposit';
 import SWPCalculator from '../components/calculators/investments/SWPCalculator';
 import GoalPlanner from '../components/calculators/investments/GoalPlanner';
+import ExpenseRatioCalculator from '../components/calculators/investments/ExpenseRatioCalculator';
+import { downloadPDF } from '../utils/export';
 
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
@@ -89,5 +91,26 @@ describe('Functional Verification Tests', () => {
         await act(async () => { await new Promise(r => setTimeout(r, 0)); });
         const bodyText = document.body.textContent;
         expect(bodyText).not.toMatch(/NaN/);
+        expect(bodyText).not.toMatch(/Infinity/);
+    });
+
+    test('GoalPlanner exports schedule data without NaN values', async () => {
+        render(<GoalPlanner currency="INR" />);
+        await act(async () => { await new Promise(r => setTimeout(r, 0)); });
+
+        downloadPDF.mockClear();
+        fireEvent.click(screen.getAllByText(/Export PDF/i)[0]);
+
+        expect(downloadPDF).toHaveBeenCalled();
+        const [rows] = downloadPDF.mock.calls[0];
+        expect(JSON.stringify(rows)).not.toMatch(/NaN/);
+    });
+
+    test('ExpenseRatioCalculator shows multiplicative effective rate instead of simple subtraction', async () => {
+        render(<ExpenseRatioCalculator currency="INR" />);
+        await act(async () => { await new Promise(r => setTimeout(r, 0)); });
+
+        expect(screen.getByText(/10\.89% effective/i)).toBeInTheDocument();
+        expect(screen.queryByText(/11\.0% effective/i)).not.toBeInTheDocument();
     });
 });

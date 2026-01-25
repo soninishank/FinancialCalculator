@@ -153,7 +153,7 @@ export default function GSTCalculator({ currency = 'INR' }) {
                                                     label: function (context) {
                                                         let value = context.raw;
                                                         let total = context.chart._metasets[context.datasetIndex].total;
-                                                        let percentage = (value / total * 100).toFixed(1) + '%';
+                                                        let percentage = (total > 0 ? (value / total * 100) : 0).toFixed(1) + '%';
                                                         return ` ${context.label}: ${moneyFormat(value, currency)} (${percentage})`;
                                                     }
                                                 }

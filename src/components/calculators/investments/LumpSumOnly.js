@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { downloadPDF } from "../../../utils/export";
+import { downloadCSV, downloadPDF } from "../../../utils/export";
 
 // --- IMPORTS ---
 import { FinancialCompoundingBarChart } from "../../common/FinancialCharts";
@@ -10,6 +10,9 @@ import InflationToggle from "../../common/InflationToggle";
 import MonthYearPicker from "../../common/MonthYearPicker";
 import CollapsibleInvestmentTable from "../../common/CollapsibleInvestmentTable";
 import UnifiedSummary from "../../common/UnifiedSummary";
+import ScenarioComparison from "../../common/ScenarioComparison";
+import InvestmentInsights from "../../common/InvestmentInsights";
+import InvestmentGoalTracker from "../../common/InvestmentGoalTracker";
 
 import CalculatorLayout from "../../common/CalculatorLayout"; // <--- NEW LAYOUT
 import { calculatorDetails } from "../../../data/calculatorDetails";
@@ -37,6 +40,7 @@ export default function LumpSumOnly({ currency, setCurrency }) {
     lumpSum, setLumpSum,
     annualRate, setAnnualRate,
     years, setYears,
+    targetAmount, setTargetAmount,
     isTaxApplied, setIsTaxApplied,
     ltcgRate, setLtcgRate,
     isExemptionApplied, setIsExemptionApplied,
@@ -91,6 +95,36 @@ export default function LumpSumOnly({ currency, setCurrency }) {
   const realValue = useMemo(() => {
     return calculateRealValue(totalFuture, inflationRate, years);
   }, [totalFuture, inflationRate, years]);
+
+  const scenarios = useMemo(() => {
+    const currentRate = Number(annualRate) || 0;
+    const scenarioRates = [
+      { type: "conservative", label: "Conservative", rate: Math.max(0, currentRate - 2) },
+      { type: "base", label: "Base Case", rate: currentRate },
+      { type: "aggressive", label: "Aggressive", rate: currentRate + 2 },
+    ];
+
+    return scenarioRates.map((scenario) => {
+      const schedule = computeYearlySchedule({
+        monthlySIP: 0,
+        lumpSum: Number(lumpSum),
+        annualRate: scenario.rate,
+        totalYears: Number(years),
+        calculationMode: "duration",
+        startDate,
+      });
+      const scenarioRows = schedule?.rows || [];
+      const finalRow = scenarioRows[scenarioRows.length - 1] || { totalInvested: 0, overallValue: 0 };
+      const scenarioTotal = finalRow.overallValue || 0;
+      const scenarioInvested = finalRow.totalInvested || 0;
+
+      return {
+        ...scenario,
+        total: scenarioTotal,
+        gain: scenarioTotal - scenarioInvested,
+      };
+    });
+  }, [annualRate, lumpSum, years, startDate]);
 
 
 
@@ -194,6 +228,26 @@ export default function LumpSumOnly({ currency, setCurrency }) {
       charts={<FinancialCompoundingBarChart data={yearlyRows} currency={currency} />}
       table={
         <div className="mt-8">
+          <ScenarioComparison scenarios={scenarios} currency={currency} />
+          <InvestmentInsights
+            currency={currency}
+            yearlyRows={yearlyRows}
+            monthlyRows={monthlyRows}
+            invested={investedTotal}
+            total={totalFuture}
+            postTaxValue={isTaxApplied ? postTaxFuture : null}
+          />
+          <InvestmentGoalTracker
+            currency={currency}
+            targetAmount={targetAmount}
+            setTargetAmount={setTargetAmount}
+            finalValue={totalFuture}
+            monthlyRows={monthlyRows}
+            annualRate={annualRate}
+            years={years}
+            strategy="lumpSum"
+            currentLumpSum={lumpSum}
+          />
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
             <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Growth Schedule</h3>
             <div className="flex items-center gap-4 w-full md:w-auto">
@@ -202,8 +256,22 @@ export default function LumpSumOnly({ currency, setCurrency }) {
                   const data = yearlyRows.map(r => [
                     `Year ${r.year}`,
                     Math.round(r.totalInvested),
-                    Math.round(r.interestEarned),
-                    Math.round(r.balance)
+                    Math.round(r.growth),
+                    Math.round(r.balance ?? r.overallValue)
+                  ]);
+                  downloadCSV(data, ['Year', 'Invested', 'Interest', 'Balance'], 'lumpsum_schedule.csv');
+                }}
+                className="text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap"
+              >
+                Export CSV
+              </button>
+              <button
+                onClick={() => {
+                  const data = yearlyRows.map(r => [
+                    `Year ${r.year}`,
+                    Math.round(r.totalInvested),
+                    Math.round(r.growth),
+                    Math.round(r.balance ?? r.overallValue)
                   ]);
                   downloadPDF(data, ['Year', 'Invested', 'Interest', 'Balance'], 'lumpsum_schedule.pdf');
                 }}

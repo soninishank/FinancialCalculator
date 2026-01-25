@@ -36,6 +36,15 @@ import {
 // Local fallbacks if not in constants
 const LOC_MIN_STEP_UP = 0;
 
+function mapGoalPlannerExportRows(rows = []) {
+  return rows.map((row) => [
+    `Year ${row.year}`,
+    Math.round(row.totalInvested ?? row.investment ?? row.invested ?? 0),
+    Math.round(row.growth ?? row.interestEarned ?? 0),
+    Math.round(row.overallValue ?? row.balance ?? 0),
+  ]);
+}
+
 export default function GoalPlanner({ currency, setCurrency }) {
   const {
     targetAmount, setTargetAmount,
@@ -143,12 +152,15 @@ export default function GoalPlanner({ currency, setCurrency }) {
   const requiredSIP = getRequiredSIP(targetSIP, effectiveRate, years);
   const requiredStepUp = getRequiredStepUpSIP(targetStepUp, effectiveRate, years, stepUpPercent);
   const isNegativeRealRate = effectiveRate <= 0 && isInflationAdjusted;
+  const safeRequiredLump = Number.isFinite(requiredLump) && requiredLump >= 0 ? requiredLump : null;
+  const safeRequiredSIP = Number.isFinite(requiredSIP) && requiredSIP >= 0 ? requiredSIP : null;
+  const safeRequiredStepUp = Number.isFinite(requiredStepUp) && requiredStepUp >= 0 ? requiredStepUp : null;
 
   // --- Generate Table Data ---
   const { lumpSumData, lumpSumMonthly, sipData, sipMonthly, stepUpData, stepUpMonthly } = useMemo(() => {
     // 1. Lump Sum
     const { rows: lData, monthlyRows: lDataMonthly } = computeYearlySchedule({
-      lumpSum: requiredLump,
+      lumpSum: safeRequiredLump ?? 0,
       monthlySIP: 0,
       stepUpPercent: 0,
       annualRate: effectiveRate,
@@ -159,7 +171,7 @@ export default function GoalPlanner({ currency, setCurrency }) {
     // 2. SIP
     const { rows: sData, monthlyRows: sDataMonthly } = computeYearlySchedule({
       lumpSum: 0,
-      monthlySIP: requiredSIP,
+      monthlySIP: safeRequiredSIP ?? 0,
       stepUpPercent: 0,
       annualRate: effectiveRate,
       totalYears: years,
@@ -169,7 +181,7 @@ export default function GoalPlanner({ currency, setCurrency }) {
     // 3. Step-Up SIP
     const { rows: suData, monthlyRows: suDataMonthly } = computeYearlySchedule({
       lumpSum: 0,
-      monthlySIP: requiredStepUp,
+      monthlySIP: safeRequiredStepUp ?? 0,
       stepUpPercent: stepUpPercent,
       annualRate: effectiveRate,
       totalYears: years,
@@ -181,7 +193,7 @@ export default function GoalPlanner({ currency, setCurrency }) {
       sipData: sData, sipMonthly: sDataMonthly,
       stepUpData: suData, stepUpMonthly: suDataMonthly
     };
-  }, [years, effectiveRate, requiredLump, requiredSIP, requiredStepUp, stepUpPercent, startDate]);
+  }, [years, effectiveRate, safeRequiredLump, safeRequiredSIP, safeRequiredStepUp, stepUpPercent, startDate]);
 
   const inputs = (
     <div className="space-y-8">
@@ -246,7 +258,7 @@ export default function GoalPlanner({ currency, setCurrency }) {
               <h4 className="font-bold text-amber-800 dark:text-amber-300 text-sm">Inflation Exceeds Returns</h4>
               <p className="text-xs text-amber-700 dark:text-amber-400 mt-1 leading-relaxed">
                 Your inflation rate ({inflationRate}%) is equal to or higher than your expected returns ({annualRate}%).
-                This means your <strong>real returns will be zero or negative</strong>, making it impossible to reach your goal. Consider investments with higher expected returns.
+                This means your <strong>real return is {Number.isFinite(effectiveRate) ? effectiveRate.toFixed(2) : "0.00"}%</strong>. You can still reach the goal with contributions, but the required savings load rises sharply and the plan becomes more sensitive to return assumptions.
               </p>
             </div>
           </div>
@@ -261,24 +273,29 @@ export default function GoalPlanner({ currency, setCurrency }) {
         <div className="bg-indigo-50 border-l-4 border-indigo-500 rounded-xl p-6 shadow-sm">
           <div className="text-xs font-bold text-indigo-600 uppercase">Option 1: Lumpsum investment</div>
           <div className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mt-2">
-            {moneyFormat(Math.round(requiredLump), currency)}
+            {safeRequiredLump === null ? 'Not reachable' : moneyFormat(Math.round(safeRequiredLump), currency)}
           </div>
         </div>
         <div className="bg-emerald-50 border-l-4 border-emerald-500 rounded-xl p-6 shadow-sm">
           <div className="text-xs font-bold text-emerald-600 uppercase">Option 2: Monthly SIP</div>
           <div className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mt-2">
-            {moneyFormat(Math.round(requiredSIP), currency)}
+            {safeRequiredSIP === null ? 'Not reachable' : moneyFormat(Math.round(safeRequiredSIP), currency)}
           </div>
         </div>
         {isStepUpEnabled && (
           <div className="bg-rose-50 border-l-4 border-rose-500 rounded-xl p-6 shadow-sm animate-fade-in">
             <div className="text-xs font-bold text-rose-600 uppercase">Option 3: Step-Up SIP</div>
             <div className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mt-2">
-              {moneyFormat(Math.round(requiredStepUp), currency)}
+              {safeRequiredStepUp === null ? 'Not reachable' : moneyFormat(Math.round(safeRequiredStepUp), currency)}
             </div>
             {stepUpPercent > 0 && (
               <p className="text-xs text-rose-700 mt-1 font-medium">Increases by {stepUpPercent}% every year</p>
             )}
+          </div>
+        )}
+        {isNegativeRealRate && (
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+            These recommendations are using a negative real return assumption. Treat them as stress-case planning numbers, not normal expected-case targets.
           </div>
         )}
       </div>
@@ -345,7 +362,7 @@ export default function GoalPlanner({ currency, setCurrency }) {
               <h4 className="text-md font-bold text-indigo-700">Option 1: Lump Sum Schedule</h4>
               <button
                 onClick={() => {
-                  const data = lumpSumData.map(r => [`Year ${r.year}`, Math.round(r.invested), Math.round(r.interestEarned || r.growth), Math.round(r.overallValue)]);
+                  const data = mapGoalPlannerExportRows(lumpSumData);
                   downloadPDF(data, ['Year', 'Invested', 'Interest', 'Balance'], 'goal_lumpsum_schedule.pdf');
                 }}
                 className="text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-1 rounded-lg transition-colors"
@@ -365,7 +382,7 @@ export default function GoalPlanner({ currency, setCurrency }) {
               <h4 className="text-md font-bold text-emerald-700">Option 2: SIP Schedule</h4>
               <button
                 onClick={() => {
-                  const data = sipData.map(r => [`Year ${r.year}`, Math.round(r.invested), Math.round(r.interestEarned || r.growth), Math.round(r.overallValue)]);
+                  const data = mapGoalPlannerExportRows(sipData);
                   downloadPDF(data, ['Year', 'Invested', 'Interest', 'Balance'], 'goal_sip_schedule.pdf');
                 }}
                 className="text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 py-1 rounded-lg transition-colors"
@@ -386,7 +403,7 @@ export default function GoalPlanner({ currency, setCurrency }) {
                 <h4 className="text-md font-bold text-rose-700">Option 3: Step-Up SIP</h4>
                 <button
                   onClick={() => {
-                    const data = stepUpData.map(r => [`Year ${r.year}`, Math.round(r.invested), Math.round(r.interestEarned || r.growth), Math.round(r.overallValue)]);
+                    const data = mapGoalPlannerExportRows(stepUpData);
                     downloadPDF(data, ['Year', 'Invested', 'Interest', 'Balance'], 'goal_stepup_schedule.pdf');
                   }}
                   className="text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-3 py-1 rounded-lg transition-colors"

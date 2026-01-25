@@ -16,8 +16,15 @@ export async function generateMetadata({ params }) {
     const baseUrl = siteConfig.url;
     const pageUrl = `${baseUrl}/calculators/${slug}`;
 
+    const keywordList = Array.isArray(meta.keywords)
+        ? meta.keywords
+        : String(meta.keywords || '')
+            .split(',')
+            .map((k) => k.trim())
+            .filter(Boolean);
+
     const keywords = [
-        ...meta.keywords,
+        ...keywordList,
         'free online calculator',
         'financial planning tool',
         meta.title.toLowerCase(),
@@ -31,6 +38,18 @@ export async function generateMetadata({ params }) {
         keywords: keywords,
         alternates: {
             canonical: pageUrl,
+        },
+        robots: {
+            index: true,
+            follow: true,
+            nocache: false,
+            googleBot: {
+                index: true,
+                follow: true,
+                'max-video-preview': -1,
+                'max-image-preview': 'large',
+                'max-snippet': -1,
+            },
         },
         openGraph: {
             title: `${meta.title} | ${siteConfig.name}`,
@@ -62,17 +81,27 @@ export default async function Page({ params }) {
 
     const faqs = calculatorFaqs[slug] || [];
 
+    // Map internal categories to accurate Schema.org types
+    const categoryMap = {
+        'Loan': 'FinanceApplication',
+        'Investments': 'FinanceApplication',
+        'Tax': 'FinanceApplication',
+        'Math': 'WebApplication',
+        'Health': 'MedicalWebPage'
+    };
+
+    const appCategory = categoryMap[meta.category] || 'SoftwareApplication';
+
     const schema = {
         "@context": "https://schema.org",
         "@graph": [
             {
                 "@type": "SoftwareApplication",
-                "name": `${siteConfig.name} ${meta.title}`,
+                "name": `${meta.title}`,
+                "operatingSystem": "Web",
+                "applicationCategory": appCategory,
                 "url": `${siteConfig.url}/calculators/${slug}`,
                 "description": meta.description,
-                "applicationCategory": "FinanceApplication",
-                "operatingSystem": "All",
-                "softwareVersion": "2.4.0",
                 "offers": {
                     "@type": "Offer",
                     "price": "0",
@@ -88,11 +117,10 @@ export default async function Page({ params }) {
                     }
                 },
                 "featureList": [
-                    "Real-time calculations",
-                    "Interactive charts",
-                    "Amortization tables",
-                    "PDF export",
-                    "Mobile responsive"
+                    "Instant Calculation",
+                    "Mobile Responsive",
+                    "Free to use",
+                    "No signup required"
                 ]
             },
             {

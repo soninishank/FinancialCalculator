@@ -49,11 +49,13 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
     // --- CALCULATION ---
     const results = useMemo(() => {
         const totalMonths = isDurationInMonths ? duration : duration * 12;
-        const r_m_gross = growthRate / 12 / 100;
+        const annualGrowthFactor = 1 + (growthRate / 100);
+        const annualExpenseFactor = 1 + (expenseRatio / 100);
+        const r_m_gross = Math.pow(annualGrowthFactor, 1 / 12) - 1;
 
-        // Effective net monthly rate
-        const effectiveAnnualRate = growthRate - expenseRatio;
-        const r_m_net = effectiveAnnualRate / 12 / 100;
+        // Expense ratio is charged on assets, so the net growth factor is multiplicative, not additive.
+        const effectiveAnnualRate = annualExpenseFactor !== 0 ? ((annualGrowthFactor / annualExpenseFactor) - 1) * 100 : 0;
+        const r_m_net = annualExpenseFactor !== 0 ? Math.pow(annualGrowthFactor / annualExpenseFactor, 1 / 12) - 1 : 0;
 
         let balanceGross = Number(initialCapital);
         let balanceNet = Number(initialCapital);
@@ -148,6 +150,7 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
             finalNet: balanceNet,
             totalInvested,
             impact: balanceGross - balanceNet,
+            effectiveAnnualRate,
             chartData: { labels: stepLabels, points: dataPoints },
             yearlyData
         };
@@ -266,7 +269,7 @@ export default function ExpenseRatioCalculator({ currency, setCurrency }) {
                             <div className="text-lg font-black text-orange-700">
                                 {moneyFormat(results.finalNet, currency, "word")}
                             </div>
-                            <p className="text-[10px] text-orange-600/70">{!isNaN(growthRate - expenseRatio) ? (growthRate - expenseRatio).toFixed(1) : "0.0"}% effective</p>
+                            <p className="text-[10px] text-orange-600/70">{Number.isFinite(results.effectiveAnnualRate) ? results.effectiveAnnualRate.toFixed(2) : "0.00"}% effective</p>
                         </div>
                     </div>
 

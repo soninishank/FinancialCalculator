@@ -232,9 +232,9 @@ export default function CompareLoans({ currency }) {
                                 </tr>
                                 <tr>
                                     <td className="px-6 py-4 font-semibold">Effective APR</td>
-                                    <td className="px-6 py-4 font-bold">{rate.toFixed(2)}%</td>
-                                    <td className="px-6 py-4 font-bold text-rose-600">{effectiveFlatRate.toFixed(2)}%</td>
-                                    <td className="px-6 py-4 text-rose-600 font-bold">+{(effectiveFlatRate - rate).toFixed(2)}%</td>
+                                    <td className="px-6 py-4 font-bold">{!isNaN(rate) ? rate.toFixed(2) : "0.00"}%</td>
+                                    <td className="px-6 py-4 font-bold text-rose-600">{!isNaN(effectiveFlatRate) ? effectiveFlatRate.toFixed(2) : "0.00"}%</td>
+                                    <td className="px-6 py-4 text-rose-600 font-bold">+{!isNaN(effectiveFlatRate - rate) ? (effectiveFlatRate - rate).toFixed(2) : "0.00"}%</td>
                                 </tr>
                                 <tr className="bg-gray-50 dark:bg-slate-900/50/50">
                                     <td className="px-6 py-4 font-semibold">Total Cost of Loan</td>

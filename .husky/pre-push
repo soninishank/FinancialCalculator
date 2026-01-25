@@ -8,6 +8,29 @@ echo ""
 
 # Check if dev server is running
 SERVER_STARTED_BY_HOOK=false
+
+# Function to safely kill the server on port 3001
+cleanup_server() {
+  if [ "$SERVER_STARTED_BY_HOOK" = true ]; then
+    echo "Stopping background server..."
+    # Kill server and its children (macOS-compatible)
+    if [ ! -z "$SERVER_PID" ]; then
+      pkill -TERM -P $SERVER_PID 2>/dev/null
+      kill $SERVER_PID 2>/dev/null
+    fi
+    
+    # Fallback: force kill anything on port 3001 if it's still there
+    sleep 1
+    if lsof -i:3001 -t >/dev/null; then
+       echo "Force refreshing port 3001..."
+       lsof -ti:3001 | xargs kill -9 2>/dev/null
+    fi
+  fi
+}
+
+# Register cleanup on exit
+trap cleanup_server EXIT
+
 if ! curl -s http://localhost:3001 > /dev/null; then
   echo "Port 3001 is not responding. Building production bundle for testing..."
   # Clean up any stale process first
@@ -16,6 +39,7 @@ if ! curl -s http://localhost:3001 > /dev/null; then
   npm run build
   
   echo "Starting production server on port 3001..."
+  # Start server in background (macOS-compatible, no setsid)
   npx next start -p 3001 > /dev/null 2>&1 &
   SERVER_PID=$!
   SERVER_STARTED_BY_HOOK=true
@@ -32,7 +56,7 @@ if ! curl -s http://localhost:3001 > /dev/null; then
 
   if [ "$RETRY_COUNT" -eq "$MAX_RETRIES" ]; then
     echo "Error: Failed to start dev server after 60 seconds."
-    kill $SERVER_PID
+    cleanup_server # Manual call since trap might not trigger on immediate exit? Actually it should.
     exit 1
   fi
   echo "Server is ready!"
@@ -50,13 +74,7 @@ TEST_URL=http://localhost:3001 node scripts/qa/test-all-calculators.js
 # Capture exit code
 TEST_EXIT_CODE=$?
 
-# Cleanup if server was started by this hook
-if [ "$SERVER_STARTED_BY_HOOK" = true ]; then
-  echo "Stopping background dev server..."
-  # Use pkill -P to kill the process group or just kill the PID
-  pkill -P $SERVER_PID || kill $SERVER_PID
-fi
-
+# Hook validation
 if [ $TEST_EXIT_CODE -ne 0 ]; then
   echo ""
   echo "Tests failed! Push blocked."

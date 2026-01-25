@@ -40,3 +40,24 @@ export const prefetchPDF = () => {
   import("jspdf");
   import("jspdf-autotable");
 };
+
+export function downloadCSV(data, headers, filename = "investment_report.csv") {
+  const escapeCell = (value) => {
+    const raw = value === null || value === undefined ? "" : String(value);
+    const escaped = raw.replace(/"/g, '""');
+    return /[",\n]/.test(escaped) ? `"${escaped}"` : escaped;
+  };
+
+  const rows = [headers, ...data];
+  const csvContent = rows.map((row) => row.map(escapeCell).join(",")).join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}

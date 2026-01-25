@@ -24,7 +24,7 @@ export function useCalculatorState(defaults = {}) {
     const [isTaxApplied, setIsTaxApplied] = useUrlState('tax', false);
     const [ltcgRate, setLtcgRate] = useUrlState('ltcg', DEFAULT_LTCG_TAX_RATE_DECIMAL * 100);
     const [isExemptionApplied, setIsExemptionApplied] = useUrlState('exemp', false);
-    const [exemptionLimit, setExemptionLimit] = useUrlState('exempLim', 100000);
+    const [exemptionLimit, setExemptionLimit] = useUrlState('exempLim', 0);
 
     // Inflation Configuration
     const [isInflationAdjusted, setIsInflationAdjusted] = useUrlState('inflAdj', false);

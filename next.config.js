@@ -2,6 +2,10 @@
 const nextConfig = {
     reactStrictMode: true,
     output: 'standalone',
+    allowedDevOrigins: [
+        '10.0.0.230',
+        'localhost',
+    ],
     images: {
         unoptimized: true,
     },

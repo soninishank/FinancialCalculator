@@ -14,6 +14,7 @@ const customJestConfig = {
         '^@/components/(.*)$': '<rootDir>/src/components/$1',
         '^@/pages/(.*)$': '<rootDir>/src/pages/$1',
     },
+    modulePathIgnorePatterns: ['<rootDir>/.next/'],
     testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
 }
 

@@ -2208,4 +2208,21 @@ export const calculatorDetails = {
             </div>
         )
     },
+    'net-worth-tracker': {
+        title: "Net Worth Tracker",
+        render: () => (
+            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 transition-colors duration-500">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Track Your Wealth Over Time</h3>
+                <div className="prose prose-teal max-w-none text-gray-600">
+                    <p className="mb-4">
+                        Your <strong>Net Worth</strong> is the simplest and most accurate measure of your financial health. It is simply the value of all your assets minus your liabilities.
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1">
+                        <li><strong>Assets:</strong> Bank balances, investments, real estate, and PF accounts.</li>
+                        <li><strong>Liabilities:</strong> Home loans, personal loans, and credit card debt.</li>
+                    </ul>
+                </div>
+            </div>
+        )
+    }
 };

@@ -23,8 +23,8 @@ export default function TaxToggle({
   exemptionLimit, // number or empty string while editing
   onExemptionLimitChange,
 }) {
-  // Determine currency-specific max exemption
   const currencyExemptionMax = useMemo(() => getLTCGExemption(currency), [currency]);
+  const hasExplicitExemptionCap = Number.isFinite(currencyExemptionMax) && currencyExemptionMax > 0;
 
   // Parse current values (null when editing empty string)
   const taxRateNum = taxRate === "" ? null : Number(taxRate);
@@ -45,7 +45,7 @@ export default function TaxToggle({
       ? null
       : exemptionNum < 0
         ? "Exemption cannot be negative."
-        : exemptionNum > currencyExemptionMax
+        : hasExplicitExemptionCap && exemptionNum > currencyExemptionMax
           ? `Maximum allowed is ${moneyFormat(currencyExemptionMax, currency)}.`
           : null;
 
@@ -80,11 +80,11 @@ export default function TaxToggle({
 
 
   // Only show the currency max hint when the user has exceeded the max.
-  const showCurrencyMaxHint = exemptionNum !== null && exemptionNum > currencyExemptionMax;
+  const showCurrencyMaxHint = hasExplicitExemptionCap && exemptionNum !== null && exemptionNum > currencyExemptionMax;
 
   // Tooltip text (concise and consistent across calculators)
   const taxTooltipText =
-    "LTCG applies to the total gain at final redemption. Exemption reduces taxable gain up to the limit.";
+    "LTCG applies to the total gain at final redemption. Use a custom exemption only if it matches the regime you are modeling.";
   const [open, setOpen] = useState(false);
   const popRef = useRef(null);
   const triggerRef = useRef(null);
@@ -175,7 +175,7 @@ export default function TaxToggle({
         </div>
 
         <p className="text-gray-500 text-xs mt-1">
-          Calculates post-tax wealth based on the LTCG rate and exemption rules.
+          Calculates post-tax wealth based on a custom LTCG assumption. Exemption is optional and must match the regime you are modeling.
         </p>
 
         {isTaxApplied && (
@@ -218,9 +218,9 @@ export default function TaxToggle({
                 className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 cursor-pointer"
               />
 
-              <label htmlFor="applyExemption" className="text-xs text-gray-700 cursor-pointer">
-                Apply Exemption Limit <span className="text-gray-500 font-normal">(Max: {moneyFormat(currencyExemptionMax, currency)})</span>
-              </label>
+                <label htmlFor="applyExemption" className="text-xs text-gray-700 cursor-pointer">
+                  Apply Exemption Limit{hasExplicitExemptionCap ? <span className="text-gray-500 font-normal"> (Max: {moneyFormat(currencyExemptionMax, currency)})</span> : <span className="text-gray-500 font-normal"> (Custom)</span>}
+                </label>
             </div>
 
             {isExemptionApplied && (
@@ -230,7 +230,7 @@ export default function TaxToggle({
                   <FormattedInput
                     value={exemptionLimit}
                     onChange={handleExemptionChange}
-                    max={currencyExemptionMax}
+                    max={hasExplicitExemptionCap ? currencyExemptionMax : undefined}
                     currency={currency}
                     className={`w-36 px-2 py-1 border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-teal-500 ${exemptionError ? "border-rose-300 bg-rose-50" : "border-gray-300"
                       }`}

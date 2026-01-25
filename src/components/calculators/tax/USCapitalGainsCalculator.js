@@ -5,24 +5,7 @@ import UnifiedSummary from '../../common/UnifiedSummary';
 import { FinancialLoanPieChart } from '../../common/FinancialCharts'; // Use this for Cost vs Interest (Tax) vs Profit
 import { calculatorDetails } from '../../../data/calculatorDetails';
 import { Landmark } from 'lucide-react';
-
-const LT_BRACKETS_2024 = {
-    single: [
-        { limit: 47025, rate: 0 },
-        { limit: 518900, rate: 15 },
-        { limit: Infinity, rate: 20 }
-    ],
-    married: [
-        { limit: 94050, rate: 0 },
-        { limit: 583750, rate: 15 },
-        { limit: Infinity, rate: 20 }
-    ],
-    head: [
-        { limit: 63000, rate: 0 },
-        { limit: 551350, rate: 15 },
-        { limit: Infinity, rate: 20 }
-    ]
-};
+import { calculateUSCapitalGainsTax } from '../../../utils/usCapitalGains';
 
 export default function USCapitalGainsCalculator({ currency = 'USD' }) {
     const [purchasePrice, setPurchasePrice] = useState(10000);
@@ -33,59 +16,14 @@ export default function USCapitalGainsCalculator({ currency = 'USD' }) {
     const [shortTermRate, setShortTermRate] = useState(24); // Fallback for short term
 
     const result = useMemo(() => {
-        const gain = salePrice - purchasePrice;
-
-        let taxRate = 0;
-        let taxAmount = 0;
-
-        if (gain > 0) {
-            if (isLongTerm) {
-                // Determine Long Term Rate based on Income
-                const brackets = LT_BRACKETS_2024[filingStatus];
-                // Simple bracket logic: The capital gains sit ON TOP of other income.
-                // But for simplicity, we often just check where the TOTAL income falls.
-                // Strict way: Income + Gain.
-                // Let's use the marginal rate of the (Income + Gain) stack?
-                // Actually the standard is: Look at Taxable Income (including gain).
-                // If Taxable Income < Limit1, 0%.
-                // We will assume 'annualIncome' includes the gain for simplicity of the UI, 
-                // or better: add gain to income.
-
-                // Let's assume 'annualIncome' is WITHOUT the gain, so we add the gain to see where it lands?
-                // Actually, the breakpoints apply to taxable income. 
-                // Let's simplify: Check rate based on Annual Income (user input)
-
-                const totalIncome = annualIncome; // User enters their total taxable income estimate
-
-                if (totalIncome <= brackets[0].limit) taxRate = brackets[0].rate;
-                else if (totalIncome <= brackets[1].limit) taxRate = brackets[1].rate;
-                else taxRate = brackets[2].rate;
-
-                // Checking for NIIT (Net Investment Income Tax) 3.8% if MAGI > 200k/250k
-                // Let's add simple checkbox for NIIT or auto-detect?
-                // Auto-detect roughly
-                const niitThreshold = filingStatus === 'married' ? 250000 : 200000;
-                if (totalIncome > niitThreshold) {
-                    taxRate += 3.8;
-                }
-
-            } else {
-                // Short Term
-                taxRate = shortTermRate;
-            }
-
-            taxAmount = gain * (taxRate / 100);
-        }
-
-        const netProfit = gain - taxAmount;
-
-        return {
-            gain,
-            taxRate,
-            taxAmount,
-            netProfit,
-            roi: purchasePrice > 0 ? (netProfit / purchasePrice) * 100 : 0
-        };
+        return calculateUSCapitalGainsTax({
+            purchasePrice,
+            salePrice,
+            isLongTerm,
+            filingStatus,
+            annualIncome,
+            shortTermRate,
+        });
     }, [purchasePrice, salePrice, isLongTerm, filingStatus, annualIncome, shortTermRate]);
 
     const inputs = (
@@ -148,7 +86,7 @@ export default function USCapitalGainsCalculator({ currency = 'USD' }) {
                         max={1000000}
                         step={1000}
                         currency={currency}
-                        helperText="Includes wages, this gain, and other income."
+                        helperText="Taxable income before this gain. Long-term gains are stacked on top."
                     />
                 </>
             ) : (
@@ -193,7 +131,7 @@ export default function USCapitalGainsCalculator({ currency = 'USD' }) {
                             gain={result.netProfit} // Using Gain as "Net Profit"
                             total={result.taxAmount} // Using Total as "Tax"
                             currency={currency}
-                            labels={{ invested: "Total Capital Gain", gain: "Net Profit (After Tax)", total: "Estimated Tax" }}
+                            labels={{ invested: "Total Capital Gain", gain: "Net Profit (After Tax)", total: "Estimated Tax", totalSubtext: "" }}
                         />
                         <div className="grid grid-cols-2 gap-4 text-center">
                             <div className="bg-emerald-50 p-3 rounded-lg border border-emerald-100">
@@ -205,6 +143,11 @@ export default function USCapitalGainsCalculator({ currency = 'USD' }) {
                                 <p className="text-lg font-bold text-indigo-700">{!isNaN(result.roi) ? result.roi.toFixed(1) : "0.0"}%</p>
                             </div>
                         </div>
+                        {isLongTerm && result.niitAmount > 0 && (
+                            <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                                Includes {currency} {Number.isFinite(result.niitAmount) ? result.niitAmount.toFixed(0) : "0"} of NIIT based on income above the threshold.
+                            </div>
+                        )}
                     </div>
                 }
                 charts={

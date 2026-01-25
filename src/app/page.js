@@ -1,175 +1,141 @@
-import NewsAggregator from "../components/news/NewsAggregator";
 import Link from "next/link";
-import { TrendingUp, Calculator, Target, PiggyBank, Newspaper } from "lucide-react";
+import {
+    ArrowRight,
+    BriefcaseBusiness,
+    FolderHeart,
+    LineChart,
+    Sparkles,
+    WalletCards,
+} from "lucide-react";
 
 export const metadata = {
-    title: "FinCalc - SIP, EMI, Loan & Tax Calculators",
-    description: "FinCalc offers a comprehensive suite of free financial tools including SIP, EMI, Income Tax, and FIRE calculators. Accurate and multi-currency support.",
-    keywords: [
-        'financial calculator', 'sip calculator', 'loan emi calculator',
-        'income tax calculator 2024-25', 'investment tools', 'retirement planner',
-        'mutual fund returns', 'wealth management', 'sip returns calculator',
-        'home loan prepayments', 'emi calculator', 'tax planning tools',
-        'compound interest calculator', 'fire planner', 'stock average calculator'
-    ],
+    title: "FinCalc - Personal Finance Workspace",
+    description: "FinCalc is a personal finance workspace for planning, tracking, and modeling decisions without turning the product into a tool directory.",
     openGraph: {
-        title: "FinCalc - Premium Financial Suite",
-        description: "Professional financial planning tools for everyone. SIP, EMI, Tax, and more.",
-        url: 'https://www.hashmatic.in',
-        siteName: 'FinCalc',
-        locale: 'en_US',
-        type: 'website',
+        title: "FinCalc - Personal Finance Workspace",
+        description: "A cleaner finance app for planning, tracking, and decision support.",
+        url: "https://www.hashmatic.in",
+        siteName: "FinCalc",
+        locale: "en_US",
+        type: "website",
     },
 };
 
+const surfaces = [
+    {
+        title: "Dashboard",
+        href: "/hub",
+        icon: BriefcaseBusiness,
+        description: "Start with your current financial position and what needs attention next.",
+    },
+    {
+        title: "Track",
+        href: "/track",
+        icon: LineChart,
+        description: "Monitor net worth, cash movement, and recurring financial behavior.",
+    },
+    {
+        title: "My Tools",
+        href: "/my-tools",
+        icon: FolderHeart,
+        description: "Return to saved work, recent activity, and reusable planning views.",
+    },
+    {
+        title: "Tools",
+        href: "/calculators",
+        icon: WalletCards,
+        description: "Use the modeling layer only when a decision needs exact numbers.",
+    },
+];
+
 export default function Home() {
-    const popularTools = [
-        { title: 'SIP Calculator', slug: 'pure-sip', icon: '📈', desc: 'Plan your mutual fund investments' },
-        { title: 'Income Tax', slug: 'india-tax', icon: '🏛️', desc: 'Compare old vs new tax regime' },
-        { title: 'Loan EMI', slug: 'loan-emi', icon: '🏠', desc: 'Calculate monthly installments' },
-        { title: 'Step-Up SIP', slug: 'step-up-sip', icon: '🚀', desc: 'Grow your SIP annually' },
-        { title: 'SWP Calculator', slug: 'swp-calculator', icon: '💰', desc: 'Plan systematic withdrawals' },
-        { title: 'Time to Goal', slug: 'time-to-goal', icon: '🎯', desc: 'Reach financial targets faster' },
-    ];
-
-    const features = [
-        { icon: TrendingUp, title: 'Real-time Insights', desc: 'Live financial news & market updates' },
-        { icon: Calculator, title: '50+ Calculators', desc: 'Comprehensive financial planning tools' },
-        { icon: Target, title: 'Goal Planning', desc: 'Plan and track your financial goals' },
-        { icon: PiggyBank, title: 'Smart Investing', desc: 'Make informed investment decisions' },
-    ];
-
     return (
-        <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 transition-colors duration-500">
-            {/* SEO Schema */}
+        <div className="min-h-screen bg-[linear-gradient(180deg,#f8fafc_0%,#ffffff_40%,#f3f6fb_100%)] dark:bg-[linear-gradient(180deg,#020617_0%,#020617_45%,#0f172a_100%)]">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify({
                         "@context": "https://schema.org",
                         "@type": "WebApplication",
-                        "name": "FinCalc Financial Suite",
+                        "name": "FinCalc",
                         "url": "https://www.hashmatic.in",
                         "applicationCategory": "FinanceApplication",
-                        "description": "Professional-grade financial planning tools (SIP, EMI, Tax) with multi-currency support.",
-                        "featureList": [
-                            "SIP Return Projections",
-                            "Advanced Home Loan EMI Analysis",
-                            "Income Tax Regime Comparison (FY 2024-25)",
-                            "FIRE & Retirement Planning",
-                            "Real-time Financial News Aggregator"
-                        ]
-                    })
+                        "description": "Personal finance workspace for planning, tracking, and modeling decisions.",
+                    }),
                 }}
             />
 
-            {/* Hero Section */}
             <section className="relative overflow-hidden">
-                {/* Background Gradient */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-100/40 via-transparent to-transparent dark:from-blue-950/20 pointer-events-none"></div>
+                <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute left-1/2 top-0 h-80 w-80 -translate-x-1/2 rounded-full bg-teal-300/20 blur-3xl dark:bg-teal-500/10" />
+                </div>
 
-                <div className="container mx-auto px-4 py-16 md:py-24">
-                    <div className="max-w-4xl mx-auto text-center">
-                        {/* Badge */}
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 mb-6">
-                            <Newspaper className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                            <span className="text-sm font-bold text-blue-700 dark:text-blue-300">Free Financial Tools & Live News</span>
+                <div className="max-w-6xl mx-auto px-6 py-16 md:py-24">
+                    <div className="max-w-4xl">
+                        <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/70 px-4 py-2">
+                            <Sparkles className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                            <span className="text-xs font-black uppercase tracking-[0.22em] text-slate-700 dark:text-slate-300">
+                                Personal finance workspace
+                            </span>
                         </div>
 
-                        {/* Headline */}
-                        <h1 className="text-4xl md:text-6xl font-black mb-6 bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-100 dark:to-slate-400 bg-clip-text text-transparent leading-tight">
-                            Your Complete Financial Planning Suite
+                        <h1 className="mt-6 text-4xl md:text-6xl font-black leading-[0.95] tracking-tight text-slate-950 dark:text-white">
+                            A finance app should help you
+                            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-teal-600 via-sky-600 to-indigo-600">
+                                run your money life, not just open tools.
+                            </span>
                         </h1>
 
-                        <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto leading-relaxed">
-                            Make smarter financial decisions with powerful calculators, real-time market news, and expert insights — completely free.
+                        <p className="mt-6 max-w-2xl text-lg md:text-xl leading-relaxed text-slate-600 dark:text-slate-400">
+                            FinCalc is organized around ongoing financial work: understanding where you stand, tracking progress, returning to saved workflows, and modeling decisions only when needed.
                         </p>
 
-                        {/* CTA Buttons */}
-                        <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
+                        <div className="mt-8 flex flex-wrap gap-3">
                             <Link
-                                href="/calculators"
-                                className="group px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl hover:scale-105 flex items-center gap-2"
+                                href="/hub"
+                                className="inline-flex items-center gap-2 rounded-2xl bg-slate-950 dark:bg-white px-6 py-3.5 text-sm font-black text-white dark:text-slate-950"
                             >
-                                <Calculator className="w-5 h-5" />
-                                Explore Calculators
+                                Open Dashboard
+                                <ArrowRight className="w-4 h-4" />
                             </Link>
                             <Link
-                                href="#news"
-                                className="px-8 py-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 text-slate-900 dark:text-slate-100 font-bold rounded-xl transition-all border-2 border-slate-200 dark:border-slate-700 flex items-center gap-2"
+                                href="/track"
+                                className="inline-flex items-center gap-2 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white/80 dark:bg-slate-900 px-6 py-3.5 text-sm font-black text-slate-800 dark:text-slate-100"
                             >
-                                <TrendingUp className="w-5 h-5" />
-                                View Market News
+                                Open Track
                             </Link>
-                        </div>
-
-                        {/* Features Grid */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-                            {features.map((feature, idx) => (
-                                <div
-                                    key={idx}
-                                    className="p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-700 transition-all"
-                                >
-                                    <feature.icon className="w-6 h-6 text-blue-600 dark:text-blue-400 mb-2 mx-auto" />
-                                    <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 mb-1">{feature.title}</h3>
-                                    <p className="text-xs text-slate-600 dark:text-slate-400">{feature.desc}</p>
-                                </div>
-                            ))}
+                            <Link
+                                href="/my-tools"
+                                className="inline-flex items-center gap-2 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white/80 dark:bg-slate-900 px-6 py-3.5 text-sm font-black text-slate-800 dark:text-slate-100"
+                            >
+                                Open My Tools
+                            </Link>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Popular Calculators Section */}
-            <section className="py-12 bg-white/50 dark:bg-slate-900/50">
-                <div className="container mx-auto px-4">
-                    <div className="text-center mb-10">
-                        <h2 className="text-3xl font-black text-slate-900 dark:text-slate-100 mb-3">
-                            Popular Calculators
-                        </h2>
-                        <p className="text-slate-600 dark:text-slate-400">
-                            Start with our most-used financial planning tools
-                        </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-                        {popularTools.map((tool, idx) => (
+            <section className="pb-20">
+                <div className="max-w-6xl mx-auto px-6">
+                    <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+                        {surfaces.map((surface) => (
                             <Link
-                                key={idx}
-                                href={`/calculators/${tool.slug}`}
-                                className="group p-6 rounded-2xl bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-600 transition-all hover:shadow-xl hover:-translate-y-1"
+                                key={surface.title}
+                                href={surface.href}
+                                className="rounded-[1.75rem] border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/80 p-6 hover:shadow-lg transition-shadow"
                             >
-                                <div className="flex items-start gap-4">
-                                    <div className="text-4xl">{tool.icon}</div>
-                                    <div className="flex-1">
-                                        <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100 mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                            {tool.title}
-                                        </h3>
-                                        <p className="text-sm text-slate-600 dark:text-slate-400">
-                                            {tool.desc}
-                                        </p>
-                                    </div>
+                                <div className="rounded-2xl w-fit border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 p-3">
+                                    <surface.icon className="w-5 h-5 text-teal-600 dark:text-teal-300" />
+                                </div>
+                                <h2 className="mt-5 text-2xl font-black text-slate-900 dark:text-white">{surface.title}</h2>
+                                <p className="mt-3 text-slate-600 dark:text-slate-400">{surface.description}</p>
+                                <div className="mt-5 inline-flex items-center gap-2 text-sm font-black text-indigo-700 dark:text-indigo-300">
+                                    Open
+                                    <ArrowRight className="w-4 h-4" />
                                 </div>
                             </Link>
                         ))}
                     </div>
-
-                    <div className="text-center mt-8">
-                        <Link
-                            href="/calculators"
-                            className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold hover:gap-3 transition-all"
-                        >
-                            View All Calculators
-                            <span className="text-xl">→</span>
-                        </Link>
-                    </div>
-                </div>
-            </section>
-
-            {/* News Stream Section */}
-            <section id="news" className="py-16 scroll-mt-20">
-                <div className="container mx-auto px-4">
-                    <NewsAggregator />
                 </div>
             </section>
         </div>

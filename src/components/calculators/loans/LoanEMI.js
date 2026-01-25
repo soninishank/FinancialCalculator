@@ -63,18 +63,19 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
   };
 
   const R_m = annualRate / 12 / 100;
-  const N = years * 12;
+  const enteredYears = tenureMode === 'Months' ? Number(years) / 12 : Number(years);
+  const enteredMonths = tenureMode === 'Months' ? Number(years) : Number(years) * 12;
 
   // 1. Determine Effective Values based on Mode
   // 1. Determine Effective Values based on Mode
   let effectivePrincipal = principal;
   let effectiveEMI = targetEMI;
   let effectiveRate = annualRate;
-  let effectiveYears = tenureMode === 'Months' ? years / 12 : years;
+  let effectiveYears = enteredYears;
 
   // Default assignments for display coherence
   if (calculationMode === 'EMI') {
-    effectiveEMI = calculateEMI(principal, R_m, N);
+    effectiveEMI = calculateEMI(principal, R_m, enteredMonths);
     // Adjustment for Advance EMI: EMI_adv = EMI_arr / (1+r)
     if (emiScheme === 'advance' && R_m > 0) {
       effectiveEMI /= (1 + R_m);
@@ -83,7 +84,7 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
     // Reverse Calc for Loan: P = EMI * ((1+r)^n - 1) / (r(1+r)^n)
     // If Advance: P_adv = P_arr * (1+r) OR effectively EMI counts as more?
     // Actually, Loan Amount from Allowable EMI changes. 
-    effectivePrincipal = Math.round(calculateLoanAmountFromEMI(targetEMI, R_m, N));
+    effectivePrincipal = Math.round(calculateLoanAmountFromEMI(targetEMI, R_m, enteredMonths));
     if (emiScheme === 'advance' && R_m > 0) {
       // With same EMI, you get MORE loan because you pay first installment immediately reducing principal?
       // No, simpler logic: Loan Amount = EMI * (Factor). Factor_adv = Factor_arr * (1+r)
@@ -94,13 +95,13 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
     if (effectiveYears === Infinity) effectiveYears = 0; // Handle error case gracefully in UI
     effectiveEMI = targetEMI;
   } else if (calculationMode === 'RATE') {
-    effectiveRate = calculateLoanInterestRate(principal, targetEMI, years);
+    effectiveRate = calculateLoanInterestRate(principal, targetEMI, enteredYears);
     effectiveEMI = targetEMI;
   }
 
   // Derived for chart/table consistency
   const finalAmortizationRate = calculationMode === 'RATE' ? effectiveRate : annualRate;
-  const finalAmortizationYears = calculationMode === 'TENURE' ? effectiveYears : years;
+  const finalAmortizationYears = calculationMode === 'TENURE' ? effectiveYears : enteredYears;
   const finalAmortizationPrincipal = calculationMode === 'LOAN' ? effectivePrincipal : principal;
   const finalAmortizationEMI = calculationMode === 'EMI' ? effectiveEMI : targetEMI;
 
@@ -109,11 +110,19 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
     : processingFeeFlat;
 
   // 2. Compute Amortization Schedule (Always use effective values)
-  const { rows: yearlyRows, monthlyRows, finalTotalInterest, finalTotalPaid } = useMemo(
+  const { rows: yearlyRows, monthlyRows, finalTotalInterest, finalTotalPaid, error: amortizationError } = useMemo(
     () => {
       // Safety check for valid inputs before computing
-      if (!finalAmortizationPrincipal || !finalAmortizationRate || !finalAmortizationYears) {
-        return { rows: [], monthlyRows: [], finalTotalInterest: 0, finalTotalPaid: 0 };
+      if (
+        !Number.isFinite(finalAmortizationPrincipal) ||
+        !Number.isFinite(finalAmortizationRate) ||
+        !Number.isFinite(finalAmortizationYears) ||
+        finalAmortizationPrincipal <= 0 ||
+        finalAmortizationYears <= 0 ||
+        !Number.isFinite(finalAmortizationEMI) ||
+        finalAmortizationEMI <= 0
+      ) {
+        return { rows: [], monthlyRows: [], finalTotalInterest: 0, finalTotalPaid: 0, error: null };
       }
       return computeLoanAmortization({
         principal: finalAmortizationPrincipal,
@@ -143,9 +152,9 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
   }, [monthlyRows]);
 
   // Check for calculation error (e.g. Negative Amortization)
-  // Relaxed check: Only error if Interest exceeds EMI by a meaningful margin (e.g. 5) to allow for "Rate" mode precision
   const interestPerMonth = finalAmortizationPrincipal * (finalAmortizationRate / 1200);
-  const isCalculationValid = !yearlyRows.error && (interestPerMonth < finalAmortizationEMI + 1);
+  const hasNegativeAmortization = Boolean(amortizationError) || (finalAmortizationRate > 0 && interestPerMonth >= finalAmortizationEMI + 1);
+  const isCalculationValid = !hasNegativeAmortization && yearlyRows.length > 0;
 
   // --- PDF EXPORT HANDLER ---
   const handleExport = () => {
@@ -442,7 +451,7 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
 
       {/* ERROR / WARNING MESSAGE IF EMI TOO LOW */}
       {/* Use same relaxed check as above for consistency */}
-      {finalAmortizationPrincipal * (finalAmortizationRate / 1200) >= finalAmortizationEMI + 1 && (
+      {hasNegativeAmortization && (
         <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-8 rounded-r-xl">
           <div className="flex items-center">
             <div className="flex-shrink-0">
@@ -454,8 +463,8 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
               <p className="text-sm text-red-700">
                 <span className="font-bold">Loan will never be paid off!</span>
                 <br />
-                Your Monthly EMI ({moneyFormat(finalAmortizationEMI, currency)}) is lower than the monthly interest ({moneyFormat(finalAmortizationPrincipal * (finalAmortizationRate / 1200), currency)}).
-                Please increase EMI or reduce the Loan Amount.
+                  {amortizationError || `Your Monthly EMI (${moneyFormat(finalAmortizationEMI, currency)}) is lower than the monthly interest (${moneyFormat(finalAmortizationPrincipal * (finalAmortizationRate / 1200), currency)}).`}
+                  {!amortizationError && <> Please increase EMI or reduce the Loan Amount.</>}
               </p>
             </div>
           </div>
@@ -463,7 +472,7 @@ export default function LoanEMI({ currency, setCurrency, defaults, detailsKey })
       )}
 
       {/* CHARTS SECTION - Hide if invalid */}
-      {finalAmortizationPrincipal * (finalAmortizationRate / 1200) < finalAmortizationEMI + 1 && (
+      {!hasNegativeAmortization && (
         <div className="flex flex-col gap-12 mt-12">
           {/* PIE CHART - Moved to Summary Section */}
 

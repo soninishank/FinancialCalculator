@@ -19,11 +19,16 @@ export function calcLumpFutureValue(L, r_m, n) {
 // Precise interest functions
 export function calculateSimpleInterest({ principal, rate, time, timeUnit = 'years', startDate, endDate, scheduleStartDate = new Date().toISOString().slice(0, 7) }) {
   let t = 0;
+  let invalidDateRange = false;
   if (startDate && endDate) {
     const start = parseDateUTC(startDate);
     const end = parseDateUTC(endDate);
-    const diffTime = Math.abs(end - start);
-    t = diffTime / (1000 * 60 * 60 * 24 * 365.25); // years
+    if (end < start) {
+      invalidDateRange = true;
+    } else {
+      const diffTime = end - start;
+      t = diffTime / (1000 * 60 * 60 * 24 * 365.25); // years
+    }
   } else {
     if (timeUnit === 'years') t = Number(time);
     else if (timeUnit === 'months') t = Number(time) / 12;
@@ -43,7 +48,16 @@ export function calculateSimpleInterest({ principal, rate, time, timeUnit = 'yea
   const sMonth = startObj.getUTCMonth();
 
   const totalMonths = Math.min(Math.ceil(t * 12), 1200); // Cap at 100 years for safety
-  if (isNaN(totalMonths) || totalMonths <= 0) return { interest, totalAmount: P + interest, timeInYears: t, yearlyData: [], monthlyData: [] };
+  if (invalidDateRange || isNaN(totalMonths) || totalMonths <= 0) {
+    return {
+      interest: invalidDateRange ? 0 : interest,
+      totalAmount: invalidDateRange ? P : P + interest,
+      timeInYears: invalidDateRange ? 0 : t,
+      yearlyData: [],
+      monthlyData: [],
+      ...(invalidDateRange ? { error: 'End date must be on or after start date.' } : {}),
+    };
+  }
 
   for (let m = 1; m <= totalMonths; m++) {
     const monthsElapsed = m;
@@ -84,11 +98,16 @@ export function calculateSimpleInterest({ principal, rate, time, timeUnit = 'yea
 
 export function calculateCompoundInterest({ principal, rate, time, timeUnit = 'years', frequency = 1, startDate, endDate, scheduleStartDate = new Date().toISOString().slice(0, 7) }) {
   let t = 0;
+  let invalidDateRange = false;
   if (startDate && endDate) {
     const start = parseDateUTC(startDate);
     const end = parseDateUTC(endDate);
-    const diffTime = Math.abs(end - start);
-    t = diffTime / (1000 * 60 * 60 * 24 * 365.25); // years
+    if (end < start) {
+      invalidDateRange = true;
+    } else {
+      const diffTime = end - start;
+      t = diffTime / (1000 * 60 * 60 * 24 * 365.25); // years
+    }
   } else {
     if (timeUnit === 'years') t = Number(time);
     else if (timeUnit === 'months') t = Number(time) / 12;
@@ -109,7 +128,16 @@ export function calculateCompoundInterest({ principal, rate, time, timeUnit = 'y
   const sMonth = startObj.getUTCMonth();
 
   const totalMonths = Math.min(Math.ceil(t * 12), 1200); // Cap at 100 years for safety
-  if (isNaN(totalMonths) || totalMonths <= 0) return { interest: amount - P, totalAmount: amount, timeInYears: t, yearlyData: [], monthlyData: [] };
+  if (invalidDateRange || isNaN(totalMonths) || totalMonths <= 0) {
+    return {
+      interest: invalidDateRange ? 0 : amount - P,
+      totalAmount: invalidDateRange ? P : amount,
+      timeInYears: invalidDateRange ? 0 : t,
+      yearlyData: [],
+      monthlyData: [],
+      ...(invalidDateRange ? { error: 'End date must be on or after start date.' } : {}),
+    };
+  }
 
   for (let m = 1; m <= totalMonths; m++) {
     const currentT = m / 12;
@@ -181,7 +209,6 @@ export function getRequiredStepUpSIP(target, annualRate, years, stepUpPercent) {
 
 export function calculateRealRate(nominalRate, inflationRate) {
   if (inflationRate === 0) return nominalRate; // No change if no inflation
-  if (nominalRate <= inflationRate) return 0; // If return <= inflation, real rate is zero or negative
 
   const R = nominalRate / 100;
   const I = inflationRate / 100;

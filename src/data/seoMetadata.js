@@ -515,6 +515,11 @@ export const calculatorFaqs = {
     ],
     'emergency-fund-calculator': [
         { q: "Where should I keep my emergency fund?", a: "Keep it in a Liquid Fund or a High-Yield Savings Account. It needs to be accessible instantly (liquidity) and safe from market crashes." }
+    ],
+    'net-worth-tracker': [
+        { q: "How often should I update my net worth?", a: "Monthly updates are ideal for most people. Weekly can feel noisy because market values fluctuate, while quarterly updates are often too infrequent for actionable planning." },
+        { q: "Should I include my home and car in net worth?", a: "Yes, include major assets at realistic current market value, but treat them separately from liquid-investable assets when planning goals like retirement or emergency runway." },
+        { q: "What is more important: net worth or cash flow?", a: "Both matter. Net worth shows long-term balance sheet health, while cash flow shows day-to-day sustainability. Strong cash flow with steady net worth growth is the ideal combination." }
     ]
 };
 
@@ -534,4 +539,3 @@ export const siteOrganization = {
         "contactType": "customer service"
     }
 };
-

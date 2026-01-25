@@ -5,8 +5,9 @@ export default function robots() {
         rules: [
             {
                 userAgent: '*',
-                allow: '/',
-                disallow: ['/admin/', '/api/', '/_next/'],
+                // By default, everything is allowed unless explicitly disallowed
+                // We only need to specify what should NOT be crawled
+                disallow: ['/admin/', '/api/'],
             },
         ],
         sitemap: `${siteConfig.url}/sitemap.xml`,

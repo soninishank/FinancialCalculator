@@ -3,15 +3,19 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Menu, Search, X } from 'lucide-react';
 import { useCurrency } from '../../contexts/CurrencyContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import ThemeToggle from '../common/ThemeToggle';
+import CalculatorLauncher from '../common/CalculatorLauncher';
 
 const Header = () => {
   const pathname = usePathname();
   const { currency, setCurrency, isLocked } = useCurrency();
   const { isDarkMode } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isLauncherOpen, setIsLauncherOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,76 +25,129 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      const targetTag = document.activeElement?.tagName;
+      const isTypingTarget = ['INPUT', 'TEXTAREA', 'SELECT'].includes(targetTag);
+
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        setIsLauncherOpen(true);
+      }
+
+      if (!isTypingTarget && event.key === '/') {
+        event.preventDefault();
+        setIsLauncherOpen(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-        ? isDarkMode
-          ? 'bg-slate-900/80 backdrop-blur-lg shadow-[0_4px_30px_rgba(0,0,0,0.3)] border-b border-white/10 py-3'
-          : 'bg-white/80 backdrop-blur-lg shadow-[0_4px_30px_rgba(0,0,0,0.03)] border-b border-white/20 py-3'
-        : isDarkMode
-          ? 'bg-slate-900 py-5'
-          : 'bg-white py-5'
-        }`}
-    >
-      <div className="container mx-auto px-4 md:px-6 flex justify-between items-center">
-        {/* logo */}
-        <Link href="/" className="flex items-center gap-2 group outline-none" aria-label="FinCalc Home">
-          <div className="relative">
-            <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/20 group-hover:scale-110 transition-transform duration-300">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
-            </div>
-            <div className="absolute -inset-1 bg-gradient-to-br from-teal-500 to-indigo-600 rounded-xl blur opacity-20 group-hover:opacity-40 transition-opacity"></div>
-          </div>
-          <span className={`text-xl font-extrabold tracking-tight transition-colors ${isDarkMode ? 'text-white group-hover:text-teal-400' : 'text-gray-900 group-hover:text-teal-600'}`}>
-            Fin<span className="text-indigo-600">Calc</span>
-          </span>
-        </Link>
-
-        {/* nav */}
-        <nav className={`hidden md:flex items-center p-1 rounded-full border transition-colors ${isDarkMode ? 'bg-slate-800/50 border-slate-700/50' : 'bg-gray-100/50 border-gray-200/50'
-          }`}>
-          <NavItem to="/" label="Home" isDarkMode={isDarkMode} />
-          <NavItem to="/calculators" label="Calculators" isDarkMode={isDarkMode} />
-        </nav>
-
-        {/* actions */}
-        <div className="flex items-center gap-4">
-          {pathname !== '/' && (
-            <div className="relative group">
-              <select
-                id="currency-select"
-                aria-label="Select Currency"
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-                disabled={isLocked}
-                title={isLocked ? "Currency is fixed for this calculator" : "Select Currency"}
-                className={`appearance-none text-xs font-bold rounded-full pl-4 pr-10 py-2 outline-none transition-all cursor-pointer ${isLocked ? 'opacity-50 cursor-not-allowed' : ''} ${isDarkMode
-                  ? 'bg-slate-800 border-slate-700 text-slate-200 focus:ring-teal-500/20 focus:border-teal-500 hover:bg-slate-700'
-                  : 'bg-gray-50 border border-gray-200 text-gray-700 focus:ring-teal-500/20 focus:border-teal-500 hover:bg-white hover:shadow-sm'
-                  }`}
-              >
-                <option value="INR">INR (₹)</option>
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="GBP">GBP (£)</option>
-                <option value="JPY">JPY (¥)</option>
-                <option value="AUD">AUD (A$)</option>
-                <option value="CAD">CAD (C$)</option>
-                <option value="SGD">SGD (S$)</option>
-              </select>
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-teal-500 transition-colors">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+    <>
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+          ? isDarkMode
+            ? 'bg-slate-900/80 backdrop-blur-lg shadow-[0_4px_30px_rgba(0,0,0,0.3)] border-b border-white/10 py-3'
+            : 'bg-white/80 backdrop-blur-lg shadow-[0_4px_30px_rgba(0,0,0,0.03)] border-b border-white/20 py-3'
+          : isDarkMode
+            ? 'bg-slate-900 py-5'
+            : 'bg-white py-5'
+          }`}
+      >
+        <div className="container mx-auto px-4 md:px-6 flex justify-between items-center gap-3">
+          <Link href="/" className="flex items-center gap-2 group outline-none shrink-0" aria-label="FinCalc Home">
+            <div className="relative">
+              <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/20 group-hover:scale-110 transition-transform duration-300">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
               </div>
+              <div className="absolute -inset-1 bg-gradient-to-br from-teal-500 to-indigo-600 rounded-xl blur opacity-20 group-hover:opacity-40 transition-opacity"></div>
             </div>
-          )}
-          <ThemeToggle />
+            <span className={`text-xl font-extrabold tracking-tight transition-colors ${isDarkMode ? 'text-white group-hover:text-teal-400' : 'text-gray-900 group-hover:text-teal-600'}`}>
+              Fin<span className="text-indigo-600">Calc</span>
+            </span>
+          </Link>
+
+          <nav className={`hidden md:flex items-center p-1 rounded-full border transition-colors ${isDarkMode ? 'bg-slate-800/50 border-slate-700/50' : 'bg-gray-100/50 border-gray-200/50'
+            }`}>
+            <NavItem to="/" label="Home" isDarkMode={isDarkMode} />
+            <NavItem to="/hub" label="Dashboard" isDarkMode={isDarkMode} />
+            <NavItem to="/track" label="Track" isDarkMode={isDarkMode} />
+            <NavItem to="/learn" label="Learn" isDarkMode={isDarkMode} />
+            <NavItem to="/calculators" label="Tools" isDarkMode={isDarkMode} />
+          </nav>
+
+          <div className="hidden md:flex items-center gap-3 flex-1 justify-end">
+            <button
+              type="button"
+              onClick={() => setIsLauncherOpen(true)}
+              className={`min-w-[240px] flex items-center justify-between rounded-full border px-4 py-2.5 text-sm font-semibold transition-colors ${isDarkMode
+                ? 'bg-slate-800/70 border-slate-700 text-slate-300 hover:bg-slate-800'
+                : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-white'
+                }`}
+            >
+              <span className="inline-flex items-center gap-2">
+                <Search className="w-4 h-4" />
+                Search app
+              </span>
+              <span className="text-[11px] font-black uppercase tracking-[0.2em] opacity-70">/ or Ctrl+K</span>
+            </button>
+            {pathname !== '/' && <CurrencyControl currency={currency} setCurrency={setCurrency} isLocked={isLocked} isDarkMode={isDarkMode} />}
+            <ThemeToggle />
+          </div>
+
+          <div className="flex md:hidden items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsLauncherOpen(true)}
+              className={`rounded-full border p-2.5 ${isDarkMode ? 'border-slate-700 text-slate-200 bg-slate-800/80' : 'border-slate-200 text-slate-700 bg-white'}`}
+              aria-label="Open calculator search"
+            >
+              <Search className="w-4 h-4" />
+            </button>
+            <ThemeToggle />
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+              className={`rounded-full border p-2.5 ${isDarkMode ? 'border-slate-700 text-slate-200 bg-slate-800/80' : 'border-slate-200 text-slate-700 bg-white'}`}
+              aria-label="Toggle navigation menu"
+            >
+              {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
+          </div>
         </div>
-      </div>
-    </header>
+
+        {isMobileMenuOpen && (
+          <div className={`md:hidden px-4 pt-4 pb-5 border-t mt-3 ${isDarkMode ? 'border-slate-800 bg-slate-900/95' : 'border-slate-200 bg-white/95'} backdrop-blur`}>
+            <div className="grid gap-2">
+              <MobileNavLink to="/" label="Home" />
+              <MobileNavLink to="/hub" label="Dashboard" />
+              <MobileNavLink to="/track" label="Track" />
+              <MobileNavLink to="/learn" label="Learn" />
+              <MobileNavLink to="/my-tools" label="My Tools" />
+              <MobileNavLink to="/calculators" label="Money Tools" />
+            </div>
+            {pathname !== '/' && (
+              <div className="mt-4">
+                <p className={`text-[11px] font-black uppercase tracking-[0.22em] mb-2 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                  Currency
+                </p>
+                <CurrencyControl currency={currency} setCurrency={setCurrency} isLocked={isLocked} isDarkMode={isDarkMode} fullWidth />
+              </div>
+            )}
+          </div>
+        )}
+      </header>
+      <CalculatorLauncher isOpen={isLauncherOpen} onClose={() => setIsLauncherOpen(false)} />
+    </>
   );
 };
 
@@ -118,5 +175,45 @@ const NavItem = ({ to, label, isDarkMode }) => {
     </Link>
   );
 };
+
+const MobileNavLink = ({ to, label }) => (
+  <Link
+    href={to}
+    className="rounded-2xl border border-slate-200 dark:border-slate-800 px-4 py-3 text-sm font-bold text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-950/50"
+  >
+    {label}
+  </Link>
+);
+
+const CurrencyControl = ({ currency, setCurrency, isLocked, isDarkMode, fullWidth = false }) => (
+  <div className={`relative group ${fullWidth ? 'w-full' : ''}`}>
+    <select
+      id="currency-select"
+      aria-label="Select Currency"
+      value={currency}
+      onChange={(e) => setCurrency(e.target.value)}
+      disabled={isLocked}
+      title={isLocked ? "Currency is fixed for this calculator" : "Select Currency"}
+      className={`appearance-none text-xs font-bold rounded-full pl-4 pr-10 py-2 outline-none transition-all cursor-pointer ${fullWidth ? 'w-full' : ''} ${isLocked ? 'opacity-50 cursor-not-allowed' : ''} ${isDarkMode
+        ? 'bg-slate-800 border-slate-700 text-slate-200 focus:ring-teal-500/20 focus:border-teal-500 hover:bg-slate-700'
+        : 'bg-gray-50 border border-gray-200 text-gray-700 focus:ring-teal-500/20 focus:border-teal-500 hover:bg-white hover:shadow-sm'
+        }`}
+    >
+      <option value="INR">INR (₹)</option>
+      <option value="USD">USD ($)</option>
+      <option value="EUR">EUR (€)</option>
+      <option value="GBP">GBP (£)</option>
+      <option value="JPY">JPY (¥)</option>
+      <option value="AUD">AUD (A$)</option>
+      <option value="CAD">CAD (C$)</option>
+      <option value="SGD">SGD (S$)</option>
+    </select>
+    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-teal-500 transition-colors">
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+      </svg>
+    </div>
+  </div>
+);
 
 export default Header;

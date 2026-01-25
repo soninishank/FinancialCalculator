@@ -106,7 +106,7 @@ const StockAverageCalculator = ({ currency }) => {
                         <div className="pt-3 border-t border-indigo-200 dark:border-indigo-700 flex justify-between items-center">
                             <span className="text-indigo-900 dark:text-indigo-100 font-bold">Average Price</span>
                             <span className="text-2xl font-bold text-indigo-700 dark:text-indigo-300">
-                                {moneyFormat(averagePrice, currency)}
+                                {moneyFormat(averagePrice, currency, false, 2)}
                             </span>
                         </div>
                     </div>
@@ -136,7 +136,7 @@ const StockAverageCalculator = ({ currency }) => {
                                             callbacks: {
                                                 label: function (context) {
                                                     let value = context.raw;
-                                                    let percentage = (value / totalAmount * 100).toFixed(1) + '%';
+                                                    let percentage = (totalAmount > 0 ? (value / totalAmount * 100) : 0).toFixed(1) + '%';
                                                     return ` ${context.label}: ${moneyFormat(value, currency)} (${percentage})`;
                                                 }
                                             }
@@ -169,7 +169,7 @@ const StockAverageCalculator = ({ currency }) => {
                         <div className="pt-3 border-t border-indigo-200 dark:border-indigo-700 flex justify-between items-center">
                             <span className="text-indigo-900 dark:text-indigo-100 font-bold">Average Price</span>
                             <span className="text-2xl font-bold text-indigo-700 dark:text-indigo-300">
-                                {moneyFormat(averagePrice, currency)}
+                                {moneyFormat(averagePrice, currency, false, 2)}
                             </span>
                         </div>
                     </div>

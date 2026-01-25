@@ -35,7 +35,7 @@ const Row = ({ ipo }) => {
             <td className="py-3 px-4 text-right tabular-nums text-gray-800 font-medium">
                 {moneyFormat(ipo.issuePrice, 'INR')}
             </td>
-            
+
             {/* Issue Size */}
             <td className="py-3 px-4 text-right tabular-nums text-gray-600">
                 {moneyFormat(ipo.issueSize, 'INR', true)}

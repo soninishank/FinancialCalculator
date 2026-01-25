@@ -1,6 +1,6 @@
 // src/utils/formatting.js
 
-export function moneyFormat(x, currency = "INR", compact = false) {
+export function moneyFormat(x, currency = "INR", compact = false, fractionDigits = 0) {
   const localeMap = {
     INR: "en-IN",
     USD: "en-US",
@@ -36,12 +36,13 @@ export function moneyFormat(x, currency = "INR", compact = false) {
           maximumFractionDigits: 2
         })} Lakh`;
       } else {
-        // Thousands or less - fallback to standard numeric with 0 decimals for cleanliness if > 1000
+        // Thousands or less - fallback to standard numeric with fractionDigits decimals
         // unless it's very small
         return num.toLocaleString(locale, {
           style: "currency",
           currency: currency,
-          maximumFractionDigits: 0
+          minimumFractionDigits: fractionDigits,
+          maximumFractionDigits: fractionDigits
         });
       }
     }
@@ -61,8 +62,8 @@ export function moneyFormat(x, currency = "INR", compact = false) {
   return num.toLocaleString(locale, {
     style: "currency",
     currency: currency,
-    // Keep this at 0 for clean, large number displays
-    maximumFractionDigits: 0,
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
   });
 }
 

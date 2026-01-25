@@ -154,9 +154,15 @@ export default function IndiaIncomeTaxCalculator({ currency = 'INR' }) {
 
                         <UnifiedSummary
                             invested={result.newRegime.tax}
-                            gain={result.oldRegime.tax}
-                            total={result.newRegime.netPay}
+                            gain={result.newRegime.netPay}
+                            total={annualSalary}
                             currency={currency}
+                            title="Salary Breakdown (New Regime)"
+                            labels={{
+                                invested: "Tax Payable",
+                                gain: "Net Income",
+                                total: "Gross Salary"
+                            }}
                             customMetrics={[
                                 { label: "New Regime Tax", value: result.newRegime.tax, color: "text-red-700", bgColor: "bg-red-50/30" },
                                 { label: "Old Regime Tax", value: result.oldRegime.tax, color: "text-indigo-700", bgColor: "bg-indigo-50/30" },

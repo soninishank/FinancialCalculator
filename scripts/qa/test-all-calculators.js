@@ -36,11 +36,11 @@ const CALCULATOR_SLUGS = [
   'china-income-tax', 'switzerland-income-tax', 'singapore-tax',
   'uae-gratuity', 'nz-paycheck', 'india-tax',
   'ireland-tax', 'mexico-isr', 'brazil-clt',
-  'south-africa-tax'
+  'south-africa-tax', 'net-worth-tracker'
 ];
 
 const BASE_URL = process.env.TEST_URL || 'http://localhost:3000';
-const PARALLEL_TESTS = 5;
+const PARALLEL_TESTS = 15;
 
 const results = {
     passed: [],
@@ -78,7 +78,7 @@ async function testCalculator(browser, slug) {
         }
 
         // Wait for React hydration
-        await sleep(1500);
+        await sleep(800);
 
         // Test 2: Title exists
         const title = await page.title();
@@ -107,7 +107,7 @@ async function testCalculator(browser, slug) {
             }
         });
 
-        await sleep(1000);
+        await sleep(500);
 
         testResult.tests.noJSErrors = jsErrors.length === 0;
         if (jsErrors.length > 0) {
