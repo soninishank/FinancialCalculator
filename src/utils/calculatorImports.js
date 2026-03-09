@@ -100,6 +100,19 @@ export const importCalculatorBySlug = (slug) => {
         case 'mexico-isr': return import('../components/calculators/regional/mexico/MexicoISRCalculator');
         case 'brazil-clt': return import('../components/calculators/regional/brazil/BrazilCLTCalculator');
         case 'south-africa-tax': return import('../components/calculators/regional/southafrica/SouthAfricaTaxCalculator');
+
+        // New Finance Products
+        case 'budget-50-30-20': return import('../components/calculators/savings/BudgetPlanner50_30_20');
+        case 'inflation-adjusted-return': return import('../components/calculators/investments/InflationAdjustedReturnCalculator');
+
+        case 'wedding-cost-planner': return import('../components/calculators/savings/WeddingCostPlanner');
+        case 'tip-calculator': return import('../components/calculators/utils/TipCalculator');
+        // High-Traffic Finance Products
+
+        case 'federal-income-tax-2025': return import('../components/calculators/tax/FederalIncomeTaxEstimator');
+        case 'retirement-savings': return import('../components/calculators/retirement/RetirementSavingsCalculator');
+
+        case 'bnpl-cost-calculator': return import('../components/calculators/utils/BNPLCalculator');
         default: return Promise.reject(new Error(`Unknown calculator: ${slug}`));
     }
 };

@@ -724,6 +724,69 @@ const calculators = [
     keywords: 'net worth calculator, net worth tracker, asset liability, financial wealth tracking, manual net worth, csv upload net worth',
     category: 'Wealth',
     component: 'NetWorthTracker'
+  },
+
+  // --- New Finance Products ---
+  {
+    slug: 'budget-50-30-20',
+    title: '50/30/20 Budget Planner',
+    description: 'Allocate your monthly take-home pay into Needs, Wants, and Savings using the popular 50/30/20 budgeting rule. Customize percentages and visualize your budget.',
+    keywords: 'budget planner, 50 30 20 rule, budget calculator, monthly budget, needs wants savings, budgeting tool, personal finance, expense allocation',
+    category: 'Savings',
+    component: 'BudgetPlanner50_30_20'
+  },
+  {
+    slug: 'inflation-adjusted-return',
+    title: 'Inflation-Adjusted Return Calculator',
+    description: 'Calculate the real (inflation-adjusted) return on your investments using the Fisher equation. Compare nominal vs real future value and see purchasing power erosion over time.',
+    keywords: 'inflation adjusted return, real return calculator, fisher equation, purchasing power, real rate of return, nominal vs real, inflation impact on investments',
+    category: 'Investments',
+    component: 'InflationAdjustedReturnCalculator'
+  },
+
+  {
+    slug: 'wedding-cost-planner',
+    title: 'Wedding Cost Planner',
+    description: 'Plan your dream wedding budget with category-wise allocation. Calculate per-guest costs, track savings progress, and get monthly savings targets.',
+    keywords: 'wedding budget planner, wedding cost calculator, wedding planner, wedding budget breakdown, marriage cost, wedding savings, per guest cost',
+    category: 'Planner',
+    component: 'WeddingCostPlanner'
+  },
+  {
+    slug: 'tip-calculator',
+    title: 'Tip Calculator',
+    description: 'Quickly calculate tip amount and split the bill among friends. Supports custom tip percentages and multi-way bill splitting.',
+    keywords: 'tip calculator, bill split calculator, gratuity calculator, split bill, restaurant tip, tipping guide, tip percentage',
+    category: 'Utility',
+    component: 'TipCalculator'
+  },
+
+  // --- High-Traffic Finance Products ---
+
+  {
+    slug: 'federal-income-tax-2025',
+    title: 'Federal Income Tax Calculator (2025)',
+    description: 'Estimate your 2025 federal income tax with updated brackets. Choose filing status, deductions, and 401(k) contributions to see your effective and marginal tax rates.',
+    keywords: 'income tax calculator, federal tax calculator 2025, how much tax do i owe, tax bracket calculator, effective tax rate, marginal tax rate, tax estimator, irs tax calculator, federal income tax',
+    category: 'Tax',
+    component: 'FederalIncomeTaxEstimator'
+  },
+  {
+    slug: 'retirement-savings',
+    title: 'Retirement Savings Calculator',
+    description: 'Find out if you are on track for retirement. Enter your age, savings, and contributions to see your projected nest egg and whether it meets your desired retirement income.',
+    keywords: 'retirement calculator, how much do i need to retire, retirement savings calculator, retirement planner, am i on track for retirement, nest egg calculator, 4 percent rule, retirement income',
+    category: 'Retirement',
+    component: 'RetirementSavingsCalculator'
+  },
+
+  {
+    slug: 'bnpl-cost-calculator',
+    title: 'Buy Now Pay Later (BNPL) Calculator',
+    description: 'Discover the true cost of Buy Now Pay Later plans. Compare Affirm, Klarna, and Afterpay to see hidden fees, true APR, and late fee impact vs paying cash.',
+    keywords: 'buy now pay later calculator, bnpl cost, affirm calculator, klarna calculator, afterpay cost, bnpl interest, true apr bnpl, bnpl fees, installment cost calculator, pay in 4 calculator',
+    category: 'Utility',
+    component: 'BNPLCalculator'
   }
 ];
 

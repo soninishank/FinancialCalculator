@@ -1,13 +1,12 @@
 'use client';
 
 import React, { Suspense, useCallback, useEffect } from 'react';
-import { useParams, useRouter, usePathname } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import manifest from '../utils/calculatorsManifest';
 import { useCurrency } from '../contexts/CurrencyContext';
 import RelatedCalculators from '../components/common/RelatedCalculators';
 // import SEO from '../components/common/SEO'; // Metadata in page.js
 import SocialShare from '../components/common/SocialShare';
-import { lazyLoad } from '../utils/lazyLoad';
 import { getLazyCalculator } from '../utils/calculatorImports';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import Breadcrumbs from '../components/common/Breadcrumbs';
@@ -34,6 +33,7 @@ const FORCED_CURRENCY_MAP = {
   'home-affordability-calculator': 'USD',
   'property-tax-estimator': 'USD',
   'fico-score-impact': 'USD',
+  'federal-income-tax-2025': 'USD',
 
   // India Calculators (INR)
   'india-tax': 'INR',
@@ -91,8 +91,6 @@ export default function CalculatorPage() {
   }, [forcedCurrency, setCurrency, setIsLocked]);
 
   const router = useRouter();
-  const pathname = usePathname();
-
   // Next.js doesn't have location.state in the same way. We can use search params or just default to /
   // For simplicity, defaulting to / or history back.
 

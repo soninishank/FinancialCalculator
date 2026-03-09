@@ -43,7 +43,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "dev": "concurrently -k -c \"bgBlue.bold,bgMagenta.bold\" \"npm run test:watch\" \"next dev\"",
-    "lint": "next lint",
+    "lint": "eslint .",
     "verify": "npm run build && npm test -- --runInBand",
     "lint:calculators": "node scripts/qa/lint-calculators.js",
     "scraper": "node server/app.js",
@@ -51,20 +51,11 @@
     "db:setup": "node server/db_setup/index.js",
     "db:setup:comments": "node scripts/db/setup_comments_db.js",
     "start:server": "node server/app.js",
-    "lint:fix": "eslint src --fix",
+    "lint:fix": "eslint . --fix",
     "verify:calculators": "node scripts/qa/verify_calculators.js",
     "sync:tests": "node scripts/qa/sync-test-calculators.js",
     "test:ui": "node scripts/qa/test-all-calculators.js",
     "prepare": "husky"
-  },
-  "eslintConfig": {
-    "extends": [
-      "next/core-web-vitals"
-    ],
-    "rules": {
-      "no-unused-vars": "error",
-      "no-undef": "error"
-    }
   },
   "browserslist": {
     "production": [

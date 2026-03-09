@@ -508,13 +508,13 @@ async function warmupAllCategories(excludeCategory) {
             console.log(`[News API] Warmup: ${cat} processed and queued for DB`);
         } catch (error) {
             console.error(`[News API] Warmup error for ${cat}:`, error.message);
+            if (error.message.includes('429') || error.message.includes('quota')) {
+                console.log(`[News API] Quota hit during warmup for ${cat}, stopping further warmup`);
+                break;
+            }
         }
 
-        // Reduced delay and check for quota
-        if (error.message.includes('429') || error.message.includes('quota')) {
-            console.log(`[News API] Quota hit during warmup for ${cat}, stopping further warmup`);
-            break;
-        }
+        // Reduced delay between category warmups
         await sleep(1000);
     }
 
