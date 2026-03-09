@@ -36,7 +36,9 @@ const CALCULATOR_SLUGS = [
   'china-income-tax', 'switzerland-income-tax', 'singapore-tax',
   'uae-gratuity', 'nz-paycheck', 'india-tax',
   'ireland-tax', 'mexico-isr', 'brazil-clt',
-  'south-africa-tax', 'net-worth-tracker'
+  'south-africa-tax', 'net-worth-tracker', 'budget-50-30-20',
+  'inflation-adjusted-return', 'wedding-cost-planner', 'tip-calculator',
+  'federal-income-tax-2025', 'retirement-savings', 'bnpl-cost-calculator'
 ];
 
 const BASE_URL = process.env.TEST_URL || 'http://localhost:3000';

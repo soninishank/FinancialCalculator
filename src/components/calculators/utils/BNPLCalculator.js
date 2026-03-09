@@ -31,7 +31,7 @@ const BNPLCalculator = ({ currency = 'USD' }) => {
 
     const result = useMemo(() => {
         const price = parseFloat(purchasePrice) || 0;
-        const numInstallments = parseFloat(installments) || 1;
+        const numInstallments = Math.max(1, parseFloat(installments) || 0);
         const rate = (parseFloat(annualInterest) || 0) / 100;
         const fee = parseFloat(upfrontFee) || 0;
         const lateFee = parseFloat(lateFeePerMiss) || 0;
@@ -49,7 +49,7 @@ const BNPLCalculator = ({ currency = 'USD' }) => {
                 (Math.pow(1 + monthlyRate, numInstallments) - 1);
             totalInterest = (installmentAmount * numInstallments) - price;
         } else {
-            installmentAmount = price / numInstallments;
+            installmentAmount = numInstallments > 0 ? price / numInstallments : 0;
             totalInterest = 0;
         }
 
@@ -221,7 +221,7 @@ const BNPLCalculator = ({ currency = 'USD' }) => {
                     </p>
                     {result.trueAPR > 0 && (
                         <p className="text-sm text-red-600 dark:text-red-400 mt-2">
-                            True APR: <strong>{result.trueAPR.toFixed(1)}%</strong>
+                            True APR: <strong>{Number.isFinite(result.trueAPR) ? result.trueAPR.toFixed(1) : '0.0'}%</strong>
                         </p>
                     )}
                 </div>
@@ -298,7 +298,7 @@ const BNPLCalculator = ({ currency = 'USD' }) => {
                 <ul className="list-disc pl-5 space-y-2">
                     <li>0% interest plans where you&apos;re confident you won&apos;t miss payments</li>
                     <li>Essential purchases where cash flow timing is an issue</li>
-                    <li>When the item will be used/needed before you could save up</li>
+                    <li>When the item will be needed before you could save up</li>
                 </ul>
 
                 <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-100 dark:border-red-800/30 mt-6">

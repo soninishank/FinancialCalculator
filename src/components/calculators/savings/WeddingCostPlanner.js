@@ -44,8 +44,8 @@ const WeddingCostPlanner = ({ currency }) => {
 
     const result = useMemo(() => {
         const budget = parseFloat(totalBudget) || 0;
-        const guests = parseFloat(guestCount) || 1;
-        const months = parseFloat(monthsToSave) || 1;
+        const guests = Math.max(1, parseFloat(guestCount) || 0);
+        const months = Math.max(1, parseFloat(monthsToSave) || 0);
         const saved = parseFloat(currentSavings) || 0;
 
         const breakdown = CATEGORIES.map((cat, i) => ({
@@ -57,9 +57,9 @@ const WeddingCostPlanner = ({ currency }) => {
 
         const totalAllocated = breakdown.reduce((s, c) => s + c.amount, 0);
         const remaining = budget - totalAllocated;
-        const perGuest = budget / guests;
+        const perGuest = guests > 0 ? budget / guests : 0;
         const shortfall = Math.max(0, budget - saved);
-        const monthlySaving = shortfall > 0 ? shortfall / months : 0;
+        const monthlySaving = shortfall > 0 && months > 0 ? shortfall / months : 0;
 
         return { breakdown, totalAllocated, remaining, perGuest, shortfall, monthlySaving };
     }, [totalBudget, guestCount, monthsToSave, currentSavings, allocations]);

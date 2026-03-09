@@ -4,6 +4,7 @@ import MoneyOSPanel from '../../components/hub/MoneyOSPanel';
 import CashFlowSummaryBanner from '../../components/home/CashFlowSummaryBanner';
 import SavingsRateHistory from '../../components/home/SavingsRateHistory';
 import SubscriptionManager from '../../components/home/SubscriptionManager';
+import ExpenseCategorizer from '../../components/home/ExpenseCategorizer';
 
 export const metadata = {
     title: 'Track Your Money',
@@ -50,6 +51,10 @@ export default function TrackPage() {
 
             <section className="max-w-6xl mx-auto px-6 pb-6">
                 <CashFlowSummaryBanner />
+            </section>
+
+            <section className="max-w-6xl mx-auto px-6 pb-6">
+                <ExpenseCategorizer />
             </section>
 
             <section className="max-w-6xl mx-auto px-6 pb-6">

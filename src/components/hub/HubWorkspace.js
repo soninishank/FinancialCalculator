@@ -7,6 +7,8 @@ import PersonalFinancePlanner from '../home/PersonalFinancePlanner';
 import BudgetTracker from '../home/BudgetTracker';
 import TaxBracketEstimator from '../home/TaxBracketEstimator';
 import FinancialMilestones from '../home/FinancialMilestones';
+import FinancialHealthScore from '../home/FinancialHealthScore';
+import FinancialChecklist from '../home/FinancialChecklist';
 import LeadCaptureCard from '../common/LeadCaptureCard';
 import MoneyOSPanel from './MoneyOSPanel';
 
@@ -203,10 +205,20 @@ export default function HubWorkspace() {
 
             {activeWorkspace === 'overview' && (
                 <>
+                    <section className="py-6">
+                        <div className="max-w-4xl mx-auto px-6">
+                            <FinancialHealthScore />
+                        </div>
+                    </section>
                     <FinancialHubPanel />
                     <section className="py-6">
                         <div className="max-w-4xl mx-auto px-6">
                             <FinancialMilestones />
+                        </div>
+                    </section>
+                    <section className="py-6">
+                        <div className="max-w-4xl mx-auto px-6">
+                            <FinancialChecklist />
                         </div>
                     </section>
                 </>

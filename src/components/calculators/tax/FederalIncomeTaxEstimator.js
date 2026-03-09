@@ -211,11 +211,11 @@ const FederalIncomeTaxEstimator = ({ currency = 'USD' }) => {
             <div className="grid grid-cols-2 gap-3">
                 <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-xl border border-amber-100 dark:border-amber-800/30 text-center">
                     <p className="text-xs font-medium text-amber-700 dark:text-amber-300 mb-1">Effective Rate</p>
-                    <p className="text-2xl font-bold text-amber-800 dark:text-amber-200">{result.effectiveRate.toFixed(1)}%</p>
+                    <p className="text-2xl font-bold text-amber-800 dark:text-amber-200">{Number.isFinite(result.effectiveRate) ? result.effectiveRate.toFixed(1) : '0.0'}%</p>
                 </div>
                 <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-100 dark:border-red-800/30 text-center">
                     <p className="text-xs font-medium text-red-700 dark:text-red-300 mb-1">Marginal Rate</p>
-                    <p className="text-2xl font-bold text-red-800 dark:text-red-200">{result.marginalRate.toFixed(0)}%</p>
+                    <p className="text-2xl font-bold text-red-800 dark:text-red-200">{Number.isFinite(result.marginalRate) ? result.marginalRate.toFixed(0) : '0'}%</p>
                 </div>
             </div>
 
@@ -236,7 +236,7 @@ const FederalIncomeTaxEstimator = ({ currency = 'USD' }) => {
                         {result.bracketBreakdown.map((b, i) => (
                             <div key={i} className="flex items-center gap-3">
                                 <span className="text-xs font-mono bg-gray-100 dark:bg-slate-700 px-2 py-1 rounded text-gray-700 dark:text-gray-300 w-12 text-center">
-                                    {(b.rate * 100).toFixed(0)}%
+                                    {Number.isFinite(b.rate * 100) ? (b.rate * 100).toFixed(0) : '0'}%
                                 </span>
                                 <div className="flex-1">
                                     <div className="h-4 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">

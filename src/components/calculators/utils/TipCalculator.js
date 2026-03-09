@@ -17,8 +17,8 @@ const TipCalculator = ({ currency }) => {
 
         const tipAmount = (bill * tip) / 100;
         const totalBill = bill + tipAmount;
-        const perPerson = totalBill / split;
-        const tipPerPerson = tipAmount / split;
+        const perPerson = split > 0 ? totalBill / split : 0;
+        const tipPerPerson = split > 0 ? tipAmount / split : 0;
 
         return { tipAmount, totalBill, perPerson, tipPerPerson };
     }, [billAmount, tipPercent, splitCount]);
@@ -155,10 +155,10 @@ const TipCalculator = ({ currency }) => {
                         <tbody>
                             <tr><td className="border border-gray-200 dark:border-slate-700 px-4 py-2">Restaurant (US)</td><td className="border border-gray-200 dark:border-slate-700 px-4 py-2 font-bold text-teal-600">15–20%</td></tr>
                             <tr className="bg-gray-50 dark:bg-slate-800/30"><td className="border border-gray-200 dark:border-slate-700 px-4 py-2">Restaurant (India)</td><td className="border border-gray-200 dark:border-slate-700 px-4 py-2 font-bold text-teal-600">5–10%</td></tr>
-                            <tr><td className="border border-gray-200 dark:border-slate-700 px-4 py-2">Coffee / Quick Service</td><td className="border border-gray-200 dark:border-slate-700 px-4 py-2 font-bold text-teal-600">10–15%</td></tr>
+                            <tr><td className="border border-gray-200 dark:border-slate-700 px-4 py-2">Coffee or Quick Service</td><td className="border border-gray-200 dark:border-slate-700 px-4 py-2 font-bold text-teal-600">10–15%</td></tr>
                             <tr className="bg-gray-50 dark:bg-slate-800/30"><td className="border border-gray-200 dark:border-slate-700 px-4 py-2">Food Delivery</td><td className="border border-gray-200 dark:border-slate-700 px-4 py-2 font-bold text-teal-600">10–15%</td></tr>
-                            <tr><td className="border border-gray-200 dark:border-slate-700 px-4 py-2">Salon / Spa</td><td className="border border-gray-200 dark:border-slate-700 px-4 py-2 font-bold text-teal-600">15–20%</td></tr>
-                            <tr className="bg-gray-50 dark:bg-slate-800/30"><td className="border border-gray-200 dark:border-slate-700 px-4 py-2">Hotel Housekeeping</td><td className="border border-gray-200 dark:border-slate-700 px-4 py-2 font-bold text-teal-600">$2–5 / day</td></tr>
+                            <tr><td className="border border-gray-200 dark:border-slate-700 px-4 py-2">Salon or Spa</td><td className="border border-gray-200 dark:border-slate-700 px-4 py-2 font-bold text-teal-600">15–20%</td></tr>
+                            <tr className="bg-gray-50 dark:bg-slate-800/30"><td className="border border-gray-200 dark:border-slate-700 px-4 py-2">Hotel Housekeeping</td><td className="border border-gray-200 dark:border-slate-700 px-4 py-2 font-bold text-teal-600">$2–5 per day</td></tr>
                         </tbody>
                     </table>
                 </div>

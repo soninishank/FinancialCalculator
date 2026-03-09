@@ -4,6 +4,8 @@ import React from 'react';
 import Link from 'next/link';
 import calculators from '../../utils/calculatorsManifest';
 import BillCalendar from './BillCalendar';
+import GoalMilestonesTimeline from './GoalMilestonesTimeline';
+import CurrencyConverterWidget from './CurrencyConverterWidget';
 import {
     clearFavorites,
     clearRecent,
@@ -258,7 +260,15 @@ export default function MyToolsWorkspace() {
                         calculatorsMap={calculatorsMap}
                         onDelete={handleDeleteComparison}
                     />
+
+                    {/* Currency Converter */}
+                    <CurrencyConverterWidget />
                 </div>
+            </section>
+
+            {/* Goal Milestones Timeline - full width */}
+            <section className="max-w-6xl mx-auto px-6 pb-12">
+                <GoalMilestonesTimeline />
             </section>
         </div>
     );
