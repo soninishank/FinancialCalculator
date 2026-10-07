@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { downloadCSV, downloadPDF } from "../../../utils/export";
 
 // --- IMPORTS ---
@@ -36,6 +36,7 @@ import {
 
 export default function LumpSumOnly({ currency, setCurrency }) {
   // --- STATE ---
+  const [scheduleView, setScheduleView] = useState('tenure'); // 'tenure' | 'calendar'
   const {
     lumpSum, setLumpSum,
     annualRate, setAnnualRate,
@@ -64,11 +65,13 @@ export default function LumpSumOnly({ currency, setCurrency }) {
       annualRate: Number(annualRate),
       totalYears: Number(years),
       calculationMode: 'duration',
-      startDate
+      startDate,
+      scheduleView
     });
-  }, [lumpSum, annualRate, years, startDate]);
+  }, [lumpSum, annualRate, years, startDate, scheduleView]);
 
-  const { rows: yearlyRows = [], monthlyRows = [] } = result || {};
+  const { rows: yearlyRows = [], calendarRows = [], tenureRows = [], monthlyRows = [] } = result || {};
+  const activeYearlyRows = scheduleView === 'tenure' ? (tenureRows.length > 0 ? tenureRows : yearlyRows) : (calendarRows.length > 0 ? calendarRows : yearlyRows);
 
   const lastRow = yearlyRows[yearlyRows.length - 1] || { totalInvested: 0, overallValue: 0 };
   const investedTotal = lastRow.totalInvested; // Should constitute only lump sum
@@ -234,13 +237,13 @@ export default function LumpSumOnly({ currency, setCurrency }) {
           } : null}
         />
       }
-      charts={<FinancialCompoundingBarChart data={yearlyRows} currency={currency} />}
+      charts={<FinancialCompoundingBarChart data={activeYearlyRows} currency={currency} />}
       table={
         <div className="mt-8">
           <ScenarioComparison scenarios={scenarios} currency={currency} />
           <InvestmentInsights
             currency={currency}
-            yearlyRows={yearlyRows}
+            yearlyRows={activeYearlyRows}
             monthlyRows={monthlyRows}
             invested={investedTotal}
             total={totalFuture}
@@ -258,11 +261,29 @@ export default function LumpSumOnly({ currency, setCurrency }) {
             currentLumpSum={lumpSum}
           />
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Growth Schedule</h3>
+            <div className="flex items-center gap-3">
+              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Growth Schedule</h3>
+              <div className="inline-flex rounded-lg border border-gray-200 dark:border-slate-700 p-0.5 bg-gray-100 dark:bg-slate-800 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setScheduleView('tenure')}
+                  className={`px-2.5 py-1 rounded-md font-semibold transition-all ${scheduleView === 'tenure' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-sm' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400'}`}
+                >
+                  Tenure Years
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setScheduleView('calendar')}
+                  className={`px-2.5 py-1 rounded-md font-semibold transition-all ${scheduleView === 'calendar' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-sm' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400'}`}
+                >
+                  Calendar Years
+                </button>
+              </div>
+            </div>
             <div className="flex items-center gap-4 w-full md:w-auto">
               <button
                 onClick={() => {
-                  const data = yearlyRows.map(r => [
+                  const data = activeYearlyRows.map(r => [
                     r.yearLabel || r.displayYear || `Year ${r.year}`,
                     Math.round(r.totalInvested),
                     Math.round(r.yearlyGrowth ?? r.growth),
@@ -277,7 +298,7 @@ export default function LumpSumOnly({ currency, setCurrency }) {
               </button>
               <button
                 onClick={() => {
-                  const data = yearlyRows.map(r => [
+                  const data = activeYearlyRows.map(r => [
                     r.yearLabel || r.displayYear || `Year ${r.year}`,
                     Math.round(r.totalInvested),
                     Math.round(r.yearlyGrowth ?? r.growth),
@@ -285,7 +306,7 @@ export default function LumpSumOnly({ currency, setCurrency }) {
                     Math.round(r.balance ?? r.overallValue)
                   ]);
                   downloadPDF(data, ['Year', 'Invested', 'Yearly Growth', 'Total Growth', 'Balance'], 'lumpsum_schedule.pdf', {
-                    assumption: `${annualRate}% CAGR (effective annual), ${years} years`
+                    assumption: `${annualRate}% CAGR (effective annual), ${years} years (${scheduleView === 'tenure' ? 'Tenure View' : 'Calendar View'})`
                   });
                 }}
                 className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap"
@@ -304,9 +325,10 @@ export default function LumpSumOnly({ currency, setCurrency }) {
             </div>
           </div>
           <CollapsibleInvestmentTable
-            yearlyData={yearlyRows}
+            yearlyData={activeYearlyRows}
             monthlyData={monthlyRows}
             currency={currency}
+            isTenureView={scheduleView === 'tenure'}
           />
         </div>
       }

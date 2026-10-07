@@ -1,10 +1,10 @@
 import React, { useState, Fragment } from 'react';
 import { moneyFormat } from '../../utils/formatting';
 
-export default function CollapsibleInvestmentTable({ yearlyData, monthlyData, currency, labels }) {
+export default function CollapsibleInvestmentTable({ yearlyData, monthlyData, currency, labels, isTenureView = false }) {
     const hasYearlyGrowth = Array.isArray(yearlyData) && yearlyData.some(r => r.yearlyGrowth !== undefined);
     const defaultLabels = {
-        year: "Year",
+        year: isTenureView ? "Tenure Year" : "Year",
         invested: "Total Invested",
         yearlyGrowth: "Yearly Growth",
         interest: hasYearlyGrowth ? "Total Growth" : "Interest Earned",
@@ -13,16 +13,21 @@ export default function CollapsibleInvestmentTable({ yearlyData, monthlyData, cu
     const finalLabels = { ...defaultLabels, ...labels };
     const [expandedYears, setExpandedYears] = useState({});
 
-    const toggleYear = (year) => {
+    const toggleYear = (key) => {
         setExpandedYears(prev => ({
             ...prev,
-            [year]: !prev[year]
+            [key]: !prev[key]
         }));
     };
 
-    // Helper to group monthly data by year
-    const getMonthsForYear = (year) => {
-        return monthlyData ? monthlyData.filter(m => m.year === year) : [];
+    // Helper to group monthly data by calendar year or tenure year
+    const getMonthsForYear = (yearRow) => {
+        if (!monthlyData) return [];
+        if (isTenureView || yearRow.periodLabel) {
+            const yNum = yearRow.yearNumber ?? yearRow.year;
+            return monthlyData.filter(m => Math.ceil(m.id / 12) === yNum);
+        }
+        return monthlyData.filter(m => m.year === yearRow.year);
     };
 
     return (
@@ -49,18 +54,19 @@ export default function CollapsibleInvestmentTable({ yearlyData, monthlyData, cu
                     )}
 
                     {yearlyData.map((yearRow) => {
-                        const isExpanded = expandedYears[yearRow.year];
-                        const months = getMonthsForYear(yearRow.year);
+                        const rowKey = yearRow.yearLabel || yearRow.year;
+                        const isExpanded = expandedYears[rowKey];
+                        const months = getMonthsForYear(yearRow);
                         const hasMonths = months && months.length > 0;
                         const displayYearText = yearRow.yearLabel || yearRow.displayYear || yearRow.year;
 
                         if (hasYearlyGrowth) {
                             return (
-                                <Fragment key={yearRow.year}>
+                                <Fragment key={rowKey}>
                                     {/* YEAR ROW - 5 COLUMNS */}
                                     <div
                                         className={`grid grid-cols-12 border-b border-gray-300 dark:border-slate-700 hover:bg-indigo-50/30 dark:hover:bg-indigo-900/20 transition-colors cursor-pointer group ${isExpanded ? 'bg-indigo-50/50 dark:bg-indigo-900/30' : ''}`}
-                                        onClick={() => hasMonths && toggleYear(yearRow.year)}
+                                        onClick={() => hasMonths && toggleYear(rowKey)}
                                     >
                                         <div className="col-span-3 p-3 sm:p-4 flex items-center font-bold text-indigo-900 dark:text-indigo-200 border-r border-gray-300 dark:border-slate-700">
                                             {hasMonths && (
@@ -86,7 +92,7 @@ export default function CollapsibleInvestmentTable({ yearlyData, monthlyData, cu
 
                                     {/* MONTHLY ROWS (Expanded) - 5 COLUMNS */}
                                     {isExpanded && months.map((monthRow, idx) => (
-                                        <div key={`${yearRow.year}-${idx}`} className="grid grid-cols-12 border-b border-gray-50 dark:border-slate-800 bg-white dark:bg-slate-800 text-xs sm:text-sm animate-fade-in-down">
+                                        <div key={`${rowKey}-${idx}`} className="grid grid-cols-12 border-b border-gray-50 dark:border-slate-800 bg-white dark:bg-slate-800 text-xs sm:text-sm animate-fade-in-down">
                                             <div className="col-span-3 p-2 pl-8 sm:pl-10 text-gray-700 dark:text-gray-300 font-medium border-r border-gray-300 dark:border-slate-700 flex items-center gap-2 truncate">
                                                 <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 px-1.5 py-0.5 rounded border border-indigo-100 dark:border-indigo-800 shrink-0">
                                                     {monthRow.label || `M${monthRow.id || monthRow.month}`}
@@ -112,11 +118,11 @@ export default function CollapsibleInvestmentTable({ yearlyData, monthlyData, cu
                         }
 
                         return (
-                            <Fragment key={yearRow.year}>
+                            <Fragment key={rowKey}>
                                 {/* YEAR ROW - 4 COLUMNS */}
                                 <div
                                     className={`grid grid-cols-12 border-b border-gray-300 dark:border-slate-700 hover:bg-indigo-50/30 dark:hover:bg-indigo-900/20 transition-colors cursor-pointer group ${isExpanded ? 'bg-indigo-50/50 dark:bg-indigo-900/30' : ''}`}
-                                    onClick={() => hasMonths && toggleYear(yearRow.year)}
+                                    onClick={() => hasMonths && toggleYear(rowKey)}
                                 >
                                     <div className="col-span-2 p-3 sm:p-4 flex items-center font-bold text-indigo-900 dark:text-indigo-200 border-r border-gray-300 dark:border-slate-700">
                                         {hasMonths && (

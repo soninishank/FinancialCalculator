@@ -185,11 +185,19 @@ export function getRequiredSIP(target, annualRate, years) {
   return numerator / denominator;
 }
 
-export function getRequiredLumpSum(target, annualRate, years) {
-  const r_m = annualRate / 12 / 100;
-  const n = years * 12;
-  // PV = FV / (1 + r)^n
-  return target / Math.pow(1 + r_m, n);
+export function getRequiredLumpSum(target, annualRate, years, compounding = 'cagr') {
+  const t = Number(years);
+  const R = Number(annualRate);
+  const FV = Number(target);
+  if (t <= 0 || FV <= 0) return FV;
+  if (R === 0) return FV;
+  if (compounding === 'monthly' || compounding === 'nominal') {
+    const r_m = R / 12 / 100;
+    const n = t * 12;
+    return FV / Math.pow(1 + r_m, n);
+  }
+  // CAGR (Effective Annual Rate): PV = FV / (1 + R/100)^t
+  return FV / Math.pow(1 + R / 100, t);
 }
 
 export function getRequiredStepUpSIP(target, annualRate, years, stepUpPercent) {
@@ -1241,7 +1249,8 @@ export function computeYearlySchedule({
   stepUpPercent = 0,
   calculationMode = 'duration',
   startDate = new Date().toISOString().slice(0, 10),
-  endDate = null
+  endDate = null,
+  scheduleView = 'calendar'
 }) {
   const cagr = Number(annualRate) / 100;
   // Effective monthly rate so that compounding 12 months produces exactly (1 + cagr):
@@ -1297,7 +1306,6 @@ export function computeYearlySchedule({
   let cumulativeInvested = Number(lumpSum);
   let sipInvested = 0;
   let prevBalance = Number(lumpSum);
-  const rows = [];
   const monthlyRows = [];
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -1342,10 +1350,10 @@ export function computeYearlySchedule({
     prevBalance = balance;
   }
 
-  // Aggregate into Yearly Rows (Calendar Years)
+  // Aggregate into Calendar Year Rows
   const yearsSet = new Set(monthlyRows.map(r => r.year));
   const sortedYears = Array.from(yearsSet).sort((a, b) => a - b);
-
+  const calendarRows = [];
   let prevYearEndBalance = Number(lumpSum);
 
   sortedYears.forEach((year, idx) => {
@@ -1364,7 +1372,7 @@ export function computeYearlySchedule({
     const netContributionsThisYear = lastMonth.invested - investedBeforeYear;
     const yearlyGrowth = lastMonth.balance - prevYearEndBalance - netContributionsThisYear;
 
-    rows.push({
+    calendarRows.push({
       year: year,
       yearLabel,
       displayYear: yearLabel,
@@ -1386,7 +1394,56 @@ export function computeYearlySchedule({
     prevYearEndBalance = lastMonth.balance;
   });
 
-  return { rows, monthlyRows };
+  // Aggregate into Tenure / Investment Year Rows (12 months per tenure year from start)
+  const tenureRows = [];
+  const totalTenureYears = Math.ceil(totalMonths / 12);
+  let prevTenureBalance = Number(lumpSum);
+
+  for (let y = 1; y <= totalTenureYears; y++) {
+    const startMIdx = (y - 1) * 12;
+    const endMIdx = Math.min(y * 12, totalMonths) - 1;
+    const monthsInTenureYear = monthlyRows.slice(startMIdx, endMIdx + 1);
+    if (monthsInTenureYear.length === 0) continue;
+
+    const firstMonth = monthsInTenureYear[0];
+    const lastMonth = monthsInTenureYear[monthsInTenureYear.length - 1];
+    const isPartial = monthsInTenureYear.length < 12;
+
+    const periodStr = `${firstMonth.monthName} ${firstMonth.year} - ${lastMonth.monthName} ${lastMonth.year}`;
+    const yearLabel = `Year ${y} (${periodStr})`;
+
+    const investedBefore = startMIdx === 0
+      ? Number(lumpSum)
+      : (monthlyRows[startMIdx - 1]?.invested || Number(lumpSum));
+    const netContributions = lastMonth.invested - investedBefore;
+    const yearlyGrowth = lastMonth.balance - prevTenureBalance - netContributions;
+
+    tenureRows.push({
+      year: y,
+      yearLabel,
+      displayYear: `Year ${y}`,
+      periodLabel: periodStr,
+      isPartial,
+      startMonthName: firstMonth.monthName,
+      endMonthName: lastMonth.monthName,
+      yearNumber: y,
+      totalInvested: lastMonth.invested,
+      sipInvested: lastMonth.sipInvested,
+      lumpSum: lastMonth.lumpSum,
+      stepUpAppliedPercent: Number(stepUpPercent),
+      yearlyGrowth: yearlyGrowth,
+      growth: lastMonth.growth,
+      balance: lastMonth.balance,
+      overallValue: lastMonth.balance,
+      investment: lastMonth.invested
+    });
+
+    prevTenureBalance = lastMonth.balance;
+  }
+
+  const rows = scheduleView === 'tenure' ? tenureRows : calendarRows;
+
+  return { rows, calendarRows, tenureRows, monthlyRows };
 }
 
 /**

@@ -74,8 +74,15 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
             expect(sip).toBeLessThan(8000);
         });
         test('Required LumpSum', () => {
-            const lump = getRequiredLumpSum(12100, 10, 2);
-            expect(lump).toBeCloseTo(9915, 0);
+            const lumpCAGR = getRequiredLumpSum(12100, 10, 2);
+            expect(lumpCAGR).toBeCloseTo(10000, 0);
+
+            const lumpMonthly = getRequiredLumpSum(12100, 10, 2, 'monthly');
+            expect(lumpMonthly).toBeCloseTo(9915, 0);
+
+            // 15-year 20% CAGR target of 7.7M requires exactly 500k
+            const lump15Yr = getRequiredLumpSum(7703510.6, 20, 15);
+            expect(lump15Yr).toBeCloseTo(500000, 0);
         });
         test('Required Step-Up SIP', () => {
             const sip = getRequiredStepUpSIP(100000, 12, 5, 10);
@@ -329,6 +336,22 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
             expect(lastYearRow.yearLabel).toBe('2041 (Jan - Sep)');
             expect(lastYearRow.isPartial).toBe(true);
             expect(lastYearRow.balance).toBeCloseTo(7703511, 0);
+
+            // Tenure Rows (Exact 12-Month Milestones from start: Oct 2026 to Sep 2041)
+            expect(res.tenureRows.length).toBe(15);
+            // Year 1: $600,000
+            expect(res.tenureRows[0].year).toBe(1);
+            expect(res.tenureRows[0].balance).toBeCloseTo(600000, 0);
+            expect(res.tenureRows[0].yearlyGrowth).toBeCloseTo(100000, 0);
+            expect(res.tenureRows[0].growth).toBeCloseTo(100000, 0);
+            // Year 2: $720,000
+            expect(res.tenureRows[1].balance).toBeCloseTo(720000, 0);
+            // Year 5: $1,244,160
+            expect(res.tenureRows[4].balance).toBeCloseTo(1244160, 0);
+            // Year 10: $3,095,868
+            expect(res.tenureRows[9].balance).toBeCloseTo(3095868, 0);
+            // Year 15: $7,703,511
+            expect(res.tenureRows[14].balance).toBeCloseTo(7703511, 0);
         });
     });
 
