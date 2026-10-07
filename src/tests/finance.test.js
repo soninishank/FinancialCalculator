@@ -246,6 +246,27 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
             });
             expect(res.monthlyRows.length).toBe(12);
         });
+        test('Mid-year start date accurately groups calendar years (e.g. 2026-09)', () => {
+            const res = computeYearlySchedule({
+                lumpSum: 500000,
+                annualRate: 20,
+                totalYears: 2,
+                startDate: '2026-09'
+            });
+            const y2026Months = res.monthlyRows.filter(r => r.year === 2026);
+            expect(y2026Months.length).toBe(4); // Sep, Oct, Nov, Dec
+            expect(y2026Months[0].monthName).toBe('Sep');
+            expect(y2026Months[3].monthName).toBe('Dec');
+            expect(res.rows[0].year).toBe(2026);
+            expect(res.rows[0].overallValue).toBeCloseTo(534175.96, 1);
+
+            const y2027Months = res.monthlyRows.filter(r => r.year === 2027);
+            expect(y2027Months.length).toBe(12); // Jan - Dec
+            expect(y2027Months[0].monthName).toBe('Jan');
+            expect(y2027Months[11].monthName).toBe('Dec');
+            expect(res.rows[1].year).toBe(2027);
+            expect(res.rows[1].overallValue).toBeCloseTo(651369.41, 1);
+        });
     });
 
     describe('Step Up Schedule', () => {
