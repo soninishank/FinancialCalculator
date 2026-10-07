@@ -1089,15 +1089,16 @@ export function computeSWPPlan({
   let monthlyRate;
   const R = Number(annualRate) / 100;
 
-  if (compoundingFrequency === 'yearly') {
-    monthlyRate = Math.pow(1 + R, 1 / 12) - 1;
+  if (compoundingFrequency === 'nominal_monthly') {
+    monthlyRate = R / 12;
   } else if (compoundingFrequency === 'half-yearly') {
     monthlyRate = Math.pow(1 + R / 2, 1 / 6) - 1;
   } else if (compoundingFrequency === 'quarterly') {
     monthlyRate = Math.pow(1 + R / 4, 1 / 3) - 1;
   } else {
-    // Default Monthly
-    monthlyRate = R / 12;
+    // Default: CAGR / Effective Annual Rate (1 + R)^(1/12) - 1
+    // Ensures an expected return of R% compounds to exactly R% annually
+    monthlyRate = R > -1 ? Math.pow(1 + R, 1 / 12) - 1 : 0;
   }
 
   const annualIncreaseFactor = 1 + (Number(annualWithdrawalIncrease) || 0) / 100;
@@ -2314,7 +2315,10 @@ export function calculateInvestmentDuration({
   if (frequency === 'half-yearly') n_freq = 2;
   if (frequency === 'yearly') n_freq = 1;
 
-  const r = R / n_freq / 100;
+  // Investment return is quoted as CAGR (effective annual rate)
+  // Period rate compounds so that (1 + r)^n_freq = 1 + CAGR
+  const cagr = R / 100;
+  const r = cagr > -1 ? Math.pow(1 + cagr, 1 / n_freq) - 1 : 0;
 
   // Zero Interest Case
   if (r === 0) {

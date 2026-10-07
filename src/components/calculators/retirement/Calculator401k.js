@@ -27,6 +27,9 @@ export default function Calculator401k({ currency = 'USD' }) {
 
         const yearlyData = [];
 
+        const cagr = Number(annualReturn) / 100;
+        const monthlyRate = cagr > -1 ? Math.pow(1 + cagr, 1 / 12) - 1 : 0;
+
         for (let i = 1; i <= yearsToInvest; i++) {
             const yearLabel = currentAge + i;
 
@@ -39,11 +42,15 @@ export default function Calculator401k({ currency = 'USD' }) {
             const employerContrib = salary * (validMatchSalaryPercent / 100) * (employerMatchPercent / 100);
 
             const totalYearDeposit = employeeContrib + employerContrib;
+            const monthlyDeposit = totalYearDeposit / 12;
+            const prevYearBalance = balance;
 
-            // Interest (Compounding)
-            const interest = (balance + totalYearDeposit / 2) * (annualReturn / 100); // Approximation: deposits happen throughout year
+            // Monthly compounding throughout the year (paycheck contributions)
+            for (let m = 1; m <= 12; m++) {
+                balance = (balance + monthlyDeposit) * (1 + monthlyRate);
+            }
 
-            balance += totalYearDeposit + interest;
+            const interest = balance - prevYearBalance - totalYearDeposit;
             totalEmployeeContribution += employeeContrib;
             totalEmployerContribution += employerContrib;
             totalInterest += interest;

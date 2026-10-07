@@ -32,7 +32,8 @@ function computeStepDownSWP({
     isStepDownEnabled,
     planningHorizon
 }) {
-    const monthlyRate = annualReturn / 100 / 12;
+    const cagr = Number(annualReturn) / 100;
+    const monthlyRate = cagr > -1 ? Math.pow(1 + cagr, 1 / 12) - 1 : 0;
     const maxMonths = planningHorizon * 12;
 
     let corpus = initialCorpus;

@@ -14,18 +14,19 @@ const RetirementSavingsCalculator = ({ currency }) => {
     const result = useMemo(() => {
         const yearsToRetire = Math.max(1, retirementAge - currentAge);
         const months = yearsToRetire * 12;
-        const monthlyRate = (parseFloat(expectedReturn) || 0) / 100 / 12;
+        const cagr = (parseFloat(expectedReturn) || 0) / 100;
+        const monthlyRate = cagr > -1 ? Math.pow(1 + cagr, 1 / 12) - 1 : 0;
         const saved = parseFloat(currentSavings) || 0;
         const monthly = parseFloat(monthlyContribution) || 0;
         const income = parseFloat(desiredIncome) || 0;
 
-        // Future value of current savings
+        // Future value of current savings (CAGR)
         const fvCurrentSavings = saved * Math.pow(1 + monthlyRate, months);
 
-        // Future value of monthly contributions (annuity)
+        // Future value of monthly contributions (annuity due)
         let fvContributions = 0;
         if (monthlyRate > 0) {
-            fvContributions = monthly * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+            fvContributions = monthly * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate) * (1 + monthlyRate);
         } else {
             fvContributions = monthly * months;
         }
@@ -52,7 +53,7 @@ const RetirementSavingsCalculator = ({ currency }) => {
         if (!isOnTrack && months > 0) {
             const shortfall = nestedEgg - fvCurrentSavings;
             if (monthlyRate > 0) {
-                extraMonthlyNeeded = shortfall * monthlyRate / (Math.pow(1 + monthlyRate, months) - 1);
+                extraMonthlyNeeded = (shortfall * monthlyRate) / ((Math.pow(1 + monthlyRate, months) - 1) * (1 + monthlyRate));
             } else {
                 extraMonthlyNeeded = shortfall / months;
             }

@@ -96,7 +96,8 @@ export default function InvestmentReturnSummary() {
     }, 0);
     const totalCurrent = investments.reduce((s, inv) => {
         if (inv.type === 'lump') return s + (Number(inv.currentValue) || 0);
-        const r = (Number(inv.rate) || 12) / 100 / 12;
+        const cagr = (Number(inv.rate) || 12) / 100;
+        const r = cagr > -1 ? Math.pow(1 + cagr, 1 / 12) - 1 : 0;
         return s + sipFV(Number(inv.monthlyAmount) || 0, r, Number(inv.months) || 0);
     }, 0);
     const overallGain = totalCurrent - totalInvested;
@@ -177,7 +178,8 @@ export default function InvestmentReturnSummary() {
                     } else {
                         const monthly = Number(inv.monthlyAmount) || 0;
                         const months = Number(inv.months) || 0;
-                        const r = (Number(inv.rate) || 12) / 100 / 12;
+                        const cagrVal = (Number(inv.rate) || 12) / 100;
+                        const r = cagrVal > -1 ? Math.pow(1 + cagrVal, 1 / 12) - 1 : 0;
                         invested = monthly * months;
                         currentVal = sipFV(monthly, r, months);
                         gain = currentVal - invested;

@@ -566,18 +566,18 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
             })).toBe(0);
         });
 
-        test('Lumpsum only: 5L @ 12% to reach 10L (Monthly Compounding)', () => {
+        test('Lumpsum only: 5L @ 12% to reach 10L (CAGR Compounding)', () => {
             const years = calculateInvestmentDuration({
                 principal: 500000,
                 contribution: 0,
                 target: 1000000,
                 annualRate: 12
             });
-            // 2 = (1 + 0.12/12)^n => n = ln(2)/ln(1.01) ~= 69.66 months ~= 5.805 years
-            expect(years).toBeCloseTo(5.805, 3);
+            // CAGR 12%: 2 = (1 + 0.12)^t => t = ln(2) / ln(1.12) = 6.116255 years (73.40 months)
+            expect(years).toBeCloseTo(6.116, 3);
         });
 
-        test('SIP only: 10k monthly @ 12% to reach 10L (Annuity Due)', () => {
+        test('SIP only: 10k monthly @ 12% to reach 10L (Annuity Due, CAGR Compounding)', () => {
             const years = calculateInvestmentDuration({
                 principal: 0,
                 contribution: 10000,
@@ -585,8 +585,8 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
                 annualRate: 12,
                 frequency: 'monthly'
             });
-            // Result is approx 69 months / 12 ~= 5.76 yrs
-            expect(years).toBeCloseTo(5.763, 3);
+            // r_m = 1.12^(1/12) - 1 ~= 0.00948879 => n ~= 70.168 months => 5.847 years
+            expect(years).toBeCloseTo(5.847, 3);
         });
 
         test('Edge Case: 0 Investment for positive target (Unreachable)', () => {

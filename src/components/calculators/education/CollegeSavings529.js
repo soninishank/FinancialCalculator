@@ -27,11 +27,10 @@ export default function CollegeSavings529({ currency = 'USD' }) {
 
         // Growth Phase (Until College Starts)
         for (let i = 1; i <= yearsToCollege; i++) {
-            // Simplified Annual Compounding for Chart
-            const yearContribution = monthlyContribution * 12;
-            const interest = (balance + yearContribution / 2) * (annualReturn / 100);
-            balance += yearContribution + interest;
-            totalInvested += yearContribution;
+            for (let m = 1; m <= 12; m++) {
+                balance = (balance + monthlyContribution) * (1 + monthlyRate);
+                totalInvested += monthlyContribution;
+            }
 
             yearlyData.push({
                 year: childAge + i,
