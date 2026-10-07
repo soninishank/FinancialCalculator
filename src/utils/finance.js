@@ -349,9 +349,9 @@ export function computeCarLoanAmortization({
 
   let balance = capitalizedLoanAmount;
   let carValue = purchasePrice;
-  const start = startDate ? new Date(startDate) : new Date();
-  const startMonth = start.getMonth();
-  const startYear = start.getFullYear();
+  const start = parseDateUTC(startDate);
+  const startMonth = start.getUTCMonth();
+  const startYear = start.getUTCFullYear();
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   const allMonthlyRows = [];
@@ -425,9 +425,11 @@ export function computeCarLoanAmortization({
 
 // Helper function (make sure this exists in your utils/finance.js)
 export function calculateEMI(principal, monthlyRate, months) {
+  if (!principal || months <= 0) return 0;
   if (monthlyRate === 0) return principal / months;
-  return (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) /
-    (Math.pow(1 + monthlyRate, months) - 1);
+  const p = Math.pow(1 + monthlyRate, months);
+  if (!isFinite(p) || p === 1) return principal / months;
+  return (principal * monthlyRate * p) / (p - 1);
 }
 
 /**
@@ -725,9 +727,11 @@ export function calculateLoanAmountFromEMI(emi, monthlyRate, months) {
 }
 
 export function calculateLoanTenure(principal, emi, annualRate) {
-  if (getLoanInterest(principal, emi, annualRate) >= emi) return Infinity; // Interest > EMI, never paid off
+  if (principal <= 0) return 0;
+  if (emi <= 0) return Infinity;
   const r = annualRate / 12 / 100;
   if (r === 0) return principal / emi;
+  if (principal * r >= emi) return Infinity; // Interest >= EMI, never paid off
 
   // Formula: n = log(EMI / (EMI - P*r)) / log(1+r)
   const numerator = Math.log(emi / (emi - principal * r));
@@ -828,8 +832,8 @@ export function calculateCAGR(beginningValue, endingValue, years) {
 export function calculateDetailedCAGR({ beginningValue, endingValue, time, timeUnit = 'years', startDate, endDate, scheduleStartDate = new Date().toISOString().slice(0, 7) }) {
   let t = 0;
   if (startDate && endDate) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const start = parseDateUTC(startDate);
+    const end = parseDateUTC(endDate);
     const diffTime = Math.abs(end - start);
     t = diffTime / (1000 * 60 * 60 * 24 * 365.25); // years
   } else {
@@ -1090,9 +1094,9 @@ export function computeSWPPlan({
 
   let effectiveYears = 0;
   if (calculationMode === 'date' && startDate && endDate) {
-    const s = new Date(startDate);
-    const e = new Date(endDate);
-    const months = (e.getFullYear() - s.getFullYear()) * 12 + (e.getMonth() - s.getMonth());
+    const s = parseDateUTC(startDate);
+    const e = parseDateUTC(endDate);
+    const months = (e.getUTCFullYear() - s.getUTCFullYear()) * 12 + (e.getUTCMonth() - s.getUTCMonth());
     effectiveYears = Math.max(0, months / 12);
   } else {
     effectiveYears = Number(totalYears);
@@ -1263,15 +1267,33 @@ export function computeYearlySchedule({
   totalMonths = Math.min(totalMonths, MAX_MONTHS);
   sipMonths = Math.min(sipMonths, totalMonths);
 
+  const startObj = parseDateUTC(startDate);
+  const startMonth = startObj.getUTCMonth();
+  const startYear = startObj.getUTCFullYear();
+
+  if (totalMonths <= 0) {
+    const initialInvested = Number(lumpSum);
+    return {
+      rows: [{
+        year: startYear,
+        yearNumber: 0,
+        totalInvested: initialInvested,
+        sipInvested: 0,
+        lumpSum: initialInvested,
+        stepUpAppliedPercent: Number(stepUpPercent),
+        growth: 0,
+        overallValue: initialInvested,
+        investment: initialInvested
+      }],
+      monthlyRows: []
+    };
+  }
+
   let balance = Number(lumpSum);
   let cumulativeInvested = Number(lumpSum);
   let sipInvested = 0;
   const rows = [];
   const monthlyRows = [];
-
-  const startObj = parseDateUTC(startDate);
-  const startMonth = startObj.getUTCMonth();
-  const startYear = startObj.getUTCFullYear();
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   for (let m = 1; m <= totalMonths; m++) {
@@ -1359,10 +1381,10 @@ export function computeStepUpSchedule({ initialSIP, stepUpPercent, annualRate, t
     // 3. Apply Interest (Always happens)
     balance = balance * (1 + r_m);
 
-    // 4. Snapshot at year end
-    if (m % 12 === 0) {
+    // 4. Snapshot at year end or final month
+    if (m % 12 === 0 || m === totalMonths) {
       rows.push({
-        year: m / 12,
+        year: Math.ceil(m / 12),
         totalInvested: totalInvested,
         sipInvested: totalInvested,
         stepUpAppliedPercent: stepUpPercent,
@@ -1425,7 +1447,9 @@ export function calculateTimeToFIRE({
 
   // Calculate true monthly rate from effective annual return (proper compounding)
   // (1 + r_annual)^(1/12) - 1 ensures monthly rate compounds to annual rate
-  const r_m = Math.pow(1 + effectiveAnnualRate / 100, 1 / 12) - 1;
+  const r_m = (1 + effectiveAnnualRate / 100 > 0)
+    ? Math.pow(1 + effectiveAnnualRate / 100, 1 / 12) - 1
+    : -1;
 
   // Solving for n in Future Value of Annuity formula mixed with Loop for simplicity
   // FV = CurrentCorpus*(1+r)^n + PMT * ...
@@ -1542,19 +1566,13 @@ export function calculateCostOfDelay({
   const r_m = annualReturn / 12 / 100;
 
   // Scenario A: Start Now, invest for X years
-  // FV = P * ((1+r)^n - 1)/r * (1+r)
-  const n_total = investmentYears * 12;
-  const fv_now = monthlyInvestment * ((Math.pow(1 + r_m, n_total) - 1) / r_m) * (1 + r_m);
+  const n_total = Math.max(0, investmentYears * 12);
+  const fv_now = calcSIPFutureValue(monthlyInvestment, r_m, n_total);
 
-  // Scenario B: Wait D years, then invest for (X - D) years? 
-  // OR usually "Cost of Delay" implies you invest for SAME duration but shift start?
-  // Common interpretation: You define a goal horizon (e.g. 20 years from now).
-  // If you start now, you have 20 years of compounding.
-  // If you wait 5 years, you only have 15 years of compounding.
-
-  const n_delayed = (investmentYears - delayYears) * 12;
+  // Scenario B: Wait D years, then invest for (X - D) years
+  const n_delayed = Math.max(0, (investmentYears - delayYears) * 12);
   const fv_delayed = n_delayed > 0
-    ? monthlyInvestment * ((Math.pow(1 + r_m, n_delayed) - 1) / r_m) * (1 + r_m)
+    ? calcSIPFutureValue(monthlyInvestment, r_m, n_delayed)
     : 0;
 
   return {
@@ -1599,9 +1617,9 @@ export function computeRentVsBuyLedger({
   const monthlyLoanRate = loanRate / 12 / 100;
   const monthlyInvestRate = investReturnRate / 12 / 100;
 
-  const start = startDate ? new Date(startDate) : new Date();
-  const startMonth = start.getMonth(); // 0-based
-  const startYear = start.getFullYear();
+  const start = parseDateUTC(startDate);
+  const startMonth = start.getUTCMonth(); // 0-based
+  const startYear = start.getUTCFullYear();
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   for (let m = 1; m <= totalMonths; m++) {

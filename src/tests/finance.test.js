@@ -564,5 +564,39 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
             // Return 4%, Inflation 5%
             expect(calculateRealRate(4, 5)).toBeCloseTo(-0.95, 2);
         });
+
+        test('calculateCostOfDelay with 0% return does not produce NaN', () => {
+            const res = calculateCostOfDelay({
+                monthlyInvestment: 10000,
+                annualReturn: 0,
+                delayYears: 5,
+                investmentYears: 15
+            });
+            expect(res.startedNow).toBe(1800000);
+            expect(res.startedLater).toBe(1200000);
+            expect(res.cost).toBe(600000);
+        });
+
+        test('calculateEMI with 0 tenure or 0 principal returns 0 without NaN/Infinity', () => {
+            expect(calculateEMI(0, 0.01, 12)).toBe(0);
+            expect(calculateEMI(100000, 0.01, 0)).toBe(0);
+        });
+
+        test('calculateLoanTenure with 0 principal returns 0', () => {
+            expect(calculateLoanTenure(0, 5000, 10)).toBe(0);
+            expect(calculateLoanTenure(100000, 0, 10)).toBe(Infinity);
+        });
+
+        test('computeYearlySchedule with 0 years preserves lumpSum as overallValue', () => {
+            const res = computeYearlySchedule({
+                lumpSum: 500000,
+                annualRate: 12,
+                totalYears: 0,
+                startDate: '2026-09'
+            });
+            expect(res.rows.length).toBe(1);
+            expect(res.rows[0].overallValue).toBe(500000);
+            expect(res.rows[0].totalInvested).toBe(500000);
+        });
     });
 });
