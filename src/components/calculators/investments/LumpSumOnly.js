@@ -157,6 +157,15 @@ export default function LumpSumOnly({ currency, setCurrency }) {
         />
         <RateQualityGuard rate={annualRate} />
 
+        <div className="mt-3 p-3 bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/60 rounded-xl flex items-start gap-2.5 text-xs text-blue-900 dark:text-blue-200 leading-relaxed">
+          <svg className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <span className="font-semibold">Projection note:</span> Illustrative, assumes constant {annualRate}% CAGR (effective annual rate). Real-world equity index and ETF returns (such as SPMO) swing year-to-year with market volatility and drawdowns. Flat CAGR is an illustrative simplification.
+          </div>
+        </div>
+
         <div className="mt-6 flex flex-col lg:flex-row gap-6">
           <div className="flex-1">
             <TaxToggle
@@ -254,12 +263,13 @@ export default function LumpSumOnly({ currency, setCurrency }) {
               <button
                 onClick={() => {
                   const data = yearlyRows.map(r => [
-                    `Year ${r.year}`,
+                    r.yearLabel || r.displayYear || `Year ${r.year}`,
                     Math.round(r.totalInvested),
+                    Math.round(r.yearlyGrowth ?? r.growth),
                     Math.round(r.growth),
                     Math.round(r.balance ?? r.overallValue)
                   ]);
-                  downloadCSV(data, ['Year', 'Invested', 'Interest', 'Balance'], 'lumpsum_schedule.csv');
+                  downloadCSV(data, ['Year', 'Invested', 'Yearly Growth', 'Total Growth', 'Balance'], 'lumpsum_schedule.csv');
                 }}
                 className="text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap"
               >
@@ -268,12 +278,15 @@ export default function LumpSumOnly({ currency, setCurrency }) {
               <button
                 onClick={() => {
                   const data = yearlyRows.map(r => [
-                    `Year ${r.year}`,
+                    r.yearLabel || r.displayYear || `Year ${r.year}`,
                     Math.round(r.totalInvested),
+                    Math.round(r.yearlyGrowth ?? r.growth),
                     Math.round(r.growth),
                     Math.round(r.balance ?? r.overallValue)
                   ]);
-                  downloadPDF(data, ['Year', 'Invested', 'Interest', 'Balance'], 'lumpsum_schedule.pdf');
+                  downloadPDF(data, ['Year', 'Invested', 'Yearly Growth', 'Total Growth', 'Balance'], 'lumpsum_schedule.pdf', {
+                    assumption: `${annualRate}% CAGR (effective annual), ${years} years`
+                  });
                 }}
                 className="text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap"
               >

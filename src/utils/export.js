@@ -1,4 +1,4 @@
-export async function downloadPDF(data, headers, filename = "investment_report.pdf") {
+export async function downloadPDF(data, headers, filename = "investment_report.pdf", options = {}) {
   const { jsPDF } = await import("jspdf");
   const { default: autoTable } = await import("jspdf-autotable");
 
@@ -6,17 +6,25 @@ export async function downloadPDF(data, headers, filename = "investment_report.p
 
   // Add a title
   doc.setFontSize(18);
-  doc.text("Investment Report", 14, 22);
-  doc.setFontSize(11);
+  doc.text("Investment Report", 14, 20);
+  doc.setFontSize(10);
   doc.setTextColor(100);
 
   // Add date
   const dateStr = new Date().toLocaleDateString();
-  doc.text(`Generated on(MM/DD/YY) : ${dateStr}`, 14, 30);
+  doc.text(`Generated on(MM/DD/YY) : ${dateStr}`, 14, 27);
+
+  let startY = 32;
+  if (options && options.assumption) {
+    doc.setFontSize(10);
+    doc.setTextColor(60, 60, 60);
+    doc.text(`Assumption: ${options.assumption}`, 14, 34);
+    startY = 41;
+  }
 
   // Generate Table
   autoTable(doc, {
-    startY: 35,
+    startY: startY,
     head: [headers],
     body: data.map(row =>
       row.map(cell =>

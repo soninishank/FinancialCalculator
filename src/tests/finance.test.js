@@ -246,7 +246,7 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
             });
             expect(res.monthlyRows.length).toBe(12);
         });
-        test('Mid-year start date accurately groups calendar years (e.g. 2026-09)', () => {
+        test('Mid-year start date accurately groups calendar years (e.g. 2026-09) with effective CAGR', () => {
             const res = computeYearlySchedule({
                 lumpSum: 500000,
                 annualRate: 20,
@@ -258,14 +258,77 @@ describe('Finance Utility Functions - 100% Coverage Suite', () => {
             expect(y2026Months[0].monthName).toBe('Sep');
             expect(y2026Months[3].monthName).toBe('Dec');
             expect(res.rows[0].year).toBe(2026);
-            expect(res.rows[0].overallValue).toBeCloseTo(534175.96, 1);
+            // 500,000 * (1.20)^(4/12) ≈ 531329.28
+            expect(res.rows[0].overallValue).toBeCloseTo(531329.28, 1);
 
             const y2027Months = res.monthlyRows.filter(r => r.year === 2027);
             expect(y2027Months.length).toBe(12); // Jan - Dec
             expect(y2027Months[0].monthName).toBe('Jan');
             expect(y2027Months[11].monthName).toBe('Dec');
             expect(res.rows[1].year).toBe(2027);
-            expect(res.rows[1].overallValue).toBeCloseTo(651369.41, 1);
+            // 500,000 * (1.20)^(16/12) ≈ 637595.14
+            expect(res.rows[1].overallValue).toBeCloseTo(637595.14, 1);
+        });
+
+        test('15-Year Lump Sum CAGR compounding matches exact milestone growth', () => {
+            const res = computeYearlySchedule({
+                lumpSum: 500000,
+                annualRate: 20,
+                totalYears: 15,
+                startDate: '2026-10' // October 2026 start
+            });
+
+            // 180 total monthly rows
+            expect(res.monthlyRows.length).toBe(180);
+
+            // Month 1: M1 Oct 2026
+            expect(res.monthlyRows[0].label).toBe('M1');
+            expect(res.monthlyRows[0].monthName).toBe('Oct');
+            expect(res.monthlyRows[0].year).toBe(2026);
+            expect(res.monthlyRows[0].monthlyGrowth).toBeCloseTo(500000 * (Math.pow(1.2, 1 / 12) - 1), 1);
+
+            // Sequential labels
+            expect(res.monthlyRows[1].label).toBe('M2');
+            expect(res.monthlyRows[2].label).toBe('M3');
+
+            // 12 months elapsed (Year 1): 500,000 * 1.2 = 600,000
+            expect(res.monthlyRows[11].label).toBe('M12');
+            expect(res.monthlyRows[11].balance).toBeCloseTo(600000, 0);
+
+            // 5 years elapsed (Month 60): 500,000 * 1.2^5 = 1,244,160
+            expect(res.monthlyRows[59].label).toBe('M60');
+            expect(res.monthlyRows[59].balance).toBeCloseTo(1244160, 0);
+
+            // 10 years elapsed (Month 120): 500,000 * 1.2^10 = 3,095,868
+            expect(res.monthlyRows[119].label).toBe('M120');
+            expect(res.monthlyRows[119].balance).toBeCloseTo(3095868, 0);
+
+            // 15 years elapsed (Month 180): 500,000 * 1.2^15 = 7,703,511
+            expect(res.monthlyRows[179].label).toBe('M180');
+            expect(res.monthlyRows[179].balance).toBeCloseTo(7703511, 0);
+
+            // Year rows structure and partial year labels
+            // 2026 covers Oct-Dec (partial)
+            expect(res.rows[0].year).toBe(2026);
+            expect(res.rows[0].yearLabel).toBe('2026 (Oct - Dec)');
+            expect(res.rows[0].isPartial).toBe(true);
+            expect(res.rows[0].yearlyGrowth).toBeGreaterThan(0);
+            // December balance is the year-end value of 2026
+            expect(res.rows[0].balance).toBe(res.monthlyRows[2].balance);
+
+            // Full year 2027
+            expect(res.rows[1].year).toBe(2027);
+            expect(res.rows[1].yearLabel).toBe('2027');
+            expect(res.rows[1].isPartial).toBe(false);
+            // December balance of 2027
+            expect(res.rows[1].balance).toBe(res.monthlyRows[14].balance);
+
+            // Final year 2041 ends in September (partial)
+            const lastYearRow = res.rows[res.rows.length - 1];
+            expect(lastYearRow.year).toBe(2041);
+            expect(lastYearRow.yearLabel).toBe('2041 (Jan - Sep)');
+            expect(lastYearRow.isPartial).toBe(true);
+            expect(lastYearRow.balance).toBeCloseTo(7703511, 0);
         });
     });
 

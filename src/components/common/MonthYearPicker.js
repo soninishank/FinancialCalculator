@@ -4,12 +4,28 @@ export default function MonthYearPicker({ value, onChange, minDate }) {
     const [isOpen, setIsOpen] = useState(false);
     const wrapperRef = useRef(null);
 
-    // Parse initial value (YYYY-MM) or default to current
-    const dateObj = value ? new Date(value + "-01") : new Date();
-    const initialYear = dateObj.getFullYear();
+    const months = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
 
+    const monthsFull = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    // Parse initial value (YYYY-MM) safely without timezone rollbacks
+    const parseValue = (val) => {
+        if (val && typeof val === 'string' && val.includes('-')) {
+            const [y, m] = val.split('-').map(Number);
+            return { year: y, monthIndex: (m || 1) - 1 };
+        }
+        const now = new Date();
+        return { year: now.getFullYear(), monthIndex: now.getMonth() };
+    };
+
+    const { year: initialYear, monthIndex: initialMonthIndex } = parseValue(value);
     const [selectedYear, setSelectedYear] = useState(initialYear);
-    // We don't need selectedMonth state as we fire onChange immediately on month click
 
     // Close when clicking outside
     useEffect(() => {
@@ -24,11 +40,11 @@ export default function MonthYearPicker({ value, onChange, minDate }) {
         };
     }, [wrapperRef]);
 
-    // Sync internal state if external value changes (optional)
+    // Sync internal state if external value changes
     useEffect(() => {
         if (value) {
-            const d = new Date(value + "-01");
-            setSelectedYear(d.getFullYear());
+            const { year: valYear } = parseValue(value);
+            setSelectedYear(valYear);
         }
     }, [value]);
 
@@ -44,13 +60,9 @@ export default function MonthYearPicker({ value, onChange, minDate }) {
         setIsOpen(false);
     };
 
-    const months = [
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ];
-
-    // Formatting for display
-    const displayDate = value ? new Date(value + "-01").toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : "Select Date";
+    // Formatting for display - timezone-safe
+    const { year: curYear, monthIndex: curMonthIndex } = parseValue(value);
+    const displayDate = value ? `${monthsFull[curMonthIndex]} ${curYear}` : "Select Date";
 
     return (
         <div className="relative w-full" ref={wrapperRef}>

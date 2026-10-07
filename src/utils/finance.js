@@ -1243,7 +1243,10 @@ export function computeYearlySchedule({
   startDate = new Date().toISOString().slice(0, 10),
   endDate = null
 }) {
-  const r_m = Number(annualRate) / 12 / 100;
+  const cagr = Number(annualRate) / 100;
+  // Effective monthly rate so that compounding 12 months produces exactly (1 + cagr):
+  // (1 + r_m)^12 = 1 + cagr  =>  r_m = (1 + cagr)^(1/12) - 1
+  const r_m = cagr > -1 ? Math.pow(1 + cagr, 1 / 12) - 1 : 0;
 
   let totalMonths = 0;
   let sipMonths = 0;
@@ -1252,11 +1255,8 @@ export function computeYearlySchedule({
     const start = parseDateUTC(startDate);
     const end = parseDateUTC(endDate);
     totalMonths = (end.getUTCFullYear() - start.getUTCFullYear()) * 12 + (end.getUTCMonth() - start.getUTCMonth());
-    // Since we usually treat "end of month" for calculations, if end date is same month as start, it's 0 or 1.
-    // Let's ensure at least 1 month if they are different days? 
-    // Actually, simple month diff is standard for these calculators.
     totalMonths = Math.max(0, totalMonths);
-    sipMonths = totalMonths; // Default SIP duration to full tenure in date mode
+    sipMonths = totalMonths;
   } else {
     totalMonths = Math.ceil(totalYears * 12);
     sipMonths = Math.ceil(sipYears * 12);
@@ -1276,12 +1276,16 @@ export function computeYearlySchedule({
     return {
       rows: [{
         year: startYear,
+        yearLabel: `${startYear}`,
+        displayYear: `${startYear}`,
         yearNumber: 0,
         totalInvested: initialInvested,
         sipInvested: 0,
         lumpSum: initialInvested,
         stepUpAppliedPercent: Number(stepUpPercent),
+        yearlyGrowth: 0,
         growth: 0,
+        balance: initialInvested,
         overallValue: initialInvested,
         investment: initialInvested
       }],
@@ -1292,6 +1296,7 @@ export function computeYearlySchedule({
   let balance = Number(lumpSum);
   let cumulativeInvested = Number(lumpSum);
   let sipInvested = 0;
+  let prevBalance = Number(lumpSum);
   const rows = [];
   const monthlyRows = [];
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -1307,16 +1312,20 @@ export function computeYearlySchedule({
     const calendarYear = startYear + Math.floor(currentMonthTotal / 12);
     const calendarMonth = currentMonthTotal % 12;
 
-    if (m <= sipMonths) {
-      balance += currentSIP;
-      cumulativeInvested += currentSIP;
-      sipInvested += currentSIP;
+    const sipThisMonth = (m <= sipMonths) ? currentSIP : 0;
+    if (sipThisMonth > 0) {
+      balance += sipThisMonth;
+      cumulativeInvested += sipThisMonth;
+      sipInvested += sipThisMonth;
     }
 
     balance = balance * (1 + r_m);
 
+    const monthlyGrowth = balance - (prevBalance + sipThisMonth);
+
     monthlyRows.push({
       id: m,
+      label: `M${m}`,
       month: calendarMonth + 1,
       monthInYear,
       monthName: monthNames[calendarMonth],
@@ -1325,31 +1334,56 @@ export function computeYearlySchedule({
       sipInvested: sipInvested,
       lumpSum: Number(lumpSum),
       growth: balance - cumulativeInvested,
+      monthlyGrowth: monthlyGrowth,
+      interest: monthlyGrowth,
       balance: balance
     });
 
+    prevBalance = balance;
   }
 
   // Aggregate into Yearly Rows (Calendar Years)
-  // We use the same robust grouping strategy as in Loan Amortization
   const yearsSet = new Set(monthlyRows.map(r => r.year));
   const sortedYears = Array.from(yearsSet).sort((a, b) => a - b);
 
-  sortedYears.forEach(year => {
+  let prevYearEndBalance = Number(lumpSum);
+
+  sortedYears.forEach((year, idx) => {
     const monthsInYear = monthlyRows.filter(r => r.year === year);
+    const firstMonth = monthsInYear[0];
     const lastMonth = monthsInYear[monthsInYear.length - 1];
+
+    const isPartial = monthsInYear.length < 12;
+    const yearLabel = isPartial
+      ? `${year} (${firstMonth.monthName} - ${lastMonth.monthName})`
+      : `${year}`;
+
+    const investedBeforeYear = idx === 0
+      ? Number(lumpSum)
+      : (monthlyRows.find(m => m.id === firstMonth.id - 1)?.invested || Number(lumpSum));
+    const netContributionsThisYear = lastMonth.invested - investedBeforeYear;
+    const yearlyGrowth = lastMonth.balance - prevYearEndBalance - netContributionsThisYear;
 
     rows.push({
       year: year,
+      yearLabel,
+      displayYear: yearLabel,
+      isPartial,
+      startMonthName: firstMonth.monthName,
+      endMonthName: lastMonth.monthName,
       yearNumber: Math.ceil(lastMonth.id / 12),
       totalInvested: lastMonth.invested,
       sipInvested: lastMonth.sipInvested,
       lumpSum: lastMonth.lumpSum,
       stepUpAppliedPercent: Number(stepUpPercent),
+      yearlyGrowth: yearlyGrowth,
       growth: lastMonth.growth,
+      balance: lastMonth.balance,
       overallValue: lastMonth.balance,
       investment: lastMonth.invested
     });
+
+    prevYearEndBalance = lastMonth.balance;
   });
 
   return { rows, monthlyRows };
@@ -1359,7 +1393,8 @@ export function computeYearlySchedule({
  * Computes yearly schedule for Step-Up SIP.
  */
 export function computeStepUpSchedule({ initialSIP, stepUpPercent, annualRate, totalYears, sipYears }) {
-  const r_m = annualRate / 12 / 100;
+  const cagr = Number(annualRate) / 100;
+  const r_m = cagr > -1 ? Math.pow(1 + cagr, 1 / 12) - 1 : 0;
   const totalMonths = Math.ceil(totalYears * 12);
   const sipMonths = Math.ceil(sipYears * 12);
 
