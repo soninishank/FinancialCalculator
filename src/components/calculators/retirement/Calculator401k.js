@@ -57,6 +57,7 @@ export default function Calculator401k({ currency = 'USD' }) {
 
             yearlyData.push({
                 year: yearLabel,
+                yearLabel: `Age ${yearLabel}`,
                 invested: totalEmployeeContribution + totalEmployerContribution, // Cumulative invested
                 gain: balance - (totalEmployeeContribution + totalEmployerContribution + currentBalance),
                 balance: balance,

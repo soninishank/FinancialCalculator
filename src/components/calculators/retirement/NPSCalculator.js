@@ -55,6 +55,7 @@ export default function NPSCalculator({ currency = 'INR' }) {
 
             yearlyData.push({
                 year: currentAge + i,
+                yearLabel: `Age ${currentAge + i}`,
                 invested: totalInvested,
                 gain: currentBalance - totalInvested,
                 totalInvested: totalInvested,

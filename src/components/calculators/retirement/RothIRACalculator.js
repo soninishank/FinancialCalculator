@@ -47,6 +47,7 @@ export default function RothIRACalculator({ currency = 'USD' }) {
 
             yearlyData.push({
                 year: age,
+                yearLabel: `Age ${age}`,
                 invested: totalInvested,
                 gain: balance - totalInvested,
                 balance: balance,

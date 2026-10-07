@@ -51,6 +51,7 @@ export default function RMDCalculator({ currency = 'USD' }) {
 
             yearlyData.push({
                 year: curAge,
+                yearLabel: `Age ${curAge}`,
                 rmd: rmd,
                 balance: endBalance,
                 // Matching chart data keys

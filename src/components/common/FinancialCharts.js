@@ -196,7 +196,14 @@ export const FinancialCompoundingBarChart = ({ data, currency, type = 'investmen
     }
 
     const chartData = {
-        labels: data.map((row) => `Year ${row.year}`),
+        labels: data.map((row) => {
+            if (row.yearLabel) return row.yearLabel;
+            if (row.displayYear) return row.displayYear;
+            const yStr = String(row.year ?? '');
+            if (yStr.startsWith('Year ') || yStr.startsWith('Age ')) return yStr;
+            if (Number(row.year) > 1000) return `${row.year}`;
+            return `Year ${row.year}`;
+        }),
         datasets: [
             {
                 type: 'line',

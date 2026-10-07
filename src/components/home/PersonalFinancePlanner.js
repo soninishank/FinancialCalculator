@@ -104,14 +104,11 @@ export default function PersonalFinancePlanner() {
     const annualRate = 0.07; // 7% real return assumption
     const monthlyRate = Math.pow(1 + annualRate, 1 / 12) - 1; // CAGR-based
     let yearsToFIRE = null;
-    if (monthlyInvestment > 0 && fireNumber > Number(profile.currentSavings)) {
-        const gap = fireNumber - Number(profile.currentSavings);
-        // n = ln(1 + gap * r / PMT) / ln(1 + r)  [future value of annuity + lump sum]
-        // Solved numerically month by month (fast enough for small n)
+    if ((monthlyInvestment > 0 || Number(profile.currentSavings) > 0) && fireNumber > Number(profile.currentSavings)) {
         let balance = Number(profile.currentSavings);
         let months = 0;
         while (balance < fireNumber && months < 600) {
-            balance = balance * (1 + monthlyRate) + monthlyInvestment;
+            balance = (balance + monthlyInvestment) * (1 + monthlyRate);
             months++;
         }
         yearsToFIRE = balance >= fireNumber ? (months / 12) : null;

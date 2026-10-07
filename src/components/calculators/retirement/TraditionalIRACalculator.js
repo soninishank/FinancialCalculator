@@ -56,6 +56,7 @@ export default function TraditionalIRACalculator({ currency = 'USD' }) {
 
             yearlyData.push({
                 year: currentAge + year,
+                yearLabel: `Age ${currentAge + year}`,
                 totalInvested: Math.round(totalContributions),
                 growth: Math.round(balance - totalContributions),
                 balance: Math.round(balance)
@@ -64,8 +65,16 @@ export default function TraditionalIRACalculator({ currency = 'USD' }) {
 
         // RMD calculation at age 73 (new SECURE 2.0 rule)
         const rmdAge = 73;
-        const yearsToRMD = Math.max(0, rmdAge - currentAge);
-        const balanceAtRMD = currentBalance * Math.pow(1 + expectedReturn / 100, yearsToRMD);
+        let balanceAtRMD = 0;
+        if (currentAge >= rmdAge) {
+            balanceAtRMD = currentBalance;
+        } else if (retirementAge >= rmdAge) {
+            const rmdIndex = rmdAge - currentAge;
+            balanceAtRMD = yearlyData[rmdIndex - 1]?.balance || balance;
+        } else {
+            const yearsPostRetirementToRMD = rmdAge - retirementAge;
+            balanceAtRMD = balance * Math.pow(1 + expectedReturn / 100, yearsPostRetirementToRMD);
+        }
         const rmdDivisor = 26.5; // IRS uniform lifetime table approximation for age 73
         const firstRMD = (rmdDivisor > 0) ? balanceAtRMD / rmdDivisor : 0;
 
