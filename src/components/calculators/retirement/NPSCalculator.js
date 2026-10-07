@@ -17,7 +17,7 @@ export default function NPSCalculator({ currency = 'INR' }) {
     const result = useMemo(() => {
         const yearsToInvest = Math.max(0, retirementAge - currentAge);
         const months = yearsToInvest * 12;
-        const monthlyRate = expectedReturn / 12 / 100;
+        const monthlyRate = Math.pow(1 + expectedReturn / 100, 1 / 12) - 1; // CAGR-based
 
         // Future Value of SIP formula
         // FV = P * ((1 + r)^n - 1) * (1 + r) / r

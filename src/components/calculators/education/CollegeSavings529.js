@@ -23,7 +23,7 @@ export default function CollegeSavings529({ currency = 'USD' }) {
         let totalInvested = currentSavings;
 
         const yearlyData = [];
-        const monthlyRate = annualReturn / 12 / 100;
+        const monthlyRate = Math.pow(1 + annualReturn / 100, 1 / 12) - 1; // CAGR-based
 
         // Growth Phase (Until College Starts)
         for (let i = 1; i <= yearsToCollege; i++) {

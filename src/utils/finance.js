@@ -176,7 +176,8 @@ export function calculateCompoundInterest({ principal, rate, time, timeUnit = 'y
 }
 
 export function getRequiredSIP(target, annualRate, years) {
-  const r_m = annualRate / 12 / 100;
+  const cagr = Number(annualRate) / 100;
+  const r_m = cagr > -1 ? Math.pow(1 + cagr, 1 / 12) - 1 : 0;
   const n = years * 12;
   if (r_m === 0) return target / n;
 
@@ -201,7 +202,8 @@ export function getRequiredLumpSum(target, annualRate, years, compounding = 'cag
 }
 
 export function getRequiredStepUpSIP(target, annualRate, years, stepUpPercent) {
-  const r_m = annualRate / 12 / 100;
+  const cagr = Number(annualRate) / 100;
+  const r_m = cagr > -1 ? Math.pow(1 + cagr, 1 / 12) - 1 : 0;
   const months = years * 12;
 
   let balance = 0;
@@ -1655,7 +1657,8 @@ export function calculateCostOfDelay({
   delayYears,
   investmentYears
 }) {
-  const r_m = annualReturn / 12 / 100;
+  const cagr = Number(annualReturn) / 100;
+  const r_m = cagr > -1 ? Math.pow(1 + cagr, 1 / 12) - 1 : 0;
 
   // Scenario A: Start Now, invest for X years
   const n_total = Math.max(0, investmentYears * 12);
@@ -1707,7 +1710,7 @@ export function computeRentVsBuyLedger({
 
   // Monthly Rates
   const monthlyLoanRate = loanRate / 12 / 100;
-  const monthlyInvestRate = investReturnRate / 12 / 100;
+  const monthlyInvestRate = Math.pow(1 + investReturnRate / 100, 1 / 12) - 1; // CAGR-based
 
   const start = parseDateUTC(startDate);
   const startMonth = start.getUTCMonth(); // 0-based

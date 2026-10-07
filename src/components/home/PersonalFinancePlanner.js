@@ -102,7 +102,7 @@ export default function PersonalFinancePlanner() {
     const fireProgress = fireNumber > 0 ? Math.min(100, Math.round((Number(profile.currentSavings) / fireNumber) * 100)) : 0;
     const monthlyInvestment = Number(profile.monthlyInvestment);
     const annualRate = 0.07; // 7% real return assumption
-    const monthlyRate = annualRate / 12;
+    const monthlyRate = Math.pow(1 + annualRate, 1 / 12) - 1; // CAGR-based
     let yearsToFIRE = null;
     if (monthlyInvestment > 0 && fireNumber > Number(profile.currentSavings)) {
         const gap = fireNumber - Number(profile.currentSavings);
